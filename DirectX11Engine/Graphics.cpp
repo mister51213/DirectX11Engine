@@ -8,7 +8,7 @@ Graphics::Graphics()
 	_D3D(nullptr),
 	_Camera(nullptr),
 	_Model(nullptr),
-	_ColorShader(nullptr)
+	_TextureShader(nullptr)
 {}
 
 Graphics::Graphics(const Graphics& other)
@@ -56,7 +56,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the model object.
-	result = _Model->Initialize(_D3D->GetDevice());
+	result = _Model->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/stone01.tga");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
@@ -64,14 +64,14 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Create the color shader object.
-	_ColorShader = new ColorShaderClass;
-	if (!_ColorShader)
+	_TextureShader = new TextureShaderClass;
+	if (!_TextureShader)
 	{
 		return false;
 	}
 
 	// Initialize the color shader object.
-	result = _ColorShader->Initialize(_D3D->GetDevice(), hwnd);
+	result = _TextureShader->Initialize(_D3D->GetDevice(), hwnd);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the color shader object.", L"Error", MB_OK);
@@ -84,11 +84,11 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 void Graphics::Shutdown()
 {
 	// Release the color shader object.
-	if (_ColorShader)
+	if (_TextureShader)
 	{
-		_ColorShader->Shutdown();
-		delete _ColorShader;
-		_ColorShader = 0;
+		_TextureShader->Shutdown();
+		delete _TextureShader;
+		_TextureShader = 0;
 	}
 
 	// Release the model object.
@@ -150,7 +150,7 @@ bool Graphics::Render()
 	_Model->Render(_D3D->GetDeviceContext());
 
 	// Render the model using the color shader.
-	result = _ColorShader->Render(_D3D->GetDeviceContext(), _Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
+	result = _TextureShader->Render(_D3D->GetDeviceContext(), _Model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, _Model->GetTexture());
 	if (!result)
 	{
 		return false;

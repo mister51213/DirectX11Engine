@@ -1,5 +1,5 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: texture.vs
+// Filename: texture_vs
 // does the actual rendering of models.
 // Called for every single vertex in the vertex buffer.
 // Processes the vertices from a model and transforms them into view space.
@@ -45,7 +45,7 @@ struct PixelInputType
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
 ////////////////////////////////////////////////////////////////////////////////
-PixelInputType ColorVertexShader(VertexInputType input)
+PixelInputType TextureVertexShader(VertexInputType input)
 {
 	PixelInputType output;
 

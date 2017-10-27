@@ -19,7 +19,7 @@ SamplerState SampleType;
 struct PixelInputType
 {
 	float4 position : SV_POSITION;
-	float4 color : COLOR;
+	float2 tex : TEXCOORD0;
 };
 
 // git test change
@@ -27,9 +27,14 @@ struct PixelInputType
 ////////////////////////////////////////////////////////////////////////////////
 // Pixel Shader
 ////////////////////////////////////////////////////////////////////////////////
-float4 ColorPixelShader(PixelInputType input) : SV_TARGET
+float4 TexturePixelShader(PixelInputType input) : SV_TARGET
 {
-	return input.color;
+    float4 textureColor;
+
+    // Sample the pixel color from the texture using the sampler at this texture coordinate location.
+    textureColor = shaderTexture.Sample(SampleType, input.tex);
+
+    return textureColor;
 }
 
 //TODO: possibly remove hlsl extensions?
