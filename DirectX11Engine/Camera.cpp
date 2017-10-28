@@ -57,57 +57,19 @@ void Camera::MoveInDirectionRelative(XMFLOAT3 displacement)
 	_positionZ += worldDispFloat3.z;
 }
 
-//void Camera::SetRelativePosition(float x, float y, float z)
-//{
-//	XMFLOAT3 desiredPos(x, y, z);
-//	XMVECTOR desiredPosCamSpace = XMLoadFloat3(&desiredPos);
-//
-//	XMMATRIX lookatMatrix = DirectX::XMMatrixRotationRollPitchYaw(_rotationX*0.0174532925f, _rotationX*0.0174532925f, _rotationX*0.0174532925f);
-//	
-//	// take inverse of current orientation (use actual inverse if this doesnt work)
-//	//XMMATRIX inverseOrientation = XMMatrixTranspose(lookatMatrix);
-//	XMFLOAT3 det(1, 1, 1);
-//	XMVECTOR determinant = XMLoadFloat3(&det);
-//	DirectX::XMVector3Normalize(determinant);
-//	XMMATRIX inverseOrientation = XMMatrixInverse(&determinant, lookatMatrix);
-//
-//	// Unrotate the desired position
-//	XMVECTOR desiredPosWorldSpace = XMVector3TransformCoord(desiredPosCamSpace, inverseOrientation);
-//
-//	// set these world values
-//	_positionX = XMVectorGetX(desiredPosWorldSpace);
-//	_positionY = XMVectorGetY(desiredPosWorldSpace);
-//	_positionZ = XMVectorGetZ(desiredPosWorldSpace);
-//}
-void Camera::SetRelativePosition(float x, float y, float z)
-{
-	XMFLOAT3 pos(x, y, z);
-	XMVECTOR posCamSpace = XMLoadFloat3(&pos);
-
-	XMMATRIX camRotMatrix = 
-		DirectX::XMMatrixRotationRollPitchYaw(
-			_rotationX*0.0174532925f, 
-			_rotationY*0.0174532925f, 
-			_rotationZ*0.0174532925f);
-
-	XMVECTOR posWorldSpace = 
-		XMVector3TransformCoord(posCamSpace, camRotMatrix);
-
-	// set these world values
-	XMFLOAT3 newPosition;
-	XMStoreFloat3(&newPosition, posWorldSpace);
-
-	_positionX = newPosition.x;
-	_positionY = newPosition.y;
-	_positionZ = newPosition.z;
-}
-
 void Camera::SetRotation(float x, float y, float z)
 {
 	_rotationX = x;
 	_rotationY = y;
 	_rotationZ = z;
 	return;
+}
+
+void Camera::RotateInDirection(const XMFLOAT3& offset)
+{
+	_rotationX += offset.x;
+	_rotationY += offset.y;
+	_rotationZ += offset.z;
 }
 
 XMFLOAT3 Camera::GetPosition()
@@ -162,11 +124,6 @@ void Camera::Render()
 	// Transform the lookAt and up vector by the rotation matrix so the view is correctly rotated at the origin.
 	lookAtVector = XMVector3TransformCoord(lookAtVector, rotationMatrix);
 	upVector = XMVector3TransformCoord(upVector, rotationMatrix);
-
-	/////////////// transform position into world space ///////////////////////////
-	//XMMATRIX inverseOrientation = XMMatrixTranspose(rotationMatrix);
-	//positionVector = XMVector3TransformCoord(positionVector, rotationMatrix);
-	///////////////////////////////////////////////////////////////////////////////
 
 	// Translate the rotated camera position to the location of the viewer.
 	lookAtVector = XMVectorAdd(positionVector, lookAtVector);

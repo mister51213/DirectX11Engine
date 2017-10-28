@@ -147,7 +147,7 @@ bool System::ProcessInput()
 	// 1. Move this into another class
 	// 2. Make movement relative to camera, not world
 
-	float moveIncrement = 0.05f;
+	float moveIncrement = 0.2f;
 	float turnIncrement = 1.5f;
 	XMFLOAT3 positionOffset(0 , 0 , 0);
 	XMFLOAT3 rotationOffset(0, 0, 0);
@@ -201,14 +201,8 @@ bool System::ProcessInput()
 	{
 		if (Camera* cam = _Graphics->GetCamera())
 		{
-			//XMFLOAT3 newPosition(cam->GetPosition() + positionOffset);
-			//cam->MoveInDirection(positionOffset);
 			cam->MoveInDirectionRelative(positionOffset);
-
-			//cam->SetRelativePosition(newPosition.x, newPosition.y, newPosition.z);
-
-			XMFLOAT3 newRotation(cam->GetRotation() + rotationOffset);
-			cam->SetRotation(newRotation.x, newRotation.y, newRotation.z);
+			cam->RotateInDirection(rotationOffset);
 		}
 	}
 

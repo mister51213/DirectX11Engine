@@ -24,8 +24,7 @@ public:
 	void MoveInDirection(XMFLOAT3 displacement);
 	void MoveInDirectionRelative(XMFLOAT3 displacement);
 	void SetRotation(float, float, float);
-
-	void SetRelativePosition(float x, float y, float z);
+	void RotateInDirection(const XMFLOAT3& offset);
 
 	XMFLOAT3 GetPosition();
 	XMFLOAT3 GetRotation();
