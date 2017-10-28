@@ -15,7 +15,6 @@ Camera::Camera(const Camera& other)
 {
 }
 
-
 Camera::~Camera()
 {
 }

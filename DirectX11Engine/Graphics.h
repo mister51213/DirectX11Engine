@@ -39,11 +39,15 @@ public:
 	inline Camera* GetCamera() { return _Camera; }
 
 private:
-	bool Render();
+	bool Render(float);
 
 private:
 	D3DClass* _D3D;
 	Camera* _Camera;
 	Model* _Model;
-	TextureShaderClass* _TextureShader;
+	//TextureShaderClass* _TextureShader;
+	LightShaderClass* _LightShader;
+	LightClass* _Light;
+
+	float _modelRotation = 0.0f;
 };

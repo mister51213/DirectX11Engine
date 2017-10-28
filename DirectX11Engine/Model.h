@@ -27,6 +27,7 @@ private:
 	{
 		XMFLOAT3 position;
 		XMFLOAT2 texture;
+		XMFLOAT3 normal;
 	};
 
 public:
@@ -40,12 +41,12 @@ public:
 
 	/** Needed by the shader to draw this model */
 	int GetIndexCount();
-
 	ID3D11ShaderResourceView* GetTexture();
 
 private:
 	bool InitializeBuffers(ID3D11Device* device);
 	void ShutdownBuffers();
+
 	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
 	void RenderBuffers(ID3D11DeviceContext* deviceContext);
 
@@ -55,7 +56,6 @@ private:
 private:
 	ID3D11Buffer *_vertexBuffer, *_indexBuffer;
 	int _vertexCount, _indexCount;
-
 	TextureClass* _Texture;
 };
 
