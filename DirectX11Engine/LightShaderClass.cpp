@@ -1,8 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: lightshaderclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
-#include "lightshaderclass.h"
+#pragma comment ( lib, "d3dcompiler.lib" )
+#pragma comment ( lib, "d3d11.lib" )
 
+#include "LightShaderClass.h"
 
 LightShaderClass::LightShaderClass()
 	:
@@ -29,7 +31,11 @@ bool LightShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 	bool result;
 
 	// Initialize the vertex and pixel shaders.
-	result = InitializeShader(device, hwnd, L"../DirectX11Engine/Light_vs.hlsl", L"../DirectX11Engine/Light_ps.hlsl");
+	result = InitializeShader(		
+		device, 
+		hwnd, 
+		L"../DirectX11Engine/Light_vs.hlsl", 
+		L"../DirectX11Engine/Light_ps.hlsl");
 	if (!result)
 	{
 		return false;
@@ -37,7 +43,6 @@ bool LightShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 
 	return true;
 }
-
 
 void LightShaderClass::Shutdown()
 {
@@ -47,11 +52,17 @@ void LightShaderClass::Shutdown()
 	return;
 }
 
-bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 lightDirection, XMFLOAT4 diffuseColor)
+bool LightShaderClass::Render(
+	ID3D11DeviceContext* deviceContext, 
+	int indexCount, 
+	XMMATRIX worldMatrix, 
+	XMMATRIX viewMatrix,
+	XMMATRIX projectionMatrix, 
+	ID3D11ShaderResourceView* texture, 
+	XMFLOAT3 lightDirection, 
+	XMFLOAT4 diffuseColor)
 {
 	bool result;
-
 
 	// Set the shader parameters that it will use for rendering.
 	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture, lightDirection, diffuseColor);

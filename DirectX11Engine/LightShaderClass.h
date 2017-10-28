@@ -8,11 +8,12 @@
 //////////////
 #include <d3d11.h>
 //#include <d3dx10math.h>
+#include <d3dcompiler.h>
 #include <directxmath.h>
-//#include <d3dx11async.h>
+#include <d3dx11async.h>
 #include <fstream>
-using namespace std;
 using namespace DirectX;
+using namespace std;
 
 
 ////////////////////////////////////////////////////////////////////////////////
