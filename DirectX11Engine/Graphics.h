@@ -36,6 +36,8 @@ public:
 	void Shutdown();
 	bool Frame();
 
+	inline Camera* GetCamera() { return _Camera; }
+
 private:
 	bool Render();
 

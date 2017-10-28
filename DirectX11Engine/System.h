@@ -35,6 +35,7 @@ public:
 
 private:
 	bool Frame();
+	bool ProcessInput();
 	void InitializeWindows(int&, int&);
 	void ShutdownWindows();
 

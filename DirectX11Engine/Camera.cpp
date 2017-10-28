@@ -28,6 +28,51 @@ void Camera::SetPosition(float x, float y, float z)
 	return;
 }
 
+//void Camera::SetRelativePosition(float x, float y, float z)
+//{
+//	XMFLOAT3 desiredPos(x, y, z);
+//	XMVECTOR desiredPosCamSpace = XMLoadFloat3(&desiredPos);
+//
+//	XMMATRIX lookatMatrix = DirectX::XMMatrixRotationRollPitchYaw(_rotationX*0.0174532925f, _rotationX*0.0174532925f, _rotationX*0.0174532925f);
+//	
+//	// take inverse of current orientation (use actual inverse if this doesnt work)
+//	//XMMATRIX inverseOrientation = XMMatrixTranspose(lookatMatrix);
+//	XMFLOAT3 det(1, 1, 1);
+//	XMVECTOR determinant = XMLoadFloat3(&det);
+//	DirectX::XMVector3Normalize(determinant);
+//	XMMATRIX inverseOrientation = XMMatrixInverse(&determinant, lookatMatrix);
+//
+//	// Unrotate the desired position
+//	XMVECTOR desiredPosWorldSpace = XMVector3TransformCoord(desiredPosCamSpace, inverseOrientation);
+//
+//	// set these world values
+//	_positionX = XMVectorGetX(desiredPosWorldSpace);
+//	_positionY = XMVectorGetY(desiredPosWorldSpace);
+//	_positionZ = XMVectorGetZ(desiredPosWorldSpace);
+//}
+void Camera::SetRelativePosition(float x, float y, float z)
+{
+	XMFLOAT3 displacement(x, y, z);
+	XMVECTOR desiredPosCamSpace = XMLoadFloat3(&desiredDisplacement);
+
+	XMMATRIX lookatMatrix = DirectX::XMMatrixRotationRollPitchYaw(_rotationX*0.0174532925f, _rotationX*0.0174532925f, _rotationX*0.0174532925f);
+
+	// take inverse of current orientation (use actual inverse if this doesnt work)
+	//XMMATRIX inverseOrientation = XMMatrixTranspose(lookatMatrix);
+	XMFLOAT3 det(1, 1, 1);
+	XMVECTOR determinant = XMLoadFloat3(&det);
+	DirectX::XMVector3Normalize(determinant);
+	XMMATRIX inverseOrientation = XMMatrixInverse(&determinant, lookatMatrix);
+
+	// Unrotate the desired position
+	XMVECTOR desiredPosWorldSpace = XMVector3TransformCoord(desiredPosCamSpace, inverseOrientation);
+
+	// set these world values
+	_positionX = XMVectorGetX(desiredPosWorldSpace);
+	_positionY = XMVectorGetY(desiredPosWorldSpace);
+	_positionZ = XMVectorGetZ(desiredPosWorldSpace);
+}
+
 void Camera::SetRotation(float x, float y, float z)
 {
 	_rotationX = x;
@@ -78,7 +123,7 @@ void Camera::Render()
 	// Load it into a XMVECTOR structure.
 	lookAtVector = XMLoadFloat3(&lookAt);
 
-	// Set the yaw (Y axis), pitch (X axis), and roll (Z axis) rotations in radians.
+	// convert yaw (Y axis), pitch (X axis), and roll (Z axis) to radians.
 	pitch = _rotationX * 0.0174532925f;
 	yaw = _rotationY * 0.0174532925f;
 	roll = _rotationZ * 0.0174532925f;

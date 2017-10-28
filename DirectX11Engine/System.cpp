@@ -1,4 +1,7 @@
 #include "System.h"
+#include "VectorMath.h"
+#include <DirectXMath.h>
+using namespace VectorMath;
 
 System::System()
 	:
@@ -116,8 +119,8 @@ bool System::Frame()
 {
 	bool result;
 
-	// Check if the user pressed escape and wants to exit the application.
-	if (_Input->IsKeyDown(VK_ESCAPE))
+	result = ProcessInput();
+	if (!result)
 	{
 		return false;
 	}
@@ -127,6 +130,76 @@ bool System::Frame()
 	if (!result)
 	{
 		return false;
+	}
+
+	return true;
+}
+
+bool System::ProcessInput()
+{
+	// Check if the user pressed escape and wants to exit the application.
+	if (_Input->IsKeyDown(VK_ESCAPE))
+	{
+		return false;
+	}
+
+	// TODO: 
+	// 1. Move this into another class
+	// 2. Make movement relative to camera, not world
+
+	float moveIncrement = 0.15f;
+	float turnIncrement = 1.1f;
+	XMFLOAT3 positionOffset(0,0,0);
+	XMFLOAT3 rotationOffset(0, 0, 0);
+
+
+	// ROTATION
+	if (_Input->IsKeyDown(VK_UP))
+	{
+		rotationOffset.x -= turnIncrement;
+	}
+	if (_Input->IsKeyDown(VK_DOWN))
+	{
+		rotationOffset.x += turnIncrement;
+	}
+	if (_Input->IsKeyDown(VK_LEFT))
+	{
+		rotationOffset.y -= turnIncrement;
+	}
+	if (_Input->IsKeyDown(VK_RIGHT))
+	{
+		rotationOffset.y += turnIncrement;
+	}
+
+	// DISPLACEMENT
+	if (_Input->IsKeyDown('W'))
+	{
+		positionOffset.z += moveIncrement;
+	}
+	if (_Input->IsKeyDown('A'))
+	{
+		positionOffset.x -= moveIncrement;
+	}
+	if (_Input->IsKeyDown('S'))
+	{
+		positionOffset.z -= moveIncrement;
+	}	
+	if (_Input->IsKeyDown('D'))
+	{
+		positionOffset.x += moveIncrement;
+	}
+
+	if (_Graphics)
+	{
+		if (Camera* cam = _Graphics->GetCamera())
+		{
+			XMFLOAT3 newPosition(cam->GetPosition() + positionOffset);
+			//cam->SetPosition(newPosition.x, newPosition.y, newPosition.z);
+			cam->SetRelativePosition(newPosition.x, newPosition.y, newPosition.z);
+
+			XMFLOAT3 newRotation(cam->GetRotation() + rotationOffset);
+			cam->SetRotation(newRotation.x, newRotation.y, newRotation.z);
+		}
 	}
 
 	return true;
