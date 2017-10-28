@@ -11,9 +11,7 @@
 #include "d3dclass.h"
 #include "camera.h"
 #include "model.h"
-//#include "textureshaderclass.h"
-#include "LightShaderClass.h"
-#include "LightClass.h"
+#include "textureshaderclass.h"
 
 /////////////
 // GLOBALS //
