@@ -21,6 +21,8 @@ public:
 	~Camera();
 
 	void SetPosition(float, float, float);
+	void MoveInDirection(XMFLOAT3 displacement);
+	void MoveInDirectionRelative(XMFLOAT3 displacement);
 	void SetRotation(float, float, float);
 
 	void SetRelativePosition(float x, float y, float z);
