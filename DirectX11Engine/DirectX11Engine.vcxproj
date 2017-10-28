@@ -146,7 +146,6 @@
     <ClCompile Include="LightClass.cpp" />
     <ClCompile Include="LightShaderClass.cpp" />
     <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TextureShaderClass.cpp" />
     <ClCompile Include="D3DClass.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Input.cpp" />
@@ -159,7 +158,6 @@
     <ClInclude Include="LightClass.h" />
     <ClInclude Include="LightShaderClass.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="TextureShaderClass.h" />
     <ClInclude Include="D3DClass.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Input.h" />

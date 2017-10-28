@@ -36,16 +36,13 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TextureShaderClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LightShaderClass.cpp">
+    <ClCompile Include="LightClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LightClass.cpp">
+    <ClCompile Include="LightShaderClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -68,19 +65,16 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TextureShaderClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VectorMath.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LightShaderClass.h">
+    <ClInclude Include="LightClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LightClass.h">
+    <ClInclude Include="LightShaderClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

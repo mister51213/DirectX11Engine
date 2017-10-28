@@ -11,7 +11,8 @@
 #include "d3dclass.h"
 #include "camera.h"
 #include "model.h"
-#include "textureshaderclass.h"
+#include "LightShaderClass.h"
+#include "LightClass.h"
 
 /////////////
 // GLOBALS //
@@ -45,7 +46,6 @@ private:
 	D3DClass* _D3D;
 	Camera* _Camera;
 	Model* _Model;
-	//TextureShaderClass* _TextureShader;
 	LightShaderClass* _LightShader;
 	LightClass* _Light;
 
