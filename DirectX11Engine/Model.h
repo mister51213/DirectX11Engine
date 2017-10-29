@@ -9,6 +9,9 @@
 //////////////
 #include <d3d11.h>
 #include <directxmath.h>
+#include <fstream>
+
+using namespace std;
 using namespace DirectX;
 
 /////////////////////
@@ -30,18 +33,29 @@ private:
 		XMFLOAT3 normal;
 	};
 
+	// Contains position, texture coords, and normal vectors corresponding to model file to be loaded
+	struct ModelType
+	{
+		float x, y, z;
+		float tu, tv;
+		float nx, ny, nz;
+	};
+
 public:
 	Model();
 	Model(const Model&);
 	~Model();
 
-	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* textureFilename);
+	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
 	/** Needed by the shader to draw this model */
 	int GetIndexCount();
 	ID3D11ShaderResourceView* GetTexture();
+
+	bool LoadModel(char*);
+	void ReleaseModel();
 
 private:
 	bool InitializeBuffers(ID3D11Device* device);
@@ -57,5 +71,8 @@ private:
 	ID3D11Buffer *_vertexBuffer, *_indexBuffer;
 	int _vertexCount, _indexCount;
 	TextureClass* _Texture;
+
+	// used to read in and hold the model data before it is placed in the vertex buffer.
+	ModelType* _model;
 };
 

@@ -8,7 +8,8 @@ Model::Model()
 	:
 	_vertexBuffer(0),
 	_indexBuffer(0),
-	_Texture(0)
+	_Texture(0),
+	_model(0)
 {}
 
 
@@ -20,9 +21,16 @@ Model::~Model()
 {
 }
 
-bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* textureFilename)
+bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename)
 {
 	bool result;
+
+	// Load in the model data
+	result = LoadModel(modelFilename);
+	if (!result)
+	{
+		return false;
+	}
 
 	// Initialize the vertex and index buffers.
 	result = InitializeBuffers(device);
@@ -48,6 +56,9 @@ void Model::Shutdown()
 
 	// Shutdown the vertex and index buffers.
 	ShutdownBuffers();
+
+	// Release the model data.
+	ReleaseModel();
 
 	return;
 }
@@ -79,10 +90,10 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 	HRESULT result;
 
 	// Set the number of vertices in the vertex array.
-	_vertexCount = 3;
+	//_vertexCount = 3;
 
 	// Set the number of indices in the index array.
-	_indexCount = 3;
+	//_indexCount = 3;
 
 	// Create the vertex array.
 	vertices = new VertexType[_vertexCount];
@@ -98,23 +109,30 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 		return false;
 	}
 
-	// Load the vertex array with data.
-	vertices[0].position = XMFLOAT3(-1.0f, -1.0f, 0.0f);  // Bottom left.
-	vertices[0].texture = XMFLOAT2(0.0f, 1.0f);
-	vertices[0].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+	// Load the vertex array and index array with data.
+	for (int i = 0; i < _vertexCount; i++)
+	{
+		vertices[i].position = XMFLOAT3(_model[i].x, _model[i].y, _model[i].z);
+		vertices[i].texture = XMFLOAT2(_model[i].tu, _model[i].tv);
+		vertices[i].normal = XMFLOAT3(_model[i].nx, _model[i].ny, _model[i].nz);
 
-	vertices[1].position = XMFLOAT3(0.0f, 1.0f, 0.0f);  // Top middle.
-	vertices[1].texture = XMFLOAT2(0.5f, 0.0f);
-	vertices[1].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+		indices[i] = i;
+	}
 
-	vertices[2].position = XMFLOAT3(1.0f, -1.0f, 0.0f);  // Bottom right.
-	vertices[2].texture = XMFLOAT2(1.0f, 1.0f);
-	vertices[2].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
-
-	// Load the index array with data.
-	indices[0] = 0;  // Bottom left.
-	indices[1] = 1;  // Top middle.
-	indices[2] = 2;  // Bottom right.
+	//// Load the vertex array with data.
+	//vertices[0].position = XMFLOAT3(-1.0f, -1.0f, 0.0f);  // Bottom left.
+	//vertices[0].texture = XMFLOAT2(0.0f, 1.0f);
+	//vertices[0].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+	//vertices[1].position = XMFLOAT3(0.0f, 1.0f, 0.0f);  // Top middle.
+	//vertices[1].texture = XMFLOAT2(0.5f, 0.0f);
+	//vertices[1].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+	//vertices[2].position = XMFLOAT3(1.0f, -1.0f, 0.0f);  // Bottom right.
+	//vertices[2].texture = XMFLOAT2(1.0f, 1.0f);
+	//vertices[2].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
+	//// Load the index array with data.
+	//indices[0] = 0;  // Bottom left.
+	//indices[1] = 1;  // Top middle.
+	//indices[2] = 2;  // Bottom right.
 
 					 // Set up the description of the static vertex buffer.
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -235,6 +253,75 @@ void Model::ReleaseTexture()
 		_Texture->Shutdown();
 		delete _Texture;
 		_Texture = 0;
+	}
+
+	return;
+}
+
+bool Model::LoadModel(char* filename)
+{
+	ifstream fin;
+	char input;
+	int i;
+
+	// Open the model file.
+	fin.open(filename);
+
+	// If it could not open the file then exit.
+	if (fin.fail())
+	{
+		return false;
+	}
+
+	// Read up to the value of vertex count.
+	fin.get(input);
+	while (input != ':')
+	{
+		fin.get(input);
+	}
+
+	// Read in the vertex count.
+	fin >> _vertexCount;
+
+	// Set the number of indices to be the same as the vertex count.
+	_indexCount = _vertexCount;
+
+	// Create the model using the vertex count that was read in.
+	_model = new ModelType[_vertexCount];
+	if (!_model)
+	{
+		return false;
+	}
+
+	// Read up to the beginning of the data.
+	fin.get(input);
+	while (input != ':')
+	{
+		fin.get(input);
+	}
+	fin.get(input);
+	fin.get(input);
+
+	// Read in the vertex data.
+	for (i = 0; i < _vertexCount; i++)
+	{
+		fin >> _model[i].x >> _model[i].y >> _model[i].z;
+		fin >> _model[i].tu >> _model[i].tv;
+		fin >> _model[i].nx >> _model[i].ny >> _model[i].nz;
+	}
+
+	// Close the model file.
+	fin.close();
+
+	return true;
+}
+
+void Model::ReleaseModel()
+{
+	if (_model)
+	{
+		delete[] _model;
+		_model = 0;
 	}
 
 	return;
