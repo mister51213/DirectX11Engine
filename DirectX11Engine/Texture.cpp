@@ -27,6 +27,9 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	unsigned int rowPitch;
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
 
+	//TODO: Need to use new version of D3DX11CreateShaderResourceViewFromFile here
+	// so we can work with any image type
+
 	// Load the targa image data into memory.
 	result = LoadTarga(filename, height, width);
 	if (!result)

@@ -60,7 +60,12 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Initialize the model object.
 	//result = _Model->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/stone01.tga");
-	result = _Model->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/cube.txt", "../Engine/data/seafloor.dds");
+	result = _Model->Initialize(
+			_D3D->GetDevice(), 
+			_D3D->GetDeviceContext(), 
+			"../DirectX11Engine/data/cube.txt", 
+			"../DirectX11Engine/data/stone01.tga");
+			//"../DirectX11Engine/data/seafloor.dds");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
