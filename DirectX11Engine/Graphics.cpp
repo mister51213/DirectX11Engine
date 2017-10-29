@@ -63,9 +63,9 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	result = _Model->Initialize(
 			_D3D->GetDevice(), 
 			_D3D->GetDeviceContext(), 
-			"../DirectX11Engine/data/cube.txt", 
+			"../DirectX11Engine/data/explosion.txt", 
 			//"../DirectX11Engine/data/stone01.tga");
-			"../DirectX11Engine/data/seafloor.tga");
+			"../DirectX11Engine/data/fire2.tga");
 			//"../DirectX11Engine/data/seafloor.dds");
 	if (!result)
 	{
