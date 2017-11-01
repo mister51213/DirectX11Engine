@@ -39,7 +39,7 @@ namespace VectorMath
 	4. If there is no solution, pick the closest fitting curve instead
 	5. Apply these coefficients to the base equation ax^2 + bx + c(1) = y to calculate each point of the spline
 	6. Apply these 2D values to a 3D vector along a given plane to generate the spline	*/
-	vector<XMFLOAT3> GenerateSpline(vector<XMFLOAT2> points)
+	vector<XMFLOAT3> GenerateSpline(vector<XMFLOAT2> points, float xIncrement = 1.f, float range = 100.f)
 	{
 		// TODO: draw vectors from 1st to 2nd and 1st to 3rd points
 		// subtract the projection of vector 1 onto vector 2, FROM vector 1,
@@ -68,10 +68,8 @@ namespace VectorMath
 
 		// apply the coefficients in the result vector to each point along the spline to get the result
 		vector<XMFLOAT3> pointsOnSpline;
-		float xIncrement = 1.f;
-		float destination = 100.f; // for example
 
-		for (float inX = 0.f; inX <= destination; inX += xIncrement)
+		for (float inX = 0.f; inX <= range; inX += xIncrement)
 		{
 			float outY = resultVector.x * inX*inX + resultVector.y * inX + resultVector.z;
 
