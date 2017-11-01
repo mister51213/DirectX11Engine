@@ -96,8 +96,9 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the light object.
+	_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	_Light->SetDiffuseColor(1.0f, 0.5f, 1.0f, 1.0f);
-	_Light->SetDirection(0.0f, 0.0f, 1.0f);
+	_Light->SetDirection(1.0f, 0.0f, 0.0f);
 
 	//// Create the color shader object.
 	//_TextureShader = new TextureShaderClass;
@@ -171,7 +172,7 @@ bool Graphics::Frame()
 	bool result;
 
 	// Update the rotation variable each frame.
-	_modelRotation += (float)XM_PI * 0.01f;
+	_modelRotation += (float)XM_PI * 0.003f;
 	if (_modelRotation > 360.0f)
 	{
 		_modelRotation -= 360.0f;
@@ -217,7 +218,8 @@ bool Graphics::Render(float lightRotation)
 			viewMatrix, 
 			projectionMatrix,
 			_Model->GetTexture(),
-			_Light->GetDirection(), 
+			_Light->GetDirection(),
+			_Light->GetAmbientColor(),
 			_Light->GetDiffuseColor());
 	if (!result)
 	{

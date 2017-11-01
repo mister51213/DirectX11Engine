@@ -20,13 +20,16 @@ public:
 	LightClass(const LightClass&);
 	~LightClass();
 
+	void SetAmbientColor(float, float, float, float);
 	void SetDiffuseColor(float, float, float, float);
 	void SetDirection(float, float, float);
 
-	XMFLOAT4 GetDiffuseColor();
-	XMFLOAT3 GetDirection();
+	XMFLOAT4 GetAmbientColor() const;
+	XMFLOAT4 GetDiffuseColor() const;
+	XMFLOAT3 GetDirection() const;
 
 private:
+	XMFLOAT4 _ambientColor;
 	XMFLOAT4 _diffuseColor;
 	XMFLOAT3 _direction;
 };
