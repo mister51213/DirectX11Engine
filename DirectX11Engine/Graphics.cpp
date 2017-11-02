@@ -99,6 +99,9 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	_Light->SetDiffuseColor(1.0f, 0.5f, 1.0f, 1.0f);
 	_Light->SetDirection(1.0f, 0.0f, 0.0f);
+	_Light->SetDirection(0.0f, 0.0f, 1.0f);
+	_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
+	_Light->SetSpecularPower(10.0f); // the lower the power, the higher the effect intensity
 
 	//// Create the color shader object.
 	//_TextureShader = new TextureShaderClass;
@@ -220,7 +223,10 @@ bool Graphics::Render(float lightRotation)
 			_Model->GetTexture(),
 			_Light->GetDirection(),
 			_Light->GetAmbientColor(),
-			_Light->GetDiffuseColor());
+			_Light->GetDiffuseColor(),
+			_Camera->GetPosition(),
+			_Light->GetSpecularColor(),
+			_Light->GetSpecularPower());
 	if (!result)
 	{
 		return false;
