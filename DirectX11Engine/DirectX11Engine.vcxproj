@@ -149,6 +149,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="FpsClass.cpp" />
     <ClCompile Include="LightClass.cpp" />
     <ClCompile Include="LightShaderClass.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -158,9 +159,11 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="System.cpp" />
+    <ClCompile Include="TimerClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="FpsClass.h" />
     <ClInclude Include="LightClass.h" />
     <ClInclude Include="LightShaderClass.h" />
     <ClInclude Include="Texture.h" />
@@ -169,6 +172,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="System.h" />
+    <ClInclude Include="TimerClass.h" />
     <ClInclude Include="VectorMath.h" />
   </ItemGroup>
   <ItemGroup>
