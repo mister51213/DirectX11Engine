@@ -4,7 +4,7 @@
 // PREPROCESSOR DIRECTIVES /
 ///////////////////////////
 
-//#define WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
 
 //////////////
 // INCLUDES //
@@ -16,6 +16,9 @@
 ///////////////////////
 #include "Input.h"
 #include "Graphics.h"
+#include "FpsClass.h"
+#include "CpuClass.h"
+#include "TimerClass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: SystemClass
@@ -35,7 +38,7 @@ public:
 
 private:
 	bool Frame();
-	bool ProcessInput();
+	bool ProcessInput(); //@custom
 	void InitializeWindows(int&, int&);
 	void ShutdownWindows();
 
@@ -46,14 +49,16 @@ private:
 
 	Input* _Input;
 	Graphics* _Graphics;
-};
 
+	FpsClass* _Fps;
+	CpuClass* _Cpu;
+	TimerClass* _Timer;
+};
 
 /////////////////////////
 // FUNCTION PROTOTYPES //
 /////////////////////////
 static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
-
 
 /////////////
 // GLOBALS //

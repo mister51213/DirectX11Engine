@@ -18,7 +18,7 @@
 // GLOBALS //
 /////////////
 const bool FULL_SCREEN = false;
-const bool VSYNC_ENABLED = true;
+const bool VSYNC_ENABLED = false;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.1f;
 
@@ -35,7 +35,7 @@ public:
 	// Create the D3DClass object and call the D3DClass Initialize function.
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame();
+	bool Frame(int fps, int cpu, float frameTime);
 
 	inline Camera* GetCamera() { return _Camera; }
 

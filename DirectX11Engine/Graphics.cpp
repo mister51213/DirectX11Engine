@@ -170,12 +170,28 @@ void Graphics::Shutdown()
 	return;
 }
 
-bool Graphics::Frame()
+bool Graphics::Frame(int fps, int cpu, float frameTime)
 {
 	bool result;
 
+	//@custom - TODO: reactivate these after adding text classes
+	// TODO: update textclass according to tutorial 15 after making it
+	//// Set the frames per second.
+	//result = _Text->SetFps(fps, m_D3D->GetDeviceContext());
+	//if (!result)
+	//{
+	//	return false;
+	//}
+
+	//// Set the cpu usage.
+	//result = _Text->SetCpu(cpu, m_D3D->GetDeviceContext());
+	//if (!result)
+	//{
+	//	return false;
+	//}
+
 	// Update the rotation variable each frame.
-	_modelRotation += (float)XM_PI * 0.003f;
+	_modelRotation += (float)XM_PI * 0.0003f;
 	if (_modelRotation > 360.0f)
 	{
 		_modelRotation -= 360.0f;

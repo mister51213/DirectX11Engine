@@ -6,7 +6,10 @@ using namespace VectorMath;
 System::System()
 	:
 	_Input(nullptr),
-	_Graphics(nullptr)
+	_Graphics(nullptr),
+	_Fps(nullptr),
+	_Cpu(nullptr),
+	_Timer(nullptr)
 {}
 
 System::System(const System& other)
@@ -51,6 +54,41 @@ bool System::Initialize()
 		return false;
 	}
 
+	// Create the fps object.
+	_Fps = new FpsClass;
+	if (!_Fps)
+	{
+		return false;
+	}
+
+	// Initialize the fps object.
+	_Fps->Initialize();
+
+	// Create the cpu object.
+	_Cpu = new CpuClass;
+	if (!_Cpu)
+	{
+		return false;
+	}
+
+	// Initialize the cpu object.
+	_Cpu->Initialize();
+
+		// Create the timer object.
+	_Timer = new TimerClass;
+	if (!_Timer)
+	{
+		return false;
+	}
+
+	// Initialize the timer object.
+	result = _Timer->Initialize();
+	if (!result)
+	{
+		MessageBox(_hwnd, L"Could not initialize the Timer object.", L"Error", MB_OK);
+		return false;
+	}
+	
 	return true;
 }
 
@@ -119,6 +157,12 @@ bool System::Frame()
 {
 	bool result;
 
+	// Update the system stats.
+	_Timer->Frame();
+	_Fps->Frame();
+	_Cpu->Frame();
+
+	//@custom
 	result = ProcessInput();
 	if (!result)
 	{
@@ -126,7 +170,7 @@ bool System::Frame()
 	}
 
 	// Do the frame processing for the graphics object.
-	result = _Graphics->Frame();
+	result = _Graphics->Frame(_Fps->GetFps(), _Cpu->GetCpuPercentage(), _Timer->GetTime());
 	if (!result)
 	{
 		return false;
@@ -147,8 +191,8 @@ bool System::ProcessInput()
 	// 1. Move this into another class
 	// 2. Make movement relative to camera, not world
 
-	float moveIncrement = 0.2f;
-	float turnIncrement = 1.5f;
+	float moveIncrement = 0.02f;
+	float turnIncrement = 0.2f;
 	XMFLOAT3 positionOffset(0 , 0 , 0);
 	XMFLOAT3 rotationOffset(0, 0, 0);
 
