@@ -10,6 +10,7 @@
 //#include <windows.h>
 #include "d3dclass.h"
 #include "camera.h"
+#include "textclass.h"
 #include "model.h"
 #include "LightShaderClass.h"
 #include "LightClass.h"
@@ -45,6 +46,7 @@ private:
 private:
 	D3DClass* _D3D;
 	Camera* _Camera;
+	TextClass* _Text;
 	Model* _Model;
 	LightShaderClass* _LightShader;
 	LightClass* _Light;

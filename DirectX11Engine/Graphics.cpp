@@ -174,17 +174,17 @@ bool Graphics::Frame(int fps, int cpu, float frameTime)
 {
 	bool result;
 
-	//@custom - TODO: reactivate these after adding text classes
-	// TODO: update textclass according to tutorial 15 after making it
-	//// Set the frames per second.
-	//result = _Text->SetFps(fps, m_D3D->GetDeviceContext());
+	//@custom - @TODO: reactivate these after adding text classes
+	// @TODO: update textclass according to tutorial 15 after making it
+	// Set the frames per second.
+	//result = _Text->SetFps(fps, _D3D->GetDeviceContext());
 	//if (!result)
 	//{
 	//	return false;
 	//}
 
 	//// Set the cpu usage.
-	//result = _Text->SetCpu(cpu, m_D3D->GetDeviceContext());
+	//result = _Text->SetCpu(cpu, _D3D->GetDeviceContext());
 	//if (!result)
 	//{
 	//	return false;

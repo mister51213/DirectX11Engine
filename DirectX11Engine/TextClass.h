@@ -42,6 +42,9 @@ public:
 
 	bool SetRenderCount(int, ID3D11DeviceContext*);
 
+	bool SetFps(int, ID3D11DeviceContext*);
+	bool SetCpu(int, ID3D11DeviceContext*);
+
 private:
 	bool InitializeSentence(SentenceType**, int, ID3D11Device*);
 	bool UpdateSentence(SentenceType*, char*, int, int, float, float, float, ID3D11DeviceContext*);
@@ -54,4 +57,5 @@ private:
 	int _screenWidth, _screenHeight;
 	XMMATRIX _baseViewMatrix;
 	SentenceType* _sentence1;
+	SentenceType* _sentence2;
 };
