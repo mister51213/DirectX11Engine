@@ -12,7 +12,9 @@ Graphics::Graphics()
 	_Text(nullptr),
 	_Model(nullptr),
 	_LightShader(nullptr),
-	_Light(nullptr)
+	_Light(nullptr),
+	_ModelList(nullptr),
+	_Frustum(nullptr)
 {}
 
 Graphics::Graphics(const Graphics& other)
@@ -82,10 +84,8 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	result = _Model->Initialize(
 			_D3D->GetDevice(), 
 			_D3D->GetDeviceContext(), 
-			"../DirectX11Engine/data/explosion.txt", 
-			//"../DirectX11Engine/data/stone01.tga");
+			"../DirectX11Engine/data/sphere.txt", 
 			"../DirectX11Engine/data/fire2.tga");
-			//"../DirectX11Engine/data/seafloor.dds");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
@@ -122,11 +122,48 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_Light->SetSpecularPower(30.0f); // the lower the power, the higher the effect intensity
 
+	// Create the model list object.
+	_ModelList = new ModelListClass;
+	if (!_ModelList)
+	{
+		return false;
+	}
+
+	// Initialize the model list object.
+	result = _ModelList->Initialize(25);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the model list object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the frustum object.
+	_Frustum = new FrustumClass;
+	if (!_Frustum)
+	{
+		return false;
+	}
+
 	return true;
 }
 
 void Graphics::Shutdown()
 {
+	// Release the frustum object.
+	if (_Frustum)
+	{
+		delete _Frustum;
+		_Frustum = 0;
+	}
+
+	// Release the model list object.
+	if (_ModelList)
+	{
+		_ModelList->Shutdown();
+		delete _ModelList;
+		_ModelList = 0;
+	}
+	
 	// Release the light object.
 	if (_Light)
 	{
@@ -175,11 +212,10 @@ void Graphics::Shutdown()
 	return;
 }
 
-bool Graphics::Frame(int mouseX, int mouseY, int fps, int cpu, float frameTime)
+bool Graphics::Frame(float rotationY, int mouseX, int mouseY, int fps, int cpu, float frameTime)
 {
 	bool result;
 
-	//@custom - @TODO: reactivate these after adding text classes
 	// @TODO: update textclass according to tutorial 15 after making it
 	// Set the frames per second.
 	result = _Text->SetFps(fps, _D3D->GetDeviceContext());
@@ -202,6 +238,12 @@ bool Graphics::Frame(int mouseX, int mouseY, int fps, int cpu, float frameTime)
 		return false;
 	}
 
+	// Set the position of the camera.
+	_Camera->SetPosition(0.0f, 0.0f, -10.0f);
+
+	// Set the rotation of the camera.
+	_Camera->SetRotation(0.0f, rotationY, 0.0f);
+
 	// Update the rotation variable each frame.
 	//_modelRotation += (float)XM_PI * 0.0003f;
 	//if (_modelRotation > 360.0f)
@@ -211,19 +253,22 @@ bool Graphics::Frame(int mouseX, int mouseY, int fps, int cpu, float frameTime)
 
 	// @DEBUG why do they now disable rendering inside frame?
 	// Render the graphics scene.
-	result = Render(_modelRotation);
-	if (!result)
-	{
-		return false;
-	}
+	//result = Render(/*_modelRotation*/);
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
 	return true;
 }
 
-bool Graphics::Render(float lightRotation)
+bool Graphics::Render()
 {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, orthoMatrix; //@NEW
-	bool result;
+	int modelCount, renderCount, index;
+	float positionX, positionY, positionZ, radius;
+	XMFLOAT4 color;
+	bool renderModel, result;
 
 	// Clear the buffers to begin the scene.
 	_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
@@ -237,26 +282,67 @@ bool Graphics::Render(float lightRotation)
 	_D3D->GetProjectionMatrix(projectionMatrix);
 	_D3D->GetOrthoMatrix(orthoMatrix); //@NEW
 
-	// Rotate the world matrix by the rotation value so that the triangle will spin.
-	worldMatrix = DirectX::XMMatrixRotationY(_modelRotation);
+	// Construct the frustum.
+	_Frustum->ConstructFrustum(SCREEN_DEPTH, projectionMatrix, viewMatrix);
 
-	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	_Model->Render(_D3D->GetDeviceContext());
+	// Get the number of models that will be rendered.
+	modelCount = _ModelList->GetModelCount();
 
-	// Render the model using the color shader.
-	result = _LightShader->Render(
-			_D3D->GetDeviceContext(), 
-			_Model->GetIndexCount(), 
-			worldMatrix, 
-			viewMatrix, 
-			projectionMatrix,
-			_Model->GetTexture(),
-			_Light->GetDirection(),
-			_Light->GetAmbientColor(),
-			_Light->GetDiffuseColor(),
-			_Camera->GetPosition(),
-			_Light->GetSpecularColor(),
-			_Light->GetSpecularPower());
+	// Initialize the count of models that have been rendered.
+	renderCount = 0;
+
+	// Go through all the models and render them only if they can be seen by the camera view.
+	for (index = 0; index < modelCount; index++)
+	{
+		// Get the position and color of the sphere model at this index.
+		_ModelList->GetData(index, positionX, positionY, positionZ, color);
+
+		// Set the radius of the sphere to 1.0 since this is already known.
+		radius = 1.0f;
+
+		// Check if the sphere model is in the view frustum.
+		renderModel = _Frustum->CheckSphere(positionX, positionY, positionZ, radius);
+
+		// If it can be seen then render it, if not skip this model and check the next sphere.
+		if (renderModel)
+		{
+			// Rotate the world matrix by the rotation value so that the triangle will spin.
+			//worldMatrix = DirectX::XMMatrixRotationY(_modelRotation);
+			// Move the model to the location it should be rendered at.
+			worldMatrix = DirectX::XMMatrixTranslation(positionX, positionY, positionZ);
+
+			// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+			_Model->Render(_D3D->GetDeviceContext());
+
+			// Render the model using the color shader.
+			result = _LightShader->Render(
+				_D3D->GetDeviceContext(),
+				_Model->GetIndexCount(),
+				worldMatrix,
+				viewMatrix,
+				projectionMatrix,
+				_Model->GetTexture(),
+				_Light->GetDirection(),
+				_Light->GetAmbientColor(),
+				_Light->GetDiffuseColor(),
+				_Camera->GetPosition(),
+				_Light->GetSpecularColor(),
+				_Light->GetSpecularPower());
+			if (!result)
+			{
+				return false;
+			}
+
+			// Reset to the original world matrix.
+			_D3D->GetWorldMatrix(worldMatrix);
+
+			// Since this model was rendered then increase the count for this frame.
+			renderCount++;
+		}
+	}
+	
+	// Set the number of models that was actually rendered this frame.
+	result = _Text->SetRenderCount(renderCount, _D3D->GetDeviceContext());
 	if (!result)
 	{
 		return false;

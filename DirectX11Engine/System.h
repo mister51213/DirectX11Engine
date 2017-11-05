@@ -19,6 +19,8 @@
 #include "FpsClass.h"
 #include "CpuClass.h"
 #include "TimerClass.h"
+#include "Position.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: SystemClass
@@ -38,7 +40,7 @@ public:
 
 private:
 	bool Frame();
-	bool ProcessInput(); //@custom
+	//bool ProcessInput(); //@custom
 	void InitializeWindows(int&, int&);
 	void ShutdownWindows();
 
@@ -53,6 +55,7 @@ private:
 	FpsClass* _Fps;
 	CpuClass* _Cpu;
 	TimerClass* _Timer;
+	PositionClass* _Position;
 };
 
 /////////////////////////

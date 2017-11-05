@@ -22,6 +22,8 @@ const float SCREEN_NEAR = 0.1f;
 #include "model.h"
 #include "LightShaderClass.h"
 #include "LightClass.h"
+#include "modellistclass.h"
+#include "frustumclass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
@@ -36,13 +38,12 @@ public:
 	// Create the D3DClass object and call the D3DClass Initialize function.
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-
-	bool Frame(int mouseX, int mouseY, int fps, int cpu, float frameTime);
+	bool Frame(float rotation, int mouseX, int mouseY, int fps, int cpu, float frameTime);
+	bool Render();
 
 	inline Camera* GetCamera() { return _Camera; }
 
 private:
-	bool Render(float lightRotation); //@TODO: dont pass light rotation here
 
 private:
 	D3DClass* _D3D;
@@ -51,6 +52,8 @@ private:
 	Model* _Model;
 	LightShaderClass* _LightShader;
 	LightClass* _Light;
+	ModelListClass* _ModelList;
+	FrustumClass* _Frustum;
 
 	float _modelRotation = 0.0f;
 };

@@ -66,6 +66,15 @@
     <ClCompile Include="TextClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="FrustumClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelListClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Position.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="System.h">
@@ -116,6 +125,15 @@
     <ClInclude Include="TextClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="FrustumClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelListClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Position.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="color_vs.hlsl" />
@@ -126,5 +144,6 @@
     <None Include="Light_ps.hlsl" />
     <None Include="font.ps" />
     <None Include="font.vs" />
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

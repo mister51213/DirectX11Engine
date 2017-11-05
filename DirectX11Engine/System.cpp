@@ -9,7 +9,8 @@ System::System()
 	_Graphics(nullptr),
 	_Fps(nullptr),
 	_Cpu(nullptr),
-	_Timer(nullptr)
+	_Timer(nullptr),
+	_Position(nullptr)
 {}
 
 System::System(const System& other)
@@ -63,6 +64,21 @@ bool System::Initialize()
 		return false;
 	}
 
+	// Create the timer object.
+	_Timer = new TimerClass;
+	if (!_Timer)
+	{
+		return false;
+	}
+
+	// Initialize the timer object.
+	result = _Timer->Initialize();
+	if (!result)
+	{
+		MessageBox(_hwnd, L"Could not initialize the Timer object.", L"Error", MB_OK);
+		return false;
+	}
+
 	// Create the fps object.
 	_Fps = new FpsClass;
 	if (!_Fps)
@@ -83,26 +99,47 @@ bool System::Initialize()
 	// Initialize the cpu object.
 	_Cpu->Initialize();
 
-		// Create the timer object.
-	_Timer = new TimerClass;
-	if (!_Timer)
+	// Create the position object.
+	_Position = new PositionClass;
+	if (!_Position)
 	{
 		return false;
 	}
 
-	// Initialize the timer object.
-	result = _Timer->Initialize();
-	if (!result)
-	{
-		MessageBox(_hwnd, L"Could not initialize the Timer object.", L"Error", MB_OK);
-		return false;
-	}
-	
 	return true;
 }
 
 void System::Shutdown()
 {
+	// Release the position object.
+	if (_Position)
+	{
+		delete _Position;
+		_Position = 0;
+	}
+
+	// Release the cpu object.
+	if (_Cpu)
+	{
+		_Cpu->Shutdown();
+		delete _Cpu;
+		_Cpu = 0;
+	}
+
+	// Release the fps object.
+	if (_Fps)
+	{
+		delete _Fps;
+		_Fps = 0;
+	}
+
+	// Release the timer object.
+	if (_Timer)
+	{
+		delete _Timer;
+		_Timer = 0;
+	}
+	
 	// Release the graphics object.
 	if (_Graphics)
 	{
@@ -172,9 +209,15 @@ void System::Run()
 
 bool System::Frame()
 {
-	bool result;
-	int mouseX, mouseY;
-	mouseX = mouseY = 0;
+	bool keyDown, result;
+	int mouseX = 0; 
+	int mouseY = 0;
+	float rotationY = 0;
+
+	// Update the system stats.
+	_Timer->Frame();
+	_Fps->Frame();
+	_Cpu->Frame();
 
 	// Do the input frame processing.
 	result = _Input->Frame();
@@ -183,10 +226,15 @@ bool System::Frame()
 		return false;
 	}
 
-	// Update the system stats.
-	_Timer->Frame();
-	_Fps->Frame();
-	_Cpu->Frame();
+	// Set the frame time for calculating the updated position.
+	_Position->SetFrameTime(_Timer->GetTime());
+
+	// Check if the left or right arrow key has been pressed, if so rotate the camera accordingly.
+	keyDown = _Input->IsLeftArrowPressed();
+	_Position->TurnLeft(keyDown);
+
+	keyDown = _Input->IsRightArrowPressed();
+	_Position->TurnRight(keyDown);
 
 	//@custom
 	//result = ProcessInput();
@@ -195,15 +243,19 @@ bool System::Frame()
 	//	return false;
 	//}
 
-	// Do the input frame processing.
-	result = _Input->Frame();
+
+	//// Get the current view point rotation.
+	_Position->GetRotation(rotationY);
+
+	// Do the frame processing for the graphics object.
+	result = _Graphics->Frame(rotationY, mouseX, mouseY, _Fps->GetFps(), _Cpu->GetCpuPercentage(), _Timer->GetTime());
 	if (!result)
 	{
 		return false;
 	}
 
-	// Do the frame processing for the graphics object.
-	result = _Graphics->Frame(mouseX, mouseY, _Fps->GetFps(), _Cpu->GetCpuPercentage(), _Timer->GetTime());
+	// Finally render the graphics to the screen.
+	result = _Graphics->Render();
 	if (!result)
 	{
 		return false;
@@ -213,17 +265,15 @@ bool System::Frame()
 }
 
 //@CUSTOM @TODO - rewrite
-bool System::ProcessInput()
-{
+//bool System::ProcessInput()
+//{
 	//// Check if the user pressed escape and wants to exit the application.
 	//if (_Input->IsKeyDown(VK_ESCAPE))
 	//{
 	//	return false;
 	//}
-
 	//// @TODO: 
 	//// 1. Move this into another class
-
 	//float moveIncrement = 0.02f;
 	//float turnIncrement = 0.2f;
 	//XMFLOAT3 positionOffset(0 , 0 , 0);
@@ -246,7 +296,6 @@ bool System::ProcessInput()
 	//{
 	//	rotationOffset.y += turnIncrement;
 	//}
-
 	//// DISPLACEMENT
 	//if (_Input->IsKeyDown('W'))
 	//{
@@ -272,7 +321,6 @@ bool System::ProcessInput()
 	//{
 	//	positionOffset.y -= moveIncrement;
 	//}
-
 	//if (_Graphics)
 	//{
 	//	if (Camera* cam = _Graphics->GetCamera())
@@ -281,9 +329,8 @@ bool System::ProcessInput()
 	//		cam->RotateInDirection(rotationOffset);
 	//	}
 	//}
-
-	return true;
-}
+//	return true;
+//}
 
 LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
@@ -296,7 +343,6 @@ LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPA
 	//	_Input->KeyDown((unsigned int)wparam);
 	//	return 0;
 	//}
-
 	//// Check if a key has been released on the keyboard.
 	//case WM_KEYUP:
 	//{
@@ -304,7 +350,6 @@ LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPA
 	//	_Input->KeyUp((unsigned int)wparam);
 	//	return 0;
 	//}
-
 	//// Any other messages send to the default message handler as our application won't make use of them.
 	//default:
 	//{

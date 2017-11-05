@@ -465,7 +465,7 @@ void D3DClass::GetProjectionMatrix(DirectX::XMMATRIX& projectionMatrix)
 	return;
 }
 
-
+// resets world matrix to original
 void D3DClass::GetWorldMatrix(DirectX::XMMATRIX& worldMatrix)
 {
 	worldMatrix = _worldMatrix;
