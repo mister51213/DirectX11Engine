@@ -257,10 +257,10 @@ bool Graphics::Render(float lightRotation)
 
 	// @DEBUG @CUSTOM RENDER THE NEW 2D OVERLAY HERE
 	// Turn off the Z buffer to begin all 2D rendering.
-	_D3D->TurnZBufferOff();
+	//_D3D->TurnZBufferOff();
 
-	// Turn on the alpha blending before rendering the text.
-	_D3D->TurnOnAlphaBlending();
+	//// Turn on the alpha blending before rendering the text.
+	//_D3D->TurnOnAlphaBlending();
 
 	// Render the text strings.
 	result = _Text->Render(_D3D->GetDeviceContext(), worldMatrix, orthoMatrix);
@@ -269,14 +269,11 @@ bool Graphics::Render(float lightRotation)
 		return false;
 	}
 
-	// Turn off alpha blending after rendering the text.
-	_D3D->TurnOffAlphaBlending();
+	//// Turn off alpha blending after rendering the text.
+	//_D3D->TurnOffAlphaBlending();
 
-	// Turn the Z buffer back on now that all 2D rendering has completed.
-	_D3D->TurnZBufferOn();
-
-	// Present the rendered scene to the screen.
-	_D3D->EndScene();
+	//// Turn the Z buffer back on now that all 2D rendering has completed.
+	//_D3D->TurnZBufferOn();
 
 	// Present the rendered scene to the screen.
 	_D3D->EndScene();
