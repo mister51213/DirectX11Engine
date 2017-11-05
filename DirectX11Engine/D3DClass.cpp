@@ -486,3 +486,52 @@ void D3DClass::GetVideoCardInfo(char* description, int& memory)
 	memory = _videoCardMemory;
 	return;
 }
+
+void D3DClass::TurnZBufferOn()
+{
+	_deviceContext->OMSetDepthStencilState(_depthStencilState, 1);
+	return;
+}
+
+
+void D3DClass::TurnZBufferOff()
+{
+	_deviceContext->OMSetDepthStencilState(_depthDisabledStencilState, 1);
+	return;
+}
+
+
+void D3DClass::TurnOnAlphaBlending()
+{
+	float blendFactor[4];
+
+
+	// Setup the blend factor.
+	blendFactor[0] = 0.0f;
+	blendFactor[1] = 0.0f;
+	blendFactor[2] = 0.0f;
+	blendFactor[3] = 0.0f;
+
+	// Turn on the alpha blending.
+	_deviceContext->OMSetBlendState(_alphaEnableBlendingState, blendFactor, 0xffffffff);
+
+	return;
+}
+
+
+void D3DClass::TurnOffAlphaBlending()
+{
+	float blendFactor[4];
+
+
+	// Setup the blend factor.
+	blendFactor[0] = 0.0f;
+	blendFactor[1] = 0.0f;
+	blendFactor[2] = 0.0f;
+	blendFactor[3] = 0.0f;
+
+	// Turn off the alpha blending.
+	_deviceContext->OMSetBlendState(_alphaDisableBlendingState, blendFactor, 0xffffffff);
+
+	return;
+}

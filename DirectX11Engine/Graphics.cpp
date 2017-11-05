@@ -9,10 +9,10 @@ Graphics::Graphics()
 	:
 	_D3D(nullptr),
 	_Camera(nullptr),
+	_Text(nullptr),
 	_Model(nullptr),
-	_LightShader(0),
-	_Light(0),
-	_Text(0)
+	_LightShader(nullptr),
+	_Light(nullptr)
 {}
 
 Graphics::Graphics(const Graphics& other)
@@ -54,6 +54,21 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	_Camera->SetPosition(0.0f, 0.0f, -4.f);
 	_Camera->Render(); //@TODO: why called again here?
 	_Camera->GetViewMatrix(baseViewMatrix); // needed for text class
+
+	// Create the text object.
+	_Text = new TextClass;
+	if (!_Text)
+	{
+		return false;
+	}
+
+	// Initialize the text object.
+	result = _Text->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), hwnd, screenWidth, screenHeight, baseViewMatrix);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
+		return false;
+	}
 
 	// Create the model object.
 	_Model = new Model;
@@ -105,51 +120,13 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	_Light->SetDirection(1.0f, 0.0f, 0.0f);
 	_Light->SetDirection(0.0f, 0.0f, 1.0f);
 	_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_Light->SetSpecularPower(10.0f); // the lower the power, the higher the effect intensity
-
-	// Create the text object.
-	_Text = new TextClass;
-	if (!_Text)
-	{
-		return false;
-	}
-
-	// Initialize the text object.
-	result = _Text->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), hwnd, screenWidth, screenHeight, baseViewMatrix);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
-		return false;
-	}
-										 
-	//@OLD
-	//// Create the color shader object.
-	//_TextureShader = new TextureShaderClass;
-	//if (!_TextureShader)
-	//{
-	//	return false;
-	//}
-	//// Initialize the color shader object.
-	//result = _TextureShader->Initialize(_D3D->GetDevice(), hwnd);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the color shader object.", L"Error", MB_OK);
-	//	return false;
-	//}
+	_Light->SetSpecularPower(30.0f); // the lower the power, the higher the effect intensity
 
 	return true;
 }
 
 void Graphics::Shutdown()
 {
-	//// Release the color shader object.
-	//if (_TextureShader)
-	//{
-	//	_TextureShader->Shutdown();
-	//	delete _TextureShader;
-	//	_TextureShader = 0;
-	//}
-
 	// Release the light object.
 	if (_Light)
 	{
@@ -171,6 +148,14 @@ void Graphics::Shutdown()
 		_Model->Shutdown();
 		delete _Model;
 		_Model = 0;
+	}
+
+	// Release the text object.
+	if (_Text)
+	{
+		_Text->Shutdown();
+		delete _Text;
+		_Text = 0;
 	}
 
 	// Release the camera object.
@@ -217,6 +202,7 @@ bool Graphics::Frame(int fps, int cpu, float frameTime)
 		_modelRotation -= 360.0f;
 	}
 
+	// @DEBUG why do they now disable rendering inside frame?
 	// Render the graphics scene.
 	result = Render(_modelRotation);
 	if (!result)
@@ -229,7 +215,7 @@ bool Graphics::Frame(int fps, int cpu, float frameTime)
 
 bool Graphics::Render(float lightRotation)
 {
-	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, orthoMatrix; //@NEW
 	bool result;
 
 	// Clear the buffers to begin the scene.
@@ -242,6 +228,7 @@ bool Graphics::Render(float lightRotation)
 	_D3D->GetWorldMatrix(worldMatrix);
 	_Camera->GetViewMatrix(viewMatrix);
 	_D3D->GetProjectionMatrix(projectionMatrix);
+	_D3D->GetOrthoMatrix(orthoMatrix); //@NEW
 
 	// Rotate the world matrix by the rotation value so that the triangle will spin.
 	worldMatrix = DirectX::XMMatrixRotationY(_modelRotation);
@@ -267,6 +254,29 @@ bool Graphics::Render(float lightRotation)
 	{
 		return false;
 	}
+
+	// @DEBUG @CUSTOM RENDER THE NEW 2D OVERLAY HERE
+	// Turn off the Z buffer to begin all 2D rendering.
+	_D3D->TurnZBufferOff();
+
+	// Turn on the alpha blending before rendering the text.
+	_D3D->TurnOnAlphaBlending();
+
+	// Render the text strings.
+	result = _Text->Render(_D3D->GetDeviceContext(), worldMatrix, orthoMatrix);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Turn off alpha blending after rendering the text.
+	_D3D->TurnOffAlphaBlending();
+
+	// Turn the Z buffer back on now that all 2D rendering has completed.
+	_D3D->TurnZBufferOn();
+
+	// Present the rendered scene to the screen.
+	_D3D->EndScene();
 
 	// Present the rendered scene to the screen.
 	_D3D->EndScene();

@@ -48,12 +48,17 @@ public:
 	void GetVideoCardInfo(char* Description, int& memory);
 	//void GetVideoCardInfo(std::wstring &Description, int& memory);
 
+	void TurnZBufferOn();
+	void TurnZBufferOff();
+
+	void TurnOnAlphaBlending();
+	void TurnOffAlphaBlending();
+
 private:
 	bool _vsync_enabled;
 	int _videoCardMemory;
 	char _videoCardDescription[128];
 	//std::wstring _videoCardDescription;
-
 
 	IDXGISwapChain* _swapChain;
 	ID3D11Device* _device;
@@ -63,7 +68,12 @@ private:
 	ID3D11DepthStencilState* _depthStencilState;
 	ID3D11DepthStencilView* _depthStencilView;
 	ID3D11RasterizerState* _rasterState;
+
 	DirectX::XMMATRIX _projectionMatrix;
 	DirectX::XMMATRIX _worldMatrix;
 	DirectX::XMMATRIX _orthoMatrix;
+
+	ID3D11DepthStencilState* _depthDisabledStencilState;
+	ID3D11BlendState* _alphaEnableBlendingState;
+	ID3D11BlendState* _alphaDisableBlendingState;
 };
