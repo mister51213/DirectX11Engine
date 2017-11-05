@@ -27,8 +27,8 @@ bool FontShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 	bool result;
 
 
-	// Initialize the vertex and pixel shaders.
-	result = InitializeShader(device, hwnd, L"../Engine/font.vs", L"../Engine/font.ps");
+	// Initialize the vertex and pixel shaders. //@DEBUG possibly remove L here?
+	result = InitializeShader(device, hwnd, L"../DirectX11Engine/font.vs", L"../DirectX11Engine/font.ps");
 	if (!result)
 	{
 		return false;

@@ -11,7 +11,8 @@ Graphics::Graphics()
 	_Camera(nullptr),
 	_Model(nullptr),
 	_LightShader(0),
-	_Light(0)
+	_Light(0),
+	_Text(0)
 {}
 
 Graphics::Graphics(const Graphics& other)
@@ -25,6 +26,7 @@ Graphics::~Graphics()
 bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
 	bool result;
+	XMMATRIX baseViewMatrix;
 
 	// Create the Direct3D object.
 	_D3D = new D3DClass;
@@ -50,6 +52,8 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Set the initial position of the camera.
 	_Camera->SetPosition(0.0f, 0.0f, -4.f);
+	_Camera->Render(); //@TODO: why called again here?
+	_Camera->GetViewMatrix(baseViewMatrix); // needed for text class
 
 	// Create the model object.
 	_Model = new Model;
@@ -103,6 +107,22 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_Light->SetSpecularPower(10.0f); // the lower the power, the higher the effect intensity
 
+	// Create the text object.
+	_Text = new TextClass;
+	if (!_Text)
+	{
+		return false;
+	}
+
+	// Initialize the text object.
+	result = _Text->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), hwnd, screenWidth, screenHeight, baseViewMatrix);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
+		return false;
+	}
+										 
+	//@OLD
 	//// Create the color shader object.
 	//_TextureShader = new TextureShaderClass;
 	//if (!_TextureShader)
@@ -177,18 +197,18 @@ bool Graphics::Frame(int fps, int cpu, float frameTime)
 	//@custom - @TODO: reactivate these after adding text classes
 	// @TODO: update textclass according to tutorial 15 after making it
 	// Set the frames per second.
-	//result = _Text->SetFps(fps, _D3D->GetDeviceContext());
-	//if (!result)
-	//{
-	//	return false;
-	//}
+	result = _Text->SetFps(fps, _D3D->GetDeviceContext());
+	if (!result)
+	{
+		return false;
+	}
 
-	//// Set the cpu usage.
-	//result = _Text->SetCpu(cpu, _D3D->GetDeviceContext());
-	//if (!result)
-	//{
-	//	return false;
-	//}
+	// Set the cpu usage.
+	result = _Text->SetCpu(cpu, _D3D->GetDeviceContext());
+	if (!result)
+	{
+		return false;
+	}
 
 	// Update the rotation variable each frame.
 	_modelRotation += (float)XM_PI * 0.0003f;

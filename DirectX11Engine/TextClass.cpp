@@ -41,8 +41,8 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	}
 
 	// Initialize the font object.
-	// note : removed L from second string param
-	result = _Font->Initialize(device, deviceContext, "../DirectX11Engine/data/fontdata.txt", "../DirectX11Engine/data/font.dds");
+	// @CUSTOM : removed L from second string param
+	result = _Font->Initialize(device, deviceContext, "../DirectX11Engine/data/fontdata.txt", "../DirectX11Engine/data/font.tga");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the font object.", L"Error", MB_OK);
@@ -64,7 +64,7 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 		return false;
 	}
 
-	// Initialize the first sentence.
+	// Initialize the first sentence. @TODO* why 32 not 16?
 	result = InitializeSentence(&_sentence1, 32, device);
 	if (!result)
 	{
@@ -77,6 +77,21 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	{
 		return false;
 	}
+
+	// Initialize the second sentence.
+	result = InitializeSentence(&_sentence2, 16, device);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Now update the sentence vertex buffer with the new string information.
+	result = UpdateSentence(_sentence2, "Goodbye", 100, 200, 1.0f, 1.0f, 0.0f, deviceContext);
+	if (!result)
+	{
+		return false;
+	}
+
 
 	return true;
 }

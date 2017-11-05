@@ -25,7 +25,7 @@ bool FontClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 {
 	bool result;
 
-
+	//@DEBUG this reads the file properly
 	// Load in the text file containing the font data.
 	result = LoadFontData(fontFilename);
 	if (!result)
@@ -33,6 +33,7 @@ bool FontClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 		return false;
 	}
 
+	//@DEBUG - failing to load dds file
 	// Load the texture that has the font characters on it.
 	result = LoadTexture(device, deviceContext, textureFilename);
 	if (!result)

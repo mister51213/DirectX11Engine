@@ -124,5 +124,7 @@
     <None Include="texture_vs.hlsl" />
     <None Include="Light_vs.hlsl" />
     <None Include="Light_ps.hlsl" />
+    <None Include="font.ps" />
+    <None Include="font.vs" />
   </ItemGroup>
 </Project>
