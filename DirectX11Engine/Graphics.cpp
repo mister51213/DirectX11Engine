@@ -175,7 +175,7 @@ void Graphics::Shutdown()
 	return;
 }
 
-bool Graphics::Frame(int fps, int cpu, float frameTime)
+bool Graphics::Frame(int mouseX, int mouseY, int fps, int cpu, float frameTime)
 {
 	bool result;
 
@@ -195,12 +195,19 @@ bool Graphics::Frame(int fps, int cpu, float frameTime)
 		return false;
 	}
 
-	// Update the rotation variable each frame.
-	_modelRotation += (float)XM_PI * 0.0003f;
-	if (_modelRotation > 360.0f)
+	// Set the location of the mouse.
+	result = _Text->SetMousePosition(mouseX, mouseY, _D3D->GetDeviceContext());
+	if (!result)
 	{
-		_modelRotation -= 360.0f;
+		return false;
 	}
+
+	// Update the rotation variable each frame.
+	//_modelRotation += (float)XM_PI * 0.0003f;
+	//if (_modelRotation > 360.0f)
+	//{
+	//	_modelRotation -= 360.0f;
+	//}
 
 	// @DEBUG why do they now disable rendering inside frame?
 	// Render the graphics scene.
@@ -259,7 +266,7 @@ bool Graphics::Render(float lightRotation)
 	// Turn off the Z buffer to begin all 2D rendering.
 	//_D3D->TurnZBufferOff();
 
-	//// Turn on the alpha blending before rendering the text.
+	// Turn on the alpha blending before rendering the text.
 	//_D3D->TurnOnAlphaBlending();
 
 	// Render the text strings.
@@ -269,10 +276,10 @@ bool Graphics::Render(float lightRotation)
 		return false;
 	}
 
-	//// Turn off alpha blending after rendering the text.
+	// Turn off alpha blending after rendering the text.
 	//_D3D->TurnOffAlphaBlending();
 
-	//// Turn the Z buffer back on now that all 2D rendering has completed.
+	// Turn the Z buffer back on now that all 2D rendering has completed.
 	//_D3D->TurnZBufferOn();
 
 	// Present the rendered scene to the screen.

@@ -37,8 +37,17 @@ bool System::Initialize()
 		return false;
 	}
 
+	//@OLD
 	// Initialize the input object.
-	_Input->Initialize();
+	//_Input->Initialize();
+
+	// Initialize the input object.
+	result = _Input->Initialize(_hinstance, _hwnd, screenWidth, screenHeight);
+	if (!result)
+	{
+		MessageBox(_hwnd, L"Could not initialize the input object.", L"Error", MB_OK);
+		return false;
+	}
 
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
 	_Graphics = new Graphics;
@@ -105,6 +114,7 @@ void System::Shutdown()
 	// Release the input object.
 	if (_Input)
 	{
+		_Input->Shutdown();
 		delete _Input;
 		_Input = 0;
 	}
@@ -145,17 +155,33 @@ void System::Run()
 			result = Frame();
 			if (!result)
 			{
+				MessageBox(_hwnd, L"Frame Processing Failed", L"Error", MB_OK);
 				done = true;
 			}
 		}
-	}
 
+		// Check if the user pressed escape and wants to quit.
+		if (_Input->IsEscapePressed() == true)
+		{
+			done = true;
+		}
+	}
+	
 	return;
 }
 
 bool System::Frame()
 {
 	bool result;
+	int mouseX, mouseY;
+	mouseX = mouseY = 0;
+
+	// Do the input frame processing.
+	result = _Input->Frame();
+	if (!result)
+	{
+		return false;
+	}
 
 	// Update the system stats.
 	_Timer->Frame();
@@ -163,14 +189,21 @@ bool System::Frame()
 	_Cpu->Frame();
 
 	//@custom
-	result = ProcessInput();
+	//result = ProcessInput();
+	//if (!result)
+	//{
+	//	return false;
+	//}
+
+	// Do the input frame processing.
+	result = _Input->Frame();
 	if (!result)
 	{
 		return false;
 	}
 
 	// Do the frame processing for the graphics object.
-	result = _Graphics->Frame(_Fps->GetFps(), _Cpu->GetCpuPercentage(), _Timer->GetTime());
+	result = _Graphics->Frame(mouseX, mouseY, _Fps->GetFps(), _Cpu->GetCpuPercentage(), _Timer->GetTime());
 	if (!result)
 	{
 		return false;
@@ -179,106 +212,105 @@ bool System::Frame()
 	return true;
 }
 
+//@CUSTOM @TODO - rewrite
 bool System::ProcessInput()
 {
-	// Check if the user pressed escape and wants to exit the application.
-	if (_Input->IsKeyDown(VK_ESCAPE))
-	{
-		return false;
-	}
+	//// Check if the user pressed escape and wants to exit the application.
+	//if (_Input->IsKeyDown(VK_ESCAPE))
+	//{
+	//	return false;
+	//}
 
-	// @TODO: 
-	// 1. Move this into another class
-	// 2. Make movement relative to camera, not world
+	//// @TODO: 
+	//// 1. Move this into another class
 
-	float moveIncrement = 0.02f;
-	float turnIncrement = 0.2f;
-	XMFLOAT3 positionOffset(0 , 0 , 0);
-	XMFLOAT3 rotationOffset(0, 0, 0);
+	//float moveIncrement = 0.02f;
+	//float turnIncrement = 0.2f;
+	//XMFLOAT3 positionOffset(0 , 0 , 0);
+	//XMFLOAT3 rotationOffset(0, 0, 0);
+	//
+	//// ROTATION
+	//if (_Input->IsKeyDown(VK_UP))
+	//{
+	//	rotationOffset.x -= turnIncrement;
+	//}
+	//if (_Input->IsKeyDown(VK_DOWN))
+	//{
+	//	rotationOffset.x += turnIncrement;
+	//}
+	//if (_Input->IsKeyDown(VK_LEFT))
+	//{
+	//	rotationOffset.y -= turnIncrement;
+	//}
+	//if (_Input->IsKeyDown(VK_RIGHT))
+	//{
+	//	rotationOffset.y += turnIncrement;
+	//}
 
+	//// DISPLACEMENT
+	//if (_Input->IsKeyDown('W'))
+	//{
+	//	positionOffset.z += moveIncrement;
+	//}
+	//if (_Input->IsKeyDown('A'))
+	//{
+	//	positionOffset.x -= moveIncrement;
+	//}
+	//if (_Input->IsKeyDown('S'))
+	//{
+	//	positionOffset.z -= moveIncrement;
+	//}	
+	//if (_Input->IsKeyDown('D'))
+	//{
+	//	positionOffset.x += moveIncrement;
+	//}
+	//if (_Input->IsKeyDown(VK_SPACE))
+	//{
+	//	positionOffset.y += moveIncrement;
+	//}
+	//if (_Input->IsKeyDown(VK_CONTROL))
+	//{
+	//	positionOffset.y -= moveIncrement;
+	//}
 
-	// ROTATION
-	if (_Input->IsKeyDown(VK_UP))
-	{
-		rotationOffset.x -= turnIncrement;
-	}
-	if (_Input->IsKeyDown(VK_DOWN))
-	{
-		rotationOffset.x += turnIncrement;
-	}
-	if (_Input->IsKeyDown(VK_LEFT))
-	{
-		rotationOffset.y -= turnIncrement;
-	}
-	if (_Input->IsKeyDown(VK_RIGHT))
-	{
-		rotationOffset.y += turnIncrement;
-	}
-
-	// DISPLACEMENT
-	if (_Input->IsKeyDown('W'))
-	{
-		positionOffset.z += moveIncrement;
-	}
-	if (_Input->IsKeyDown('A'))
-	{
-		positionOffset.x -= moveIncrement;
-	}
-	if (_Input->IsKeyDown('S'))
-	{
-		positionOffset.z -= moveIncrement;
-	}	
-	if (_Input->IsKeyDown('D'))
-	{
-		positionOffset.x += moveIncrement;
-	}
-	if (_Input->IsKeyDown(VK_SPACE))
-	{
-		positionOffset.y += moveIncrement;
-	}
-	if (_Input->IsKeyDown(VK_CONTROL))
-	{
-		positionOffset.y -= moveIncrement;
-	}
-
-	if (_Graphics)
-	{
-		if (Camera* cam = _Graphics->GetCamera())
-		{
-			cam->MoveInDirectionRelative(positionOffset);
-			cam->RotateInDirection(rotationOffset);
-		}
-	}
+	//if (_Graphics)
+	//{
+	//	if (Camera* cam = _Graphics->GetCamera())
+	//	{
+	//		cam->MoveInDirectionRelative(positionOffset);
+	//		cam->RotateInDirection(rotationOffset);
+	//	}
+	//}
 
 	return true;
 }
 
 LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
-	switch (umsg)
-	{
-		// Check if a key has been pressed on the keyboard.
-	case WM_KEYDOWN:
-	{
-		// If a key is pressed send it to the input object so it can record that state.
-		_Input->KeyDown((unsigned int)wparam);
-		return 0;
-	}
+	//switch (umsg)
+	//{
+	//	// Check if a key has been pressed on the keyboard.
+	//case WM_KEYDOWN:
+	//{
+	//	// If a key is pressed send it to the input object so it can record that state.
+	//	_Input->KeyDown((unsigned int)wparam);
+	//	return 0;
+	//}
 
-	// Check if a key has been released on the keyboard.
-	case WM_KEYUP:
-	{
-		// If a key is released then send it to the input object so it can unset the state for that key.
-		_Input->KeyUp((unsigned int)wparam);
-		return 0;
-	}
+	//// Check if a key has been released on the keyboard.
+	//case WM_KEYUP:
+	//{
+	//	// If a key is released then send it to the input object so it can unset the state for that key.
+	//	_Input->KeyUp((unsigned int)wparam);
+	//	return 0;
+	//}
 
-	// Any other messages send to the default message handler as our application won't make use of them.
-	default:
-	{
+	//// Any other messages send to the default message handler as our application won't make use of them.
+	//default:
+	//{
 		return DefWindowProc(hwnd, umsg, wparam, lparam);
-	}
-	}
+	//}
+	//}
 }
 
 void System::InitializeWindows(int& screenWidth, int& screenHeight)

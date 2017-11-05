@@ -41,7 +41,7 @@ public:
 	bool Render(ID3D11DeviceContext*, XMMATRIX, XMMATRIX);
 
 	bool SetRenderCount(int, ID3D11DeviceContext*);
-
+	bool SetMousePosition(int, int, ID3D11DeviceContext*);
 	bool SetFps(int, ID3D11DeviceContext*);
 	bool SetCpu(int, ID3D11DeviceContext*);
 
