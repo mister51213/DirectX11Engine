@@ -283,7 +283,7 @@ bool Graphics::Render()
 	_D3D->GetOrthoMatrix(orthoMatrix); //@NEW
 
 	// Construct the frustum.
-	_Frustum->ConstructFrustum(SCREEN_DEPTH, projectionMatrix, viewMatrix);
+	//@TODO//_Frustum->ConstructFrustum(SCREEN_DEPTH, projectionMatrix, viewMatrix);
 
 	// Get the number of models that will be rendered.
 	modelCount = _ModelList->GetModelCount();
@@ -301,11 +301,11 @@ bool Graphics::Render()
 		radius = 1.0f;
 
 		// Check if the sphere model is in the view frustum.
-		renderModel = _Frustum->CheckSphere(positionX, positionY, positionZ, radius);
+		//@TODOrenderModel = _Frustum->CheckSphere(positionX, positionY, positionZ, radius);
 
 		// If it can be seen then render it, if not skip this model and check the next sphere.
-		if (renderModel)
-		{
+//@TODO		//if (renderModel)
+		//{
 			// Rotate the world matrix by the rotation value so that the triangle will spin.
 			//worldMatrix = DirectX::XMMatrixRotationY(_modelRotation);
 			// Move the model to the location it should be rendered at.
@@ -338,7 +338,7 @@ bool Graphics::Render()
 
 			// Since this model was rendered then increase the count for this frame.
 			renderCount++;
-		}
+		//}
 	}
 	
 	// Set the number of models that was actually rendered this frame.
@@ -350,10 +350,10 @@ bool Graphics::Render()
 
 	// @DEBUG @CUSTOM RENDER THE NEW 2D OVERLAY HERE
 	// Turn off the Z buffer to begin all 2D rendering.
-	//_D3D->TurnZBufferOff();
+	_D3D->TurnZBufferOff();
 
 	// Turn on the alpha blending before rendering the text.
-	//_D3D->TurnOnAlphaBlending();
+	_D3D->TurnOnAlphaBlending();
 
 	// Render the text strings.
 	result = _Text->Render(_D3D->GetDeviceContext(), worldMatrix, orthoMatrix);
@@ -363,10 +363,10 @@ bool Graphics::Render()
 	}
 
 	// Turn off alpha blending after rendering the text.
-	//_D3D->TurnOffAlphaBlending();
+	_D3D->TurnOffAlphaBlending();
 
 	// Turn the Z buffer back on now that all 2D rendering has completed.
-	//_D3D->TurnZBufferOn();
+	_D3D->TurnZBufferOn();
 
 	// Present the rendered scene to the screen.
 	_D3D->EndScene();
