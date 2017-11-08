@@ -14,21 +14,21 @@ using namespace DirectX::SimpleMath;
 ////////////////////////////////////////////////////////////////////////////////
 class FrustumClass
 {
-//public:
-//	FrustumClass();
-//	FrustumClass(const FrustumClass&);
-//	~FrustumClass();
-//
-//	void ConstructFrustum(float, XMMATRIX, XMMATRIX);
-//
-//	bool CheckPoint(float, float, float);
-//	bool CheckCube(float, float, float, float);
-//	bool CheckSphere(float, float, float, float);
-//	bool CheckRectangle(float, float, float, float, float, float);
-//
-//private:
-//	//Plane _planes[6];
-//	XMVECTOR _planes[6];
+public:
+	FrustumClass();
+	FrustumClass(const FrustumClass&);
+	~FrustumClass();
+
+	void ConstructFrustum(float, XMMATRIX, XMMATRIX);
+
+	bool CheckPoint(float, float, float);
+	bool CheckCube(float, float, float, float);
+	bool CheckSphere(float, float, float, float);
+	bool CheckRectangle(float, float, float, float, float, float);
+
+private:
+	//Plane _planes[6];
+	XMFLOAT4 _planes[6];
 
 	// @TODO: maybe use XMVECTOR instead
 };
