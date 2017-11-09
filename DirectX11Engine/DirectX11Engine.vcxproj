@@ -193,9 +193,25 @@
     <ClInclude Include="VectorMath.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="color_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <FileType>Document</FileType>
+    </None>
+    <None Include="color_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <FileType>Document</FileType>
+    </None>
     <None Include="font.ps" />
     <None Include="font.vs" />
     <None Include="packages.config" />
+    <None Include="texture_ps.hlsl" />
+    <None Include="texture_vs.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Light_ps.hlsl">

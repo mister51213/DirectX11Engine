@@ -184,56 +184,47 @@ bool TextureClass::LoadTarga(char* filename, int& height, int& width, unsigned c
 	unsigned int count;
 	TargaHeader targaFileHeader;
 	unsigned char* targaImage;
-
 	// Open the targa file for reading in binary.
 	error = fopen_s(&filePtr, filename, "rb");
 	if (error != 0)
 	{
 		return false;
 	}
-
 	// Read in the file header.
 	count = (unsigned int)fread(&targaFileHeader, sizeof(TargaHeader), 1, filePtr);
 	if (count != 1)
 	{
 		return false;
 	}
-
 	// Get the important information from the header.
 	height = (int)targaFileHeader.height;
 	width = (int)targaFileHeader.width;
 	bpp = (int)targaFileHeader.bpp;
-
 	// Check that it is 32 bit and not 24 bit.
 	if (bpp != 32)
 	{
 		return false;
 	}
-
 	// Calculate the size of the 32 bit image data.
 	imageSize = width * height * 4;
-
 	// Allocate memory for the targa image data.
 	targaImage = new unsigned char[imageSize];
 	if (!targaImage)
 	{
 		return false;
 	}
-
 	// Read in the targa image data.
 	count = (unsigned int)fread(targaImage, 1, imageSize, filePtr);
 	if (count != imageSize)
 	{
 		return false;
 	}
-
 	// Close the file.
 	error = fclose(filePtr);
 	if (error != 0)
 	{
 		return false;
 	}
-
 	// Allocate memory for the targa destination data.
 	//_targaData = new unsigned char[imageSize];
 	*pTargaData = new unsigned char[imageSize];

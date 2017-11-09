@@ -253,3 +253,5 @@ ModelManifest.xml
 /DX11_Framework_custom/Meshes/aphrodite.mtl
 DX11_EscNY MAP
 /DX11_Framework_custom/Shaders/*.cso
+DirectX11Engine/shader-error.txt
+DirectX11Engine/shader-error.txt
