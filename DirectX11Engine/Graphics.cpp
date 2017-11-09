@@ -283,7 +283,7 @@ bool Graphics::Render()
 	_D3D->GetOrthoMatrix(orthoMatrix); //@NEW
 
 	// Construct the frustum.
-	//@TODO//_Frustum->ConstructFrustum(SCREEN_DEPTH, projectionMatrix, viewMatrix);
+	_Frustum->ConstructFrustum(SCREEN_DEPTH, projectionMatrix, viewMatrix);
 
 	// Get the number of models that will be rendered.
 	modelCount = _ModelList->GetModelCount();
