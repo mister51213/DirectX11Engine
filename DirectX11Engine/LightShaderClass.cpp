@@ -23,17 +23,15 @@ LightShaderClass::LightShaderClass(const LightShaderClass& other)
 {
 }
 
-
 LightShaderClass::~LightShaderClass()
 {
 }
-
 
 bool LightShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 {
 	bool result;
 
-	// Initialize the vertex and pixel shaders.
+	// Initialize the vertex and pixel shaders. //@CUSTOM - light shader now does multitexturing
 	result = InitializeShader(device, hwnd, L"../DirectX11Engine/Light_vs.hlsl", L"../DirectX11Engine/Light_ps.hlsl");
 	if (!result)
 	{
@@ -53,13 +51,13 @@ void LightShaderClass::Shutdown()
 }
 
 bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, 
+	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
 	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower)
 {
 	bool result;
 	
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture, lightDirection, ambientColor, diffuseColor, cameraPosition, specularColor, specularPower);
+	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, lightDirection, ambientColor, diffuseColor, cameraPosition, specularColor, specularPower);
 	if (!result)
 	{
 		return false;
@@ -87,8 +85,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	
 	// description variable for the light constant buffer.
 	D3D11_BUFFER_DESC lightBufferDesc;
-
-
+	
 	// Initialize the pointers this function will use to null.
 	errorMessage = 0;
 	vertexShaderBuffer = 0;
@@ -368,7 +365,7 @@ void LightShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 }
 
 bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
+	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
 	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower)
 {
 	HRESULT result;
@@ -431,7 +428,8 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_cameraBuffer);
 
 	// Set shader texture resource in the pixel shader.
-	deviceContext->PSSetShaderResources(0, 1, &texture);
+	//deviceContext->PSSetShaderResources(0, 1, &texture);
+	deviceContext->PSSetShaderResources(0, 2, textureArray); //@TODO no need to pass address?
 
 	// Lock the light constant buffer so it can be written to.
 	result = deviceContext->Map(_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

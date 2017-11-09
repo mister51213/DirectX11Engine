@@ -115,11 +115,11 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the light object.
-	_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
+	_Light->SetAmbientColor(0.f, 0.f, 0.15f, 1.0f);
 	_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_Light->SetDirection(0.0f, 0.0f, 1.0f);
-	_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_Light->SetSpecularPower(30.0f); // the lower the power, the higher the effect intensity
+	_Light->SetSpecularColor(.0f, .0f, 1.0f, 1.0f);
+	_Light->SetSpecularPower(45.0f); // the lower the power, the higher the effect intensity
 
 	// Create the model list object.
 	_ModelList = new ModelListClass;
@@ -270,7 +270,7 @@ bool Graphics::Render()
 	bool renderModel, result;
 
 	// Clear the buffers to begin the scene.
-	_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+	_D3D->BeginScene(0.5f, 0.5f, 0.5f, 1.0f);
 
 	// Generate the view matrix based on the camera's position.
 	_Camera->Render();
