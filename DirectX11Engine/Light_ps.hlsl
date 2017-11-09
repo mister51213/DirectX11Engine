@@ -9,8 +9,12 @@
 // GLOBALS //
 /////////////
 // texture resource that will be used for rendering the texture on the model
+<<<<<<< HEAD
 //Texture2D shaderTexture;
 Texture2D shaderTextures[2];
+=======
+Texture2D shaderTexture;
+>>>>>>> parent of db1fdec... switched order of applying texture and lighting in pixel shader
 // allows modifying how pixels are written to the polygon face, for example choosing which to draw. 
 SamplerState SampleType;
 
@@ -94,11 +98,11 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
         specular = pow(saturate(dot(reflection, input.viewDirection)), specularPower);
     }
 
-    // Multiply the texture pixel and the final diffuse color to get the final pixel color result.
-    color = color * textureColor;
-
     // Saturate the final light color.
     color = saturate(color + specular);
+
+    // Multiply the texture pixel and the final diffuse color to get the final pixel color result.
+    color = color * textureColor;
 
     return color;
 }
