@@ -185,7 +185,6 @@ bool TextureClass::LoadTarga(char* filename, int& height, int& width, unsigned c
 	TargaHeader targaFileHeader;
 	unsigned char* targaImage;
 
-
 	// Open the targa file for reading in binary.
 	error = fopen_s(&filePtr, filename, "rb");
 	if (error != 0)
