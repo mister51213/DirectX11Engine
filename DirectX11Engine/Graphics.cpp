@@ -302,14 +302,14 @@ bool Graphics::Render()
 		radius = 1.0f;
 
 		// Check if the sphere model is in the view frustum.
-		renderModel = _Frustum->CheckSphere(positionX, positionY, positionZ, radius);
+		//@TODOrenderModel = _Frustum->CheckSphere(positionX, positionY, positionZ, radius);
 
 		// If it can be seen then render it, if not skip this model and check the next sphere.
-		if (renderModel)
-		{
-			//Rotate the world matrix by the rotation value so that the triangle will spin.
-			worldMatrix = DirectX::XMMatrixRotationY(_modelRotation);
-			//Move the model to the location it should be rendered at.
+//@TODO		//if (renderModel)
+		//{
+			// Rotate the world matrix by the rotation value so that the triangle will spin.
+			//worldMatrix = DirectX::XMMatrixRotationY(_modelRotation);
+			// Move the model to the location it should be rendered at.
 			worldMatrix = DirectX::XMMatrixTranslation(positionX, positionY, positionZ);
 
 			// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
@@ -339,7 +339,7 @@ bool Graphics::Render()
 
 			// Since this model was rendered then increase the count for this frame.
 			renderCount++;
-		}
+		//}
 	}
 	
 	// Set the number of models that was actually rendered this frame.

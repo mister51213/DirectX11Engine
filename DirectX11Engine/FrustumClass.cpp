@@ -83,13 +83,15 @@ void FrustumClass::ConstructFrustum(float screenDepth, XMMATRIX projectionMatrix
 
 bool FrustumClass::CheckPoint(float x, float y, float z)
 {
+	int i;
+
 	// @STUDY - you only need 3 floats for the normal, and 1 for the distance from origin to express a plane
 	// http://mathinsight.org/distance_point_plane
 
 	// Check if the point is inside all six planes of the view frustum.
-	for (int i = 0; i<6; i++)
+	for (i = 0; i<6; i++)
 	{
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3(x, y, z)))) < 0.0f)
+		if (D3DXPlaneDotCoord(&m_planes[i], &D3DXVECTOR3(x, y, z)) < 0.0f)
 		{
 			return false;
 		}
@@ -100,44 +102,30 @@ bool FrustumClass::CheckPoint(float x, float y, float z)
 //CheckCube checks if any of the eight corner points of the cube are inside the viewing frustum.It only requires as input the center point of the cube and the radius, it uses those to calculate the 8 corner points of the cube.It then checks if any one of the corner points are inside all 6 planes of the viewing frustum.If it does find a point inside all six planes of the viewing frustum it returns true, otherwise it returns false.
 
 bool FrustumClass::CheckCube(float xCenter, float yCenter, float zCenter, float radius)
-{	
+{
+	int i;
+	
 	// Check if any one point of the cube is in the view frustum.
-	for (int i = 0; i < 6; i++)
+	for (i = 0; i < 6; i++)
 	{
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3((xCenter - radius), (yCenter - radius), (zCenter - radius)))))>= 0.0f)
-		{
-			continue;
-		}
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3((xCenter + radius), (yCenter - radius), (zCenter - radius)))))>= 0.0f)
-		{																																			 
-			continue;																																 
-		}																																			 
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3((xCenter - radius), (yCenter + radius), (zCenter - radius)))))>= 0.0f)
-		{																																			 
-			continue;																																 
-		}																																			 
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3((xCenter + radius), (yCenter + radius), (zCenter - radius)))))>= 0.0f)
-		{																																			
-			continue;																																
-		}																																			
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3((xCenter - radius), (yCenter - radius), (zCenter + radius)))))>= 0.0f)
-		{																																			
-			continue;																																
-		}																																			
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3((xCenter + radius), (yCenter - radius), (zCenter + radius)))))>= 0.0f)
-		{																																			
-			continue;																																
-		}																																			
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3((xCenter - radius), (yCenter + radius), (zCenter + radius)))))>= 0.0f)
-		{																																			
-			continue;																																
-		}																																			
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3((xCenter + radius), (yCenter + radius), (zCenter + radius)))))>= 0.0f)
-		{
-			continue;
-		}
+		//@TODO: is this the right value?
+		if (XMPlaneDotCoord(_planes[i], XMLoadFloat3(&XMFLOAT3((xCenter - radius), (yCenter - radius), (zCenter - radius)))).m128_f32[0] >= 0.0f)
+		{ continue; }		
+		if (XMPlaneDotCoord(_planes[i], XMLoadFloat3(&XMFLOAT3((xCenter + radius), (yCenter - radius), (zCenter - radius)))).m128_f32[0] >= 0.0f)
+		{continue;}		
+		if (XMPlaneDotCoord(_planes[i], XMLoadFloat3(&XMFLOAT3((xCenter - radius), (yCenter + radius), (zCenter - radius)))).m128_f32[0] >= 0.0f)
+		{continue;}
+		if (XMPlaneDotCoord(_planes[i], XMLoadFloat3(&XMFLOAT3((xCenter + radius), (yCenter + radius), (zCenter - radius)))).m128_f32[0] >= 0.0f)
+		{continue;}		
+		if (XMPlaneDotCoord(_planes[i], XMLoadFloat3(&XMFLOAT3((xCenter - radius), (yCenter - radius), (zCenter + radius)))).m128_f32[0] >= 0.0f)
+		{continue;}		
+		if (XMPlaneDotCoord(_planes[i], XMLoadFloat3(&XMFLOAT3((xCenter + radius), (yCenter - radius), (zCenter + radius)))).m128_f32[0] >= 0.0f)
+		{continue;}
+		if (XMPlaneDotCoord(_planes[i], XMLoadFloat3(&XMFLOAT3((xCenter - radius), (yCenter + radius), (zCenter + radius)))).m128_f32[0] >= 0.0f)
+		{continue;}
+		if (XMPlaneDotCoord(_planes[i], XMLoadFloat3(&XMFLOAT3((xCenter + radius), (yCenter + radius), (zCenter + radius)))).m128_f32[0] >= 0.0f)
+		{continue;}
 
-		//@OLD
 		//if (D3DXPlaneDotCoord(&m_planes[i], &D3DXVECTOR3((xCenter - radius), (yCenter - radius), (zCenter - radius))) >= 0.0f)
 		//{
 		//	continue;
@@ -177,6 +165,7 @@ bool FrustumClass::CheckCube(float xCenter, float yCenter, float zCenter, float 
 	return true;
 }
 //CheckSphere checks if the radius of the sphere from the center point is inside all six planes of the viewing frustum.If it is outside any of them then the sphere cannot be seen and the function will return false.If it is inside all six the function returns true that the sphere can be seen.
+
 bool FrustumClass::CheckSphere(float xCenter, float yCenter, float zCenter, float radius)
 {
 	int i;
@@ -185,7 +174,7 @@ bool FrustumClass::CheckSphere(float xCenter, float yCenter, float zCenter, floa
 	// Check if the radius of the sphere is inside the view frustum.
 	for (i = 0; i<6; i++)
 	{
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3(xCenter, yCenter, zCenter)))) < -radius)
+		if (XMPlaneDotCoord(_planes[i], XMFLOAT3(xCenter, yCenter, zCenter)) < -radius)
 		{
 			return false;
 		}
@@ -203,71 +192,45 @@ bool FrustumClass::CheckRectangle(float xCenter, float yCenter, float zCenter, f
 	// Check if any of the 6 planes of the rectangle are inside the view frustum.
 	for (i = 0; i<6; i++)
 	{
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3((xCenter - xSize), (yCenter - ySize), (zCenter - zSize))))) >= 0.0f)
+		if (XMPlaneDotCoord(_planes[i], &D3DXVECTOR3((xCenter - xSize), (yCenter - ySize), (zCenter - zSize))) >= 0.0f)
 		{
 			continue;
 		}
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3((xCenter + xSize), (yCenter - ySize), (zCenter - zSize))))) >= 0.0f)
+
+		if (XMPlaneDotCoord(_planes[i], &D3DXVECTOR3((xCenter + xSize), (yCenter - ySize), (zCenter - zSize))) >= 0.0f)
 		{
 			continue;
 		}
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3((xCenter - xSize), (yCenter + ySize), (zCenter - zSize))))) >= 0.0f)
+
+		if (XMPlaneDotCoord(_planes[i], &D3DXVECTOR3((xCenter - xSize), (yCenter + ySize), (zCenter - zSize))) >= 0.0f)
 		{
 			continue;
 		}
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3((xCenter - xSize), (yCenter - ySize), (zCenter + zSize))))) >= 0.0f)
+
+		if (XMPlaneDotCoord(_planes[i], &D3DXVECTOR3((xCenter - xSize), (yCenter - ySize), (zCenter + zSize))) >= 0.0f)
 		{
 			continue;
 		}
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3((xCenter + xSize), (yCenter + ySize), (zCenter - zSize))))) >= 0.0f)
+
+		if (XMPlaneDotCoord(_planes[i], &D3DXVECTOR3((xCenter + xSize), (yCenter + ySize), (zCenter - zSize))) >= 0.0f)
 		{
 			continue;
 		}
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3((xCenter + xSize), (yCenter - ySize), (zCenter + zSize))))) >= 0.0f)
+
+		if (XMPlaneDotCoord(_planes[i], &D3DXVECTOR3((xCenter + xSize), (yCenter - ySize), (zCenter + zSize))) >= 0.0f)
 		{
 			continue;
 		}
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3((xCenter - xSize), (yCenter + ySize), (zCenter + zSize))))) >= 0.0f)
+
+		if (XMPlaneDotCoord(_planes[i], &D3DXVECTOR3((xCenter - xSize), (yCenter + ySize), (zCenter + zSize))) >= 0.0f)
 		{
 			continue;
 		}
-		if (XMVectorGetX(XMPlaneDotCoord(XMLoadFloat4(&_planes[i]), XMLoadFloat3(&XMFLOAT3((xCenter + xSize), (yCenter + ySize), (zCenter + zSize))))) >= 0.0f)
+
+		if (XMPlaneDotCoord(_planes[i], &D3DXVECTOR3((xCenter + xSize), (yCenter + ySize), (zCenter + zSize))) >= 0.0f)
 		{
 			continue;
 		}
-		//////////////////////////////////////////////////////
-		//if (XMPlaneDotCoord(_planes[i], &D3DXVECTOR3((xCenter - xSize), (yCenter - ySize), (zCenter - zSize))) >= 0.0f)
-		//{
-		//	continue;
-		//}
-		//if (XMPlaneDotCoord(_planes[i], &D3DXVECTOR3((xCenter + xSize), (yCenter - ySize), (zCenter - zSize))) >= 0.0f)
-		//{
-		//	continue;
-		//}
-		//if (XMPlaneDotCoord(_planes[i], &D3DXVECTOR3((xCenter - xSize), (yCenter + ySize), (zCenter - zSize))) >= 0.0f)
-		//{
-		//	continue;
-		//}
-		//if (XMPlaneDotCoord(_planes[i], &D3DXVECTOR3((xCenter - xSize), (yCenter - ySize), (zCenter + zSize))) >= 0.0f)
-		//{
-		//	continue;
-		//}
-		//if (XMPlaneDotCoord(_planes[i], &D3DXVECTOR3((xCenter + xSize), (yCenter + ySize), (zCenter - zSize))) >= 0.0f)
-		//{
-		//	continue;
-		//}
-		//if (XMPlaneDotCoord(_planes[i], &D3DXVECTOR3((xCenter + xSize), (yCenter - ySize), (zCenter + zSize))) >= 0.0f)
-		//{
-		//	continue;
-		//}
-		//if (XMPlaneDotCoord(_planes[i], &D3DXVECTOR3((xCenter - xSize), (yCenter + ySize), (zCenter + zSize))) >= 0.0f)
-		//{
-		//	continue;
-		//}
-		//if (XMPlaneDotCoord(_planes[i], &D3DXVECTOR3((xCenter + xSize), (yCenter + ySize), (zCenter + zSize))) >= 0.0f)
-		//{
-		//	continue;
-		//}
 
 		return false;
 	}
