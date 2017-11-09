@@ -9,7 +9,8 @@
 // GLOBALS //
 /////////////
 // texture resource that will be used for rendering the texture on the model
-Texture2D shaderTexture;
+//Texture2D shaderTexture;
+Texture2D shaderTextures[2];
 // allows modifying how pixels are written to the polygon face, for example choosing which to draw. 
 SamplerState SampleType;
 
@@ -39,15 +40,32 @@ struct PixelInputType
 ////////////////////////////////////////////////////////////////////////////////
 float4 LightPixelShader(PixelInputType input) : SV_TARGET
 {
+	// multi texturing data
+    float4 color1;
+    float4 color2;
+    float4 blendColor;
+
+	// lighting data
     float4 textureColor;
     float3 lightDir;
     float lightIntensity;
-    float4 color;
     float3 reflection;
     float4 specular;
+    //float4 color;
 
     // Sample the pixel color from the texture using the sampler at this texture coordinate location.
-    textureColor = shaderTexture.Sample(SampleType, input.tex);
+    //textureColor = shaderTexture.Sample(SampleType, input.tex);
+	// Get the pixel color from the first texture.
+    color1 = shaderTextures[0].Sample(SampleType, input.tex);
+
+    // Get the pixel color from the second texture.
+    color2 = shaderTextures[1].Sample(SampleType, input.tex);
+
+    // Blend the two pixels together and multiply by the gamma value.
+    blendColor = color1 * color2 * 2.0f;
+    
+    // Saturate the final color.
+    blendColor = saturate(blendColor);
 
     // Set the default output color to the ambient light value for all pixels.
     color = ambientColor;
@@ -76,11 +94,11 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
         specular = pow(saturate(dot(reflection, input.viewDirection)), specularPower);
     }
 
-    // Saturate the final light color.
-    color = saturate(color + specular);
-
     // Multiply the texture pixel and the final diffuse color to get the final pixel color result.
     color = color * textureColor;
+
+    // Saturate the final light color.
+    color = saturate(color + specular);
 
     return color;
 }
