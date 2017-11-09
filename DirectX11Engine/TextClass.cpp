@@ -361,7 +361,7 @@ bool TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, SentenceType*
 	pixelColor = XMFLOAT4(sentence->red, sentence->green, sentence->blue, 1.0f);
 
 	// Render the text using the font shader.
-	result = _FontShader->Render(deviceContext, sentence->indexCount, worldMatrix, _baseViewMatrix, orthoMatrix, _Font->GetTexture(),
+	result = _FontShader->Render(deviceContext, sentence->indexCount, worldMatrix, _baseViewMatrix, orthoMatrix, *_Font->GetTexture(),
 		pixelColor);
 	if (!result)
 	{

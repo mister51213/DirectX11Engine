@@ -130,7 +130,7 @@ bool FontClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	}
 
 	// Initialize the texture object.
-	result = _Texture->Initialize(device, deviceContext, filename);
+	result = _Texture->Initialize(device, deviceContext, filename, filename);
 	if (!result)
 	{
 		return false;
@@ -154,9 +154,9 @@ void FontClass::ReleaseTexture()
 }
 
 
-ID3D11ShaderResourceView* FontClass::GetTexture()
+ID3D11ShaderResourceView** FontClass::GetTexture()
 {
-	return _Texture->GetTexture();
+	return _Texture->GetTextureArray();
 }
 
 

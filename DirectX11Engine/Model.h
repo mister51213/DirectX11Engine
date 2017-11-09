@@ -1,7 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: model.h
 ////////////////////////////////////////////////////////////////////////////////
-
 #pragma once
 
 //////////////
@@ -46,13 +45,14 @@ public:
 	Model(const Model&);
 	~Model();
 
-	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename);
+	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename1, char* textureFilename2);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
 	/** Needed by the shader to draw this model */
 	int GetIndexCount();
-	ID3D11ShaderResourceView* GetTexture();
+	//ID3D11ShaderResourceView* GetTexture();
+	ID3D11ShaderResourceView** GetTextureArray();
 
 	bool LoadModel(char*);
 	void ReleaseModel();
@@ -64,15 +64,14 @@ private:
 	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
 	void RenderBuffers(ID3D11DeviceContext* deviceContext);
 
-	bool LoadTexture(ID3D11Device*, ID3D11DeviceContext*, char*);
-	void ReleaseTexture();
+	bool LoadTextures(ID3D11Device*, ID3D11DeviceContext*, char* fileName1, char* fileName2);
+	void ReleaseTextures();
 
 private:
 	ID3D11Buffer *_vertexBuffer, *_indexBuffer;
 	int _vertexCount, _indexCount;
-	TextureClass* _Texture;
-
-	// used to read in and hold the model data before it is placed in the vertex buffer.
-	ModelType* _model;
+	ModelType* _model; // used to read in and hold the model data before it is placed in the vertex buffer.
+	//TextureClass* _Texture;
+	TextureClass* _TextureArray;
 };
 

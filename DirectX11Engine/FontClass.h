@@ -44,7 +44,7 @@ public:
 	bool Initialize(ID3D11Device*, ID3D11DeviceContext* deviceContext, char*, char*);
 	void Shutdown();
 
-	ID3D11ShaderResourceView* GetTexture();
+	ID3D11ShaderResourceView** GetTexture();
 
 	void BuildVertexArray(void*, char*, float, float);
 

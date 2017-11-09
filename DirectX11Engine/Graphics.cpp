@@ -64,13 +64,13 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Initialize the text object.
-	result = _Text->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), hwnd, screenWidth, screenHeight, baseViewMatrix);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
-		return false;
-	}
+	// Initialize the text object. //@TODO: fix loading for font class
+	//result = _Text->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), hwnd, screenWidth, screenHeight, baseViewMatrix);
+	//if (!result)
+	//{
+	//	MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
+	//	return false;
+	//}
 
 	// Create the model object.
 	_Model = new Model;
@@ -82,10 +82,12 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Initialize the model object.
 	//result = _Model->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/stone01.tga");
 	result = _Model->Initialize(
-			_D3D->GetDevice(), 
-			_D3D->GetDeviceContext(), 
-			"../DirectX11Engine/data/sphere.txt", 
-			"../DirectX11Engine/data/fire2.tga");
+		_D3D->GetDevice(),
+		_D3D->GetDeviceContext(),
+		"../DirectX11Engine/data/sphere.txt",
+		//"../DirectX11Engine/data/fire2.tga");
+		"../DirectX11Engine/data/stone01.tga",
+		"../DirectX11Engine/data/dirt01.tga");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
@@ -320,7 +322,7 @@ bool Graphics::Render()
 				worldMatrix,
 				viewMatrix,
 				projectionMatrix,
-				_Model->GetTexture(),
+				_Model->GetTextureArray(),
 				_Light->GetDirection(),
 				/*color,*/ _Light->GetAmbientColor(),
 				color, //_Light->GetDiffuseColor(), 
@@ -355,11 +357,11 @@ bool Graphics::Render()
 	_D3D->TurnOnAlphaBlending();
 
 	// Render the text strings.
-	result = _Text->Render(_D3D->GetDeviceContext(), worldMatrix, orthoMatrix);
-	if (!result)
-	{
-		return false;
-	}
+	//result = _Text->Render(_D3D->GetDeviceContext(), worldMatrix, orthoMatrix);
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
 	// Turn off alpha blending after rendering the text.
 	_D3D->TurnOffAlphaBlending();
