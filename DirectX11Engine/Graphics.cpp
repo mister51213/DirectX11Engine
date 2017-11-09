@@ -115,12 +115,11 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the light object.
-	_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-	_Light->SetDiffuseColor(1.0f, 0.5f, 1.0f, 1.0f);
-	_Light->SetDirection(1.0f, 0.0f, 0.0f);
+	_Light->SetAmbientColor(0.0f, 0.0f, 0.5f, 1.0f);
+	_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_Light->SetDirection(0.0f, 0.0f, 1.0f);
 	_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_Light->SetSpecularPower(30.0f); // the lower the power, the higher the effect intensity
+	_Light->SetSpecularPower(10.0f); // the lower the power, the higher the effect intensity
 
 	// Create the model list object.
 	_ModelList = new ModelListClass;
@@ -253,11 +252,11 @@ bool Graphics::Frame(float rotationY, int mouseX, int mouseY, int fps, int cpu, 
 
 	// @DEBUG why do they now disable rendering inside frame?
 	// Render the graphics scene.
-	//result = Render(/*_modelRotation*/);
-	//if (!result)
-	//{
-	//	return false;
-	//}
+	result = Render(/*_modelRotation*/);
+	if (!result)
+	{
+		return false;
+	}
 
 	return true;
 }
@@ -324,7 +323,7 @@ bool Graphics::Render()
 				_Model->GetTexture(),
 				_Light->GetDirection(),
 				_Light->GetAmbientColor(),
-				_Light->GetDiffuseColor(),
+				_Light->GetDiffuseColor(), //color,
 				_Camera->GetPosition(),
 				_Light->GetSpecularColor(),
 				_Light->GetSpecularPower());

@@ -32,10 +32,10 @@ public:
 	D3DClass(const D3DClass&);
 	~D3DClass();
 
-	bool Initialize(int, int, bool, HWND, bool, float, float);
+	bool Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, bool fullscreen, float screenDepth, float screenNear);
 	void Shutdown();
 
-	void BeginScene(float, float, float, float);
+	void BeginScene(float red, float green, float blue, float alpha);
 	void EndScene();
 
 	ID3D11Device* GetDevice();

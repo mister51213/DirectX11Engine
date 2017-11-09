@@ -18,7 +18,6 @@ ModelListClass::~ModelListClass()
 
 bool ModelListClass::Initialize(int numModels)
 {
-	int i;
 	float red, green, blue;
 
 	// Store the number of models.
@@ -35,7 +34,7 @@ bool ModelListClass::Initialize(int numModels)
 	srand((unsigned int)time(NULL));
 
 	// Go through all the models and randomly generate the model color and position.
-	for (i = 0; i<_modelCount; i++)
+	for (int i = 0; i<_modelCount; i++)
 	{
 		// Generate a random color for the model.
 		red = (float)rand() / RAND_MAX;
