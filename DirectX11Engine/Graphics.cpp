@@ -86,8 +86,10 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		_D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/sphere.txt",
 		//"../DirectX11Engine/data/fire2.tga");
-		"../DirectX11Engine/data/stone01.tga",
-		"../DirectX11Engine/data/dirt01.tga");
+		"../DirectX11Engine/data/seafloor.tga",
+		"../DirectX11Engine/data/seafloor.tga"
+/*		"../DirectX11Engine/data/stone01.tga",
+		"../DirectX11Engine/data/dirt01.tga"*/);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
@@ -217,27 +219,27 @@ bool Graphics::Frame(float rotationY, int mouseX, int mouseY, int fps, int cpu, 
 {
 	bool result;
 
-	// @TODO: update textclass according to tutorial 15 after making it
-	// Set the frames per second.
-	result = _Text->SetFps(fps, _D3D->GetDeviceContext());
-	if (!result)
-	{
-		return false;
-	}
+	//// @TODO: update textclass according to tutorial 15 after making it
+	//// Set the frames per second.
+	//result = _Text->SetFps(fps, _D3D->GetDeviceContext());
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
-	// Set the cpu usage.
-	result = _Text->SetCpu(cpu, _D3D->GetDeviceContext());
-	if (!result)
-	{
-		return false;
-	}
+	//// Set the cpu usage.
+	//result = _Text->SetCpu(cpu, _D3D->GetDeviceContext());
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
-	// Set the location of the mouse.
-	result = _Text->SetMousePosition(mouseX, mouseY, _D3D->GetDeviceContext());
-	if (!result)
-	{
-		return false;
-	}
+	//// Set the location of the mouse.
+	//result = _Text->SetMousePosition(mouseX, mouseY, _D3D->GetDeviceContext());
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
 	// Set the position of the camera.
 	_Camera->SetPosition(0.0f, 0.0f, -10.0f);
@@ -342,12 +344,12 @@ bool Graphics::Render()
 		}
 	}
 	
-	// Set the number of models that was actually rendered this frame.
-	result = _Text->SetRenderCount(renderCount, _D3D->GetDeviceContext());
-	if (!result)
-	{
-		return false;
-	}
+	//// Set the number of models that was actually rendered this frame.
+	//result = _Text->SetRenderCount(renderCount, _D3D->GetDeviceContext());
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
 	// @DEBUG @CUSTOM RENDER THE NEW 2D OVERLAY HERE
 	// Turn off the Z buffer to begin all 2D rendering.

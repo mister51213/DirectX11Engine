@@ -44,13 +44,13 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	*/
 
 	// Load the targa image data into memory.
-	result = LoadTarga(filename1, height, width, &_targaData1);
+	result = LoadTarga(filename1, height, width, _targaData1);
 	if (!result)
 	{
 		return false;
 	}
 
-	result = LoadTarga(filename2, height, width, &_targaData2);
+	result = LoadTarga(filename2, height, width, _targaData2);
 	if (!result)
 	{
 		return false;
@@ -177,7 +177,7 @@ ID3D11ShaderResourceView** TextureClass::GetTextureArray()
 	return _textureViews;
 }
 
-bool TextureClass::LoadTarga(char* filename, int& height, int& width, unsigned char** pTargaData)
+bool TextureClass::LoadTarga(char* filename, int& height, int& width, unsigned char* pTargaData)
 {
 	int error, bpp, imageSize, index, i, j, k;
 	FILE* filePtr;
@@ -236,7 +236,7 @@ bool TextureClass::LoadTarga(char* filename, int& height, int& width, unsigned c
 
 	// Allocate memory for the targa destination data.
 	//_targaData = new unsigned char[imageSize];
-	*pTargaData = new unsigned char[imageSize];
+	pTargaData = new unsigned char[imageSize];
 	if (!*pTargaData)
 	{
 		return false;
@@ -253,10 +253,10 @@ bool TextureClass::LoadTarga(char* filename, int& height, int& width, unsigned c
 	{
 		for (i = 0; i < width; i++)
 		{
-			*pTargaData[index + 0] = targaImage[k + 2];  // Red.
-			*pTargaData[index + 1] = targaImage[k + 1];  // Green.
-			*pTargaData[index + 2] = targaImage[k + 0];  // Blue
-			*pTargaData[index + 3] = targaImage[k + 3];  // Alpha
+			pTargaData[index + 0] = targaImage[k + 2];  // Red.
+			pTargaData[index + 1] = targaImage[k + 1];  // Green.
+			pTargaData[index + 2] = targaImage[k + 0];  // Blue
+			pTargaData[index + 3] = targaImage[k + 3];  // Alpha
 
 														 // Increment the indexes into the targa data.
 			k += 4;
