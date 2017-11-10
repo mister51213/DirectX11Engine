@@ -86,8 +86,8 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		_D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/sphere.txt",
 		//"../DirectX11Engine/data/fire2.tga");
-		"../DirectX11Engine/data/seafloor.tga",
-		"../DirectX11Engine/data/seafloor.tga"
+		"../DirectX11Engine/data/stone01.tga",
+		"../DirectX11Engine/data/dirt01.tga"
 /*		"../DirectX11Engine/data/stone01.tga",
 		"../DirectX11Engine/data/dirt01.tga"*/);
 	if (!result)
