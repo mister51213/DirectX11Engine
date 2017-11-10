@@ -104,7 +104,7 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 		return false;
 	}
 
-	// Create the 1st shader resource view for the texture.
+	// Create the 2nd shader resource view for the texture.
 	hResult = device->CreateShaderResourceView(_texture2, &srvDesc, &_textureViews[1]);
 	if (FAILED(hResult))
 	{
@@ -116,11 +116,11 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	deviceContext->GenerateMips(_textureViews[1]);
 	
 	// Release the targa image data now that the image data has been loaded into the texture.
-	delete[] _targaData1;
-	_targaData1 = 0;
-
 	delete[] _targaData2;
 	_targaData2 = 0;
+
+	delete[] _targaData1;
+	_targaData1 = 0;
 
 	return true;
 }

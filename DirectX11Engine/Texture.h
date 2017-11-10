@@ -37,10 +37,8 @@ private:
 
 	unsigned char* _targaData1;
 	unsigned char* _targaData2;
-	//ID3D11Texture2D* _texture;
 	ID3D11Texture2D* _texture1;
 	ID3D11Texture2D* _texture2;
-	//ID3D11ShaderResourceView* _textureView;
 	ID3D11ShaderResourceView* _textureViews[2];
 
 };
