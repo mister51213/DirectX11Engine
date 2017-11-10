@@ -33,7 +33,7 @@ public:
 	ID3D11ShaderResourceView** GetTextureArray();
 
 private:
-	bool LoadTarga(char*, int&, int&, unsigned char* pTargaData);
+	unsigned char* LoadTarga(char*, int&, int&, unsigned char* pTargaData);
 
 	unsigned char* _targaData1;
 	unsigned char* _targaData2;

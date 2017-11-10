@@ -44,14 +44,19 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	*/
 
 	// Load the targa image data into memory.
-	result = LoadTarga(filename1, height, width, _targaData1);
-	if (!result)
+	//result = LoadTarga(filename1, height, width, _targaData1);
+	//if (!result)
+	//{
+	//	return false;
+	//}
+	_targaData1 = LoadTarga(filename1, height, width, _targaData1);
+	if (!_targaData1)
 	{
 		return false;
 	}
-
-	result = LoadTarga(filename2, height, width, _targaData2);
-	if (!result)
+	
+	_targaData2 = LoadTarga(filename2, height, width, _targaData2);
+	if (!_targaData2)
 	{
 		return false;
 	}
@@ -177,7 +182,7 @@ ID3D11ShaderResourceView** TextureClass::GetTextureArray()
 	return _textureViews;
 }
 
-bool TextureClass::LoadTarga(char* filename, int& height, int& width, unsigned char* pTargaData)
+unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, unsigned char* pTargaData)
 {
 	int error, bpp, imageSize, index, i, j, k;
 	FILE* filePtr;
@@ -271,6 +276,6 @@ bool TextureClass::LoadTarga(char* filename, int& height, int& width, unsigned c
 	delete[] targaImage;
 	targaImage = 0;
 
-	return true;
+	return pTargaData;
 }
 
