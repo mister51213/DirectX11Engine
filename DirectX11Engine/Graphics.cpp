@@ -108,6 +108,21 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// Create the font shader object.
+	_FontShader = new FontShaderClass;
+	if (!_FontShader)
+	{
+		return false;
+	}
+	
+	// Initialize the font shader object.
+	result = _FontShader->Initialize(_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the font shader object.", L"Error", MB_OK);
+		return false;
+	}//@TODO: release this object
+
 	// Create the text object for the fps string.
 	m_FpsString = new TextClass;
 	if (!m_FpsString)
@@ -564,26 +579,26 @@ bool Graphics::Render()
 	// Turn on the alpha blending before rendering the text.
 	_D3D->TurnOnAlphaBlending();
 
-	// Render the fps string.
-	m_FpsString->Render(_D3D->GetDeviceContext(), worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
-
-	// Render the position and rotation strings.
-	for (int i = 0; i<6; i++)
-	{
-		m_PositionStrings[i].Render(_D3D->GetDeviceContext(), worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
-	}
-
-	// Render the render count strings.
-	for (int i = 0; i<3; i++)
-	{
-		m_RenderCountStrings[i].Render(_D3D->GetDeviceContext(), worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
-	}
-
-	// Render the text strings.
+	// Render the text strings. //@OLD
 	//result = _Text->Render(_D3D->GetDeviceContext(), worldMatrix, orthoMatrix);
 	//if (!result)
 	//{
 	//	return false;
+	//}
+
+	// Render the fps string.
+	m_FpsString->Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
+
+	//// Render the position and rotation strings.
+	//for (int i = 0; i<6; i++)
+	//{
+	//	m_PositionStrings[i].Render(_D3D->GetDeviceContext(), worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
+	//}
+
+	//// Render the render count strings.
+	//for (int i = 0; i<3; i++)
+	//{
+	//	m_RenderCountStrings[i].Render(_D3D->GetDeviceContext(), worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
 	//}
 
 	// Turn off alpha blending after rendering the text.

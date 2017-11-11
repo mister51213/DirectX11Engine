@@ -53,8 +53,10 @@ private:
 private:
 	D3DClass* _D3D;
 	Camera* _Camera;
-	//TextClass* _Text; //@CUSTOM - now have multiple text classes holding different info
+	TextClass* _Text; //@CUSTOM - now have multiple text classes holding different info
 	FontClass* m_Font1;
+	FontShaderClass* _FontShader;
+
 	TextClass *m_FpsString, *m_VideoStrings, *m_PositionStrings;
 	int m_previousFps;
 	int m_previousPosition[6];

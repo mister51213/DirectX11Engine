@@ -29,7 +29,7 @@ public:
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename1, char* filename2);
 	void Shutdown();
 
-	//ID3D11ShaderResourceView* GetTexture();
+	ID3D11ShaderResourceView* GetTexture();
 	ID3D11ShaderResourceView** GetTextureArray();
 
 private:
@@ -39,6 +39,7 @@ private:
 	unsigned char* _targaData2;
 	ID3D11Texture2D* _texture1;
 	ID3D11Texture2D* _texture2;
+	ID3D11ShaderResourceView* _textureViewSingle;
 	ID3D11ShaderResourceView* _textureViews[2];
 
 };

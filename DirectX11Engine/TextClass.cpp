@@ -81,16 +81,31 @@ void TextClass::Shutdown()
 }
 
 
-void TextClass::Render(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
+void TextClass::Render(ID3D11DeviceContext* deviceContext, FontShaderClass* pFontShader, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX orthoMatrix, ID3D11ShaderResourceView* fontTexture)
 {
 	// Draw the sentence.
-	RenderSentence(deviceContext, worldMatrix, viewMatrix, orthoMatrix, fontTexture);
+	RenderSentence(deviceContext, pFontShader, worldMatrix, viewMatrix, orthoMatrix, fontTexture);
 
 	//@TODO: RENDER ALL THE SENTENCES
 
 	return;
 }
+
+//bool TextClass::Render(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX orthoMatrix)
+//{
+//	bool result;
+//
+//
+//	// Draw the first sentence.
+//	result = RenderSentence(deviceContext, _sentence1, worldMatrix, orthoMatrix);
+//	if (!result)
+//	{
+//		return false;
+//	}
+//
+//	return true;
+//}
 
 
 bool TextClass::InitializeSentence(ID3D11Device* device, ID3D11DeviceContext* deviceContext, FontClass* Font, char* text, int positionX,
@@ -289,7 +304,7 @@ bool TextClass::UpdateSentence(ID3D11DeviceContext* deviceContext, FontClass* Fo
 }
 
 // HIS @CUSTOM
-void TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
+void TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, FontShaderClass* pFontShader, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX orthoMatrix, ID3D11ShaderResourceView* fontTexture)
 {
 	unsigned int stride, offset;
@@ -315,10 +330,8 @@ void TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, XMMATRIX worl
 	deviceContext->IASetIndexBuffer(m_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	//ShaderManager->RenderFontShader(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, m_pixelColor);
-
-	// Render the text using the font shader.
-	result = _FontShader->Render(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, m_pixelColor);
+	// Render the text using the font shader. //@PROBLEM - do it the old way using the old texture
+	result = pFontShader->Render(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, /**_Font->GetTexture(),*/ fontTexture, m_pixelColor);
 	if (!result)
 	{
 		false;

@@ -162,9 +162,9 @@ void FontClass::ReleaseTexture()
 
 ID3D11ShaderResourceView* FontClass::GetTexture()
 {
-	//return m_Texture->GetTexture();
-	ID3D11ShaderResourceView** views = m_Texture->GetTextureArray();
-	return views[0];
+	return m_Texture->GetTexture();
+	//ID3D11ShaderResourceView** views = m_Texture->GetTextureArray();
+	//return views[0];
 }
 
 

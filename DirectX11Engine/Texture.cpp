@@ -49,6 +49,7 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	//{
 	//	return false;
 	//}
+
 	_targaData1 = LoadTarga(filename1, height, width, _targaData1);
 	if (!_targaData1)
 	{
@@ -127,7 +128,7 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 		_targaData2 = 0;
 	}
 
-	if (_targaData2)
+	if (_targaData1)
 	{
 		delete[] _targaData1;
 		_targaData1 = 0;
@@ -186,6 +187,11 @@ ID3D11ShaderResourceView** TextureClass::GetTextureArray()
 {
 	//return _textureView;
 	return _textureViews;
+}
+
+ID3D11ShaderResourceView* TextureClass::GetTexture()
+{
+	return _textureViewSingle;
 }
 
 unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, unsigned char* pTargaData)
