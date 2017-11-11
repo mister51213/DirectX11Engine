@@ -121,11 +121,17 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	deviceContext->GenerateMips(_textureViews[1]);
 	
 	// Release the targa image data now that the image data has been loaded into the texture.
-	delete[] _targaData2;
-	_targaData2 = 0;
+	if (_targaData2)
+	{
+		delete[] _targaData2;
+		_targaData2 = 0;
+	}
 
-	delete[] _targaData1;
-	_targaData1 = 0;
+	if (_targaData2)
+	{
+		delete[] _targaData1;
+		_targaData1 = 0;
+	}
 
 	return true;
 }
@@ -191,6 +197,11 @@ unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, 
 	unsigned char* targaImage;
 
 	// Open the targa file for reading in binary.
+	if (!filename)
+	{
+		return nullptr;
+	}
+
 	error = fopen_s(&filePtr, filename, "rb");
 	if (error != 0)
 	{

@@ -248,7 +248,8 @@ bool System::Frame()
 	_Position->GetRotation(rotationY);
 
 	// Do the frame processing for the graphics object.
-	result = _Graphics->Frame(rotationY, mouseX, mouseY, _Fps->GetFps(), _Cpu->GetCpuPercentage(), _Timer->GetTime());
+	//result = _Graphics->Frame(rotationY, mouseX, mouseY, _Fps->GetFps(), _Cpu->GetCpuPercentage(), _Timer->GetTime());
+	result = _Graphics->Frame(_Timer->GetTime(), _Fps->GetFps(), /*_Position.X, _Position.Y, _Position.Z,*/ 0.f,0.f,0.f, 0.f, rotationY, 0.f);
 	if (!result)
 	{
 		return false;
