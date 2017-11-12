@@ -38,6 +38,8 @@ public:
 	//void MoveInDirectionBack(bool keydown, float x, float y, float z);
 	void MoveInDirectionRelative(const XMFLOAT3 & displacement);
 	void MoveBack(bool keydown);
+	void MoveLeft(bool keydown);
+	void MoveRight(bool keydown);
 	void StrafeLeft(bool keydown);
 	void StrafeRight(bool keydown);
 
@@ -49,6 +51,9 @@ private:
 	float _leftTurnSpeed, _rightTurnSpeed;
 	float _fwdIncrement;
 	float _backIncrement;
+	float _leftIncrement;
+	float _rightIncrement; //@TODO: store these values in one vector
+
 	int mouseX, mouseY;
 	float _moveSpeed = 0.0001f;
 	float _brakeSpeed = 0.00007f;

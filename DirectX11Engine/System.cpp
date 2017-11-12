@@ -265,7 +265,8 @@ void System::ProcessInput()
 	_CamPosition->TurnRight(_Input->IsRightArrowPressed());
 	_CamPosition->MoveForward(_Input->IsKeyDown(DIK_W));
 	_CamPosition->MoveBack(_Input->IsKeyDown(DIK_S));
-
+	_CamPosition->MoveLeft(_Input->IsKeyDown(DIK_A));
+	_CamPosition->MoveRight(_Input->IsKeyDown(DIK_D));
 }
 
 LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)

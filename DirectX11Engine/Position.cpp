@@ -13,8 +13,9 @@ PositionClass::PositionClass()
 	_leftTurnSpeed(0.f),
 	_rightTurnSpeed(0.f),
 	_fwdIncrement(0.f),
-	_backIncrement(0.f)
-
+	_backIncrement(0.f),
+	_leftIncrement(0.f),
+	_rightIncrement(0.f)
 {
 	_orientation = XMFLOAT3(0.f, 0.f, 0.f);
 	_position = XMFLOAT3(0.f, 0.f, 0.f);
@@ -130,15 +131,22 @@ void PositionClass::SetMouseLocation(int X, int Y)
 
 void PositionClass::MoveForward(bool keydown)
 {
-	//MoveInDirection(keydown, 0.f, 0.f, 1.f);
 	MoveInDirection(keydown, _fwdIncrement, 0.f, 0.f, 1.f);
 }
 
 void PositionClass::MoveBack(bool keydown)
 {
-	//MoveInDirectionBack(keydown, 0.f, 0.f, -1.f);
 	MoveInDirection(keydown, _backIncrement, 0.f, 0.f, -1.f);
+}
 
+void PositionClass::MoveLeft(bool keydown)
+{
+	MoveInDirection(keydown, _leftIncrement, -1.f, 0.f, 0.f);
+}
+
+void PositionClass::MoveRight(bool keydown)
+{
+	MoveInDirection(keydown, _rightIncrement, 1.f, 0.f, 0.f);
 }
 
 void PositionClass::MoveInDirection(bool keydown, float& increment, float x, float y, float z)
