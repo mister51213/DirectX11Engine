@@ -68,11 +68,11 @@ void PositionClass::TurnLeft(bool keydown)
 	}
 
 	// Update the rotation using the turning speed.
-	_rotationY -= _leftTurnSpeed;
-	if (_rotationY < 0.0f)
-	{
-		_rotationY += 360.0f;
-	}
+	//_rotationY -= _leftTurnSpeed;
+	//if (_rotationY < 0.0f)
+	//{
+	//	_rotationY += 360.0f;
+	//}
 
 	//@CUSTOM
 	_orientation.y -= _leftTurnSpeed;
@@ -114,7 +114,6 @@ void PositionClass::TurnRight(bool keydown)
 	//}
 
 	//@CUSTOM
-	_orientation.y -= _leftTurnSpeed;
 	if (_orientation.y  > 360.0f)
 	{
 		_orientation.y -= 360.0f;

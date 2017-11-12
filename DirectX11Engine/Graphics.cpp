@@ -430,31 +430,9 @@ void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of inti
 	return;
 }
 
-bool Graphics::Frame(/*float rotationY, int mouseX, int mouseY, int fps, int cpu, */float frameTime, int fps, float posX, float posY, float posZ,
-	float rotX, float rotY, float rotZ)
+bool Graphics::Frame(float frameTime, int fps, float posX, float posY, float posZ, float rotX, float rotY, float rotZ)
 {
 	bool result;
-
-	// Set the frames per second.
-	//result = _Text->SetFps(fps, _D3D->GetDeviceContext());
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	//// Set the cpu usage.
-	//result = _Text->SetCpu(cpu, _D3D->GetDeviceContext());
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	//// Set the location of the mouse.
-	//result = _Text->SetMousePosition(mouseX, mouseY, _D3D->GetDeviceContext());
-	//if (!result)
-	//{
-	//	return false;
-	//}
 
 	// Set the position of the camera.
 	_Camera->SetPosition(posX, posY, posZ);

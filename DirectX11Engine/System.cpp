@@ -232,7 +232,7 @@ bool System::Frame()
 	_CamPosition->SetFrameTime(_Timer->GetTime());
 
 	//// Get the current view point rotation.
-	_CamPosition->GetRotation(rotationY);
+	//_CamPosition->GetRotation(rotationY);
 	_CamPosition->GetOrientation(orientation);
 
 	//// Check if the left or right arrow key has been pressed, if so rotate the camera accordingly. //@custom
@@ -240,7 +240,7 @@ bool System::Frame()
 
 	// Do the frame processing for the graphics object.
 	//result = _Graphics->Frame(rotationY, mouseX, mouseY, _Fps->GetFps(), _Cpu->GetCpuPercentage(), _Timer->GetTime());
-	result = _Graphics->Frame(_Timer->GetTime(), _Fps->GetFps(), /*_Position.X, _Position.Y, _Position.Z,*/ 0.f,0.f,0.f, 0.f, orientation.y, 0.f);
+	result = _Graphics->Frame(_Timer->GetTime(), _Fps->GetFps(), 0.f,0.f,0.f, orientation.x, orientation.y, orientation.z);
 	if (!result)
 	{
 		return false;
