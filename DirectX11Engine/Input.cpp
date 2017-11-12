@@ -231,9 +231,20 @@ bool Input::IsLeftArrowPressed()
 	return false;
 }
 
+
 bool Input::IsRightArrowPressed()
 {
 	if (_keyboardState[DIK_RIGHT] & 0x80)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+bool Input::IsKeyDown(int keyMacro)
+{
+	if (_keyboardState[keyMacro] & 0x80)
 	{
 		return true;
 	}

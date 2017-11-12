@@ -29,6 +29,7 @@ public:
 
 	bool IsEscapePressed();
 	bool IsLeftArrowPressed();
+	bool IsKeyDown(int keyMacro);
 	bool IsRightArrowPressed();
 	void GetMouseLocation(int&, int&);
 

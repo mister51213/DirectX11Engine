@@ -1,7 +1,6 @@
 #include "System.h"
-#include "VectorMath.h"
+#include <dinput.h>
 #include <DirectXMath.h>
-using namespace VectorMath;
 
 System::System()
 	:
@@ -215,6 +214,7 @@ bool System::Frame()
 	int mouseY = 0;
 	float rotationY = 0;
 	XMFLOAT3 orientation;
+	XMFLOAT3 position;
 
 	// Update the system stats.
 	_Timer->Frame();
@@ -234,13 +234,14 @@ bool System::Frame()
 	//// Get the current view point rotation.
 	//_CamPosition->GetRotation(rotationY);
 	_CamPosition->GetOrientation(orientation);
+	_CamPosition->GetPosition(position);
 
 	//// Check if the left or right arrow key has been pressed, if so rotate the camera accordingly. //@custom
 	ProcessInput();
 
 	// Do the frame processing for the graphics object.
 	//result = _Graphics->Frame(rotationY, mouseX, mouseY, _Fps->GetFps(), _Cpu->GetCpuPercentage(), _Timer->GetTime());
-	result = _Graphics->Frame(_Timer->GetTime(), _Fps->GetFps(), 0.f,0.f,0.f, orientation.x, orientation.y, orientation.z);
+	result = _Graphics->Frame(_Timer->GetTime(), _Fps->GetFps(), position.x, position.y, position.z, orientation.x, orientation.y, orientation.z);
 	if (!result)
 	{
 		return false;
@@ -260,78 +261,11 @@ bool System::Frame()
 void System::ProcessInput()
 {
 	//@STUDY command vs observer pattern
-	// Check if the left or right arrow key has been pressed, if so rotate the camera accordingly.
 	_CamPosition->TurnLeft(_Input->IsLeftArrowPressed());
 	_CamPosition->TurnRight(_Input->IsRightArrowPressed());
-	int mouseX, mouseY;
-	_Input->GetMouseLocation(mouseX, mouseY);
-	_CamPosition->SetMouseLocation(mouseX, mouseY);
+	_CamPosition->MoveForward(_Input->IsKeyDown(DIK_W));
+	_CamPosition->MoveBack(_Input->IsKeyDown(DIK_S));
 
-	//_CamPosition->TurnLeft();
-	//_CamPosition->TurnRight(_Input->GetMouseLocation());
-
-
-	//_CamPosition->MoveForward(_Input->IsRightArrowPressed());
-	//_CamPosition->MoveBack(_Input->IsRightArrowPressed());
-	//_CamPosition->StrafeLeft(_Input->IsRightArrowPressed());
-	//_CamPosition->StrafeRight(_Input->IsRightArrowPressed());
-
-	//// 1. Move this into another class
-	//float moveIncrement = 0.02f;
-	//float turnIncrement = 0.2f;
-	//XMFLOAT3 positionOffset(0 , 0 , 0);
-	//XMFLOAT3 rotationOffset(0, 0, 0);
-	//
-	//// ROTATION
-	//if (_Input->IsKeyDown(VK_UP))
-	//{
-	//	rotationOffset.x -= turnIncrement;
-	//}
-	//if (_Input->IsKeyDown(VK_DOWN))
-	//{
-	//	rotationOffset.x += turnIncrement;
-	//}
-	//if (_Input->IsKeyDown(VK_LEFT))
-	//{
-	//	rotationOffset.y -= turnIncrement;
-	//}
-	//if (_Input->IsKeyDown(VK_RIGHT))
-	//{
-	//	rotationOffset.y += turnIncrement;
-	//}
-	//// DISPLACEMENT
-	//if (_Input->IsKeyDown('W'))
-	//{
-	//	positionOffset.z += moveIncrement;
-	//}
-	//if (_Input->IsKeyDown('A'))
-	//{
-	//	positionOffset.x -= moveIncrement;
-	//}
-	//if (_Input->IsKeyDown('S'))
-	//{
-	//	positionOffset.z -= moveIncrement;
-	//}	
-	//if (_Input->IsKeyDown('D'))
-	//{
-	//	positionOffset.x += moveIncrement;
-	//}
-	//if (_Input->IsKeyDown(VK_SPACE))
-	//{
-	//	positionOffset.y += moveIncrement;
-	//}
-	//if (_Input->IsKeyDown(VK_CONTROL))
-	//{
-	//	positionOffset.y -= moveIncrement;
-	//}
-	//if (_Graphics)
-	//{
-	//	if (Camera* cam = _Graphics->GetCamera())
-	//	{
-	//		cam->MoveInDirectionRelative(positionOffset);
-	//		cam->RotateInDirection(rotationOffset);
-	//	}
-	//}
 }
 
 LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)

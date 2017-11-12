@@ -9,8 +9,10 @@
 #include <DirectXMath.h>
 #include <stdlib.h>
 #include <time.h>
+#include "VectorMath.h"
 
 using namespace DirectX;
+using namespace VectorMath;
 
 ///////////////////////////////////////////////////////////////////////////////
 // Class name: ModelListClass
