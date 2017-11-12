@@ -260,9 +260,14 @@ bool System::Frame()
 //@CUSTOM @TODO - rewrite
 void System::ProcessInput()
 {
+	int mouseX = 0.f;
+	int mouseY = 0.f;
+	_Input->GetMouseLocation(mouseX, mouseY);
+	_CamPosition->SetOrientation(XMFLOAT3((float)mouseY, (float)mouseX, 0.f));
+
 	//@STUDY command vs observer pattern
-	_CamPosition->TurnLeft(_Input->IsLeftArrowPressed());
-	_CamPosition->TurnRight(_Input->IsRightArrowPressed());
+	//_CamPosition->TurnLeft(_Input->IsLeftArrowPressed());
+	//_CamPosition->TurnRight(_Input->IsRightArrowPressed());
 	_CamPosition->MoveForward(_Input->IsKeyDown(DIK_W));
 	_CamPosition->MoveBack(_Input->IsKeyDown(DIK_S));
 	_CamPosition->MoveLeft(_Input->IsKeyDown(DIK_A));

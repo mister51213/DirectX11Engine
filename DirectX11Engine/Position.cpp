@@ -58,6 +58,11 @@ void PositionClass::GetPosition(XMFLOAT3& destination) const
 	return;
 }
 
+void PositionClass::SetOrientation(XMFLOAT3& newOrientation)
+{
+	_orientation = newOrientation;
+	return;
+}
 
 void PositionClass::TurnLeft(bool keydown)
 {
@@ -171,38 +176,8 @@ void PositionClass::MoveInDirection(bool keydown, float& increment, float x, flo
 	}
 
 	//@STUDY Command pattern
-	//MoveInDirectionRelative(XMFLOAT3(0.0f, 0.0f, increment));
 	MoveInDirectionRelative(XMFLOAT3(x,y,z)*increment);
-
 }
-
-//void PositionClass::MoveInDirectionBack(bool keydown, float x, float y, float z)
-//{
-//	if (keydown)
-//	{
-//		_backIncrement += _frameTime * _moveSpeed;
-//
-//		if (_backIncrement > (_frameTime * _maxSpeed))
-//		{
-//			_backIncrement = _frameTime * _maxSpeed;
-//		}
-//	}
-//	else
-//	{
-//		_backIncrement -= _frameTime * _brakeSpeed;
-//
-//		if (_backIncrement < 0.0f)
-//		{
-//			_backIncrement = 0.0f;
-//		}
-//	}
-//
-//	//@STUDY Command pattern
-//	MoveInDirectionRelative(XMFLOAT3(0.0f, 0.0f, -_backIncrement));
-//	//MoveInDirectionRelative(XMFLOAT3(x,y,z)*_walkIncrement);
-//
-//}
-
 
 void PositionClass::MoveInDirectionRelative(const XMFLOAT3& displacement)
 {
@@ -224,13 +199,4 @@ void PositionClass::MoveInDirectionRelative(const XMFLOAT3& displacement)
 	_position.x += worldDispFloat3.x;
 	_position.y += worldDispFloat3.y;
 	_position.z += worldDispFloat3.z;
-}
-
-
-void PositionClass::StrafeLeft(bool keydown)
-{
-}
-
-void PositionClass::StrafeRight(bool keydown)
-{
 }
