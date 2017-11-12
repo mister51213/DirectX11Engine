@@ -20,6 +20,7 @@ public:
 	Camera(const Camera&);
 	~Camera();
 
+	void Tick();
 	void SetPosition(float, float, float);
 	void MoveInDirection(XMFLOAT3 displacement);
 	void MoveInDirectionRelative(XMFLOAT3 displacement);

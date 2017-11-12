@@ -19,6 +19,11 @@ Camera::~Camera()
 {
 }
 
+void Camera::Tick()
+{
+
+}
+
 void Camera::SetPosition(float x, float y, float z)
 {
 	_positionX = x;

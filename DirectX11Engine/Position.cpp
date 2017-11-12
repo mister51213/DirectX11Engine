@@ -9,7 +9,9 @@ PositionClass::PositionClass()
 	_rotationY(0.f),
 	_leftTurnSpeed(0.f),
 	_rightTurnSpeed(0.f)
-{}
+{
+	_orientation = XMFLOAT3(0.f, 0.f, 0.f);
+}
 
 PositionClass::PositionClass(const PositionClass& other)
 {
@@ -25,11 +27,23 @@ void PositionClass::SetFrameTime(float time)
 	return;
 }
 
-void PositionClass::GetRotation(float& y)
+float PositionClass::GetFrameTime(float)
+{
+	return _frameTime;
+}
+
+void PositionClass::GetRotation(float& y) const
 {
 	y = _rotationY;
 	return;
 }
+
+void PositionClass::GetOrientation(XMFLOAT3& destination) const
+{
+	destination = _orientation;
+	return;
+}
+
 
 void PositionClass::TurnLeft(bool keydown)
 {
@@ -60,6 +74,13 @@ void PositionClass::TurnLeft(bool keydown)
 		_rotationY += 360.0f;
 	}
 
+	//@CUSTOM
+	_orientation.y -= _leftTurnSpeed;
+	if (_orientation.y < 0.0f)
+	{
+		_orientation.y += 360.0f;
+	}
+
 	return;
 }
 
@@ -86,11 +107,39 @@ void PositionClass::TurnRight(bool keydown)
 	}
 
 	// Update the rotation using the turning speed.
-	_rotationY += _rightTurnSpeed;
-	if (_rotationY > 360.0f)
+	//_rotationY += _rightTurnSpeed;
+	//if (_rotationY > 360.0f)
+	//{
+	//	_rotationY -= 360.0f;
+	//}
+
+	//@CUSTOM
+	_orientation.y -= _leftTurnSpeed;
+	if (_orientation.y  > 360.0f)
 	{
-		_rotationY -= 360.0f;
+		_orientation.y -= 360.0f;
 	}
 
 	return;
+}
+
+void PositionClass::SetMouseLocation(int X, int Y)
+{
+	mouseX = X;
+	mouseY = Y;
+}
+
+void PositionClass::MoveForward(bool keydown)
+{}
+
+void PositionClass::MoveBack(bool keydown)
+{
+}
+
+void PositionClass::StrafeLeft(bool keydown)
+{
+}
+
+void PositionClass::StrafeRight(bool keydown)
+{
 }

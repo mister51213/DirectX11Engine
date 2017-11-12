@@ -305,7 +305,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	return true;
 }
 
-void Graphics::Shutdown()
+void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of intialization
 {
 	// Release the frustum object.
 	if (_Frustum)
@@ -337,6 +337,14 @@ void Graphics::Shutdown()
 		_LightShader = 0;
 	}
 
+	// Release the light shader object.
+	if (_FontShader)
+	{
+		_FontShader->Shutdown();
+		delete _FontShader;
+		_FontShader = 0;
+	}
+	
 	// Release the model object.
 	if (_Model)
 	{
@@ -449,10 +457,15 @@ bool Graphics::Frame(/*float rotationY, int mouseX, int mouseY, int fps, int cpu
 	//}
 
 	// Set the position of the camera.
-	_Camera->SetPosition(0.0f, 0.0f, -10.0f);
+	_Camera->SetPosition(posX, posY, posZ);
 
 	// Set the rotation of the camera.
-	_Camera->SetRotation(0.0f, rotY/*rotationY*/, 0.0f);
+	_Camera->SetRotation(rotX, rotY/*rotationY*/, rotZ);
+
+	if (Camera* cam = GetCamera())
+	{
+		_Camera->Tick();
+	}
 
 	// Update the rotation variable each frame.
 	//_modelRotation += (float)XM_PI * 0.0003f;
@@ -488,7 +501,7 @@ bool Graphics::Frame(/*float rotationY, int mouseX, int mouseY, int fps, int cpu
 
 bool Graphics::Render()
 {
-	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, orthoMatrix; //@NEW
+	XMMATRIX worldPosition, viewMatrix, projectionMatrix, orthoMatrix; //@NEW
 	int modelCount, renderCount, index;
 	float positionX, positionY, positionZ, radius;
 	XMFLOAT4 color;
@@ -501,7 +514,7 @@ bool Graphics::Render()
 	_Camera->Render();
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
-	_D3D->GetWorldMatrix(worldMatrix);
+	_D3D->GetWorldMatrix(worldPosition);
 	_Camera->GetViewMatrix(viewMatrix);
 	_D3D->GetProjectionMatrix(projectionMatrix);
 	_D3D->GetOrthoMatrix(orthoMatrix); //@NEW
@@ -531,9 +544,9 @@ bool Graphics::Render()
 		if (renderModel)
 		{
 			//Rotate the world matrix by the rotation value so that the triangle will spin.
-			worldMatrix = DirectX::XMMatrixRotationY(_modelRotation);
+			//worldMatrix = DirectX::XMMatrixRotationY(_modelRotation);
 			//Move the model to the location it should be rendered at.
-			worldMatrix = DirectX::XMMatrixTranslation(positionX, positionY, positionZ);
+			worldPosition = DirectX::XMMatrixTranslation(positionX, positionY, positionZ);
 
 			// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 			_Model->Render(_D3D->GetDeviceContext());
@@ -542,7 +555,7 @@ bool Graphics::Render()
 			result = _LightShader->Render(
 				_D3D->GetDeviceContext(),
 				_Model->GetIndexCount(),
-				worldMatrix,
+				worldPosition,
 				viewMatrix,
 				projectionMatrix,
 				_Model->GetTextureArray(),
@@ -558,7 +571,7 @@ bool Graphics::Render()
 			}
 
 			// Reset to the original world matrix.
-			_D3D->GetWorldMatrix(worldMatrix);
+			_D3D->GetWorldMatrix(worldPosition);
 
 			// Since this model was rendered then increase the count for this frame.
 			renderCount++;
@@ -587,18 +600,18 @@ bool Graphics::Render()
 	//}
 
 	// Render the fps string.
-	m_FpsString->Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
+	m_FpsString->Render(_D3D->GetDeviceContext(), _FontShader, worldPosition, viewMatrix, orthoMatrix, m_Font1->GetTexture());
 
 	// Render the position and rotation strings.
 	for (int i = 0; i<6; i++)
 	{
-		m_PositionStrings[i].Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
+		m_PositionStrings[i].Render(_D3D->GetDeviceContext(), _FontShader, worldPosition, viewMatrix, orthoMatrix, m_Font1->GetTexture());
 	}
 
 	// Render the render count strings.
 	for (int i = 0; i<3; i++)
 	{
-		m_RenderCountStrings[i].Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
+		m_RenderCountStrings[i].Render(_D3D->GetDeviceContext(), _FontShader, worldPosition, viewMatrix, orthoMatrix, m_Font1->GetTexture());
 	}
 
 	// Turn off alpha blending after rendering the text.

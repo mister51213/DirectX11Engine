@@ -10,7 +10,7 @@ System::System()
 	_Fps(nullptr),
 	_Cpu(nullptr),
 	_Timer(nullptr),
-	_Position(nullptr)
+	_CamPosition(nullptr)
 {}
 
 System::System(const System& other)
@@ -100,8 +100,8 @@ bool System::Initialize()
 	_Cpu->Initialize();
 
 	// Create the position object.
-	_Position = new PositionClass;
-	if (!_Position)
+	_CamPosition = new PositionClass;
+	if (!_CamPosition)
 	{
 		return false;
 	}
@@ -112,10 +112,10 @@ bool System::Initialize()
 void System::Shutdown()
 {
 	// Release the position object.
-	if (_Position)
+	if (_CamPosition)
 	{
-		delete _Position;
-		_Position = 0;
+		delete _CamPosition;
+		_CamPosition = 0;
 	}
 
 	// Release the cpu object.
@@ -197,6 +197,7 @@ void System::Run()
 			}
 		}
 
+		//@TODO: should this also be in process input?
 		// Check if the user pressed escape and wants to quit.
 		if (_Input->IsEscapePressed() == true)
 		{
@@ -213,6 +214,7 @@ bool System::Frame()
 	int mouseX = 0; 
 	int mouseY = 0;
 	float rotationY = 0;
+	XMFLOAT3 orientation;
 
 	// Update the system stats.
 	_Timer->Frame();
@@ -227,29 +229,18 @@ bool System::Frame()
 	}
 
 	// Set the frame time for calculating the updated position.
-	_Position->SetFrameTime(_Timer->GetTime());
-
-	// Check if the left or right arrow key has been pressed, if so rotate the camera accordingly.
-	keyDown = _Input->IsLeftArrowPressed();
-	_Position->TurnLeft(keyDown);
-
-	keyDown = _Input->IsRightArrowPressed();
-	_Position->TurnRight(keyDown);
-
-	//@custom
-	//result = ProcessInput();
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
+	_CamPosition->SetFrameTime(_Timer->GetTime());
 
 	//// Get the current view point rotation.
-	_Position->GetRotation(rotationY);
+	_CamPosition->GetRotation(rotationY);
+	_CamPosition->GetOrientation(orientation);
+
+	//// Check if the left or right arrow key has been pressed, if so rotate the camera accordingly. //@custom
+	ProcessInput();
 
 	// Do the frame processing for the graphics object.
 	//result = _Graphics->Frame(rotationY, mouseX, mouseY, _Fps->GetFps(), _Cpu->GetCpuPercentage(), _Timer->GetTime());
-	result = _Graphics->Frame(_Timer->GetTime(), _Fps->GetFps(), /*_Position.X, _Position.Y, _Position.Z,*/ 0.f,0.f,0.f, 0.f, rotationY, 0.f);
+	result = _Graphics->Frame(_Timer->GetTime(), _Fps->GetFps(), /*_Position.X, _Position.Y, _Position.Z,*/ 0.f,0.f,0.f, 0.f, orientation.y, 0.f);
 	if (!result)
 	{
 		return false;
@@ -266,14 +257,25 @@ bool System::Frame()
 }
 
 //@CUSTOM @TODO - rewrite
-//bool System::ProcessInput()
-//{
-	//// Check if the user pressed escape and wants to exit the application.
-	//if (_Input->IsKeyDown(VK_ESCAPE))
-	//{
-	//	return false;
-	//}
-	//// @TODO: 
+void System::ProcessInput()
+{
+	//@STUDY command vs observer pattern
+	// Check if the left or right arrow key has been pressed, if so rotate the camera accordingly.
+	_CamPosition->TurnLeft(_Input->IsLeftArrowPressed());
+	_CamPosition->TurnRight(_Input->IsRightArrowPressed());
+	int mouseX, mouseY;
+	_Input->GetMouseLocation(mouseX, mouseY);
+	_CamPosition->SetMouseLocation(mouseX, mouseY);
+
+	//_CamPosition->TurnLeft();
+	//_CamPosition->TurnRight(_Input->GetMouseLocation());
+
+
+	//_CamPosition->MoveForward(_Input->IsRightArrowPressed());
+	//_CamPosition->MoveBack(_Input->IsRightArrowPressed());
+	//_CamPosition->StrafeLeft(_Input->IsRightArrowPressed());
+	//_CamPosition->StrafeRight(_Input->IsRightArrowPressed());
+
 	//// 1. Move this into another class
 	//float moveIncrement = 0.02f;
 	//float turnIncrement = 0.2f;
@@ -330,33 +332,11 @@ bool System::Frame()
 	//		cam->RotateInDirection(rotationOffset);
 	//	}
 	//}
-//	return true;
-//}
+}
 
 LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
-	//switch (umsg)
-	//{
-	//	// Check if a key has been pressed on the keyboard.
-	//case WM_KEYDOWN:
-	//{
-	//	// If a key is pressed send it to the input object so it can record that state.
-	//	_Input->KeyDown((unsigned int)wparam);
-	//	return 0;
-	//}
-	//// Check if a key has been released on the keyboard.
-	//case WM_KEYUP:
-	//{
-	//	// If a key is released then send it to the input object so it can unset the state for that key.
-	//	_Input->KeyUp((unsigned int)wparam);
-	//	return 0;
-	//}
-	//// Any other messages send to the default message handler as our application won't make use of them.
-	//default:
-	//{
-		return DefWindowProc(hwnd, umsg, wparam, lparam);
-	//}
-	//}
+	return DefWindowProc(hwnd, umsg, wparam, lparam);
 }
 
 void System::InitializeWindows(int& screenWidth, int& screenHeight)

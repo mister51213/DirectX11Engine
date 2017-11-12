@@ -231,7 +231,6 @@ bool Input::IsLeftArrowPressed()
 	return false;
 }
 
-
 bool Input::IsRightArrowPressed()
 {
 	if (_keyboardState[DIK_RIGHT] & 0x80)

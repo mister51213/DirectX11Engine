@@ -40,7 +40,7 @@ public:
 
 private:
 	bool Frame();
-	//bool ProcessInput(); //@custom
+	void ProcessInput(); //@custom
 	void InitializeWindows(int&, int&);
 	void ShutdownWindows();
 
@@ -55,7 +55,7 @@ private:
 	FpsClass* _Fps;
 	CpuClass* _Cpu;
 	TimerClass* _Timer;
-	PositionClass* _Position;
+	PositionClass* _CamPosition;
 };
 
 /////////////////////////
