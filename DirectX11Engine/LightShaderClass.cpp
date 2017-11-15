@@ -429,7 +429,8 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	// Set shader texture resource in the pixel shader.
 	//deviceContext->PSSetShaderResources(0, 1, &texture);
 	//deviceContext->PSSetShaderResources(0, 2, textureArray); // multi tex
-	deviceContext->PSSetShaderResources(0, 3, textureArray); // triple tex with lightmap
+	//deviceContext->PSSetShaderResources(0, 3, textureArray); // triple tex with lightmap
+	deviceContext->PSSetShaderResources(0, 4, textureArray); // quadruple tex with lightmap
 
 	// Lock the light constant buffer so it can be written to.
 	result = deviceContext->Map(_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
