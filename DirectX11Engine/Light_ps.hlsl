@@ -44,7 +44,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     float4 color1;
     float4 color2;
     float4 lightColor; //light map
-	float4 alphaColor;
+	float4 alphaValue;
     
 	// computed blend of textures
 	float4 blendColor;
@@ -57,7 +57,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     float4 specular;
     float4 color;
 
-	float gamma = 2.5f;
+	float gamma = 2.f;
 
     // Sample the pixel color from the texture using the sampler at this texture coordinate location.
     //textureColor = shaderTexture.Sample(SampleType, input.tex);
@@ -71,10 +71,10 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	lightColor = shaderTextures[2].Sample(SampleType, input.tex);
 
 	// Apply alpha
-	alphaColor = shaderTextures[3].Sample(SampleType, input.tex);
+	alphaValue = shaderTextures[3].Sample(SampleType, input.tex);
 
     // Blend the two pixels together and multiply by the gamma value.
-    blendColor = color1 * color2 * lightColor * alphaColor; //* gamma;
+    blendColor = (alphaValue * color1) + ((1.0f - alphaValue) * color2) * lightColor * gamma;
     
     // Saturate the final color.
     blendColor = saturate(blendColor);
