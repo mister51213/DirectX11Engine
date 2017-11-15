@@ -146,14 +146,14 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 		return false;
 	}
 
-	// Create the 2nd shader resource view for the texture.
+	// Create the 3rd shader resource view for the texture.
 	hResult = device->CreateShaderResourceView(_texture3, &srvDesc, &_textureViews[2]);
 	if (FAILED(hResult))
 	{
 		return false;
 	}
 
-	// Create the 2nd shader resource view for the texture.
+	// Create the 4th shader resource view for the texture.
 	hResult = device->CreateShaderResourceView(_texture4, &srvDesc, &_textureViews[3]);
 	if (FAILED(hResult))
 	{

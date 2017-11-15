@@ -241,9 +241,9 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		_D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/sphere.txt",
 			"../DirectX11Engine/data/stone.tga", // tex1
-			"../DirectX11Engine/data/dirt.tga", // tex2
-				"../DirectX11Engine/data/fire.tga", // lightmap
-				"../DirectX11Engine/data/light2.tga"); // alpha
+			"../DirectX11Engine/data/stone.tga", // tex2
+				"../DirectX11Engine/data/stone.tga", // lightmap
+		"../DirectX11Engine/data/stone.tga"); // alpha
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);

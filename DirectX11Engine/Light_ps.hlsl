@@ -46,6 +46,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     float4 lightColor; //light map
 	float4 alphaColor;
     
+	// computed blend of textures
 	float4 blendColor;
 
 	// lighting data
