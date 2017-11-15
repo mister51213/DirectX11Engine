@@ -240,12 +240,10 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		_D3D->GetDevice(),
 		_D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/sphere.txt",
-		//"../DirectX11Engine/data/fire2.tga",
-		"../DirectX11Engine/data/stone01.tga",
-		"../DirectX11Engine/data/dirt01.tga",
-		"../DirectX11Engine/data/light01.tga"
-/*		"../DirectX11Engine/data/stone01.tga",
-		"../DirectX11Engine/data/dirt01.tga"*/);
+			"../DirectX11Engine/data/stone.tga", // tex1
+			"../DirectX11Engine/data/dirt.tga", // tex2
+				"../DirectX11Engine/data/fire.tga", // lightmap
+				"../DirectX11Engine/data/light2.tga"); // alpha
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
@@ -275,7 +273,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the light object.
-	_Light->SetAmbientColor(0.f, 0.f, 0.15f, 1.0f);
+	_Light->SetAmbientColor(1.f, 1.f, 1.0f, 1.0f);
 	_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_Light->SetDirection(0.0f, 0.0f, 1.0f);
 	_Light->SetSpecularColor(.0f, .0f, 1.0f, 1.0f);

@@ -10,7 +10,7 @@
 /////////////
 // texture resource that will be used for rendering the texture on the model
 //Texture2D shaderTexture;
-Texture2D shaderTextures[3];
+Texture2D shaderTextures[4];
 // allows modifying how pixels are written to the polygon face, for example choosing which to draw. 
 SamplerState SampleType;
 
@@ -44,7 +44,9 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     float4 color1;
     float4 color2;
     float4 lightColor; //light map
-    float4 blendColor;
+	float4 alphaColor;
+    
+	float4 blendColor;
 
 	// lighting data
     float4 textureColor;
@@ -53,6 +55,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     float3 reflection;
     float4 specular;
     float4 color;
+
 	float gamma = 2.5f;
 
     // Sample the pixel color from the texture using the sampler at this texture coordinate location.
@@ -65,9 +68,12 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 	// Apply lightmap
 	lightColor = shaderTextures[2].Sample(SampleType, input.tex);
-	
+
+	// Apply alpha
+	alphaColor = shaderTextures[3].Sample(SampleType, input.tex);
+
     // Blend the two pixels together and multiply by the gamma value.
-    blendColor = color1 * color2 * lightColor * gamma;
+    blendColor = color1 * color2 * lightColor * alphaColor; //* gamma;
     
     // Saturate the final color.
     blendColor = saturate(blendColor);
