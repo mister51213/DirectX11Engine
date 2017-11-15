@@ -242,7 +242,8 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		"../DirectX11Engine/data/sphere.txt",
 		//"../DirectX11Engine/data/fire2.tga",
 		"../DirectX11Engine/data/stone01.tga",
-		"../DirectX11Engine/data/dirt01.tga"
+		"../DirectX11Engine/data/dirt01.tga",
+		"../DirectX11Engine/data/light01.tga"
 /*		"../DirectX11Engine/data/stone01.tga",
 		"../DirectX11Engine/data/dirt01.tga"*/);
 	if (!result)

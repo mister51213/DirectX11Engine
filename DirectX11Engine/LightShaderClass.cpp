@@ -274,7 +274,6 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	return true;
 }
 
-
 void LightShaderClass::ShutdownShader()
 {
 	// Release the light constant buffer.
@@ -429,7 +428,8 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	// Set shader texture resource in the pixel shader.
 	//deviceContext->PSSetShaderResources(0, 1, &texture);
-	deviceContext->PSSetShaderResources(0, 2, textureArray); //@TODO no need to pass address?
+	//deviceContext->PSSetShaderResources(0, 2, textureArray); // multi tex
+	deviceContext->PSSetShaderResources(0, 3, textureArray); // triple tex with lightmap
 
 	// Lock the light constant buffer so it can be written to.
 	result = deviceContext->Map(_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

@@ -200,6 +200,7 @@ void Input::ProcessInput()
 	_mouseX += _mouseState.lX;
 	_mouseY += _mouseState.lY;
 
+	//@TODO - clamp angles not position   @STUDY
 	// Ensure the mouse location doesn't exceed the screen width or height.
 	//if (_mouseX < 0) { _mouseX = 0; }
 	//if (_mouseY < 0) { _mouseY = 0; }

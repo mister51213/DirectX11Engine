@@ -136,7 +136,7 @@ bool FontClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	}
 
 	// Initialize the texture object.
-	result = m_Texture->Initialize(device, deviceContext, filename, filename);
+	result = m_Texture->Initialize(device, deviceContext, filename, filename, filename);
 	if (!result)
 	{
 		return false;
@@ -256,18 +256,10 @@ int FontClass::GetSentencePixelLength(char* sentence)
 	return pixelLength;
 }
 
-
 int FontClass::GetFontHeight()
 {
 	return (int)m_fontHeight;
 }
-
-
-
-
-
-
-
 
 /////////////////////////////////////////////////////////////////////////////////
 //// Filename: fontclass.cpp
