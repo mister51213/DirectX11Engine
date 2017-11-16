@@ -96,7 +96,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 	/////////////////// BLENDING /////////////////////////
     // Blend the two pixels together and multiply by the gamma value.
-    blendColor = (alphaValue * color1) + ((1.0f - alphaValue) * color2) * lightColor /** bumpMap*/ ;//* gamma;
+    blendColor = (alphaValue * color1) + ((1.0f - alphaValue) * color2) * /*lightColor **/ gamma;
     
     // Saturate the final color.
     blendColor = saturate(blendColor);
@@ -111,8 +111,8 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     lightDir = -lightDirection;
 
     // Calculate the amount of light on this pixel.
-    lightIntensity = saturate(dot(input.normal, lightDir));
-   // lightIntensity = saturate(dot(bumpNormal, lightDir));
+    //lightIntensity = saturate(dot(input.normal, lightDir));
+    lightIntensity = saturate(dot(bumpNormal, lightDir));
 
 	if(lightIntensity > 0.0f)
     {
@@ -123,7 +123,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
         color = saturate(color);
 
 		// Calculate the reflection vector based on the light intensity, normal vector, and light direction.
-        reflection = normalize(2 * lightIntensity * input.normal - lightDir); 
+        reflection = normalize(2 * lightIntensity * /*input.normal*/bumpNormal - lightDir); 
 
         // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
         specular = pow(saturate(dot(reflection, input.viewDirection)), specularPower);
@@ -133,7 +133,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     color = color * blendColor; //textureColor;
 
     // Saturate the final light color.
-   color = saturate(color + specular);
+    color = saturate(color+ specular);
 
     return color;
 }
