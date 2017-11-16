@@ -32,6 +32,8 @@ struct PixelInputType
 	float4 position : SV_POSITION;
 	float2 tex : TEXCOORD0;
     float3 normal : NORMAL;
+	float3 tangent : TANGENT;
+    float3 binormal : BINORMAL;
     float3 viewDirection : TEXCOORD1;
 };
 
@@ -40,6 +42,7 @@ struct PixelInputType
 ////////////////////////////////////////////////////////////////////////////////
 float4 LightPixelShader(PixelInputType input) : SV_TARGET
 {
+	//////////// INIT VALUES ////////////////
 	// multi texturing data
     float4 color1;
     float4 color2;
@@ -57,7 +60,8 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     float4 specular;
     float4 color;
 
-	float4 normal;
+    float4 bumpMap;
+    float3 bumpNormal;
 
 	float gamma = 2.f;
 
@@ -75,11 +79,24 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	// Apply alpha
 	alphaValue = shaderTextures[3].Sample(SampleType, input.tex);
 
-	// Get normal value
-	normal = shaderTextures[4].Sample(SampleType, input.tex);
+	// Get normal value from the bump map
+	bumpMap = shaderTextures[4].Sample(SampleType, input.tex);
 
+
+	/////////////////// NORMAL MAPPING //////////////////
+	// Expand the range of the normal value from (0, +1) to (-1, +1).
+    bumpMap = (bumpMap * 2.0f) - 1.0f;
+
+	// Change the COORDINATE BASIS of the normal into the space represented by basis vectors tangent, binormal, and normal!
+    bumpNormal = (bumpMap.x * input.tangent) + (bumpMap.y * input.binormal) + (bumpMap.z * input.normal);
+
+	// Normalize the resulting bump normal.
+    bumpNormal = normalize(bumpNormal);
+
+
+	/////////////////// BLENDING /////////////////////////
     // Blend the two pixels together and multiply by the gamma value.
-    blendColor = (alphaValue * color1) + ((1.0f - alphaValue) * color2) * lightColor /** normal*/ * gamma;
+    blendColor = (alphaValue * color1) + ((1.0f - alphaValue) * color2) * lightColor /** bumpMap*/ ;//* gamma;
     
     // Saturate the final color.
     blendColor = saturate(blendColor);
@@ -95,6 +112,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
     // Calculate the amount of light on this pixel.
     lightIntensity = saturate(dot(input.normal, lightDir));
+   // lightIntensity = saturate(dot(bumpNormal, lightDir));
 
 	if(lightIntensity > 0.0f)
     {
@@ -115,7 +133,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     color = color * blendColor; //textureColor;
 
     // Saturate the final light color.
-    color = saturate(color + specular);
+   color = saturate(color + specular);
 
     return color;
 }

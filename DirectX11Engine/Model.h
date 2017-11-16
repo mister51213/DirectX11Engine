@@ -30,6 +30,8 @@ private:
 		XMFLOAT3 position;
 		XMFLOAT2 texture;
 		XMFLOAT3 normal;
+		XMFLOAT3 tangent;
+		XMFLOAT3 binormal;
 	};
 
 	// Contains position, texture coords, and normal vectors corresponding to model file to be loaded
@@ -38,6 +40,21 @@ private:
 		float x, y, z;
 		float tu, tv;
 		float nx, ny, nz;
+		float tx, ty, tz;
+		float bx, by, bz;
+	};
+
+	// Used to calculate tangent and binormal
+	struct TempVertexType
+	{
+		float x, y, z;
+		float tu, tv;
+		float nx, ny, nz;
+	};
+
+	struct VectorType
+	{
+		float x, y, z;
 	};
 
 public:
@@ -66,6 +83,11 @@ private:
 
 	bool LoadTextures(ID3D11Device*, ID3D11DeviceContext*, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* textureFileName5);
 	void ReleaseTextures();
+
+	//functions for calculating the tangent and binormal vectors for the model.
+	void CalculateModelVectors();
+	void CalculateTangentBinormal(TempVertexType, TempVertexType, TempVertexType, VectorType&, VectorType&);
+	void CalculateNormal(VectorType, VectorType, VectorType&);
 
 private:
 	ID3D11Buffer *_vertexBuffer, *_indexBuffer;

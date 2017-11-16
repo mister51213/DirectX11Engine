@@ -244,7 +244,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 			"../DirectX11Engine/data/dirt.tga", // tex2
 				"../DirectX11Engine/data/light.tga", // lightmap
 		"../DirectX11Engine/data/alpha.tga", // alpha
-			"../DirectX11Engine/data/fire.tga"); // normal map
+			"../DirectX11Engine/data/bumpMap.tga"); // normal map
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
@@ -274,11 +274,11 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the light object.
-	_Light->SetAmbientColor(1.f, 1.f, 1.0f, 1.0f);
+	_Light->SetAmbientColor(.1f, .1f, .1f, 1.0f);
 	_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_Light->SetDirection(0.0f, 0.0f, 1.0f);
 	_Light->SetSpecularColor(.0f, .0f, 1.0f, 1.0f);
-	_Light->SetSpecularPower(45.0f); // the lower the power, the higher the effect intensity
+	_Light->SetSpecularPower(40.0f); // the lower the power, the higher the effect intensity
 
 	// Create the model list object.
 	_ModelList = new ModelListClass;
@@ -446,11 +446,11 @@ bool Graphics::Frame(float frameTime, int fps, float posX, float posY, float pos
 	}
 
 	// Update the rotation variable each frame.
-	//_modelRotation += (float)XM_PI * 0.0003f;
-	//if (_modelRotation > 360.0f)
-	//{
-	//	_modelRotation -= 360.0f;
-	//}
+	_modelRotation += (float)XM_PI * 0.0003f;
+	if (_modelRotation > 360.0f)
+	{
+		_modelRotation -= 360.0f;
+	}
 
 	// Update the fps string. //@TODO
 	result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
