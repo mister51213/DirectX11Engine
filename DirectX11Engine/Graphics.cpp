@@ -243,7 +243,8 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 			"../DirectX11Engine/data/stone.tga", // tex1
 			"../DirectX11Engine/data/dirt.tga", // tex2
 				"../DirectX11Engine/data/light.tga", // lightmap
-		"../DirectX11Engine/data/alpha.tga"); // alpha
+		"../DirectX11Engine/data/alpha.tga", // alpha
+			"../DirectX11Engine/data/fire.tga"); // normal map
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);

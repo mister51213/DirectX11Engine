@@ -18,7 +18,7 @@ Model::Model(const Model& other)
 Model::~Model()
 {}
 
-bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename1, char* textureFilename2, char* textureFileName3, char* textureFileName4)
+bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename1, char* textureFilename2, char* textureFileName3, char* textureFileName4, char* textureFilename5)
 {
 	bool result;
 
@@ -37,7 +37,7 @@ bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 	}
 
 	// Load the texture for this model.
-	result = LoadTextures(device, deviceContext, textureFilename1, textureFilename2, textureFileName3, textureFileName4);
+	result = LoadTextures(device, deviceContext, textureFilename1, textureFilename2, textureFileName3, textureFileName4, textureFilename5);
 	if (!result)
 	{
 		return false;
@@ -223,7 +223,7 @@ void Model::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	return;
 }
 
-bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fileName1, char* fileName2, char* fileName3, char* fileName4)
+bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* fileName5)
 {
 	bool result;
 
@@ -235,7 +235,7 @@ bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContex
 	}
 
 	// Initialize the texture object.
-	result = _TextureArray->Initialize(device, deviceContext, fileName1, fileName2, fileName3, fileName4);
+	result = _TextureArray->Initialize(device, deviceContext, fileName1, fileName2, fileName3, fileName4, fileName5);
 	if (!result)
 	{
 		return false;
