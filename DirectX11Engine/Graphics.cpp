@@ -235,7 +235,6 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the model object.
-	//result = _Model->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/stone01.tga");
 	result = _Model->Initialize(
 		_D3D->GetDevice(),
 		_D3D->GetDeviceContext(),
@@ -244,7 +243,8 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 			"../DirectX11Engine/data/dirt.tga", // tex2
 				"../DirectX11Engine/data/light.tga", // lightmap
 		"../DirectX11Engine/data/alpha.tga", // alpha
-			"../DirectX11Engine/data/bumpMap.tga"); // normal map
+			"../DirectX11Engine/data/bumpMap.tga", // normal map
+		"../DirectX11Engine/data/specMap.tga"); // specMap
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);

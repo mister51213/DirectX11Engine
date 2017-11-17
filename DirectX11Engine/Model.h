@@ -62,7 +62,7 @@ public:
 	Model(const Model&);
 	~Model();
 
-	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename1, char* textureFilename2, char* textureFilename3, char* textureFilename4, char* textureFilename5);
+	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename1, char* textureFilename2, char* textureFilename3, char* textureFilename4, char* textureFilename5, char* textureFilename6);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
@@ -81,7 +81,7 @@ private:
 	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
 	void RenderBuffers(ID3D11DeviceContext* deviceContext);
 
-	bool LoadTextures(ID3D11Device*, ID3D11DeviceContext*, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* textureFileName5);
+	bool LoadTextures(ID3D11Device*, ID3D11DeviceContext*, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* textureFileName5, char* texFileName6);
 	void ReleaseTextures();
 
 	//functions for calculating the tangent and binormal vectors for the model.

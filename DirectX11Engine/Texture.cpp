@@ -25,7 +25,7 @@ TextureClass::~TextureClass()
 {
 }
 
-bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename1, char* filename2, char* filename3, char* filename4, char* filename5)
+bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename1, char* filename2, char* filename3, char* filename4, char* filename5, char* filename6SpecMap)
 {
 	bool result;
 
@@ -76,10 +76,17 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	}
 
 	_targaData5 = LoadTarga(filename5, height, width, _targaData5);
-	if (!_targaData4)
+	if (!_targaData5)
 	{
 		return false;
 	}
+
+	_targaData6 = LoadTarga(filename6SpecMap, height, width, _targaData6);
+	if (!_targaData6)
+	{
+		return false;
+	}
+	
 
 	// Setup the description of the texture.
 	textureDesc.Height = height;
@@ -129,6 +136,13 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 		return false;
 	}
 
+	// Create the empty spec map
+	hResult = device->CreateTexture2D(&textureDesc, NULL, &_texture6);
+	if (FAILED(hResult))
+	{
+		return false;
+	}
+
 	// Set the row pitch of the targa image data.
 	rowPitch = (width * 4) * sizeof(unsigned char);
 
@@ -139,6 +153,7 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	deviceContext->UpdateSubresource(_texture3, 0, NULL, _targaData3, rowPitch, 0);
 	deviceContext->UpdateSubresource(_texture4, 0, NULL, _targaData4, rowPitch, 0);
 	deviceContext->UpdateSubresource(_texture5, 0, NULL, _targaData5, rowPitch, 0);
+	deviceContext->UpdateSubresource(_texture5, 0, NULL, _targaData6, rowPitch, 0);
 
 	// Setup the shader resource view description.
 	srvDesc.Format = textureDesc.Format;
@@ -181,14 +196,28 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 		return false;
 	}
 
+	// Create the 5th shader resource view for the texture.
+	hResult = device->CreateShaderResourceView(_texture6, &srvDesc, &_textureViews[5]);
+	if (FAILED(hResult))
+	{
+		return false;
+	}
+
 	// Generate mipmaps for this texture.
 	deviceContext->GenerateMips(_textureViews[0]);
 	deviceContext->GenerateMips(_textureViews[1]);
 	deviceContext->GenerateMips(_textureViews[2]);
 	deviceContext->GenerateMips(_textureViews[3]);
 	deviceContext->GenerateMips(_textureViews[4]);
+	deviceContext->GenerateMips(_textureViews[5]);
 	
 	// Release the targa image data now that the image data has been loaded into the texture.
+	if (_targaData6)
+	{
+		delete[] _targaData6;
+		_targaData6 = 0;
+	}
+
 	if (_targaData5)
 	{
 		delete[] _targaData5;
@@ -268,7 +297,19 @@ void TextureClass::Shutdown()
 		_textureViews[4] = 0;
 	}
 
+	if (_textureViews[5])
+	{
+		_textureViews[5]->Release();
+		_textureViews[5] = 0;
+	}
+
 	// Release the targa data. //@CLEANUP: Why done twice?
+	if (_targaData6)
+	{
+		delete[] _targaData6;
+		_targaData6 = 0;
+	}
+
 	if (_targaData5)
 	{
 		delete[] _targaData5;

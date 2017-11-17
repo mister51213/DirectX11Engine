@@ -10,7 +10,7 @@
 /////////////
 // texture resource that will be used for rendering the texture on the model
 //Texture2D shaderTexture;
-Texture2D shaderTextures[5];
+Texture2D shaderTextures[6];
 // allows modifying how pixels are written to the polygon face, for example choosing which to draw. 
 SamplerState SampleType;
 
