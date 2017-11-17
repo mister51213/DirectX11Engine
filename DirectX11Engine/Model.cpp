@@ -18,7 +18,7 @@ Model::Model(const Model& other)
 Model::~Model()
 {}
 
-bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename1, char* textureFilename2, char* textureFileName3, char* textureFileName4, char* normalMapFilename5, char* normalMapFilename6)
+bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename1, char* textureFilename2, char* lightMapFileName3, char* alphaFileName4, char* normalMapFilename5, char* specMapFilename6)
 {
 	bool result;
 
@@ -40,7 +40,7 @@ bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 	}
 
 	// Load the texture for this model.
-	result = LoadTextures(device, deviceContext, textureFilename1, textureFilename2, textureFileName3, textureFileName4, normalMapFilename5, normalMapFilename6);
+	result = LoadTextures(device, deviceContext, textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6);
 	if (!result)
 	{
 		return false;

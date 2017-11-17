@@ -153,7 +153,7 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	deviceContext->UpdateSubresource(_texture3, 0, NULL, _targaData3, rowPitch, 0);
 	deviceContext->UpdateSubresource(_texture4, 0, NULL, _targaData4, rowPitch, 0);
 	deviceContext->UpdateSubresource(_texture5, 0, NULL, _targaData5, rowPitch, 0);
-	deviceContext->UpdateSubresource(_texture5, 0, NULL, _targaData6, rowPitch, 0);
+	deviceContext->UpdateSubresource(_texture6, 0, NULL, _targaData6, rowPitch, 0);
 
 	// Setup the shader resource view description.
 	srvDesc.Format = textureDesc.Format;
