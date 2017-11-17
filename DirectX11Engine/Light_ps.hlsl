@@ -58,6 +58,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     float lightIntensity;
     float3 reflection;
     float4 specular;
+	float4 specularIntensity;
     float4 color;
 
     float4 bumpMap;
@@ -65,9 +66,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 	float gamma = 2.f;
 
-    // Sample the pixel color from the texture using the sampler at this texture coordinate location.
-    //textureColor = shaderTexture.Sample(SampleType, input.tex);
-	// Get the pixel color from the first texture.
+    // Sample the pixel color from the textures using the sampler at this texture coordinate location.
     color1 = shaderTextures[0].Sample(SampleType, input.tex);
 
     // Get the pixel color from the second texture.
@@ -116,6 +115,9 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 	if(lightIntensity > 0.0f)
     {
+	    // Sample the pixel from the specular map texture.
+        specularIntensity = shaderTextures[5].Sample(SampleType, input.tex);
+
         // Determine the final diffuse color based on the diffuse color and the amount of light intensity.
         color += (diffuseColor * lightIntensity);
 
@@ -127,6 +129,9 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
         // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
         specular = pow(saturate(dot(reflection, input.viewDirection)), specularPower);
+
+		// Use the specular map to determine the intensity of specular light at this pixel.
+        specular = specular * specularIntensity;
     }
 
     // Multiply the texture pixel and the final diffuse color to get the final pixel color result.

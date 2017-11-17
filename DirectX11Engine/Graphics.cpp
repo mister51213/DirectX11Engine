@@ -238,7 +238,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	result = _Model->Initialize(
 		_D3D->GetDevice(),
 		_D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/sphere.txt",
+		"../DirectX11Engine/data/cube.txt",
 			"../DirectX11Engine/data/stone.tga", // tex1
 			"../DirectX11Engine/data/dirt.tga", // tex2
 				"../DirectX11Engine/data/light.tga", // lightmap
@@ -278,7 +278,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_Light->SetDirection(0.0f, 0.0f, 1.0f);
 	_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_Light->SetSpecularPower(15.0f); // the lower the power, the higher the effect intensity
+	_Light->SetSpecularPower(16.0f); // the lower the power, the higher the effect intensity
 
 	// Create the model list object.
 	_ModelList = new ModelListClass;
