@@ -55,8 +55,6 @@ bool TextureShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCou
 {
 	bool result;
 
-	XMMATRIX id = XMMatrixIdentity();
-
 	// Set the shader parameters that it will use for rendering.
 	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture);
 	if (!result)

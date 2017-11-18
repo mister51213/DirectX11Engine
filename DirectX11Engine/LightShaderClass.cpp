@@ -16,7 +16,8 @@ LightShaderClass::LightShaderClass()
 	_sampleState(0),
 	_matrixBuffer(0),
 	_cameraBuffer(0),
-	_lightBuffer(0)
+	_lightBuffer(0),
+	_fogBuffer(0)
 {}
 
 LightShaderClass::LightShaderClass(const LightShaderClass& other)
@@ -52,12 +53,12 @@ void LightShaderClass::Shutdown()
 
 bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
-	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower)
+	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd)
 {
 	bool result;
 	
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, lightDirection, ambientColor, diffuseColor, cameraPosition, specularColor, specularPower);
+	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, lightDirection, ambientColor, diffuseColor, cameraPosition, specularColor, specularPower, fogStart, fogEnd);
 	if (!result)
 	{
 		return false;
@@ -68,7 +69,6 @@ bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount
 
 	return true;
 }
-
 
 bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename)
 {
@@ -84,9 +84,8 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	D3D11_BUFFER_DESC matrixBufferDesc;
 	D3D11_SAMPLER_DESC samplerDesc;
 	D3D11_BUFFER_DESC cameraBufferDesc;
-	
-	// description variable for the light constant buffer.
 	D3D11_BUFFER_DESC lightBufferDesc;
+	D3D11_BUFFER_DESC fogBufferDesc;
 	
 	// Initialize the pointers this function will use to null.
 	errorMessage = 0;
@@ -289,11 +288,33 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 		return false;
 	}
 
+	// Setup the description of the dynamic fog constant buffer that is in the vertex shader.
+	fogBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	fogBufferDesc.ByteWidth = sizeof(FogBufferType);
+	fogBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	fogBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	fogBufferDesc.MiscFlags = 0;
+	fogBufferDesc.StructureByteStride = 0;
+
+	// Create the fog buffer pointer so we can access the vertex shader fog constant buffer from within this class.
+	result = device->CreateBuffer(&fogBufferDesc, NULL, &_fogBuffer);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 	return true;
 }
 
 void LightShaderClass::ShutdownShader()
 {
+	// Release the fog constant buffer.
+	if (_fogBuffer)
+	{
+		_fogBuffer->Release();
+		_fogBuffer = 0;
+	}
+
 	// Release the light constant buffer.
 	if (_lightBuffer)
 	{
@@ -346,7 +367,6 @@ void LightShaderClass::ShutdownShader()
 	return;
 }
 
-
 void LightShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR* shaderFilename)
 {
 	char* compileErrors;
@@ -383,14 +403,15 @@ void LightShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 
 bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
-	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower)
+	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	unsigned int bufferNumber;
-	MatrixBufferType* dataPtr;
+	MatrixBufferType* dataPtr1;
 	LightBufferType* dataPtr2;
 	CameraBufferType* dataPtr3;
+	FogBufferType* dataPtr4;
 
 	// Transpose the matrices to prepare them for the shader.
 	worldMatrix = XMMatrixTranspose(worldMatrix);
@@ -405,12 +426,12 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	}
 
 	// Get a pointer to the data in the constant buffer.
-	dataPtr = (MatrixBufferType*)mappedResource.pData;
+	dataPtr1 = (MatrixBufferType*)mappedResource.pData;
 
 	// Copy the matrices into the constant buffer.
-	dataPtr->world = worldMatrix;
-	dataPtr->view = viewMatrix;
-	dataPtr->projection = projectionMatrix;
+	dataPtr1->world = worldMatrix;
+	dataPtr1->view = viewMatrix;
+	dataPtr1->projection = projectionMatrix;
 
 	// Unlock the constant buffer.
 	deviceContext->Unmap(_matrixBuffer, 0);
@@ -421,6 +442,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	// Now set the constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_matrixBuffer);
 
+	///////////////////// CAM INIT //////////////////////////////////
 	// Lock the camera constant buffer so it can be written to.
 	result = deviceContext->Map(_cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
@@ -443,6 +465,8 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	// Now set the camera constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_cameraBuffer);
+
+	/////////////////////// LIGHT INIT //////////////////////
 
 	// Set shader texture resource in the pixel shader.
 	//deviceContext->PSSetShaderResources(0, 1, &texture);
@@ -477,6 +501,33 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	// Finally set the light constant buffer in the pixel shader with the updated values.
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &_lightBuffer);
+
+	//////////////////////////////////////////////////////////////////////////////////////////
+	/////////// FOG INIT /////////////////////////// @TODO: is the data packed correctly???
+	// Lock the fog constant buffer so it can be written to.
+	result = deviceContext->Map(_fogBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	// Get a pointer to the data in the constant buffer.
+	dataPtr4 = (FogBufferType*)mappedResource.pData;
+
+	// Copy the fog information into the fog constant buffer.
+	dataPtr4->fogStart = fogStart;
+	dataPtr4->fogEnd = fogEnd;
+
+	// Unlock the constant buffer.
+	deviceContext->Unmap(_fogBuffer, 0);
+
+	// Set the position of the fog constant buffer in the vertex shader.
+	bufferNumber = 1; ///////////@TODO: fix these numbers in correct order
+
+	// Now set the fog buffer in the vertex shader with the updated values.
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_fogBuffer);
+
+	/////////////////////@TODO: is the data packed correctly ? ? ?///////////
 
 	return true;
 }

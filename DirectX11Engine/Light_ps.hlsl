@@ -35,6 +35,7 @@ struct PixelInputType
 	float3 tangent : TANGENT;
     float3 binormal : BINORMAL;
     float3 viewDirection : TEXCOORD1;
+	float fogFactor : FOG;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -48,6 +49,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     float4 color2;
     float4 lightColor; //light map
 	float4 alphaValue;
+    float4 fogColor = float4(0.5f, 0.3f, 0.3f, 1.0f);
     
 	// computed blend of textures
 	float4 blendColor;
@@ -137,8 +139,14 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     // Multiply the texture pixel and the final diffuse color to get the final pixel color result.
     color = color * blendColor; //textureColor;
 
+	//@TODO: experiment with calling this in different places
+	// Calculate the final color using the fog effect equation.
+    color = input.fogFactor * color + (1.0 - input.fogFactor) * fogColor;
+	//@TODO
+
     // Saturate the final light color.
-    color = saturate(color+ specular);
+    color = saturate(color + specular);
+    //color += specular;
 
     return color;
 }

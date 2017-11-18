@@ -23,8 +23,14 @@ cbuffer MatrixBuffer
 // pass in position of camera for reflection
 cbuffer CameraBuffer
 {
-    float3 cameraPosition;
+    float3 cameraPosition; // okay not to be float4?
     float padding;
+};
+
+cbuffer FogBuffer
+{
+    float fogStart;
+    float fogEnd;
 };
 
 //////////////
@@ -53,6 +59,7 @@ struct PixelInputType
 	float3 tangent : TANGENT;
     float3 binormal : BINORMAL;
 	float3 viewDirection : TEXCOORD1;
+	float fogFactor : FOG; //@TODO: Properly byte alligned?
 };
 
 // The output of the vertex shader will be sent to the pixel shader.
@@ -93,7 +100,32 @@ PixelInputType LightVertexShader(VertexInputType input)
 
     // Determine the viewing direction based on the position of the camera and the position of the vertex in the world.
     output.viewDirection = cameraPosition.xyz - worldPosition.xyz;
-	
+
+    // Calculate the camera position. // is this the same as the following method?
+    float4 cameraPosition = mul(input.position, worldMatrix);
+    cameraPosition = mul(cameraPosition, viewMatrix);
+	//float4 vertexPosViewSpace = mul(worldPosition, viewMatrix); @TODO: decide which way is better
+
+    // Calculate linear fog.
+    output.fogFactor = saturate((fogEnd - /*vertexPosViewSpace.z*/cameraPosition.z) / (fogEnd - fogStart));
+
+	//@TODO: Try other fog types:
+	/*
+	Linear fog adds a linear amount of fog based on the distance you are viewing the object from:
+
+	Linear Fog = (FogEnd - ViewpointDistance) / (FogEnd - FogStart)
+Exponential fog adds exponentially more fog the further away an object is inside the fog:
+
+	Exponential Fog = 1.0 / 2.71828 power (ViewpointDistance * FogDensity)
+Exponential 2 fog adds even more exponential fog than the previous equation giving a very thick fog appearance:
+
+	Exponential Fog 2 = 1.0 / 2.71828 power ((ViewpointDistance * FogDensity) * (ViewpointDistance * FogDensity))
+All three equations produce a fog factor. To apply that fog factor to the model's texture and produce a final pixel color value we use the following equation:
+
+	Fog Color = FogFactor * TextureColor + (1.0 - FogFactor) * FogColor
+
+	*/
+
     // Normalize the viewing direction vector.
     output.viewDirection = normalize(output.viewDirection);
 

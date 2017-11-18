@@ -527,7 +527,12 @@ bool Graphics::Frame(float frameTime, int fps, float posX, float posY, float pos
 
 bool Graphics::Render()
 {
-	XMMATRIX worldMatrix, /*viewMatrix, */baseViewMatrix, orthoMatrix;
+	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
+	
+	XMFLOAT3 fogColor(0.5f, 0.3f, 0.3f);
+	float fogStart = 0.0f;
+	float fogEnd = 3.f;
+
 	bool result;
 
 	// Render the entire scene to the texture first.
@@ -538,10 +543,11 @@ bool Graphics::Render()
 	}
 
 	// Clear the buffers to begin the scene.
-	_D3D->BeginScene(0.3f, 0.3f, 0.3f, 1.0f);
+	//_D3D->BeginScene(0.3f, 0.3f, 0.3f, 1.0f);
+	_D3D->BeginScene(fogColor.x, fogColor.y, fogColor.z, 1.0f);
 
 	// Render the scene as normal to the back buffer.
-	result = RenderScene();
+	result = RenderScene(fogStart, fogEnd);
 	if (!result)
 	{
 		return false;
@@ -551,59 +557,30 @@ bool Graphics::Render()
 	_D3D->TurnZBufferOff();
 
 	_D3D->GetWorldMatrix(worldMatrix);
-	//_Camera->GetViewMatrix(viewMatrix);
 	_Camera->GetBaseViewMatrix(baseViewMatrix);
 	_D3D->GetOrthoMatrix(orthoMatrix);
 
 	// Put the debug window vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	result = _DebugWindow->Render(_D3D->GetDeviceContext(), 80, 50); //@TODO - add in new texture shader for ui
+	result = _DebugWindow->Render(_D3D->GetDeviceContext(), 80, 50);
 	if (!result)
 	{
 		return false;
 	}
 
-	////////////////////////////////////////////////////////////////////////////////
-	/////@TODO: Add THIRD Shader class for this special view target
 	// Render the debug window using the texture shader.
-	result = 
-		_TextureShader->Render(
-			_D3D->GetDeviceContext(), 
-			_DebugWindow->GetIndexCount(), 
-			worldMatrix, 
-			baseViewMatrix, //viewMatrix,
-			orthoMatrix, 
-			_RenderTexture->GetShaderResourceView());
+	result = _TextureShader->Render(
+				_D3D->GetDeviceContext(), 
+				_DebugWindow->GetIndexCount(), 
+				worldMatrix, 
+				baseViewMatrix, //viewMatrix,
+				orthoMatrix, 
+				_RenderTexture->GetShaderResourceView());
 	if (!result)
 	{
 		return false;
 	}
-	/////@TODO: Add THIRD Shader class for this special view target
-	////////////////////////////////////////////////////////////////////////////////
 
-	// Turn on the alpha blending before rendering the text.
-	//_D3D->TurnOnAlphaBlending();
-	_D3D->EnableAlphaBlending();
-
-	////////////////////////////////////////////////////////////////////////////////
-	//@TODO: encapsulate into RENDER FONTS /////////////////////////////////////////
-	// Render the fps string.
-	m_FpsString->Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, m_Font1->GetTexture());
-	// Render the position and rotation strings.
-	for (int i = 0; i<6; i++)
-	{
-		m_PositionStrings[i].Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, m_Font1->GetTexture());
-	}
-	// Render the render count strings.
-	for (int i = 0; i<3; i++)
-	{
-		m_RenderCountStrings[i].Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, m_Font1->GetTexture());
-	}
-	//@TODO: encapsulate into RENDER FONTS /////////////////////////////////////////
-	////////////////////////////////////////////////////////////////////////////////
-
-	// Turn off alpha blending after rendering the text.
-	//_D3D->TurnOffAlphaBlending();
-	_D3D->DisableAlphaBlending();
+	RenderText(worldMatrix, baseViewMatrix, orthoMatrix);
 
 	// Turn the Z buffer back on now that all 2D rendering has completed.
 	_D3D->TurnZBufferOn();
@@ -623,7 +600,7 @@ bool Graphics::RenderToTexture()
 	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 1.0f, 1.0f);
 
 	// Render the scene now and it will draw to the render to texture instead of the back buffer.
-	bool result = RenderScene();
+	bool result = RenderScene(0.f,10.f); //@REFACTOR later
 	if (!result)
 	{
 		return false;
@@ -636,7 +613,29 @@ bool Graphics::RenderToTexture()
 	return result;
 }
 
-bool Graphics::RenderScene()
+void Graphics::RenderText(const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATRIX &baseViewMatrix, const DirectX::XMMATRIX &orthoMatrix)
+{
+	// Turn on the alpha blending before rendering the text.
+	_D3D->EnableAlphaBlending();
+
+	// Render the fps string.
+	m_FpsString->Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, m_Font1->GetTexture());
+	// Render the position and rotation strings.
+	for (int i = 0; i<6; i++)
+	{
+		m_PositionStrings[i].Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, m_Font1->GetTexture());
+	}
+	// Render the render count strings.
+	for (int i = 0; i<3; i++)
+	{
+		m_RenderCountStrings[i].Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, m_Font1->GetTexture());
+	}
+
+	// Turn off alpha blending after rendering the text.
+	_D3D->DisableAlphaBlending();
+}
+
+bool Graphics::RenderScene(float fogStart, float fogEnd)
 {
 	XMMATRIX worldPosition, viewMatrix, projectionMatrix;
 	int modelCount, renderCount, index;
@@ -698,7 +697,9 @@ bool Graphics::RenderScene()
 				color, //_Light->GetDiffuseColor(), 
 				_Camera->GetPosition(),
 				/*color,*/ _Light->GetSpecularColor(),
-				_Light->GetSpecularPower());
+				_Light->GetSpecularPower(),
+				fogStart,
+				fogEnd);
 			if (!result)
 			{
 				return false;

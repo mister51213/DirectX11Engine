@@ -46,12 +46,14 @@ public:
 		float rotX, float rotY, float rotZ);
 	bool Render();
 
+	void RenderText(const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATRIX &baseViewMatrix, const DirectX::XMMATRIX &orthoMatrix);
+
 	inline Camera* GetCamera() { return _Camera; }
 	bool UpdateRenderCounts(ID3D11DeviceContext*, int, int, int);
 
 private:
 	bool RenderToTexture();
-	bool RenderScene();
+	bool RenderScene(float fogStart, float fogEnd);
 
 	bool UpdateFpsString(ID3D11DeviceContext*, int);
 	bool UpdatePositionStrings(ID3D11DeviceContext*, float, float, float, float, float, float);
