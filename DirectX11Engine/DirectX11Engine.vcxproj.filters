@@ -81,6 +81,9 @@
     <ClCompile Include="DebugWindowClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="TextureShaderClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="System.h">
@@ -146,6 +149,9 @@
     <ClInclude Include="DebugWindowClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TextureShaderClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Light_vs.hlsl" />
@@ -153,5 +159,7 @@
     <None Include="font.ps" />
     <None Include="font.vs" />
     <None Include="packages.config" />
+    <None Include="texture_ps.hlsl" />
+    <None Include="texture_vs.hlsl" />
   </ItemGroup>
 </Project>

@@ -20,7 +20,8 @@ Graphics::Graphics()
 	m_PositionStrings(nullptr),
 	m_RenderCountStrings(nullptr),
 	_RenderTexture(nullptr),
-	_DebugWindow(nullptr)
+	_DebugWindow(nullptr),
+	_TextureShader(nullptr)
 {}
 
 Graphics::Graphics(const Graphics& other)
@@ -106,6 +107,22 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, L"Could not initialize the debug window object.", L"Error", MB_OK);
 		return false;
 	}
+
+	// Create the texture shader object.
+	_TextureShader = new TextureShaderClass;
+	if (!_TextureShader)
+	{
+		return false;
+	}
+
+	// Initialize the texture shader object.
+	result = _TextureShader->Initialize(_D3D->GetDevice(), hwnd);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
+		return false;
+	}
+
 
 	// Create the first font object.
 	m_Font1 = new FontClass;
@@ -375,6 +392,14 @@ void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of inti
 		_FontShader = 0;
 	}
 	
+	// Release the texture shader object.
+	if (_TextureShader)
+	{
+		_TextureShader->Shutdown();
+		delete _TextureShader;
+		_TextureShader = 0;
+	}
+
 	// Release the model object.
 	if (_Model)
 	{
@@ -603,12 +628,12 @@ bool Graphics::Render()
 	////////////////////////////////////////////////////////////////////////////////
 	/////@TODO: Add THIRD Shader class for this special view target
 	// Render the debug window using the texture shader.
-	//result = _TextureShader->Render(_D3D->GetDeviceContext(), _DebugWindow->GetIndexCount(), worldMatrix, viewMatrix,
-	//	orthoMatrix, _RenderTexture->GetShaderResourceView());
-	//if (!result)
-	//{
-	//	return false;
-	//}
+	result = _TextureShader->Render(_D3D->GetDeviceContext(), _DebugWindow->GetIndexCount(), worldMatrix, viewMatrix,
+		orthoMatrix, _RenderTexture->GetShaderResourceView());
+	if (!result)
+	{
+		return false;
+	}
 	/////@TODO: Add THIRD Shader class for this special view target
 	////////////////////////////////////////////////////////////////////////////////
 

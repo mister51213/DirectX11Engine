@@ -26,6 +26,8 @@ const float SCREEN_NEAR = 0.1f;
 #include "debugwindowclass.h"
 #include "modellistclass.h"
 #include "frustumclass.h"
+#include "textureshaderclass.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
@@ -74,6 +76,7 @@ private:
 	FrustumClass* _Frustum;
 	RenderTextureClass* _RenderTexture;
 	DebugWindowClass* _DebugWindow;
+	TextureShaderClass* _TextureShader;
 
 	float _modelRotation = 0.0f;
 };
