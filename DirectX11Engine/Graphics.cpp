@@ -78,20 +78,34 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	////////////////
 	// UI RELATED //
 	////////////////
-	// Create the text object.
-	//_Text = new TextClass;
-	//if (!_Text)
-	//{
-	//	return false;
-	//}
+	// Create the render to texture object.
+	_RenderTexture = new RenderTextureClass;
+	if (!_RenderTexture)
+	{
+		return false;
+	}
 
-	//// Initialize the text object.
-	//result = _Text->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), hwnd, screenWidth, screenHeight, baseViewMatrix);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the text object.", L"Error", MB_OK);
-	//	return false;
-	//}
+	// Initialize the render to texture object.
+	result = _RenderTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Create the debug window object.
+	_DebugWindow = new DebugWindowClass;
+	if (!_DebugWindow)
+	{
+		return false;
+	}
+
+	// Initialize the debug window object.
+	result = _DebugWindow->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, 100, 100);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the debug window object.", L"Error", MB_OK);
+		return false;
+	}
 
 	// Create the first font object.
 	m_Font1 = new FontClass;
@@ -307,6 +321,22 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of intialization
 {
+	// Release the debug window object.
+	if (_DebugWindow)
+	{
+		_DebugWindow->Shutdown();
+		delete _DebugWindow;
+		_DebugWindow = 0;
+	}
+
+	// Release the render to texture object.
+	if (_RenderTexture)
+	{
+		_RenderTexture->Shutdown();
+		delete _RenderTexture;
+		_RenderTexture = 0;
+	}
+
 	// Release the frustum object.
 	if (_Frustum)
 	{
@@ -352,14 +382,6 @@ void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of inti
 		delete _Model;
 		_Model = 0;
 	}
-
-	// Release the text object.
-	//if (_Text)
-	//{
-	//	_Text->Shutdown();
-	//	delete _Text;
-	//	_Text = 0;
-	//}
 
 	// Release the camera object.
 	if (_Camera)
@@ -479,14 +501,177 @@ bool Graphics::Frame(float frameTime, int fps, float posX, float posY, float pos
 
 bool Graphics::Render()
 {
-	XMMATRIX worldPosition, viewMatrix, projectionMatrix, orthoMatrix; //@NEW
+	XMMATRIX worldMatrix, viewMatrix, orthoMatrix;
+
 	int modelCount, renderCount, index;
 	float positionX, positionY, positionZ, radius;
 	XMFLOAT4 color;
 	bool renderModel, result;
 
+	//@TODO: RENDER TO TEXTURE HERE!!!!!! //REORGANIZE bc dont have the whole scene yet!
+	//@TODO: RENDER TO TEXTURE HERE!!!!!!
+	// Render the entire scene to the texture first.
+	result = RenderToTexture();
+	if (!result)
+	{
+		return false;
+	}
+	//@TODO: RENDER TO TEXTURE HERE!!!!!!
+	//@TODO: RENDER TO TEXTURE HERE!!!!!!
+
 	// Clear the buffers to begin the scene.
-	_D3D->BeginScene(0.5f, 0.5f, 0.5f, 1.0f);
+	_D3D->BeginScene(0.3f, 0.3f, 0.3f, 1.0f);
+
+	// Render the scene as normal to the back buffer.
+	result = RenderScene();
+	if (!result)
+	{
+		return false;
+	}
+
+	//// Generate the view matrix based on the camera's position.
+	//_Camera->Render();
+	//// Get the world, view, and projection matrices from the camera and d3d objects.
+	//_D3D->GetWorldMatrix(worldPosition);
+	//_Camera->GetViewMatrix(viewMatrix);
+	//_D3D->GetProjectionMatrix(projectionMatrix);
+	//_D3D->GetOrthoMatrix(orthoMatrix); //@NEW
+	//// Construct the frustum.
+	//_Frustum->ConstructFrustum(SCREEN_DEPTH, projectionMatrix, viewMatrix);
+	//// Get the number of models that will be rendered.
+	//modelCount = _ModelList->GetModelCount();
+	//// Initialize the count of models that have been rendered.
+	//renderCount = 0;
+	//// Go through all the models and render them only if they can be seen by the camera view.
+	//for (index = 0; index < modelCount; index++)
+	//{
+	//	// Get the position and color of the sphere model at this index.
+	//	_ModelList->GetData(index, positionX, positionY, positionZ, color);
+	//	// Set the radius of the sphere to 1.0 since this is already known.
+	//	radius = 1.0f;
+	//	// Check if the sphere model is in the view frustum.
+	//	renderModel = _Frustum->CheckSphere(positionX, positionY, positionZ, radius);
+	//	// If it can be seen then render it, if not skip this model and check the next sphere.
+	//	if (renderModel)
+	//	{
+	//		//Rotate the world matrix by the rotation value so that the triangle will spin.
+	//		//worldMatrix = DirectX::XMMatrixRotationY(_modelRotation);
+	//		//Move the model to the location it should be rendered at.
+	//		worldPosition = DirectX::XMMatrixTranslation(positionX, positionY, positionZ);
+	//		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	//		_Model->Render(_D3D->GetDeviceContext());
+	//		// Render the model using the color shader.
+	//		result = _LightShader->Render(
+	//			_D3D->GetDeviceContext(),
+	//			_Model->GetIndexCount(),
+	//			worldPosition,
+	//			viewMatrix,
+	//			projectionMatrix,
+	//			_Model->GetTextureArray(),
+	//			_Light->GetDirection(),
+	//			/*color,*/ _Light->GetAmbientColor(),
+	//			color, //_Light->GetDiffuseColor(), 
+	//			_Camera->GetPosition(),
+	//			/*color,*/ _Light->GetSpecularColor(),
+	//			_Light->GetSpecularPower());
+	//		if (!result)
+	//		{
+	//			return false;
+	//		}
+	//		// Reset to the original world matrix.
+	//		_D3D->GetWorldMatrix(worldPosition);
+	//		// Since this model was rendered then increase the count for this frame.
+	//		renderCount++;
+	//	}
+	//}
+	
+	// @DEBUG @CUSTOM RENDER THE NEW 2D OVERLAY HERE
+	// Turn off the Z buffer to begin all 2D rendering.
+	_D3D->TurnZBufferOff();
+
+	_D3D->GetWorldMatrix(worldMatrix);
+	_Camera->GetViewMatrix(viewMatrix);
+	_D3D->GetOrthoMatrix(orthoMatrix);
+
+	// Put the debug window vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	result = _DebugWindow->Render(_D3D->GetDeviceContext(), 50, 50); //@TODO - add in new texture shader for ui
+	if (!result)
+	{
+		return false;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	/////@TODO: Add THIRD Shader class for this special view target
+	// Render the debug window using the texture shader.
+	//result = _TextureShader->Render(_D3D->GetDeviceContext(), _DebugWindow->GetIndexCount(), worldMatrix, viewMatrix,
+	//	orthoMatrix, _RenderTexture->GetShaderResourceView());
+	//if (!result)
+	//{
+	//	return false;
+	//}
+	/////@TODO: Add THIRD Shader class for this special view target
+	////////////////////////////////////////////////////////////////////////////////
+
+	// Turn on the alpha blending before rendering the text.
+	_D3D->TurnOnAlphaBlending();
+
+	////////////////////////////////////////////////////////////////////////////////
+	//@TODO: encapsulate into RENDER FONTS /////////////////////////////////////////
+	// Render the fps string.
+	m_FpsString->Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
+	// Render the position and rotation strings.
+	for (int i = 0; i<6; i++)
+	{
+		m_PositionStrings[i].Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
+	}
+	// Render the render count strings.
+	for (int i = 0; i<3; i++)
+	{
+		m_RenderCountStrings[i].Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
+	}
+	//@TODO: encapsulate into RENDER FONTS /////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////////////////
+
+	// Turn off alpha blending after rendering the text.
+	_D3D->TurnOffAlphaBlending();
+
+	// Turn the Z buffer back on now that all 2D rendering has completed.
+	_D3D->TurnZBufferOn();
+
+	// Present the rendered scene to the screen.
+	_D3D->EndScene();
+
+	return true;
+}
+
+bool Graphics::RenderToTexture()
+{
+	// Set the render target to be the render to texture.
+	_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
+
+	// Clear the render to texture.
+	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 1.0f, 1.0f);
+
+	// Render the scene now and it will draw to the render to texture instead of the back buffer.
+	bool result = RenderScene();
+	if (!result)
+	{
+		return false;
+	}
+
+	// Reset the render target back to the original back buffer and not the render to texture anymore.
+	_D3D->SetBackBufferRenderTarget();
+
+	return result;
+}
+
+bool Graphics::RenderScene()
+{
+	XMMATRIX worldPosition, viewMatrix, projectionMatrix;
+	int modelCount, renderCount, index;
+	float positionX, positionY, positionZ, radius;
+	XMFLOAT4 color;
+	bool renderModel, result;
 
 	// Generate the view matrix based on the camera's position.
 	_Camera->Render();
@@ -495,7 +680,7 @@ bool Graphics::Render()
 	_D3D->GetWorldMatrix(worldPosition);
 	_Camera->GetViewMatrix(viewMatrix);
 	_D3D->GetProjectionMatrix(projectionMatrix);
-	_D3D->GetOrthoMatrix(orthoMatrix); //@NEW
+	//_D3D->GetOrthoMatrix(orthoMatrix); //@NEW
 
 	// Construct the frustum.
 	_Frustum->ConstructFrustum(SCREEN_DEPTH, projectionMatrix, viewMatrix);
@@ -555,63 +740,6 @@ bool Graphics::Render()
 			renderCount++;
 		}
 	}
-	
-	// Set the number of models that was actually rendered this frame.
-	//result = _Text->SetRenderCount(renderCount, _D3D->GetDeviceContext());
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	// @DEBUG @CUSTOM RENDER THE NEW 2D OVERLAY HERE
-	// Turn off the Z buffer to begin all 2D rendering.
-	_D3D->TurnZBufferOff();
-
-	// Turn on the alpha blending before rendering the text.
-	_D3D->TurnOnAlphaBlending();
-
-	// Render the text strings. //@OLD
-	//result = _Text->Render(_D3D->GetDeviceContext(), worldMatrix, orthoMatrix);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	// Render the fps string.
-	m_FpsString->Render(_D3D->GetDeviceContext(), _FontShader, worldPosition, viewMatrix, orthoMatrix, m_Font1->GetTexture());
-
-	// Render the position and rotation strings.
-	for (int i = 0; i<6; i++)
-	{
-		m_PositionStrings[i].Render(_D3D->GetDeviceContext(), _FontShader, worldPosition, viewMatrix, orthoMatrix, m_Font1->GetTexture());
-	}
-
-	// Render the render count strings.
-	for (int i = 0; i<3; i++)
-	{
-		m_RenderCountStrings[i].Render(_D3D->GetDeviceContext(), _FontShader, worldPosition, viewMatrix, orthoMatrix, m_Font1->GetTexture());
-	}
-
-	// Turn off alpha blending after rendering the text.
-	_D3D->TurnOffAlphaBlending();
-
-	// Turn the Z buffer back on now that all 2D rendering has completed.
-	_D3D->TurnZBufferOn();
-
-	// Present the rendered scene to the screen.
-	_D3D->EndScene();
-
-	return true;
-}
-
-bool Graphics::RenderToTexture()
-{
-
-	return true;
-}
-
-bool RenderScene()
-{
 
 	return true;
 }
