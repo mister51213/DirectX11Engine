@@ -51,7 +51,7 @@ private:
 	float _rightIncrement; //@TODO: store these values in one vector
 
 	const float _moveSpeed = 0.0002f;
-	const float _brakeSpeed = 0.0001f;
+	const float _brakeSpeed = 0.0003f;
 	const float _maxSpeed = 0.01f;
 
 	int mouseX, mouseY;

@@ -74,7 +74,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Set the initial position of the camera.
 	_Camera->SetPosition(0.0f, 0.0f, -4.f);
 	_Camera->Render();
-	_Camera->RenderBaseViewMatrix();
+	//_Camera->RenderBaseViewMatrix();
 	//_Camera->GetViewMatrix(baseViewMatrix); // needed for text class
 
 	////////////////
@@ -565,9 +565,6 @@ bool Graphics::Render()
 	////////////////////////////////////////////////////////////////////////////////
 	/////@TODO: Add THIRD Shader class for this special view target
 	// Render the debug window using the texture shader.
-
-	
-
 	result = 
 		_TextureShader->Render(
 			_D3D->GetDeviceContext(), 
