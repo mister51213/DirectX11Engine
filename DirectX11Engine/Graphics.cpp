@@ -527,22 +527,14 @@ bool Graphics::Frame(float frameTime, int fps, float posX, float posY, float pos
 bool Graphics::Render()
 {
 	XMMATRIX worldMatrix, viewMatrix, orthoMatrix;
+	bool result;
 
-	int modelCount, renderCount, index;
-	float positionX, positionY, positionZ, radius;
-	XMFLOAT4 color;
-	bool renderModel, result;
-
-	//@TODO: RENDER TO TEXTURE HERE!!!!!! //REORGANIZE bc dont have the whole scene yet!
-	//@TODO: RENDER TO TEXTURE HERE!!!!!!
 	// Render the entire scene to the texture first.
 	result = RenderToTexture();
 	if (!result)
 	{
 		return false;
 	}
-	//@TODO: RENDER TO TEXTURE HERE!!!!!!
-	//@TODO: RENDER TO TEXTURE HERE!!!!!!
 
 	// Clear the buffers to begin the scene.
 	_D3D->BeginScene(0.3f, 0.3f, 0.3f, 1.0f);
@@ -554,63 +546,6 @@ bool Graphics::Render()
 		return false;
 	}
 
-	//// Generate the view matrix based on the camera's position.
-	//_Camera->Render();
-	//// Get the world, view, and projection matrices from the camera and d3d objects.
-	//_D3D->GetWorldMatrix(worldPosition);
-	//_Camera->GetViewMatrix(viewMatrix);
-	//_D3D->GetProjectionMatrix(projectionMatrix);
-	//_D3D->GetOrthoMatrix(orthoMatrix); //@NEW
-	//// Construct the frustum.
-	//_Frustum->ConstructFrustum(SCREEN_DEPTH, projectionMatrix, viewMatrix);
-	//// Get the number of models that will be rendered.
-	//modelCount = _ModelList->GetModelCount();
-	//// Initialize the count of models that have been rendered.
-	//renderCount = 0;
-	//// Go through all the models and render them only if they can be seen by the camera view.
-	//for (index = 0; index < modelCount; index++)
-	//{
-	//	// Get the position and color of the sphere model at this index.
-	//	_ModelList->GetData(index, positionX, positionY, positionZ, color);
-	//	// Set the radius of the sphere to 1.0 since this is already known.
-	//	radius = 1.0f;
-	//	// Check if the sphere model is in the view frustum.
-	//	renderModel = _Frustum->CheckSphere(positionX, positionY, positionZ, radius);
-	//	// If it can be seen then render it, if not skip this model and check the next sphere.
-	//	if (renderModel)
-	//	{
-	//		//Rotate the world matrix by the rotation value so that the triangle will spin.
-	//		//worldMatrix = DirectX::XMMatrixRotationY(_modelRotation);
-	//		//Move the model to the location it should be rendered at.
-	//		worldPosition = DirectX::XMMatrixTranslation(positionX, positionY, positionZ);
-	//		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	//		_Model->Render(_D3D->GetDeviceContext());
-	//		// Render the model using the color shader.
-	//		result = _LightShader->Render(
-	//			_D3D->GetDeviceContext(),
-	//			_Model->GetIndexCount(),
-	//			worldPosition,
-	//			viewMatrix,
-	//			projectionMatrix,
-	//			_Model->GetTextureArray(),
-	//			_Light->GetDirection(),
-	//			/*color,*/ _Light->GetAmbientColor(),
-	//			color, //_Light->GetDiffuseColor(), 
-	//			_Camera->GetPosition(),
-	//			/*color,*/ _Light->GetSpecularColor(),
-	//			_Light->GetSpecularPower());
-	//		if (!result)
-	//		{
-	//			return false;
-	//		}
-	//		// Reset to the original world matrix.
-	//		_D3D->GetWorldMatrix(worldPosition);
-	//		// Since this model was rendered then increase the count for this frame.
-	//		renderCount++;
-	//	}
-	//}
-	
-	// @DEBUG @CUSTOM RENDER THE NEW 2D OVERLAY HERE
 	// Turn off the Z buffer to begin all 2D rendering.
 	_D3D->TurnZBufferOff();
 
@@ -628,8 +563,14 @@ bool Graphics::Render()
 	////////////////////////////////////////////////////////////////////////////////
 	/////@TODO: Add THIRD Shader class for this special view target
 	// Render the debug window using the texture shader.
-	result = _TextureShader->Render(_D3D->GetDeviceContext(), _DebugWindow->GetIndexCount(), worldMatrix, viewMatrix,
-		orthoMatrix, _RenderTexture->GetShaderResourceView());
+	result = 
+		_TextureShader->Render(
+			_D3D->GetDeviceContext(), 
+			_DebugWindow->GetIndexCount(), 
+			worldMatrix, 
+			viewMatrix,
+			orthoMatrix, 
+			_RenderTexture->GetShaderResourceView());
 	if (!result)
 	{
 		return false;
@@ -638,7 +579,8 @@ bool Graphics::Render()
 	////////////////////////////////////////////////////////////////////////////////
 
 	// Turn on the alpha blending before rendering the text.
-	_D3D->TurnOnAlphaBlending();
+	//_D3D->TurnOnAlphaBlending();
+	_D3D->EnableAlphaBlending();
 
 	////////////////////////////////////////////////////////////////////////////////
 	//@TODO: encapsulate into RENDER FONTS /////////////////////////////////////////
@@ -658,7 +600,8 @@ bool Graphics::Render()
 	////////////////////////////////////////////////////////////////////////////////
 
 	// Turn off alpha blending after rendering the text.
-	_D3D->TurnOffAlphaBlending();
+	//_D3D->TurnOffAlphaBlending();
+	_D3D->DisableAlphaBlending();
 
 	// Turn the Z buffer back on now that all 2D rendering has completed.
 	_D3D->TurnZBufferOn();
@@ -686,6 +629,7 @@ bool Graphics::RenderToTexture()
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
 	_D3D->SetBackBufferRenderTarget();
+
 
 	return result;
 }
