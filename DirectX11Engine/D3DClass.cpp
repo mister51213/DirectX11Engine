@@ -488,7 +488,6 @@ void D3DClass::BeginScene(float red, float green, float blue, float alpha)
 	return;
 }
 
-
 void D3DClass::EndScene()
 {
 	// Present the back buffer to the screen since rendering is complete.
@@ -590,6 +589,19 @@ void D3DClass::TurnOffAlphaBlending()
 
 	// Turn off the alpha blending.
 	_deviceContext->OMSetBlendState(_alphaDisableBlendingState, blendFactor, 0xffffffff);
+
+	return;
+}
+
+ID3D11DepthStencilView* D3DClass::GetDepthStencilView()
+{
+	return _depthStencilView;
+}
+
+void D3DClass::SetBackBufferRenderTarget()
+{
+	// Bind the render target view and depth stencil buffer to the output render pipeline.
+	_deviceContext->OMSetRenderTargets(1, &_renderTargetView, _depthStencilView);
 
 	return;
 }

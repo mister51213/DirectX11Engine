@@ -9,19 +9,19 @@ Graphics::Graphics()
 	:
 	_D3D(nullptr),
 	_Camera(nullptr),
-	//_Text(nullptr),
 	_Model(nullptr),
 	_LightShader(nullptr),
 	_Light(nullptr),
 	_ModelList(nullptr),
-	_Frustum(nullptr)
-{
-	m_Font1 = 0;
-	m_FpsString = 0;
-	m_VideoStrings = 0;
-	m_PositionStrings = 0;
-	m_RenderCountStrings = 0;
-}
+	_Frustum(nullptr),
+	m_Font1(nullptr),
+	m_FpsString(nullptr),
+	m_VideoStrings(nullptr),
+	m_PositionStrings(nullptr),
+	m_RenderCountStrings(nullptr),
+	_RenderTexture(nullptr),
+	_DebugWindow(nullptr)
+{}
 
 Graphics::Graphics(const Graphics& other)
 {
@@ -604,6 +604,18 @@ bool Graphics::Render()
 	return true;
 }
 
+bool Graphics::RenderToTexture()
+{
+
+	return true;
+}
+
+bool RenderScene()
+{
+
+	return true;
+}
+
 bool Graphics::UpdateFpsString(ID3D11DeviceContext* deviceContext, int fps)
 {
 	char tempString[16];
@@ -667,7 +679,6 @@ bool Graphics::UpdateFpsString(ID3D11DeviceContext* deviceContext, int fps)
 
 	return true;
 }
-
 
 bool Graphics::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float posX, float posY, float posZ,
 	float rotX, float rotY, float rotZ)

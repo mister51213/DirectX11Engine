@@ -22,6 +22,8 @@ const float SCREEN_NEAR = 0.1f;
 #include "model.h"
 #include "LightShaderClass.h"
 #include "LightClass.h"
+#include "rendertextureclass.h"
+#include "debugwindowclass.h"
 #include "modellistclass.h"
 #include "frustumclass.h"
 
@@ -43,10 +45,12 @@ public:
 	bool Render();
 
 	inline Camera* GetCamera() { return _Camera; }
-
 	bool UpdateRenderCounts(ID3D11DeviceContext*, int, int, int);
 
 private:
+	bool RenderToTexture();
+	bool RenderScene();
+
 	bool UpdateFpsString(ID3D11DeviceContext*, int);
 	bool UpdatePositionStrings(ID3D11DeviceContext*, float, float, float, float, float, float);
 
@@ -68,6 +72,8 @@ private:
 	LightClass* _Light;
 	ModelListClass* _ModelList;
 	FrustumClass* _Frustum;
+	RenderTextureClass* _RenderTexture;
+	DebugWindowClass* _DebugWindow;
 
 	float _modelRotation = 0.0f;
 };
