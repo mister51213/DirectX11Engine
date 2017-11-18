@@ -43,7 +43,7 @@ public:
 	~FontClass();
 
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fontFilename, char* textureFilename,
-		float fontHeight, int spaceSize);
+	float fontHeight, int spaceSize);
 	void Shutdown();
 
 	ID3D11ShaderResourceView* GetTexture();
@@ -58,8 +58,8 @@ private:
 	void ReleaseTexture();
 
 private:
-	FontType* m_Font;
-	TextureClass* m_Texture;
-	float m_fontHeight;
-	int m_spaceSize;
+	FontType* _Font;
+	TextureClass* _Texture;
+	float _fontHeight;
+	int _spaceSize;
 };
