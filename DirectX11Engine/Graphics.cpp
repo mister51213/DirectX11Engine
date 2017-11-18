@@ -74,7 +74,8 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Set the initial position of the camera.
 	_Camera->SetPosition(0.0f, 0.0f, -4.f);
 	_Camera->Render();
-	_Camera->GetViewMatrix(baseViewMatrix); // needed for text class
+	_Camera->RenderBaseViewMatrix();
+	//_Camera->GetViewMatrix(baseViewMatrix); // needed for text class
 
 	////////////////
 	// UI RELATED //
@@ -526,7 +527,7 @@ bool Graphics::Frame(float frameTime, int fps, float posX, float posY, float pos
 
 bool Graphics::Render()
 {
-	XMMATRIX worldMatrix, viewMatrix, orthoMatrix;
+	XMMATRIX worldMatrix, /*viewMatrix, */baseViewMatrix, orthoMatrix;
 	bool result;
 
 	// Render the entire scene to the texture first.
@@ -550,11 +551,12 @@ bool Graphics::Render()
 	_D3D->TurnZBufferOff();
 
 	_D3D->GetWorldMatrix(worldMatrix);
-	_Camera->GetViewMatrix(viewMatrix);
+	//_Camera->GetViewMatrix(viewMatrix);
+	_Camera->GetBaseViewMatrix(baseViewMatrix);
 	_D3D->GetOrthoMatrix(orthoMatrix);
 
 	// Put the debug window vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	result = _DebugWindow->Render(_D3D->GetDeviceContext(), 50, 50); //@TODO - add in new texture shader for ui
+	result = _DebugWindow->Render(_D3D->GetDeviceContext(), 80, 50); //@TODO - add in new texture shader for ui
 	if (!result)
 	{
 		return false;
@@ -563,12 +565,15 @@ bool Graphics::Render()
 	////////////////////////////////////////////////////////////////////////////////
 	/////@TODO: Add THIRD Shader class for this special view target
 	// Render the debug window using the texture shader.
+
+	
+
 	result = 
 		_TextureShader->Render(
 			_D3D->GetDeviceContext(), 
 			_DebugWindow->GetIndexCount(), 
 			worldMatrix, 
-			viewMatrix,
+			baseViewMatrix, //viewMatrix,
 			orthoMatrix, 
 			_RenderTexture->GetShaderResourceView());
 	if (!result)
@@ -585,16 +590,16 @@ bool Graphics::Render()
 	////////////////////////////////////////////////////////////////////////////////
 	//@TODO: encapsulate into RENDER FONTS /////////////////////////////////////////
 	// Render the fps string.
-	m_FpsString->Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
+	m_FpsString->Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, m_Font1->GetTexture());
 	// Render the position and rotation strings.
 	for (int i = 0; i<6; i++)
 	{
-		m_PositionStrings[i].Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
+		m_PositionStrings[i].Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, m_Font1->GetTexture());
 	}
 	// Render the render count strings.
 	for (int i = 0; i<3; i++)
 	{
-		m_RenderCountStrings[i].Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, viewMatrix, orthoMatrix, m_Font1->GetTexture());
+		m_RenderCountStrings[i].Render(_D3D->GetDeviceContext(), _FontShader, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, m_Font1->GetTexture());
 	}
 	//@TODO: encapsulate into RENDER FONTS /////////////////////////////////////////
 	////////////////////////////////////////////////////////////////////////////////

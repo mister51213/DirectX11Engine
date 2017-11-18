@@ -33,8 +33,10 @@ public:
 	void Render();
 	void GetViewMatrix(XMMATRIX&);
 
+	void RenderBaseViewMatrix();
+	void GetBaseViewMatrix(XMMATRIX&);
 private:
 	float _positionX, _positionY, _positionZ;
 	float _rotationX, _rotationY, _rotationZ;
-	XMMATRIX _viewMatrix;
+	XMMATRIX _viewMatrix, m_baseViewMatrix;
 };
