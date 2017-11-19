@@ -270,7 +270,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	result = _Model->Initialize(
 		_D3D->GetDevice(),
 		_D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/cube.txt",
+		"../DirectX11Engine/data/sphere.txt",
 			"../DirectX11Engine/data/stone.tga", // tex1
 			"../DirectX11Engine/data/dirt.tga", // tex2
 				"../DirectX11Engine/data/light.tga", // lightmap
@@ -638,6 +638,9 @@ void Graphics::RenderText(const DirectX::XMMATRIX &worldMatrix, const DirectX::X
 bool Graphics::RenderScene(float fogStart, float fogEnd)
 {
 	XMMATRIX worldPosition, viewMatrix, projectionMatrix;
+	// Setup a clipping plane.
+	XMFLOAT4 clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, 0.0f);
+
 	int modelCount, renderCount, index;
 	float positionX, positionY, positionZ, radius;
 	XMFLOAT4 color;
@@ -699,7 +702,8 @@ bool Graphics::RenderScene(float fogStart, float fogEnd)
 				/*color,*/ _Light->GetSpecularColor(),
 				_Light->GetSpecularPower(),
 				fogStart,
-				fogEnd);
+				fogEnd,
+				clipPlane);
 			if (!result)
 			{
 				return false;

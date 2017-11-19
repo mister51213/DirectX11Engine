@@ -36,6 +36,7 @@ struct PixelInputType
     float3 binormal : BINORMAL;
     float3 viewDirection : TEXCOORD1;
 	float fogFactor : FOG;
+	float clip : SV_ClipDistance0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,7 +67,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     float4 bumpMap;
     float3 bumpNormal;
 
-	float gamma = 2.f;
+	float gamma = 1.5f;
 
     // Sample the pixel color from the textures using the sampler at this texture coordinate location.
     color1 = shaderTextures[0].Sample(SampleType, input.tex);
@@ -139,14 +140,18 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     // Multiply the texture pixel and the final diffuse color to get the final pixel color result.
     color = color * blendColor; //textureColor;
 
-	//@TODO: experiment with calling this in different places
+	/////////////////////////////////////////////////////////////////////
+	//@TODO: FOG FOG FOG FOG FOG FOG - experiment with calling this in different places
 	// Calculate the final color using the fog effect equation.
-    color = input.fogFactor * color + (1.0 - input.fogFactor) * fogColor;
-	//@TODO
+    //color = input.fogFactor * color + (1.0 - input.fogFactor) * fogColor;
+	//@TODO:  FOG FOG FOG FOG FOG FOG
+	/////////////////////////////////////////////////////////////////////////
 
     // Saturate the final light color.
     color = saturate(color + specular);
-    //color += specular;
+	//float shiny = color + specular;
+	//float matte = color;
+    //color = saturate((alphaValue * matte) + ((1.0f - alphaValue) * shiny));
 
     return color;
 }

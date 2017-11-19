@@ -27,6 +27,11 @@ cbuffer CameraBuffer
     float padding;
 };
 
+cbuffer ClipPlaneBuffer
+{
+    float4 clipPlane;
+};
+
 cbuffer FogBuffer
 {
     float fogStart;
@@ -59,7 +64,8 @@ struct PixelInputType
 	float3 tangent : TANGENT;
     float3 binormal : BINORMAL;
 	float3 viewDirection : TEXCOORD1;
-	float fogFactor : FOG; //@TODO: Properly byte alligned?
+	float fogFactor : FOG; 
+	float clip : SV_ClipDistance0; //@TODO: Properly byte alligned?
 };
 
 // The output of the vertex shader will be sent to the pixel shader.
@@ -128,6 +134,9 @@ All three equations produce a fog factor. To apply that fog factor to the model'
 
     // Normalize the viewing direction vector.
     output.viewDirection = normalize(output.viewDirection);
+
+	// Set the clipping plane.
+    output.clip = dot(mul(input.position, worldMatrix), clipPlane);
 
 	return output;
 }
