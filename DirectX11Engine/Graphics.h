@@ -69,7 +69,7 @@ private:
 	int m_previousFps;
 	int m_previousPosition[6];
 	TextClass* m_RenderCountStrings;
-
+	float textureTranslation = 0.f;
 
 	Model* _Model;
 	LightShaderClass* _LightShader;

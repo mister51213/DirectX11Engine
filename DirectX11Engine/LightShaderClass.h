@@ -26,13 +26,6 @@ private:
 		XMMATRIX projection;
 	};
 
-	// for tex translation
-	struct TranslateBufferType
-	{
-		float translation;
-		XMFLOAT3 padding;
-	};
-
 	struct ClipPlaneBufferType
 	{
 		XMFLOAT4 clipPlane;
@@ -60,6 +53,12 @@ private:
 		float padding1, padding2;
 	};
 
+	// for tex translation
+	struct TranslateBufferType
+	{
+		float translation;
+		XMFLOAT3 padding;
+	};
 
 public:
 	LightShaderClass();

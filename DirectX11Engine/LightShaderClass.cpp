@@ -612,7 +612,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	deviceContext->Unmap(_translateBuffer, 0);
 
 	// Set the position of the texture translation constant buffer in the pixel shader.
-	bufferNumber = 0;
+	bufferNumber = 1;
 
 	// Now set the texture translation constant buffer in the pixel shader with the updated values.
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &_translateBuffer);
