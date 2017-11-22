@@ -662,7 +662,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	// Set the position of the transparent constant buffer in the pixel shader.
 	//bufferNumber = 0;
-	bufferNumber = 7;
+	bufferNumber = 4;
 
 	// Now set the texture translation constant buffer in the pixel shader with the updated values.
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &_transparentBuffer);

@@ -632,7 +632,7 @@ void Graphics::RenderText(const DirectX::XMMATRIX &worldMatrix, const DirectX::X
 	}
 
 	// Turn off alpha blending after rendering the text.
-	_D3D->DisableAlphaBlending();
+	//_D3D->DisableAlphaBlending();
 }
 
 bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)

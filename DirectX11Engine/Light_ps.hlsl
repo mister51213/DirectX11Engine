@@ -31,7 +31,7 @@ cbuffer TranslationBuffer
 };
 
 // for alpha blending textures
-cbuffer TransparentBuffer:register(b6)
+cbuffer TransparentBuffer:register(b4)
 {
     float blendAmount;
 };
@@ -170,7 +170,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 	/////////////// TRANSPARENCY /////////////////////
     // Set the alpha value of this pixel to the blending amount to create the alpha blending effect.
-    color.a = textureTranslation;//blendAmount;
+    color.a = blendAmount;
 
     return color;
 }
