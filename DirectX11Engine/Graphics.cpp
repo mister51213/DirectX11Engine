@@ -647,7 +647,8 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	bool renderModel, result;
 	
 	// Tex translation
-	//textureTranslation += 0.0001f;
+	//static float textureTranslation = 0.f;
+	textureTranslation += .004f;
 	//textureTranslation += 0.08f * frameTime;
 	if (textureTranslation > 1.0f)
 	{
