@@ -152,7 +152,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	/////////////////////////////////////////////////////////////////////
 	//@TODO: FOG FOG FOG FOG FOG FOG - experiment with calling this in different places
 	// Calculate the final color using the fog effect equation.
-    color = input.fogFactor * color + (1.0 - input.fogFactor) * fogColor;
+    //color = input.fogFactor * color + (1.0 - input.fogFactor) * fogColor;
 	//@TODO:  FOG FOG FOG FOG FOG FOG
 	/////////////////////////////////////////////////////////////////////////
 
