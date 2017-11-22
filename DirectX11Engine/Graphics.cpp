@@ -645,6 +645,9 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	float positionX, positionY, positionZ, radius;
 	XMFLOAT4 color;
 	bool renderModel, result;
+
+	// Set the blending amount to 50%.
+	float blendAmount = 0.5f;
 	
 	// Tex translation
 	//static float textureTranslation = 0.f;
@@ -654,8 +657,7 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	{
 		textureTranslation -= 1.0f;
 	}
-
-
+	
 	// Generate the view matrix based on the camera's position.
 	_Camera->Render();
 
@@ -714,7 +716,8 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 				fogStart,
 				fogEnd,
 				clipPlane,
-				textureTranslation);
+				textureTranslation,
+				blendAmount);
 			if (!result)
 			{
 				return false;

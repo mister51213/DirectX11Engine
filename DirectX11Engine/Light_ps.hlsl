@@ -30,6 +30,12 @@ cbuffer TranslationBuffer
     float textureTranslation; //@NOTE = hlsl automatically pads floats for you
 };
 
+// for alpha blending textures
+cbuffer TransparentBuffer:register(b6)
+{
+    float blendAmount;
+};
+
 //////////////
 // TYPEDEFS //
 //////////////
@@ -161,6 +167,10 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	//float shiny = color + specular;
 	//float matte = color;
     //color = saturate((alphaValue * matte) + ((1.0f - alphaValue) * shiny));
+
+	/////////////// TRANSPARENCY /////////////////////
+    // Set the alpha value of this pixel to the blending amount to create the alpha blending effect.
+    color.a = textureTranslation;//blendAmount;
 
     return color;
 }
