@@ -18,7 +18,8 @@ LightShaderClass::LightShaderClass()
 	_cameraBuffer(0),
 	_lightBuffer(0),
 	_fogBuffer(0),
-	_clipPlaneBuffer(0)
+	_clipPlaneBuffer(0),
+	_translateBuffer(0)
 {}
 
 LightShaderClass::LightShaderClass(const LightShaderClass& other)
@@ -54,12 +55,12 @@ void LightShaderClass::Shutdown()
 
 bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
-	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane)
+	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation)
 {
 	bool result;
 	
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, lightDirection, ambientColor, diffuseColor, cameraPosition, specularColor, specularPower, fogStart, fogEnd, clipPlane);
+	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, lightDirection, ambientColor, diffuseColor, cameraPosition, specularColor, specularPower, fogStart, fogEnd, clipPlane, translation);
 	if (!result)
 	{
 		return false;
@@ -88,6 +89,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	D3D11_BUFFER_DESC lightBufferDesc;
 	D3D11_BUFFER_DESC fogBufferDesc;
 	D3D11_BUFFER_DESC clipPlaneBufferDesc;
+	D3D11_BUFFER_DESC translateBufferDesc;
 
 	// Initialize the pointers this function will use to null.
 	errorMessage = 0;
@@ -244,6 +246,8 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 		return false;
 	}
 
+	// Create these buffers so we have an interface to setting values in the pixel shader.
+
 	// Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
 	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	matrixBufferDesc.ByteWidth = sizeof(MatrixBufferType);
@@ -320,11 +324,33 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 		return false;
 	}
 
+	// Setup the description of the texture translation dynamic constant buffer that is in the pixel shader.
+	translateBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	translateBufferDesc.ByteWidth = sizeof(TranslateBufferType);
+	translateBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	translateBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	translateBufferDesc.MiscFlags = 0;
+	translateBufferDesc.StructureByteStride = 0;
+
+	// Create the constant buffer pointer so we can access the pixel shader constant buffer from within this class.
+	result = device->CreateBuffer(&translateBufferDesc, NULL, &_translateBuffer);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
 	return true;
 }
 
 void LightShaderClass::ShutdownShader()
 {
+	// Release the texture translation constant buffer.
+	if (_translateBuffer)
+	{
+		_translateBuffer->Release();
+		_translateBuffer = 0;
+	}
+
 	// Release the fog constant buffer.
 	if (_fogBuffer)
 	{
@@ -420,7 +446,7 @@ void LightShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 
 bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
-	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane)
+	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -430,7 +456,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	CameraBufferType* dataPtr3;
 	FogBufferType* dataPtr4;
 	ClipPlaneBufferType* dataPtr5;
-
+	TranslateBufferType* dataPtr6;
 
 	// Transpose the matrices to prepare them for the shader.
 	worldMatrix = XMMatrixTranspose(worldMatrix);
@@ -567,6 +593,29 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	// Now set the clip plane constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_clipPlaneBuffer);
+
+	////////////// TEX TRANSLATION BUFFER //////////////////
+	// Lock the texture translation constant buffer so it can be written to.
+	result = deviceContext->Map(_translateBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	// Get a pointer to the data in the texture translation constant buffer.
+	dataPtr6 = (TranslateBufferType*)mappedResource.pData;
+
+	// Copy the translation value into the texture translation constant buffer.
+	dataPtr6->translation = translation;
+
+	// Unlock the buffer.
+	deviceContext->Unmap(_translateBuffer, 0);
+
+	// Set the position of the texture translation constant buffer in the pixel shader.
+	bufferNumber = 0;
+
+	// Now set the texture translation constant buffer in the pixel shader with the updated values.
+	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &_translateBuffer);
 
 	/////////////////////@TODO: is the data packed correctly ? ? ?///////////
 

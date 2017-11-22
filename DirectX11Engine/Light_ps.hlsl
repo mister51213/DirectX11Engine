@@ -24,6 +24,12 @@ cbuffer LightBuffer
     float4 specularColor;
 };
 
+// value set here will be between 0 and 1.
+cbuffer TranslationBuffer
+{
+    float textureTranslation; //@NOTE = hlsl automatically pads floats for you
+};
+
 //////////////
 // TYPEDEFS //
 //////////////
@@ -69,8 +75,11 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 	float gamma = 1.5f;
 
+	// Translate the position where we sample the pixel from.
+    input.tex.x += textureTranslation;
+
     // Sample the pixel color from the textures using the sampler at this texture coordinate location.
-    color1 = shaderTextures[0].Sample(SampleType, input.tex);
+	color1 = shaderTextures[0].Sample(SampleType, input.tex);
 
     // Get the pixel color from the second texture.
     color2 = shaderTextures[1].Sample(SampleType, input.tex);

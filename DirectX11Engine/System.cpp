@@ -248,7 +248,7 @@ bool System::Frame()
 	}
 
 	// Finally render the graphics to the screen.
-	result = _Graphics->Render();
+	result = _Graphics->Render(_Timer->GetTime());
 	if (!result)
 	{
 		return false;

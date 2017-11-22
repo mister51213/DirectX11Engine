@@ -44,7 +44,7 @@ public:
 	void Shutdown();
 	bool Frame(/*float rotation, int mouseX, int mouseY, int fps, int cpu,*/ float frameTime, int fps, float posX, float posY, float posZ,
 		float rotX, float rotY, float rotZ);
-	bool Render();
+	bool Render(float frameTime);
 
 	void RenderText(const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATRIX &baseViewMatrix, const DirectX::XMMATRIX &orthoMatrix);
 
@@ -52,8 +52,8 @@ public:
 	bool UpdateRenderCounts(ID3D11DeviceContext*, int, int, int);
 
 private:
-	bool RenderToTexture();
-	bool RenderScene(float fogStart, float fogEnd);
+	bool RenderToTexture(float frameTime);
+	bool RenderScene(float fogStart, float fogEnd, float frameTime);
 
 	bool UpdateFpsString(ID3D11DeviceContext*, int);
 	bool UpdatePositionStrings(ID3D11DeviceContext*, float, float, float, float, float, float);

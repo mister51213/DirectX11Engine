@@ -516,7 +516,7 @@ bool Graphics::Frame(float frameTime, int fps, float posX, float posY, float pos
 
 	// @DEBUG why do they now disable rendering inside frame?
 	// Render the graphics scene.
-	result = Render(/*_modelRotation*/);
+	result = Render(frameTime/*_modelRotation*/);
 	if (!result)
 	{
 		return false;
@@ -525,7 +525,7 @@ bool Graphics::Frame(float frameTime, int fps, float posX, float posY, float pos
 	return true;
 }
 
-bool Graphics::Render()
+bool Graphics::Render(float frameTime)
 {
 	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
 	
@@ -536,7 +536,7 @@ bool Graphics::Render()
 	bool result;
 
 	// Render the entire scene to the texture first.
-	result = RenderToTexture();
+	result = RenderToTexture(frameTime);
 	if (!result)
 	{
 		return false;
@@ -547,7 +547,7 @@ bool Graphics::Render()
 	_D3D->BeginScene(fogColor.x, fogColor.y, fogColor.z, 1.0f);
 
 	// Render the scene as normal to the back buffer.
-	result = RenderScene(fogStart, fogEnd);
+	result = RenderScene(fogStart, fogEnd, frameTime);
 	if (!result)
 	{
 		return false;
@@ -591,7 +591,7 @@ bool Graphics::Render()
 	return true;
 }
 
-bool Graphics::RenderToTexture()
+bool Graphics::RenderToTexture(float frameTime)
 {
 	// Set the render target to be the render to texture.
 	_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
@@ -600,7 +600,7 @@ bool Graphics::RenderToTexture()
 	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 1.0f, 1.0f);
 
 	// Render the scene now and it will draw to the render to texture instead of the back buffer.
-	bool result = RenderScene(0.f,10.f); //@REFACTOR later
+	bool result = RenderScene(0.f,10.f, frameTime); //@REFACTOR later
 	if (!result)
 	{
 		return false;
@@ -635,7 +635,7 @@ void Graphics::RenderText(const DirectX::XMMATRIX &worldMatrix, const DirectX::X
 	_D3D->DisableAlphaBlending();
 }
 
-bool Graphics::RenderScene(float fogStart, float fogEnd)
+bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 {
 	XMMATRIX worldPosition, viewMatrix, projectionMatrix;
 	// Setup a clipping plane.
@@ -645,6 +645,15 @@ bool Graphics::RenderScene(float fogStart, float fogEnd)
 	float positionX, positionY, positionZ, radius;
 	XMFLOAT4 color;
 	bool renderModel, result;
+	
+	// Tex translation
+	//textureTranslation += 0.0001f;
+	//textureTranslation += 0.08f * frameTime;
+	if (textureTranslation > 1.0f)
+	{
+		textureTranslation -= 1.0f;
+	}
+
 
 	// Generate the view matrix based on the camera's position.
 	_Camera->Render();
@@ -703,7 +712,8 @@ bool Graphics::RenderScene(float fogStart, float fogEnd)
 				_Light->GetSpecularPower(),
 				fogStart,
 				fogEnd,
-				clipPlane);
+				clipPlane,
+				textureTranslation);
 			if (!result)
 			{
 				return false;
