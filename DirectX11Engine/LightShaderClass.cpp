@@ -566,7 +566,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	deviceContext->Unmap(_fogBuffer, 0);
 
 	// Set the position of the fog constant buffer in the vertex shader.
-	bufferNumber = 1; ///////////@TODO: fix these numbers in correct order
+	bufferNumber = 3; ///////////@TODO: fix these numbers in correct order
 
 	// Now set the fog buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_fogBuffer);
