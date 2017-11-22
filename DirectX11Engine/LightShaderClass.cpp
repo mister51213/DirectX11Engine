@@ -482,12 +482,12 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	deviceContext->Unmap(_matrixBuffer, 0);
 
 	// Set the position of the constant buffer in the vertex shader.
-	bufferNumber = 0;
+	bufferNumber = 0; //@TODO just increment buffer number each time, and separate vertex and pixel buffers into 2 function
 
 	// Now set the constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_matrixBuffer);
 
-	///////////////////// CAM INIT //////////////////////////////////
+	///////////////////// CAM INIT - BUFFER 1//////////////////////////////////
 	// Lock the camera constant buffer so it can be written to.
 	result = deviceContext->Map(_cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
@@ -511,7 +511,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	// Now set the camera constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_cameraBuffer);
 
-	/////////////////////// LIGHT INIT //////////////////////
+	/////////////////////// LIGHT INIT - BUFFER 0 //////////////////////
 
 	// Set shader texture resource in the pixel shader.
 	//deviceContext->PSSetShaderResources(0, 1, &texture);
