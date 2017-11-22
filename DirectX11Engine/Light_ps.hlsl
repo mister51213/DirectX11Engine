@@ -15,7 +15,7 @@ Texture2D shaderTextures[6];
 SamplerState SampleType;
 
 // hold diffuse color and direction of light
-cbuffer LightBuffer
+cbuffer LightBuffer //@TODO: register w same number as in class
 {
     float4 ambientColor;
     float4 diffuseColor;
@@ -25,7 +25,7 @@ cbuffer LightBuffer
 };
 
 // value set here will be between 0 and 1.
-cbuffer TranslationBuffer
+cbuffer TranslationBuffer //@TODO: register w same number as in class
 {
     float textureTranslation; //@NOTE = hlsl automatically pads floats for you
 };
