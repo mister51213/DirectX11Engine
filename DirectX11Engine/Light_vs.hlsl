@@ -38,7 +38,7 @@ cbuffer FogBuffer
     float fogEnd;
 };
 
-cbuffer ReflectionBuffer
+cbuffer ReflectionBuffer:register(b3)
 {
     matrix reflectionMatrix;
 };

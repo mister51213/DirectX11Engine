@@ -581,7 +581,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	deviceContext->Unmap(_reflectionBuffer, 0);
 
 	// Set the position of the reflection constant buffer in the vertex shader.
-	bufferNumber = 2;
+	bufferNumber = 3;
 
 	// Now set the reflection constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_reflectionBuffer);
