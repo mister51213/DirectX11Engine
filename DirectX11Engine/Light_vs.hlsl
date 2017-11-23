@@ -38,6 +38,11 @@ cbuffer FogBuffer
     float fogEnd;
 };
 
+cbuffer ReflectionBuffer
+{
+    matrix reflectionMatrix;
+};
+
 //////////////
 // TYPEDEFS //
 //////////////
@@ -66,6 +71,7 @@ struct PixelInputType
 	float3 viewDirection : TEXCOORD1;
 	float fogFactor : FOG; 
 	float clip : SV_ClipDistance0; //@TODO: Properly byte alligned?
+	float4 reflectionPosition : TEXCOORD2;
 };
 
 // The output of the vertex shader will be sent to the pixel shader.
@@ -76,6 +82,7 @@ PixelInputType LightVertexShader(VertexInputType input)
 {
 	PixelInputType output;
 	float4 worldPosition;
+    matrix reflectProjectWorld;
 
 	// Change the position vector to be 4 units for proper matrix calculations.
 	input.position.w = 1.0f;
@@ -85,6 +92,11 @@ PixelInputType LightVertexShader(VertexInputType input)
 	output.position = mul(input.position, worldMatrix);
 	output.position = mul(output.position, viewMatrix);
 	output.position = mul(output.position, projectionMatrix);
+
+	/////////////// REFLECTION ////////////////
+	// Create the reflection projection world matrix.
+    reflectProjectWorld = mul(reflectionMatrix, projectionMatrix);
+    reflectProjectWorld = mul(worldMatrix, reflectProjectWorld);
 
 	// Store the input color for the pixel shader to use.
 	output.tex  = input.tex;
@@ -129,12 +141,15 @@ Exponential 2 fog adds even more exponential fog than the previous equation givi
 All three equations produce a fog factor. To apply that fog factor to the model's texture and produce a final pixel color value we use the following equation:
 
 	Fog Color = FogFactor * TextureColor + (1.0 - FogFactor) * FogColor
-
 	*/
 
     // Normalize the viewing direction vector.
     output.viewDirection = normalize(output.viewDirection);
 
+	////////////////////////// REFLECTION ////////////////////////
+	// Calculate the input position against the reflectProjectWorld matrix.
+    output.reflectionPosition = mul(input.position, reflectProjectWorld);
+	
 	// Set the clipping plane.
     output.clip = dot(mul(input.position, worldMatrix), clipPlane);
 

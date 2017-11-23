@@ -28,7 +28,6 @@ const float SCREEN_NEAR = 0.1f;
 #include "frustumclass.h"
 #include "textureshaderclass.h"
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,6 +45,8 @@ public:
 		float rotX, float rotY, float rotZ);
 	bool Render(float frameTime);
 
+	bool RenderToReflection(float time);
+
 	void RenderText(const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATRIX &baseViewMatrix, const DirectX::XMMATRIX &orthoMatrix);
 
 	inline Camera* GetCamera() { return _Camera; }
@@ -53,7 +54,7 @@ public:
 
 private:
 	bool RenderToTexture(float frameTime);
-	bool RenderScene(float fogStart, float fogEnd, float frameTime);
+	bool RenderScene(XMMATRIX reflectionViewMatrix, float fogStart, float fogEnd, float frameTime);
 
 	bool UpdateFpsString(ID3D11DeviceContext*, int);
 	bool UpdatePositionStrings(ID3D11DeviceContext*, float, float, float, float, float, float);
@@ -79,6 +80,10 @@ private:
 	RenderTextureClass* _RenderTexture;
 	DebugWindowClass* _DebugWindow;
 	TextureShaderClass* _TextureShader;
+
+	/////////// REFLECTION //////////////////
+	RenderTextureClass* _ReflectionTexture;
+	Model* _FloorModel;
 
 	float _modelRotation = 0.0f;
 };

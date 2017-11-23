@@ -21,7 +21,9 @@ Graphics::Graphics()
 	m_RenderCountStrings(nullptr),
 	_RenderTexture(nullptr),
 	_DebugWindow(nullptr),
-	_TextureShader(nullptr)
+	_TextureShader(nullptr),
+	_ReflectionTexture(nullptr),
+	_FloorModel(nullptr)
 {}
 
 Graphics::Graphics(const Graphics& other)
@@ -334,11 +336,64 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	// Create the render to texture object.
+	_ReflectionTexture = new RenderTextureClass;
+	if (!_ReflectionTexture)
+	{
+		return false;
+	}
+
+	// Initialize the render to texture object.
+	result = _ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
+	if (!result)
+	{
+		return false;
+	}
+
+	//Create and initialize the blue floor model object.
+	_FloorModel = new Model;
+	if (!_FloorModel)
+	{
+		return false;
+	}
+
+	// Initialize the floor model object. //TODO: make tga
+	result = _FloorModel->Initialize(_D3D->GetDevice(),
+		_D3D->GetDeviceContext(),
+		"../DirectX11Engine/data/floor.txt",
+		"../DirectX11Engine/data/blue01.tga", 
+		"../DirectX11Engine/data/blue01.tga",
+		"../DirectX11Engine/data/blue01.tga",
+		"../DirectX11Engine/data/blue01.tga",
+		"../DirectX11Engine/data/blue01.tga",
+		"../DirectX11Engine/data/blue01.tga");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the floor model object.", L"Error", MB_OK);
+		return false;
+	}
+
 	return true;
 }
 
 void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of intialization
 {
+	// Release the floor model object.
+	if (_FloorModel)
+	{
+		_FloorModel->Shutdown();
+		delete _FloorModel;
+		_FloorModel = 0;
+	}
+
+	// Release the render to texture object.
+	if (_ReflectionTexture)
+	{
+		_RenderTexture->Shutdown();
+		delete _ReflectionTexture;
+		_ReflectionTexture = 0;
+	}
+
 	// Release the debug window object.
 	if (_DebugWindow)
 	{
@@ -542,12 +597,17 @@ bool Graphics::Render(float frameTime)
 		return false;
 	}
 
+	//@TODO add this new function so we can render to 2 textures
+	result = RenderToReflection(frameTime);
+
 	// Clear the buffers to begin the scene.
 	//_D3D->BeginScene(0.3f, 0.3f, 0.3f, 1.0f);
 	_D3D->BeginScene(fogColor.x, fogColor.y, fogColor.z, 1.0f);
 
 	// Render the scene as normal to the back buffer.
-	result = RenderScene(fogStart, fogEnd, frameTime);
+	XMMATRIX viewMatrix;
+	_Camera->GetViewMatrix(viewMatrix);
+	result = RenderScene(viewMatrix, fogStart, fogEnd, frameTime);
 	if (!result)
 	{
 		return false;
@@ -591,6 +651,36 @@ bool Graphics::Render(float frameTime)
 	return true;
 }
 
+bool Graphics::RenderToReflection(float time)
+{
+	XMMATRIX worldMatrix, reflectionViewMatrix, projectionMatrix;
+	static float rotation = 0.0f;
+
+	// Set the render target to be the render to texture.
+	_ReflectionTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
+
+	// Clear the render to texture.
+	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Use the camera to calculate the reflection matrix.
+	_Camera->RenderReflection(-1.5f);
+
+	// Get the camera reflection view matrix instead of the normal view matrix.
+	reflectionViewMatrix = _Camera->GetReflectionViewMatrix();
+
+	//@TODO: must now pass in view matrix here
+	bool result = RenderScene(reflectionViewMatrix, 0.f, 10.f, time); //@REFACTOR later
+	if (!result)
+	{
+		return false;
+	}
+
+	// Reset the render target back to the original back buffer and not the render to texture anymore.
+	_D3D->SetBackBufferRenderTarget();
+
+	return true;
+}
+
 bool Graphics::RenderToTexture(float frameTime)
 {
 	// Set the render target to be the render to texture.
@@ -600,7 +690,9 @@ bool Graphics::RenderToTexture(float frameTime)
 	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 1.0f, 1.0f);
 
 	// Render the scene now and it will draw to the render to texture instead of the back buffer.
-	bool result = RenderScene(0.f,10.f, frameTime); //@REFACTOR later
+	XMMATRIX viewMatrix;
+	_Camera->GetViewMatrix(viewMatrix);
+	bool result = RenderScene(viewMatrix, 0.f,10.f, frameTime); //@REFACTOR later
 	if (!result)
 	{
 		return false;
@@ -608,7 +700,6 @@ bool Graphics::RenderToTexture(float frameTime)
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
 	_D3D->SetBackBufferRenderTarget();
-
 
 	return result;
 }
@@ -635,9 +726,9 @@ void Graphics::RenderText(const DirectX::XMMATRIX &worldMatrix, const DirectX::X
 	//_D3D->DisableAlphaBlending();
 }
 
-bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
+bool Graphics::RenderScene(XMMATRIX viewMatrix, float fogStart, float fogEnd, float frameTime)
 {
-	XMMATRIX worldPosition, viewMatrix, projectionMatrix;
+	XMMATRIX worldPosition, /*viewMatrix, */projectionMatrix;
 	// Setup a clipping plane.
 	XMFLOAT4 clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, 0.0f);
 
@@ -663,11 +754,11 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	_D3D->GetWorldMatrix(worldPosition);
-	_Camera->GetViewMatrix(viewMatrix);
+	//_Camera->GetViewMatrix(viewMatrix);
 	_D3D->GetProjectionMatrix(projectionMatrix);
 	//_D3D->GetOrthoMatrix(orthoMatrix); //@NEW
 
-	// Construct the frustum.
+	// Construct the frustum. //@TODO : is this also needed for reflection?
 	_Frustum->ConstructFrustum(SCREEN_DEPTH, projectionMatrix, viewMatrix);
 
 	// Get the number of models that will be rendered.
@@ -717,7 +808,9 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 				fogEnd,
 				clipPlane,
 				textureTranslation,
-				blendAmount);
+				blendAmount,
+				_Model->GetTextureArray()[0], //@TODO: must fix
+				viewMatrix); // @TODO: 
 			if (!result)
 			{
 				return false;
@@ -729,6 +822,40 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 			// Since this model was rendered then increase the count for this frame.
 			renderCount++;
 		}
+
+		///////////// RENDER REFLECTIVE FLOOR ///////////////////
+		// Get the world matrix again and translate down for the floor model to render underneath the cube.
+		_D3D->GetWorldMatrix(worldPosition);
+		XMMATRIX translation = XMMatrixTranslation(0.0f, -1.5f, 0.0f);
+		worldPosition = XMMatrixMultiply(worldPosition, translation);
+
+		// Get the camera reflection view matrix.
+		XMMATRIX reflectionMatrix = _Camera->GetReflectionViewMatrix();
+
+		// Put the floor model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+		_FloorModel->Render(_D3D->GetDeviceContext());
+
+		// Render the floor model using the reflection shader, reflection texture, and reflection view matrix.
+		result = _LightShader->Render(
+			_D3D->GetDeviceContext(),
+			_Model->GetIndexCount(),
+			worldPosition,
+			viewMatrix,
+			projectionMatrix,
+			_FloorModel->GetTextureArray(),
+			_Light->GetDirection(),
+			/*color,*/ _Light->GetAmbientColor(),
+			color, //_Light->GetDiffuseColor(), 
+			_Camera->GetPosition(),
+			/*color,*/ _Light->GetSpecularColor(),
+			_Light->GetSpecularPower(),
+			fogStart,
+			fogEnd,
+			clipPlane,
+			0.f,
+			blendAmount,
+			_RenderTexture->GetShaderResourceView(),
+			reflectionMatrix);
 	}
 
 	return true;

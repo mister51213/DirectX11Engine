@@ -21,12 +21,13 @@ public:
 	~Camera();
 
 	void Tick();
+
 	void SetPosition(float, float, float);
+	
 	void MoveInDirection(XMFLOAT3 displacement);
 	void MoveInDirectionRelative(XMFLOAT3 displacement);
 	void SetRotation(float, float, float);
 	void RotateInDirection(const XMFLOAT3& offset);
-
 	XMFLOAT3 GetPosition();
 	XMFLOAT3 GetRotation();
 
@@ -35,9 +36,12 @@ public:
 
 	//void RenderBaseViewMatrix();
 	void GetBaseViewMatrix(XMMATRIX&);
+
+	void RenderReflection(float);
+	XMMATRIX GetReflectionViewMatrix();
 private:
 	float _positionX, _positionY, _positionZ;
 	float _rotationX, _rotationY, _rotationZ;
-	XMMATRIX _viewMatrix, m_baseViewMatrix;
+	XMMATRIX _viewMatrix, m_baseViewMatrix, _reflectionViewMatrix;
 	bool _bFirstRenderPass;
 };

@@ -20,7 +20,8 @@ LightShaderClass::LightShaderClass()
 	_fogBuffer(0),
 	_clipPlaneBuffer(0),
 	_translateBuffer(0), 
-	_transparentBuffer(0)
+	_transparentBuffer(0),
+	_reflectionBuffer(0)
 {}
 
 LightShaderClass::LightShaderClass(const LightShaderClass& other)
@@ -56,12 +57,13 @@ void LightShaderClass::Shutdown()
 
 bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
-	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency)
+	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency,
+	ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix)
 {
 	bool result;
 	
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, lightDirection, ambientColor, diffuseColor, cameraPosition, specularColor, specularPower, fogStart, fogEnd, clipPlane, translation, transparency);
+	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, lightDirection, ambientColor, diffuseColor, cameraPosition, specularColor, specularPower, fogStart, fogEnd, clipPlane, translation, transparency, reflectionTexture, reflectionMatrix);
 	if (!result)
 	{
 		return false;
@@ -92,6 +94,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	D3D11_BUFFER_DESC clipPlaneBufferDesc;
 	D3D11_BUFFER_DESC translateBufferDesc;
 	D3D11_BUFFER_DESC transparentBufferDesc;
+	D3D11_BUFFER_DESC reflectionBufferDesc;
 
 	// Initialize the pointers this function will use to null.
 	errorMessage = 0;
@@ -356,12 +359,33 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 		return false;
 	}
 
+	// Setup the description of the reflection dynamic constant buffer that is in the vertex shader.
+	reflectionBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	reflectionBufferDesc.ByteWidth = sizeof(ReflectionBufferType);
+	reflectionBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	reflectionBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	reflectionBufferDesc.MiscFlags = 0;
+	reflectionBufferDesc.StructureByteStride = 0;
+
+	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	result = device->CreateBuffer(&reflectionBufferDesc, NULL, &_reflectionBuffer);
+	if (FAILED(result))
+	{
+		return false;
+	}
 
 	return true;
 }
 
 void LightShaderClass::ShutdownShader()
 {
+	// Release the reflection constant buffer.
+	if (_reflectionBuffer)
+	{
+		_reflectionBuffer->Release();
+		_reflectionBuffer = 0;
+	}
+
 	// Release the transparent constant buffer.
 	if (_transparentBuffer)
 	{
@@ -471,7 +495,7 @@ void LightShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND h
 
 bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
-	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency)
+	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency, ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -483,11 +507,13 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	ClipPlaneBufferType* dataPtr5;
 	TranslateBufferType* dataPtr6;
 	TransparentBufferType* dataPtr7;
+	ReflectionBufferType* dataPtr8;
 
 	// Transpose the matrices to prepare them for the shader.
 	worldMatrix = XMMatrixTranspose(worldMatrix);
 	viewMatrix = XMMatrixTranspose(viewMatrix);
 	projectionMatrix = XMMatrixTranspose(projectionMatrix);
+	reflectionMatrix = XMMatrixTranspose(reflectionMatrix);
 
 	// Lock the constant buffer so it can be written to.
 	result = deviceContext->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
@@ -537,15 +563,36 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	// Now set the camera constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_cameraBuffer);
 
-	/////////////////////// LIGHT INIT - BUFFER 0 //////////////////////
+	////////////////////////// REFLECTION BUFFER - NUMBER 2 /////////////////////////////
+	// Lock the reflection constant buffer so it can be written to.
+	result = deviceContext->Map(_reflectionBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result))
+	{
+		return false;
+	}
 
+	// Get a pointer to the data in the matrix constant buffer.
+	dataPtr8 = (ReflectionBufferType*)mappedResource.pData;
+
+	// Copy the matrix into the reflection constant buffer.
+	dataPtr8->reflectionMatrix = reflectionMatrix;
+
+	// Unlock the reflection constant buffer.
+	deviceContext->Unmap(_reflectionBuffer, 0);
+
+	// Set the position of the reflection constant buffer in the vertex shader.
+	bufferNumber = 2;
+
+	// Now set the reflection constant buffer in the vertex shader with the updated values.
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_reflectionBuffer);
+
+	/////////////////////// LIGHT INIT - BUFFER 0 //////////////////////
 	// Set shader texture resource in the pixel shader.
 	//deviceContext->PSSetShaderResources(0, 1, &texture);
-	//deviceContext->PSSetShaderResources(0, 2, textureArray); // multi tex
-	//deviceContext->PSSetShaderResources(0, 3, textureArray); // triple tex with lightmap
-	//deviceContext->PSSetShaderResources(0, 4, textureArray); // quadruple tex with lightmap
-	//deviceContext->PSSetShaderResources(0, 5, textureArray); // quadruple tex with lightmap
 	deviceContext->PSSetShaderResources(0, 6, textureArray); // quintuple tex with lightmap
+
+	// Set the reflection texture resource in the pixel shader. //@TODO: shoudl be in the array?
+	deviceContext->PSSetShaderResources(1, 1, &reflectionTexture);
 
 	// Lock the light constant buffer so it can be written to.
 	result = deviceContext->Map(_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
