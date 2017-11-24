@@ -16,6 +16,9 @@ SamplerState SampleType;
 
 Texture2D reflectionTexture;
 
+//////////////////////
+// CONSTANT BUFFERS //
+//////////////////////
 // hold diffuse color and direction of light
 cbuffer LightBuffer //@TODO: register w same number as in class
 {

@@ -13,7 +13,10 @@
 * These global variables can be modified externally from the C++ code.
 * Generally they should be put in buffer object types called "cbuffer" for single global variable. 
 */
-cbuffer MatrixBuffer
+//////////////////////
+// CONSTANT BUFFERS //
+//////////////////////
+cbuffer MatrixBuffer:register(b0)
 {
 	matrix worldMatrix;
 	matrix viewMatrix;
@@ -21,7 +24,7 @@ cbuffer MatrixBuffer
 };
 
 // pass in position of camera for reflection
-cbuffer CameraBuffer
+cbuffer CameraBuffer:register(b1)
 {
     float3 cameraPosition; // okay not to be float4?
     float padding;

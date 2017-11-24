@@ -534,7 +534,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	deviceContext->Unmap(_matrixBuffer, 0);
 
 	// Set the position of the constant buffer in the vertex shader.
-	bufferNumber = 0; //@TODO just increment buffer number each time, and separate vertex and pixel buffers into 2 function
+	bufferNumber = 0; //@TODO just increment buffer number each time, and separate vertex and pixel buffers into 2 functions
 
 	// Now set the constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_matrixBuffer);
