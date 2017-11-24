@@ -322,7 +322,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the model list object.
-	result = _ModelList->Initialize(100);
+	result = _ModelList->Initialize(20);
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model list object.", L"Error", MB_OK);

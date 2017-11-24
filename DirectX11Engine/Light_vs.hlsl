@@ -30,20 +30,20 @@ cbuffer CameraBuffer:register(b1)
     float padding;
 };
 
-cbuffer ClipPlaneBuffer
+cbuffer ClipPlaneBuffer:register(b2)
 {
     float4 clipPlane;
-};
-
-cbuffer FogBuffer
-{
-    float fogStart;
-    float fogEnd;
 };
 
 cbuffer ReflectionBuffer:register(b3)
 {
     matrix reflectionMatrix;
+};
+
+cbuffer FogBuffer:register(b4)
+{
+    float fogStart;
+    float fogEnd;
 };
 
 //////////////

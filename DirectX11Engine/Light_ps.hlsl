@@ -20,7 +20,7 @@ Texture2D reflectionTexture;
 // CONSTANT BUFFERS //
 //////////////////////
 // hold diffuse color and direction of light
-cbuffer LightBuffer //@TODO: register w same number as in class
+cbuffer LightBuffer:register(b0) //@TODO: register w same number as in class
 {
     float4 ambientColor;
     float4 diffuseColor;
@@ -30,13 +30,13 @@ cbuffer LightBuffer //@TODO: register w same number as in class
 };
 
 // value set here will be between 0 and 1.
-cbuffer TranslationBuffer //@TODO: register w same number as in class
+cbuffer TranslationBuffer:register(b1) //@TODO: register w same number as in class
 {
     float textureTranslation; //@NOTE = hlsl automatically pads floats for you
 };
 
 // for alpha blending textures
-cbuffer TransparentBuffer:register(b4)
+cbuffer TransparentBuffer:register(b2)
 {
     float blendAmount;
 };
