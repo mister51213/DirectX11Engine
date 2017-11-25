@@ -65,7 +65,6 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	ID3D10Blob* pixelShaderBuffer;
 
 	// Now set to 5 to accommodate tangent and binormal
-	//D3D11_INPUT_ELEMENT_DESC polygonLayout[3];
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[5];
 	unsigned int numElements;
 	D3D11_BUFFER_DESC matrixBufferDesc;
@@ -449,19 +448,12 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	unsigned int bufferNumber;
-	//MatrixBufferType* dataPtr1;
 
-	//@TODO: need to explicitly resolve it like this???
 	result = SetBaseParameters(&mappedResource, deviceContext, worldMatrix, viewMatrix, projectionMatrix, bufferNumber);
 	if (FAILED(result))
 	{
 		return false;
 	}
-
-	// Transpose the matrices to prepare them for the shader.
-	//worldMatrix = XMMatrixTranspose(worldMatrix);
-	//viewMatrix = XMMatrixTranspose(viewMatrix);
-	//projectionMatrix = XMMatrixTranspose(projectionMatrix);
 
 	LightBufferType* dataPtr2; //NOTE - dataPtr1 define in parent class
 	CameraBufferType* dataPtr3;
@@ -497,6 +489,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	// Unlock the camera constant buffer.
 	deviceContext->Unmap(_cameraBuffer, 0);
 
+	//////////// CAMERA BUFFER SETUP /////////////
 	// Set the position of the camera constant buffer in the vertex shader.
 	bufferNumber = 1;
 
