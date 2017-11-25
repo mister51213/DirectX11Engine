@@ -16,26 +16,10 @@ LightShaderClass::LightShaderClass()
 {}
 
 LightShaderClass::LightShaderClass(const LightShaderClass& other)
-{
-}
+{}
 
 LightShaderClass::~LightShaderClass()
-{
-}
-
-bool LightShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
-{
-	bool result;
-
-	// Initialize the vertex and pixel shaders. //@CUSTOM - light shader now does multitexturing
-	result = InitializeShader(device, hwnd, L"../DirectX11Engine/Light_vs.hlsl", L"../DirectX11Engine/Light_ps.hlsl");
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
+{}
 
 bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
@@ -402,40 +386,7 @@ void LightShaderClass::ShutdownShader()
 		_cameraBuffer = 0;
 	}
 
-	// Release the matrix constant buffer.
-	if (_matrixBuffer)
-	{
-		_matrixBuffer->Release();
-		_matrixBuffer = 0;
-	}
-
-	// Release the sampler state.
-	if (_sampleState)
-	{
-		_sampleState->Release();
-		_sampleState = 0;
-	}
-
-	// Release the layout.
-	if (_layout)
-	{
-		_layout->Release();
-		_layout = 0;
-	}
-
-	// Release the pixel shader.
-	if (_pixelShader)
-	{
-		_pixelShader->Release();
-		_pixelShader = 0;
-	}
-
-	// Release the vertex shader.
-	if (_vertexShader)
-	{
-		_vertexShader->Release();
-		_vertexShader = 0;
-	}
+	ShaderClass::ShutdownShader();
 
 	return;
 }

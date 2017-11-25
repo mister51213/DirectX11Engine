@@ -5,12 +5,6 @@
 #include "TextureShaderClass.h"
 
 TextureShaderClass::TextureShaderClass()
-	//:
-	//_vertexShader(0),
-	//_pixelShader(0),
-	//_layout(0),
-	//_matrixBuffer(0),
-	//_sampleState(0)
 {}
 
 TextureShaderClass::TextureShaderClass(const TextureShaderClass& other)
@@ -18,27 +12,7 @@ TextureShaderClass::TextureShaderClass(const TextureShaderClass& other)
 }
 
 TextureShaderClass::~TextureShaderClass()
-{
-}
-
-// pass in the name of the HLSL shader files
-bool TextureShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
-{
-	bool result;
-	
-	// Initialize the vertex and pixel shaders.
-	result = InitializeShader(
-		device, 
-		hwnd, 
-		L"../DirectX11Engine/texture_vs.hlsl", 
-		L"../DirectX11Engine/texture_ps.hlsl");
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
+{}
 
 bool TextureShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture)
@@ -115,8 +89,7 @@ bool TextureShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR
 	}
 
 	// Once the vertex shader and pixel shader code has successfully compiled into buffers we then use those buffers to create the shader objects themselves.
-	// Create the vertex shader from the buffer. 
-	// We will use these pointers to interface with the vertex and pixel shader from this point forward.
+	// Create the vertex shader from the buffer. We will use these pointers to interface with the vertex and pixel shader from this point forward.
 	result = device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &_vertexShader);
 	if (FAILED(result))
 	{
@@ -130,8 +103,7 @@ bool TextureShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR
 		return false;
 	}
 
-	// Create the vertex input layout description.
-	// This setup needs to match the VertexType stucture in the ModelClass and in the shader.
+	// Create the vertex input layout description. This setup needs to match the VertexType stucture in the ModelClass and in the shader.
 	polygonLayout[0].SemanticName = "POSITION";
 	polygonLayout[0].SemanticIndex = 0;
 	polygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
@@ -212,40 +184,7 @@ bool TextureShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR
 
 void TextureShaderClass::ShutdownShader()
 {
-	// Release the sampler state.
-	if (_sampleState)
-	{
-		_sampleState->Release();
-		_sampleState = 0;
-	}
-
-	// Release the matrix constant buffer.
-	if (_matrixBuffer)
-	{
-		_matrixBuffer->Release();
-		_matrixBuffer = 0;
-	}
-
-	// Release the layout.
-	if (_layout)
-	{
-		_layout->Release();
-		_layout = 0;
-	}
-
-	// Release the pixel shader.
-	if (_pixelShader)
-	{
-		_pixelShader->Release();
-		_pixelShader = 0;
-	}
-
-	// Release the vertex shader.
-	if (_vertexShader)
-	{
-		_vertexShader->Release();
-		_vertexShader = 0;
-	}
+	ShaderClass::ShutdownShader();
 
 	return;
 }

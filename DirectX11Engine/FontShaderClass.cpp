@@ -14,21 +14,6 @@ FontShaderClass::FontShaderClass(const FontShaderClass& other)
 FontShaderClass::~FontShaderClass()
 {}
 
-bool FontShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
-{
-	bool result;
-
-
-	// Initialize the vertex and pixel shaders.
-	result = InitializeShader(device, hwnd, L"../DirectX11Engine/font.vs", L"../DirectX11Engine/font.ps");
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
-
 bool FontShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT4 pixelColor)
 {
@@ -47,7 +32,6 @@ bool FontShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount,
 
 	return true;
 }
-
 
 bool FontShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename)
 {
@@ -209,7 +193,6 @@ bool FontShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* v
 	return true;
 }
 
-
 void FontShaderClass::ShutdownShader()
 {
 	// Release the pixel constant buffer.
@@ -219,40 +202,7 @@ void FontShaderClass::ShutdownShader()
 		_pixelBuffer = 0;
 	}
 
-	// Release the sampler state.
-	if (_sampleState)
-	{
-		_sampleState->Release();
-		_sampleState = 0;
-	}
-
-	// Release the matrix constant buffer.
-	if (_matrixBuffer)
-	{
-		_matrixBuffer->Release();
-		_matrixBuffer = 0;
-	}
-
-	// Release the layout.
-	if (_layout)
-	{
-		_layout->Release();
-		_layout = 0;
-	}
-
-	// Release the pixel shader.
-	if (_pixelShader)
-	{
-		_pixelShader->Release();
-		_pixelShader = 0;
-	}
-
-	// Release the vertex shader.
-	if (_vertexShader)
-	{
-		_vertexShader->Release();
-		_vertexShader = 0;
-	}
+	ShaderClass::ShutdownShader();
 
 	return;
 }

@@ -42,9 +42,7 @@ public:
 
 private:
 	// Make a private class object for each shader type the application will be using.
-
 	TextureShaderClass* _TextureShader;
 	LightShaderClass* _LightShader;
 	FontShaderClass* _FontShader;
-	//ReflectionShaderClass* _ReflectionShader;
 };

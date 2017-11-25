@@ -30,7 +30,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	// Initialize the texture shader object.
-	result = _TextureShader->Initialize(device, hwnd);
+	result = _TextureShader->Initialize(device, hwnd, L"../DirectX11Engine/texture_vs.hlsl", L"../DirectX11Engine/texture_ps.hlsl");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
@@ -45,7 +45,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	// Initialize the light shader object.
-	result = _LightShader->Initialize(device, hwnd);
+	result = _LightShader->Initialize(device, hwnd, L"../DirectX11Engine/Light_vs.hlsl", L"../DirectX11Engine/Light_ps.hlsl");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
@@ -60,7 +60,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	// Initialize the bump map shader object.
-	result = _FontShader->Initialize(device, hwnd);
+	result = _FontShader->Initialize(device, hwnd, L"../DirectX11Engine/font.vs", L"../DirectX11Engine/font.ps");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the bump map shader object.", L"Error", MB_OK);

@@ -24,7 +24,6 @@ public:
 	FontShaderClass(const FontShaderClass&);
 	~FontShaderClass();
 
-	virtual bool Initialize(ID3D11Device*, HWND)override;
 	bool Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 		XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT4 pixelColor);
 

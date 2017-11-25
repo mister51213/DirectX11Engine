@@ -29,6 +29,62 @@ void ShaderClass::Shutdown()
 	return;
 }
 
+bool ShaderClass::Initialize(ID3D11Device * device, HWND hwnd, WCHAR * vsFilename, WCHAR * psFilename)
+{
+	bool result;
+
+	// Initialize the vertex and pixel shaders.
+	result = InitializeShader(
+		device,
+		hwnd,
+		vsFilename,
+		psFilename);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void ShaderClass::ShutdownShader()
+{
+	// Release the sampler state.
+	if (_sampleState)
+	{
+		_sampleState->Release();
+		_sampleState = 0;
+	}
+
+	// Release the matrix constant buffer.
+	if (_matrixBuffer)
+	{
+		_matrixBuffer->Release();
+		_matrixBuffer = 0;
+	}
+
+	// Release the layout.
+	if (_layout)
+	{
+		_layout->Release();
+		_layout = 0;
+	}
+
+	// Release the pixel shader.
+	if (_pixelShader)
+	{
+		_pixelShader->Release();
+		_pixelShader = 0;
+	}
+
+	// Release the vertex shader.
+	if (_vertexShader)
+	{
+		_vertexShader->Release();
+		_vertexShader = 0;
+	}
+}
+
 void ShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR* shaderFilename)
 {
 	char* compileErrors;

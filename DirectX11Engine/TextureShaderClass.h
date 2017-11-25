@@ -20,12 +20,11 @@ public:
 	~TextureShaderClass();
 
 	/** pass in the name of the HLSL shader files inside this function */
-	virtual bool Initialize(ID3D11Device* device, HWND hwnd)override;
 	bool Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture);
 
 private:
 	/** actually loads the shader files and makes it usable to DirectX and the GPU. */
-	bool InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFileName, WCHAR* psFileName);
+	virtual bool InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFileName, WCHAR* psFileName) override;
 	virtual void ShutdownShader() override;
 
 	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture);
