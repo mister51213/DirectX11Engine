@@ -8,9 +8,7 @@ ShaderManagerClass::ShaderManagerClass()
 	_TextureShader(0),
 	_LightShader(0),
 	_FontShader(0)
-{
-
-}
+{}
 
 ShaderManagerClass::ShaderManagerClass(const ShaderManagerClass& other)
 {

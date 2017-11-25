@@ -44,8 +44,6 @@ protected:
 	/** pass in the name of the HLSL shader files inside this function */
 	virtual bool Initialize(ID3D11Device* device, HWND hwnd) { return true; }
 	virtual void ShutdownShader() {}
-	/** actually loads the shader files and makes it usable to DirectX and the GPU. */
-	//bool InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFileName, WCHAR* psFileName);
 	void OutputShaderErrorMessage(ID3D10Blob*, HWND hwnd, WCHAR*);
 	virtual bool SetBaseParameters(D3D11_MAPPED_SUBRESOURCE* const mappedResource, ID3D11DeviceContext*, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, /*ID3D11ShaderResourceView* texture*/unsigned int& bufferNumber);
 	void RenderShader(ID3D11DeviceContext* deviceContext, int indexCount);

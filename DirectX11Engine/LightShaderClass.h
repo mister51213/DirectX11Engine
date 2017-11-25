@@ -18,13 +18,11 @@ private:
 	{
 		XMFLOAT4 clipPlane;
 	};
-
 	struct CameraBufferType
 	{
 		XMFLOAT3 cameraPosition;
 		float padding;
 	};
-
 	struct LightBufferType
 	{
 		XMFLOAT4 ambientColor;
@@ -33,29 +31,22 @@ private:
 		float specularPower; // placed the specular power by the light direction to form a 4 float slot instead of using padding so that the structure could be kept in multiples of 16 bytes
 		XMFLOAT4 specularColor;
 	};
-
 	struct FogBufferType
 	{
 		float fogStart;
 		float fogEnd;
 		float padding1, padding2;
 	};
-
-	// for tex translation
 	struct TranslateBufferType
 	{
 		float translation;
 		XMFLOAT3 padding;
 	};
-
-	// for alpha blending textures
 	struct TransparentBufferType
 	{
 		float blendAmount;
 		XMFLOAT3 padding;
 	};
-
-	// Used for reflection
 	struct ReflectionBufferType
 	{
 		XMMATRIX reflectionMatrix;
@@ -82,12 +73,8 @@ private:
 	ID3D11Buffer* _cameraBuffer;
 	ID3D11Buffer* _lightBuffer;
 	ID3D11Buffer* _fogBuffer;
-
 	ID3D11Buffer* _clipPlaneBuffer;
-
 	ID3D11Buffer* _translateBuffer;
-
 	ID3D11Buffer* _transparentBuffer;
-
 	ID3D11Buffer* _reflectionBuffer;
 };
