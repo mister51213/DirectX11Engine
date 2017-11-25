@@ -818,28 +818,6 @@ bool Graphics::RenderScene(XMMATRIX viewMatrix, float fogStart, float fogEnd, fl
 			// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 			_Model->Render(_D3D->GetDeviceContext());
 
-			// Render the model using the color shader.
-			//result = _LightShader->Render(
-			//	_D3D->GetDeviceContext(),
-			//	_Model->GetIndexCount(),
-			//	worldPosition,
-			//	viewMatLocal,//viewMatrix,
-			//	projectionMatrix,
-			//	_Model->GetTextureArray(),
-			//	_Light->GetDirection(),
-			//	/*color,*/ _Light->GetAmbientColor(),
-			//	color, //_Light->GetDiffuseColor(), 
-			//	_Camera->GetPosition(),
-			//	/*color,*/ _Light->GetSpecularColor(),
-			//	_Light->GetSpecularPower(),
-			//	fogStart,
-			//	fogEnd,
-			//	clipPlane,
-			//	textureTranslation,
-			//	blendAmount,
-			//	_Model->GetTextureArray()[0], //@TODO: must fix
-			//	_Camera->GetReflectionViewMatrix());//viewMatrix); // @TODO: 
-
 			result = _ShaderManager->RenderLightShader(
 				_D3D->GetDeviceContext(),
 				_Model->GetIndexCount(),
@@ -884,28 +862,7 @@ bool Graphics::RenderScene(XMMATRIX viewMatrix, float fogStart, float fogEnd, fl
 		// Put the floor model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 		_FloorModel->Render(_D3D->GetDeviceContext());
 
-		// Render the floor model using the reflection shader, reflection texture, and reflection view matrix.
-		//result = _LightShader->Render(
-		//	_D3D->GetDeviceContext(),
-		//	_Model->GetIndexCount(),
-		//	worldPosition,
-		//	viewMatrix,
-		//	projectionMatrix,
-		//	_FloorModel->GetTextureArray(),
-		//	_Light->GetDirection(),
-		//	/*color,*/ _Light->GetAmbientColor(),
-		//	color, //_Light->GetDiffuseColor(), 
-		//	_Camera->GetPosition(),
-		//	/*color,*/ _Light->GetSpecularColor(),
-		//	_Light->GetSpecularPower(),
-		//	fogStart,
-		//	fogEnd,
-		//	clipPlane,
-		//	0.f,
-		//	blendAmount,
-		//	_RenderTexture->GetShaderResourceView(),
-		//	reflectionMatrix);
-
+		//@TODO: DONT USE LIGHT SHADER for this anymore - use dedicated reflection shader instead
 		result = _ShaderManager->RenderLightShader(
 			_D3D->GetDeviceContext(),
 			_Model->GetIndexCount(),

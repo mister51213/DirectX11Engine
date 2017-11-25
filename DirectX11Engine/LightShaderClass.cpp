@@ -10,11 +10,11 @@
 
 LightShaderClass::LightShaderClass()
 	:
-	_vertexShader(0),
-	_pixelShader(0),
-	_layout(0),
-	_sampleState(0),
-	_matrixBuffer(0),
+	//_vertexShader(0),
+	//_pixelShader(0),
+	//_layout(0),
+	//_sampleState(0),
+	//_matrixBuffer(0),
 	_cameraBuffer(0),
 	_lightBuffer(0),
 	_fogBuffer(0),
@@ -47,13 +47,13 @@ bool LightShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 }
 
 
-void LightShaderClass::Shutdown()
-{
-	// Shutdown the vertex and pixel shaders as well as the related objects.
-	ShutdownShader();
-
-	return;
-}
+//void LightShaderClass::Shutdown()
+//{
+//	// Shutdown the vertex and pixel shaders as well as the related objects.
+//	ShutdownShader();
+//
+//	return;
+//}
 
 bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
@@ -459,49 +459,63 @@ void LightShaderClass::ShutdownShader()
 	return;
 }
 
-void LightShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR* shaderFilename)
-{
-	char* compileErrors;
-	unsigned long bufferSize, i;
-	ofstream fout;
-
-	// Get a pointer to the error message text buffer.
-	compileErrors = (char*)(errorMessage->GetBufferPointer());
-
-	// Get the length of the message.
-	bufferSize = errorMessage->GetBufferSize();
-
-	// Open a file to write the error message to.
-	fout.open("shader-error.txt");
-
-	// Write out the error message.
-	for (i = 0; i<bufferSize; i++)
-	{
-		fout << compileErrors[i];
-	}
-
-	// Close the file.
-	fout.close();
-
-	// Release the error message.
-	errorMessage->Release();
-	errorMessage = 0;
-
-	// Pop a message up on the screen to notify the user to check the text file for compile errors.
-	MessageBox(hwnd, L"Error compiling shader.  Check shader-error.txt for message.", shaderFilename, MB_OK);
-
-	return;
-}
+//void LightShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR* shaderFilename)
+//{
+//	char* compileErrors;
+//	unsigned long bufferSize, i;
+//	ofstream fout;
+//
+//	// Get a pointer to the error message text buffer.
+//	compileErrors = (char*)(errorMessage->GetBufferPointer());
+//
+//	// Get the length of the message.
+//	bufferSize = errorMessage->GetBufferSize();
+//
+//	// Open a file to write the error message to.
+//	fout.open("shader-error.txt");
+//
+//	// Write out the error message.
+//	for (i = 0; i<bufferSize; i++)
+//	{
+//		fout << compileErrors[i];
+//	}
+//
+//	// Close the file.
+//	fout.close();
+//
+//	// Release the error message.
+//	errorMessage->Release();
+//	errorMessage = 0;
+//
+//	// Pop a message up on the screen to notify the user to check the text file for compile errors.
+//	MessageBox(hwnd, L"Error compiling shader.  Check shader-error.txt for message.", shaderFilename, MB_OK);
+//
+//	return;
+//}
 
 bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
 	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency, ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix)
 {
 	HRESULT result;
+
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	unsigned int bufferNumber;
-	MatrixBufferType* dataPtr1;
-	LightBufferType* dataPtr2;
+	//MatrixBufferType* dataPtr1;
+
+	//@TODO: need to explicitly resolve it like this???
+	result = ShaderClass::SetShaderParameters(&mappedResource, deviceContext, worldMatrix, viewMatrix, projectionMatrix, bufferNumber);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	// Transpose the matrices to prepare them for the shader.
+	//worldMatrix = XMMatrixTranspose(worldMatrix);
+	//viewMatrix = XMMatrixTranspose(viewMatrix);
+	//projectionMatrix = XMMatrixTranspose(projectionMatrix);
+
+	LightBufferType* dataPtr2; //NOTE - dataPtr1 define in parent class
 	CameraBufferType* dataPtr3;
 	FogBufferType* dataPtr4;
 	ClipPlaneBufferType* dataPtr5;
@@ -509,39 +523,34 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	TransparentBufferType* dataPtr7;
 	ReflectionBufferType* dataPtr8;
 
-	// Transpose the matrices to prepare them for the shader.
-	worldMatrix = XMMatrixTranspose(worldMatrix);
-	viewMatrix = XMMatrixTranspose(viewMatrix);
-	projectionMatrix = XMMatrixTranspose(projectionMatrix);
 	reflectionMatrix = XMMatrixTranspose(reflectionMatrix);
 
 	// Lock the constant buffer so it can be written to.
-	result = deviceContext->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	//result = deviceContext->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
 
-	// Get a pointer to the data in the constant buffer.
-	dataPtr1 = (MatrixBufferType*)mappedResource.pData;
+	//// Get a pointer to the data in the constant buffer.
+	//dataPtr1 = (MatrixBufferType*)mappedResource.pData;
 
-	// Copy the matrices into the constant buffer.
-	dataPtr1->world = worldMatrix;
-	dataPtr1->view = viewMatrix;
-	dataPtr1->projection = projectionMatrix;
+	//// Copy the matrices into the constant buffer.
+	//dataPtr1->world = worldMatrix;
+	//dataPtr1->view = viewMatrix;
+	//dataPtr1->projection = projectionMatrix;
 
-	/////////////////////////////////////////////////////////////
-	/////////////////////// VS BUFFERS //////////////////////////
-	/////////////////////////////////////////////////////////////
-	////////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////
-	// Unlock the constant buffer.
-	deviceContext->Unmap(_matrixBuffer, 0);
+	//// Unlock the constant buffer.
+	//deviceContext->Unmap(_matrixBuffer, 0);
+	///////////////////////////////////////////////////////////////
+	///////////////////////// VS BUFFERS //////////////////////////
+	///////////////////////////////////////////////////////////////
+	//////////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////
+	//// Set the position of the constant buffer in the vertex shader.
+	//bufferNumber = 0; //@TODO just increment buffer number each time, and separate vertex and pixel buffers into 2 functions
 
-	// Set the position of the constant buffer in the vertex shader.
-	bufferNumber = 0; //@TODO just increment buffer number each time, and separate vertex and pixel buffers into 2 functions
-
-	// Now set the constant buffer in the vertex shader with the updated values.
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_matrixBuffer);
+	//// Now set the constant buffer in the vertex shader with the updated values.
+	//deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_matrixBuffer);
 
 	///////////////////// CAM INIT - VS BUFFER 1 //////////////////////////////////
 	// Lock the camera constant buffer so it can be written to.
@@ -728,20 +737,20 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	return true;
 }
 
-void LightShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
-{
-	// Set the vertex input layout.
-	deviceContext->IASetInputLayout(_layout);
-
-	// Set the vertex and pixel shaders that will be used to render this triangle.
-	deviceContext->VSSetShader(_vertexShader, NULL, 0);
-	deviceContext->PSSetShader(_pixelShader, NULL, 0);
-
-	// Set the sampler state in the pixel shader.
-	deviceContext->PSSetSamplers(0, 1, &_sampleState);
-
-	// Render the triangle.
-	deviceContext->DrawIndexed(indexCount, 0, 0);
-
-	return;
-}
+//void LightShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
+//{
+//	// Set the vertex input layout.
+//	deviceContext->IASetInputLayout(_layout);
+//
+//	// Set the vertex and pixel shaders that will be used to render this triangle.
+//	deviceContext->VSSetShader(_vertexShader, NULL, 0);
+//	deviceContext->PSSetShader(_pixelShader, NULL, 0);
+//
+//	// Set the sampler state in the pixel shader.
+//	deviceContext->PSSetSamplers(0, 1, &_sampleState);
+//
+//	// Render the triangle.
+//	deviceContext->DrawIndexed(indexCount, 0, 0);
+//
+//	return;
+//}
