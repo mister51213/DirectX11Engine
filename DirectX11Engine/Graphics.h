@@ -7,7 +7,7 @@
 /////////////
 // GLOBALS //
 /////////////
-const bool FULL_SCREEN = true;
+const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = false;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.1f;
@@ -20,13 +20,14 @@ const float SCREEN_NEAR = 0.1f;
 #include "camera.h"
 #include "textclass.h"
 #include "model.h"
-#include "LightShaderClass.h"
 #include "LightClass.h"
 #include "rendertextureclass.h"
 #include "debugwindowclass.h"
 #include "modellistclass.h"
 #include "frustumclass.h"
-#include "textureshaderclass.h"
+#include "shadermanagerclass.h"
+//#include "textureshaderclass.h"
+//#include "LightShaderClass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
@@ -63,23 +64,25 @@ private:
 	D3DClass* _D3D;
 	Camera* _Camera;
 	TextClass* _Text; //@CUSTOM - now have multiple text classes holding different info
-	FontClass* m_Font1;
-	FontShaderClass* _FontShader;
+	FontClass* _Font1;
 
-	TextClass *m_FpsString, *m_VideoStrings, *m_PositionStrings;
-	int m_previousFps;
-	int m_previousPosition[6];
-	TextClass* m_RenderCountStrings;
+	TextClass *_FpsString, *_VideoStrings, *_PositionStrings;
+	int _previousFps;
+	int _previousPosition[6];
+	TextClass* _RenderCountStrings;
 	float textureTranslation = 0.f;
 
 	Model* _Model;
-	LightShaderClass* _LightShader;
 	LightClass* _Light;
 	ModelListClass* _ModelList;
 	FrustumClass* _Frustum;
 	RenderTextureClass* _RenderTexture;
 	DebugWindowClass* _DebugWindow;
-	TextureShaderClass* _TextureShader;
+	
+	ShaderManagerClass* _ShaderManager;
+	//FontShaderClass* _FontShader;
+	//LightShaderClass* _LightShader;
+	//TextureShaderClass* _TextureShader;
 
 	/////////// REFLECTION //////////////////
 	RenderTextureClass* _ReflectionTexture;

@@ -16,6 +16,12 @@
     <Filter Include="Header Files\Utilities">
       <UniqueIdentifier>{ec5d199e-ce31-4d18-8541-6bfc735b9b89}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Shaders">
+      <UniqueIdentifier>{b07e6c23-7ae4-4cf7-b952-952ca8225b07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shaders">
+      <UniqueIdentifier>{4430a54b-1eb0-489b-a461-733153231cba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -45,9 +51,6 @@
     <ClCompile Include="LightClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LightShaderClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TimerClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -58,9 +61,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FontClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="FontShaderClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TextClass.cpp">
@@ -81,8 +81,17 @@
     <ClCompile Include="DebugWindowClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TextureShaderClass.cpp">
+    <ClCompile Include="ShaderManagerClass.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FontShaderClass.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="LightShaderClass.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureShaderClass.cpp">
+      <Filter>Source Files\Shaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -110,9 +119,6 @@
     <ClInclude Include="LightClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LightShaderClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VectorMath.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
@@ -126,9 +132,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FontClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FontShaderClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextClass.h">
@@ -149,17 +152,40 @@
     <ClInclude Include="DebugWindowClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TextureShaderClass.h">
+    <ClInclude Include="ShaderManagerClass.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LightShaderClass.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="FontShaderClass.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureShaderClass.h">
+      <Filter>Header Files\Shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Light_vs.hlsl" />
-    <None Include="Light_ps.hlsl" />
-    <None Include="font.ps" />
-    <None Include="font.vs" />
-    <None Include="packages.config" />
-    <None Include="texture_ps.hlsl" />
-    <None Include="texture_vs.hlsl" />
+    <None Include="font.ps">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="font.vs">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="Light_ps.hlsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="Light_vs.hlsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="packages.config">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="texture_ps.hlsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="texture_vs.hlsl">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

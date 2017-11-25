@@ -81,11 +81,12 @@ void TextClass::Shutdown()
 }
 
 
-void TextClass::Render(ID3D11DeviceContext* deviceContext, FontShaderClass* pFontShader, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
+void TextClass::Render(ID3D11DeviceContext* deviceContext, ShaderManagerClass* pShaderManager/*FontShaderClass* pFontShader*/, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX orthoMatrix, ID3D11ShaderResourceView* fontTexture)
 {
 	// Draw the sentence.
-	RenderSentence(deviceContext, pFontShader, worldMatrix, viewMatrix, orthoMatrix, fontTexture);
+	//RenderSentence(deviceContext, pFontShader, worldMatrix, viewMatrix, orthoMatrix, fontTexture);
+	RenderSentence(deviceContext, pShaderManager, worldMatrix, viewMatrix, orthoMatrix, fontTexture);
 
 	//@TODO: RENDER ALL THE SENTENCES
 
@@ -304,7 +305,7 @@ bool TextClass::UpdateSentence(ID3D11DeviceContext* deviceContext, FontClass* Fo
 }
 
 // HIS @CUSTOM
-void TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, FontShaderClass* pFontShader, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
+void TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, /*class FontShaderClass* pFontShader,*/ShaderManagerClass* pShaderManager, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX orthoMatrix, ID3D11ShaderResourceView* fontTexture)
 {
 	unsigned int stride, offset;
@@ -331,7 +332,8 @@ void TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, FontShaderCla
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Render the text using the font shader. //@PROBLEM - do it the old way using the old texture
-	result = pFontShader->Render(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, /**_Font->GetTexture(),*/ fontTexture, m_pixelColor);
+	//result = pFontShader->Render(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, /**_Font->GetTexture(),*/ fontTexture, m_pixelColor);
+	result = pShaderManager->RenderFontShader(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, m_pixelColor);
 	if (!result)
 	{
 		false;

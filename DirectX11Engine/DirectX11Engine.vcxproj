@@ -163,6 +163,7 @@
     <ClCompile Include="ModelListClass.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="RenderTextureClass.cpp" />
+    <ClCompile Include="ShaderManagerClass.cpp" />
     <ClCompile Include="TextClass.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="D3DClass.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="ModelListClass.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="RenderTextureClass.h" />
+    <ClInclude Include="ShaderManagerClass.h" />
     <ClInclude Include="TextClass.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="D3DClass.h" />
