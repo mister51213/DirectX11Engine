@@ -11,6 +11,7 @@
 #include "textureshaderclass.h"
 #include "lightshaderclass.h"
 #include "fontShaderClass.h"
+#include "ReflectionShaderClass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: ShaderManagerClass
@@ -35,8 +36,8 @@ public:
 	bool RenderFontShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 		XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT4 pixelColor);
 
-	bool RenderReflectionShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-		XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMMATRIX reflectionMatrix);
+	bool RenderReflectionShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, 
+		XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix);
 
 	FontShaderClass* GetFontShader();
 
@@ -45,4 +46,5 @@ private:
 	TextureShaderClass* _TextureShader;
 	LightShaderClass* _LightShader;
 	FontShaderClass* _FontShader;
+	ReflectionShaderClass* _ReflectionShader;
 };

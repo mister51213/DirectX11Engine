@@ -22,6 +22,9 @@
     <Filter Include="Source Files\Shaders">
       <UniqueIdentifier>{4430a54b-1eb0-489b-a461-733153231cba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HLSL Files">
+      <UniqueIdentifier>{657fbe75-46a3-4c50-aa2c-afe1df7d0ba9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -81,9 +84,6 @@
     <ClCompile Include="DebugWindowClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderManagerClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FontShaderClass.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
@@ -93,8 +93,14 @@
     <ClCompile Include="TextureShaderClass.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="ShaderClass.cpp">
+    <ClCompile Include="ReflectionShaderClass.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderClass.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManagerClass.cpp">
+      <Filter>Source Files\Shaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -155,9 +161,6 @@
     <ClInclude Include="DebugWindowClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderManagerClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LightShaderClass.h">
       <Filter>Header Files\Shaders</Filter>
     </ClInclude>
@@ -167,31 +170,43 @@
     <ClInclude Include="TextureShaderClass.h">
       <Filter>Header Files\Shaders</Filter>
     </ClInclude>
-    <ClInclude Include="ShaderClass.h">
+    <ClInclude Include="ReflectionShaderClass.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderClass.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderManagerClass.h">
+      <Filter>Header Files\Shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="font.ps">
-      <Filter>Source Files\Shaders</Filter>
-    </None>
-    <None Include="font.vs">
-      <Filter>Source Files\Shaders</Filter>
-    </None>
-    <None Include="Light_ps.hlsl">
-      <Filter>Source Files\Shaders</Filter>
-    </None>
-    <None Include="Light_vs.hlsl">
-      <Filter>Source Files\Shaders</Filter>
-    </None>
     <None Include="packages.config">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="Light_ps.hlsl">
+      <Filter>HLSL Files</Filter>
+    </None>
+    <None Include="Light_vs.hlsl">
+      <Filter>HLSL Files</Filter>
+    </None>
+    <None Include="Reflection_ps.hlsl">
+      <Filter>HLSL Files</Filter>
+    </None>
+    <None Include="Reflection_vs.hlsl">
+      <Filter>HLSL Files</Filter>
+    </None>
     <None Include="texture_ps.hlsl">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>HLSL Files</Filter>
     </None>
     <None Include="texture_vs.hlsl">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>HLSL Files</Filter>
+    </None>
+    <None Include="font.vs">
+      <Filter>HLSL Files</Filter>
+    </None>
+    <None Include="font.ps">
+      <Filter>HLSL Files</Filter>
     </None>
   </ItemGroup>
 </Project>

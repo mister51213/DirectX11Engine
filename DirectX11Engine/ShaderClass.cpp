@@ -47,6 +47,72 @@ bool ShaderClass::Initialize(ID3D11Device * device, HWND hwnd, WCHAR * vsFilenam
 	return true;
 }
 
+bool ShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, WCHAR * vsFileName, WCHAR * psFileName)
+{
+	return false;
+}
+
+bool ShaderClass::CompileShaders(ID3D11Device * device, ID3D10Blob* vertexShaderBuffer, ID3D10Blob* pixelShaderBuffer, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename, char* vsDesc, char* psDesc, ID3D10Blob* errorMessage)
+{
+	//@TODO!!!!!!WATCH OUT FOR NULL POINTERS HERE!!!!!
+		//@TODO!!!!!!WATCH OUT FOR NULL POINTERS HERE!!!!!
+	// Compile the vertex shader code. @TODO!!!!!! WATCH OUT FOR NULL POINTERS HERE!!!!!
+	bool result = D3DCompileFromFile(vsFilename, NULL, NULL, vsDesc, "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
+		0, &vertexShaderBuffer, &errorMessage);
+	if (FAILED(result))
+	{
+		// If the shader failed to compile it should have writen something to the error message.
+		if (errorMessage)
+		{
+			OutputShaderErrorMessage(errorMessage, hwnd, vsFilename);
+		}
+		// If there was  nothing in the error message then it simply could not find the shader file itself.
+		else
+		{
+			MessageBox(hwnd, vsFilename, L"Missing Shader File", MB_OK);
+		}
+
+		return false;
+	}
+
+	// Compile the pixel shader code.
+	result = D3DCompileFromFile(psFilename, NULL, NULL, psDesc, "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
+		0, &pixelShaderBuffer, &errorMessage);
+	if (FAILED(result))
+	{
+		// If the shader failed to compile it should have writen something to the error message.
+		if (errorMessage)
+		{
+			OutputShaderErrorMessage(errorMessage, hwnd, psFilename);
+		}
+		// If there was  nothing in the error message then it simply could not find the file itself.
+		else
+		{
+			MessageBox(hwnd, psFilename, L"Missing Shader File", MB_OK);
+		}
+
+		return false;
+	}
+
+	// Create the vertex shader from the buffer.
+	result = device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL,
+		&_vertexShader);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	// Create the vertex shader from the buffer.
+	result = device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL,
+		&_pixelShader);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	return true;
+}
+
 void ShaderClass::ShutdownShader()
 {
 	// Release the sampler state.

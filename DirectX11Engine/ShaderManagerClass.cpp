@@ -11,8 +11,7 @@ ShaderManagerClass::ShaderManagerClass()
 {}
 
 ShaderManagerClass::ShaderManagerClass(const ShaderManagerClass& other)
-{
-}
+{}
 
 ShaderManagerClass::~ShaderManagerClass()
 {
@@ -67,11 +66,34 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 		return false;
 	}
 
+	// Create the bump map shader object.
+	_ReflectionShader = new ReflectionShaderClass;
+	if (!_FontShader)
+	{
+		return false;
+	}
+
+	// Initialize the bump map shader object.
+	result = _ReflectionShader->Initialize(device, hwnd, L"../DirectX11Engine/Reflection_vs.hlsl", L"../DirectX11Engine/Reflection_ps.hlsl");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the bump map shader object.", L"Error", MB_OK);
+		return false;
+	}
+
 	return true;
 }
 
 void ShaderManagerClass::Shutdown()
 {
+	// Release reflection shader
+	if (_ReflectionShader)
+	{
+		_ReflectionShader->Shutdown();
+		delete _ReflectionShader;
+		_ReflectionShader = 0;
+	}
+
 	// Release the bump map shader object.
 	if (_FontShader)
 	{
@@ -95,14 +117,6 @@ void ShaderManagerClass::Shutdown()
 		delete _TextureShader;
 		_TextureShader = 0;
 	}
-
-	// Release the texture shader object.
-	//if (_ReflectionShader)
-	//{
-	//	_ReflectionShader->Shutdown();
-	//	delete _ReflectionShader;
-	//	_ReflectionShader = 0;
-	//}
 
 	return;
 }
@@ -158,18 +172,18 @@ bool ShaderManagerClass::RenderFontShader(ID3D11DeviceContext* deviceContext, in
 }
 
 bool ShaderManagerClass::RenderReflectionShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMMATRIX reflectionMatrix)
+	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix)
 {
 	bool result;
 
-	//// Render the model using the bump map shader. // @TODO: also make inheritance hierarchy for SHADER CLASSES
-	//result = _ReflectionShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, reflectionMatrix);
-	//if (!result)
-	//{
-	//	return false;
-	//}
+	// Render the model using the reflection shader. 
+	result = _ReflectionShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, reflectionTexture, reflectionMatrix);
+	if (!result)
+	{
+		return false;
+	}
 
-	return false;
+	return true;
 }
 
 FontShaderClass * ShaderManagerClass::GetFontShader()

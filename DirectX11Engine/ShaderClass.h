@@ -40,7 +40,9 @@ public:
 	bool Initialize(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename);
 
 protected:
-	virtual bool InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFileName, WCHAR* psFileName) { return false; };
+	virtual bool InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFileName, WCHAR* psFileName);
+
+	bool CompileShaders(ID3D11Device * device, ID3D10Blob* vertexShaderBuffer, ID3D10Blob* pixelShaderBuffer, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename, char* vsDesc, char* psDesc, ID3D10Blob* errorMessage);
 
 	virtual void ShutdownShader();
 	void OutputShaderErrorMessage(ID3D10Blob*, HWND hwnd, WCHAR*);
