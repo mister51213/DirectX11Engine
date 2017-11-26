@@ -673,7 +673,7 @@ bool Graphics::RenderToReflection(float time) // same as rendertotexture in rast
 	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Use the camera to calculate the reflection matrix.
-	_Camera->RenderReflection(-1.5f);
+	_Camera->RenderReflection(-1.f); //@TODO - must be same as rendering height
 
 	// Get the camera reflection view matrix instead of the normal view matrix.
 	reflectionViewMatrix = _Camera->GetReflectionViewMatrix();
@@ -683,7 +683,7 @@ bool Graphics::RenderToReflection(float time) // same as rendertotexture in rast
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
 	// Update the rotation variable each frame.
-	rotation += (float)XM_PI * 0.005f;
+	rotation += (float)XM_PI * 0.001f;
 	if (rotation > 360.0f){rotation -= 360.0f;}
 	XMMATRIX rotMat = XMMatrixRotationY(rotation);
 	worldMatrix = XMMatrixMultiply(worldMatrix, rotMat);
@@ -773,7 +773,7 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 
 	// Update the rotation variable each frame.
 	static float rotation = 0.0f;
-	rotation += (float)XM_PI * 0.005f;
+	rotation += (float)XM_PI * 0.001f;
 	if (rotation > 360.0f) { rotation -= 360.0f; }
 	XMMATRIX rotMat = XMMatrixRotationY(rotation);
 	worldPosition = XMMatrixMultiply(worldPosition, rotMat);
@@ -782,22 +782,50 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	_ModelSingle->Render(_D3D->GetDeviceContext());
 
 	// Render the model with the texture shader.
-	result = _ShaderManager->RenderTextureShader(
-		_D3D->GetDeviceContext(), _Model->GetIndexCount(), worldPosition, 
-		viewMatrix,	projectionMatrix, _ModelSingle->GetTextureArray()[0]);
+	//result = _ShaderManager->RenderTextureShader(
+	//	_D3D->GetDeviceContext(), _Model->GetIndexCount(), worldPosition, 
+	//	viewMatrix,	projectionMatrix, _ModelSingle->GetTextureArray()[0]);
+	//if (!result)
+	//{
+	//	return false;
+	//}
+
+	/// TEST - use light shader on cube instead
+	XMMATRIX reflectionMatrix = _Camera->GetReflectionViewMatrix();
+	XMFLOAT4 clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, 0.0f);
+	result = _ShaderManager->RenderLightShader(
+		_D3D->GetDeviceContext(),
+		_Model->GetIndexCount(),
+		worldPosition,
+		viewMatrix,
+		projectionMatrix,
+		_ModelSingle->GetTextureArray(),
+		_Light->GetDirection(),
+		_Light->GetAmbientColor(),
+		_Light->GetDiffuseColor(), 
+		_Camera->GetPosition(),
+		 _Light->GetSpecularColor(),
+		_Light->GetSpecularPower(),
+		fogStart,
+		fogEnd,
+		clipPlane,
+		0.f,
+		.5f,
+		_RenderTexture->GetShaderResourceView(),
+		reflectionMatrix);
 	if (!result)
 	{
 		return false;
 	}
-
+	
 	///////////// RENDER REFLECTIVE FLOOR ///////////////////
 	// Get the world matrix again and translate down for the floor model to render underneath the cube.
 	_D3D->GetWorldMatrix(worldPosition);
-	XMMATRIX translation = XMMatrixTranslation(0.0f, -1.5f, 0.0f);
+	XMMATRIX translation = XMMatrixTranslation(0.0f, -1.f, 0.0f);
 	worldPosition = XMMatrixMultiply(worldPosition, translation);
 
 	// Get the camera reflection view matrix.
-	XMMATRIX reflectionMatrix = _Camera->GetReflectionViewMatrix();
+	//XMMATRIX reflectionMatrix = _Camera->GetReflectionViewMatrix();
 
 	// Put the floor model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	_FloorModel->Render(_D3D->GetDeviceContext());
@@ -888,41 +916,6 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	//_D3D->DisableAlphaBlending();
 
 #pragma endregion
-
-	//result = 
-	//	_ShaderManager->RenderReflectionShader(
-	//		_D3D->GetDeviceContext(), 
-	//		_Model->GetIndexCount(), 
-	//		worldMatrix, 
-	//		reflectionViewMatrix,
-	//		projectionMatrix, 
-	//		_Model->GetTextureArray()[0],
-	//		_FloorModel->);
-
-	//result = _ShaderManager->RenderLightShader(
-	//	_D3D->GetDeviceContext(),
-	//	_FloorModel->GetIndexCount(),
-	//	worldPosition,
-	//	viewMatrix,
-	//	projectionMatrix,
-	//	_FloorModel->GetTextureArray(),
-	//	_Light->GetDirection(),
-	//	/*color,*/ _Light->GetAmbientColor(),
-	//	color, //_Light->GetDiffuseColor(), 
-	//	_Camera->GetPosition(),
-	//	/*color,*/ _Light->GetSpecularColor(),
-	//	_Light->GetSpecularPower(),
-	//	fogStart,
-	//	fogEnd,
-	//	clipPlane,
-	//	0.f,
-	//	blendAmount,
-	//	_RenderTexture->GetShaderResourceView(),
-	//	reflectionMatrix);
-	//if (!result)
-	//{
-	//	return false;
-	//}
 
 	return true;
 }
