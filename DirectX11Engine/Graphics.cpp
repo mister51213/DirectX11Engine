@@ -671,7 +671,7 @@ bool Graphics::RenderToReflection(float time) // same as rendertotexture in rast
 
 	// Render the model IMAGE upside down in the reflective surface.
 	XMFLOAT3 fogColor(.6f, .6f, .6f);	float fogStart = 0.0f;	float fogEnd = 3.f;
-	XMFLOAT4 clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, 0.0f);
+	XMFLOAT4 clipPlane = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
 	result = _ShaderManager->RenderLightShader(
 		_D3D->GetDeviceContext(),
 		_Model->GetIndexCount(),
@@ -689,9 +689,7 @@ bool Graphics::RenderToReflection(float time) // same as rendertotexture in rast
 		fogEnd,
 		clipPlane,
 		0.f,
-		.5f,
-		_RenderTexture->GetShaderResourceView(),
-		reflectionViewMatrix);
+		.5f);
 	if (!result)
 	{
 		return false;
@@ -726,7 +724,7 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	_ModelSingle->Render(_D3D->GetDeviceContext());
 
-	// Render the model with the texture shader.
+	// @OPTIMIZATION: Render the model with the texture shader.
 	//result = _ShaderManager->RenderTextureShader(
 	//	_D3D->GetDeviceContext(), _Model->GetIndexCount(), worldPosition, 
 	//	viewMatrix,	projectionMatrix, _ModelSingle->GetTextureArray()[0]);
@@ -737,7 +735,7 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 
 	/// TEST - use light shader on cube instead
 	XMMATRIX reflectionMatrix = _Camera->GetReflectionViewMatrix();
-	XMFLOAT4 clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, 0.0f);
+	XMFLOAT4 clipPlane = XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f);
 	result = _ShaderManager->RenderLightShader(
 		_D3D->GetDeviceContext(),
 		_Model->GetIndexCount(),
@@ -755,9 +753,9 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 		fogEnd,
 		clipPlane,
 		0.f,
-		.5f,
+		.5f/*,
 		_RenderTexture->GetShaderResourceView(),
-		reflectionMatrix);
+		reflectionMatrix*/);
 	if (!result)
 	{
 		return false;
