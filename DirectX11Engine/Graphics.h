@@ -48,14 +48,14 @@ public:
 
 	bool RenderToReflection(float time);
 
-	void RenderText(const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATRIX &baseViewMatrix, const DirectX::XMMATRIX &orthoMatrix);
+	void RenderText(/*const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATRIX &baseViewMatrix, const DirectX::XMMATRIX &orthoMatrix*/);
 
 	inline Camera* GetCamera() { return _Camera; }
 	bool UpdateRenderCounts(ID3D11DeviceContext*, int, int, int);
 
 private:
-	bool RenderToTexture(float frameTime);
-	bool RenderScene(XMMATRIX reflectionViewMatrix, float fogStart, float fogEnd, float frameTime);
+	//bool RenderToTexture(float frameTime);
+	bool RenderScene(float fogStart, float fogEnd, float frameTime);
 
 	bool UpdateFpsString(ID3D11DeviceContext*, int);
 	bool UpdatePositionStrings(ID3D11DeviceContext*, float, float, float, float, float, float);
@@ -73,6 +73,7 @@ private:
 	float textureTranslation = 0.f;
 
 	Model* _Model;
+	Model* _ModelSingle;
 	LightClass* _Light;
 	ModelListClass* _ModelList;
 	FrustumClass* _Frustum;
@@ -80,9 +81,6 @@ private:
 	DebugWindowClass* _DebugWindow;
 	
 	ShaderManagerClass* _ShaderManager;
-	//FontShaderClass* _FontShader;
-	//LightShaderClass* _LightShader;
-	//TextureShaderClass* _TextureShader;
 
 	/////////// REFLECTION //////////////////
 	RenderTextureClass* _ReflectionTexture;

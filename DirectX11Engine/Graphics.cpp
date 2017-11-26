@@ -387,11 +387,41 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
+	_ModelSingle = new Model;
+	if (!_ModelSingle)
+	{
+		return false;
+	}
+
+	result = _ModelSingle->Initialize(
+		_D3D->GetDevice(),
+		_D3D->GetDeviceContext(),
+		"../DirectX11Engine/data/cube.txt",
+		"../DirectX11Engine/data/stone.tga", // tex1
+		"../DirectX11Engine/data/dirt.tga", // tex2
+		"../DirectX11Engine/data/light.tga", // lightmap
+		"../DirectX11Engine/data/alpha.tga", // alpha
+		"../DirectX11Engine/data/bumpMap.tga", // normal map
+		"../DirectX11Engine/data/specMap.tga"); // specMap
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
+		return false;
+	}
+
 	return true;
 }
 
 void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of intialization
 {
+	// Release the floor model object.
+	if (_ModelSingle)
+	{
+		_ModelSingle->Shutdown();
+		delete _ModelSingle;
+		_ModelSingle = 0;
+	}
+
 	// Release the floor model object.
 	if (_FloorModel)
 	{
@@ -453,7 +483,6 @@ void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of inti
 	//	delete _LightShader;
 	//	_LightShader = 0;
 	//}
-
 	//// Release the light shader object.
 	//if (_FontShader)
 	//{
@@ -596,93 +625,49 @@ bool Graphics::Frame(float frameTime, int fps, float posX, float posY, float pos
 
 bool Graphics::Render(float frameTime)
 {
-	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
-	
-	XMFLOAT3 fogColor(0.5f, 0.3f, 0.3f);
-	float fogStart = 0.0f;
-	float fogEnd = 3.f;
+	XMFLOAT3 fogColor(.6f, .6f, .6f);	float fogStart = 0.0f;	float fogEnd = 3.f;
 
-	bool result;
+	bool result = RenderToReflection(frameTime);
+	if (!result) { return false; }
 
-	// Render the entire scene to the texture first.
-	result = RenderToTexture(frameTime);
-	if (!result)
-	{
-		return false;
-	}
-
-	//@TODO add this new function so we can render to 2 textures
-	result = RenderToReflection(frameTime);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Clear the buffers to begin the scene.
-	//_D3D->BeginScene(0.3f, 0.3f, 0.3f, 1.0f);
 	_D3D->BeginScene(fogColor.x, fogColor.y, fogColor.z, 1.0f);
 
 	// Render the scene as normal to the back buffer.
-	XMMATRIX viewMatrix;
-	_Camera->GetViewMatrix(viewMatrix);
-	result = RenderScene(viewMatrix, fogStart, fogEnd, frameTime);
-	if (!result)
-	{
-		return false;
-	}
+	//XMMATRIX viewMatrix;	_Camera->GetViewMatrix(viewMatrix);
+	result = RenderScene(fogStart, fogEnd, frameTime);
+	if (!result) { return false; }
 
-	// Turn off the Z buffer to begin all 2D rendering.
 	_D3D->TurnZBufferOff();
 
-	_D3D->GetWorldMatrix(worldMatrix);
-	_Camera->GetBaseViewMatrix(baseViewMatrix);
-	_D3D->GetOrthoMatrix(orthoMatrix);
-
 	// Put the debug window vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	result = _DebugWindow->Render(_D3D->GetDeviceContext(), 80, 50);
-	if (!result)
-	{
-		return false;
-	}
+	//result = _DebugWindow->Render(_D3D->GetDeviceContext(), 80, 50);
+	//if (!result) {	return false; }
+	//result = _ShaderManager->RenderTextureShader(
+	//	_D3D->GetDeviceContext(),
+	//	_DebugWindow->GetIndexCount(),
+	//	worldMatrix,
+	//	baseViewMatrix, //viewMatrix,
+	//	orthoMatrix,
+	//	_RenderTexture->GetShaderResourceView());
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
-	// Render the debug window using the texture shader.
-	//result = _TextureShader->Render(
-	//			_D3D->GetDeviceContext(), 
-	//			_DebugWindow->GetIndexCount(), 
-	//			worldMatrix, 
-	//			baseViewMatrix, //viewMatrix,
-	//			orthoMatrix, 
-	//			_RenderTexture->GetShaderResourceView());
-	result = _ShaderManager->RenderTextureShader(
-		_D3D->GetDeviceContext(),
-		_DebugWindow->GetIndexCount(),
-		worldMatrix,
-		baseViewMatrix, //viewMatrix,
-		orthoMatrix,
-		_RenderTexture->GetShaderResourceView());
-	if (!result)
-	{
-		return false;
-	}
-
-	RenderText(worldMatrix, baseViewMatrix, orthoMatrix);
-
-	// Turn the Z buffer back on now that all 2D rendering has completed.
-	_D3D->TurnZBufferOn();
-
-	// Present the rendered scene to the screen.
-	_D3D->EndScene();
+	RenderText();
+	_D3D->TurnZBufferOn(); // Turn the Z buffer back on now that all 2D rendering has completed.
+	_D3D->EndScene(); // Present the rendered scene to the screen.
 
 	return true;
 }
 
-bool Graphics::RenderToReflection(float time)
+bool Graphics::RenderToReflection(float time) // same as rendertotexture in rastertek
 {
 	XMMATRIX worldMatrix, reflectionViewMatrix, projectionMatrix;
 	static float rotation = 0.0f;
 
 	// Set the render target to be the render to texture.
-	_ReflectionTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
+	_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
 
 	// Clear the render to texture.
 	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
@@ -693,12 +678,29 @@ bool Graphics::RenderToReflection(float time)
 	// Get the camera reflection view matrix instead of the normal view matrix.
 	reflectionViewMatrix = _Camera->GetReflectionViewMatrix();
 
+	// Get the world and projection matrices.
+	_D3D->GetWorldMatrix(worldMatrix);
+	_D3D->GetProjectionMatrix(projectionMatrix);
+
+	// Update the rotation variable each frame.
+	rotation += (float)XM_PI * 0.005f;
+	if (rotation > 360.0f){rotation -= 360.0f;}
+	XMMATRIX rotMat = XMMatrixRotationY(rotation);
+	worldMatrix = XMMatrixMultiply(worldMatrix, rotMat);
+
+	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	_ModelSingle->Render(_D3D->GetDeviceContext());
+
+	// Render the model using the texture shader and the reflection view matrix.
+	_ShaderManager->RenderTextureShader(_D3D->GetDeviceContext(), _Model->GetIndexCount(), worldMatrix, reflectionViewMatrix,
+		projectionMatrix, _Model->GetTextureArray()[0]);
+
 	//@TODO: must now pass in view matrix here
-	bool result = RenderScene(reflectionViewMatrix, 0.f, 10.f, time); //@REFACTOR later
-	if (!result)
-	{
-		return false;
-	}
+	//bool result = RenderScene(reflectionViewMatrix, 0.f, 10.f, time); //@REFACTOR later
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
 	_D3D->SetBackBufferRenderTarget();
@@ -706,31 +708,37 @@ bool Graphics::RenderToReflection(float time)
 	return true;
 }
 
-bool Graphics::RenderToTexture(float frameTime)
+//bool Graphics::RenderToTexture(float frameTime)
+//{
+//	// Set the render target to be the render to texture.
+//	_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
+//
+//	// Clear the render to texture.
+//	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 1.0f, 1.0f);
+//
+//	// Render the scene now and it will draw to the render to texture instead of the back buffer.
+//	XMMATRIX viewMatrix;
+//	_Camera->GetViewMatrix(viewMatrix);
+//	bool result = RenderScene(viewMatrix, 0.f,10.f, frameTime); //@REFACTOR later
+//	if (!result)
+//	{
+//		return false;
+//	}
+//
+//	// Reset the render target back to the original back buffer and not the render to texture anymore.
+//	_D3D->SetBackBufferRenderTarget();
+//
+//	return result;
+//}
+
+void Graphics::RenderText(/*const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATRIX &baseViewMatrix, const DirectX::XMMATRIX &orthoMatrix*/)
 {
-	// Set the render target to be the render to texture.
-	_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
+	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
 
-	// Clear the render to texture.
-	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 1.0f, 1.0f);
+	_D3D->GetWorldMatrix(worldMatrix);
+	_Camera->GetBaseViewMatrix(baseViewMatrix);
+	_D3D->GetOrthoMatrix(orthoMatrix);
 
-	// Render the scene now and it will draw to the render to texture instead of the back buffer.
-	XMMATRIX viewMatrix;
-	_Camera->GetViewMatrix(viewMatrix);
-	bool result = RenderScene(viewMatrix, 0.f,10.f, frameTime); //@REFACTOR later
-	if (!result)
-	{
-		return false;
-	}
-
-	// Reset the render target back to the original back buffer and not the render to texture anymore.
-	_D3D->SetBackBufferRenderTarget();
-
-	return result;
-}
-
-void Graphics::RenderText(const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATRIX &baseViewMatrix, const DirectX::XMMATRIX &orthoMatrix)
-{
 	// Turn on the alpha blending before rendering the text.
 	_D3D->EnableAlphaBlending();
 
@@ -748,146 +756,173 @@ void Graphics::RenderText(const DirectX::XMMATRIX &worldMatrix, const DirectX::X
 	}
 
 	// Turn off alpha blending after rendering the text.
-	//_D3D->DisableAlphaBlending();
+	_D3D->DisableAlphaBlending();
 }
 
-bool Graphics::RenderScene(XMMATRIX viewMatrix, float fogStart, float fogEnd, float frameTime)
+bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 {
-	XMMATRIX worldPosition, /*viewMatrix, */projectionMatrix;
-	// Setup a clipping plane.
-	XMFLOAT4 clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, 0.0f);
+	XMMATRIX worldPosition, viewMatrix, projectionMatrix;
+	bool result;
 
-	int modelCount, renderCount, index;
-	float positionX, positionY, positionZ, radius;
-	XMFLOAT4 color;
-	bool renderModel, result;
+	_Camera->Render(); // Generate the view matrix based on the camera's position.
 
-	// Set the blending amount to 50%.
-	float blendAmount = 0.5f;
-	
-	// Tex translation
-	//static float textureTranslation = 0.f;
-	textureTranslation += .004f;
-	//textureTranslation += 0.08f * frameTime;
-	if (textureTranslation > 1.0f)
-	{
-		textureTranslation -= 1.0f;
-	}
-	
-	// Generate the view matrix based on the camera's position.
-	_Camera->Render();
-
-	// Get the world, view, and projection matrices from the camera and d3d objects.
+     ///////////// RENDER SPINNING CUBE ///////////////////
 	_D3D->GetWorldMatrix(worldPosition);
-	//_Camera->GetViewMatrix(viewMatrix);
+	_Camera->GetViewMatrix(viewMatrix);
 	_D3D->GetProjectionMatrix(projectionMatrix);
-	//_D3D->GetOrthoMatrix(orthoMatrix); //@NEW
+
+	// Update the rotation variable each frame.
+	static float rotation = 0.0f;
+	rotation += (float)XM_PI * 0.005f;
+	if (rotation > 360.0f) { rotation -= 360.0f; }
+	XMMATRIX rotMat = XMMatrixRotationY(rotation);
+	worldPosition = XMMatrixMultiply(worldPosition, rotMat);
+
+	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	_ModelSingle->Render(_D3D->GetDeviceContext());
+
+	// Render the model with the texture shader.
+	result = _ShaderManager->RenderTextureShader(
+		_D3D->GetDeviceContext(), _Model->GetIndexCount(), worldPosition, 
+		viewMatrix,	projectionMatrix, _ModelSingle->GetTextureArray()[0]);
+	if (!result)
+	{
+		return false;
+	}
+
+	///////////// RENDER REFLECTIVE FLOOR ///////////////////
+	// Get the world matrix again and translate down for the floor model to render underneath the cube.
+	_D3D->GetWorldMatrix(worldPosition);
+	XMMATRIX translation = XMMatrixTranslation(0.0f, -1.5f, 0.0f);
+	worldPosition = XMMatrixMultiply(worldPosition, translation);
+
+	// Get the camera reflection view matrix.
+	XMMATRIX reflectionMatrix = _Camera->GetReflectionViewMatrix();
+
+	// Put the floor model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	_FloorModel->Render(_D3D->GetDeviceContext());
+
+	// Render the floor model using the reflection shader, reflection texture, and reflection view matrix.
+	result = _ShaderManager->RenderReflectionShader(_D3D->GetDeviceContext(), _FloorModel->GetIndexCount(), worldPosition, viewMatrix,
+		projectionMatrix, _FloorModel->GetTextureArray()[0], _RenderTexture->GetShaderResourceView(),
+		reflectionMatrix);
+
+#pragma region MULTIMODELS
+	//textureTranslation += .004f;	if (textureTranslation > 1.0f) { textureTranslation -= 1.0f; }
+
+	//XMFLOAT4 clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, 0.0f);
+	//float blendAmount = 0.5f;
 
 	// Construct the frustum. //@TODO : is this also needed for reflection?
-	_Frustum->ConstructFrustum(SCREEN_DEPTH, projectionMatrix, viewMatrix);
+	//_Frustum->ConstructFrustum(SCREEN_DEPTH, projectionMatrix, viewMatrix);
+
+	//float positionX, positionY, positionZ, radius;
+	//XMFLOAT4 color;
+	//bool renderModel;
 
 	// Get the number of models that will be rendered.
-	modelCount = _ModelList->GetModelCount();
+	//int modelCount = _ModelList->GetModelCount();
 
 	// Initialize the count of models that have been rendered.
-	renderCount = 0;
+	//int renderCount = 0;
 
-	XMMATRIX viewMatLocal;
-	_Camera->GetViewMatrix(viewMatLocal);
+	//XMMATRIX viewMatLocal;
+	//_Camera->GetViewMatrix(viewMatLocal);
+
+	//_D3D->EnableAlphaBlending();
 
 	// Go through all the models and render them only if they can be seen by the camera view.
-	for (index = 0; index < modelCount; index++)
-	{
-		// Get the position and color of the sphere model at this index.
-		_ModelList->GetData(index, positionX, positionY, positionZ, color);
+	//for (int index = 0; index < modelCount; index++)
+	//{
+	//	// Get the position and color of the sphere model at this index.
+	//	_ModelList->GetData(index, positionX, positionY, positionZ, color);
 
-		// Set the radius of the sphere to 1.0 since this is already known.
-		radius = 1.0f;
+	//	// Set the radius of the sphere to 1.0 since this is already known.
+	//	radius = 1.0f;
 
-		// Check if the sphere model is in the view frustum.
-		renderModel = _Frustum->CheckSphere(positionX, positionY, positionZ, radius);
+	//	// Check if the sphere model is in the view frustum.
+	//	renderModel = _Frustum->CheckSphere(positionX, positionY, positionZ, radius);
 
-		// If it can be seen then render it, if not skip this model and check the next sphere.
-		if (renderModel)
-		{
-			//Rotate the world matrix by the rotation value so that the triangle will spin.
-			//worldMatrix = DirectX::XMMatrixRotationY(_modelRotation);
-			//Move the model to the location it should be rendered at.
-			worldPosition = DirectX::XMMatrixTranslation(positionX, positionY, positionZ);
+	//	// If it can be seen then render it, if not skip this model and check the next sphere.
+	//	if (renderModel)
+	//	{
+	//		//Move the model to the location it should be rendered at.
+	//		worldPosition = DirectX::XMMatrixTranslation(positionX, positionY, positionZ);
 
-			// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-			_Model->Render(_D3D->GetDeviceContext());
+	//		// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	//		_Model->Render(_D3D->GetDeviceContext());
 
-			result = _ShaderManager->RenderLightShader(
-				_D3D->GetDeviceContext(),
-				_Model->GetIndexCount(),
-				worldPosition,
-				viewMatLocal,//viewMatrix,
-				projectionMatrix,
-				_Model->GetTextureArray(),
-				_Light->GetDirection(),
-				/*color,*/ _Light->GetAmbientColor(),
-				color, //_Light->GetDiffuseColor(), 
-				_Camera->GetPosition(),
-				/*color,*/ _Light->GetSpecularColor(),
-				_Light->GetSpecularPower(),
-				fogStart,
-				fogEnd,
-				clipPlane,
-				textureTranslation,
-				blendAmount,
-				_Model->GetTextureArray()[0], //@TODO: must fix
-				_Camera->GetReflectionViewMatrix());//viewMatrix); // @TODO: 
-			if (!result)
-			{
-				return false;
-			}
+	//		result = _ShaderManager->RenderLightShader(
+	//			_D3D->GetDeviceContext(),
+	//			_Model->GetIndexCount(),
+	//			worldPosition,
+	//			viewMatLocal,//viewMatrix,
+	//			projectionMatrix,
+	//			_Model->GetTextureArray(),
+	//			_Light->GetDirection(),
+	//			/*color,*/ _Light->GetAmbientColor(),
+	//			color, //_Light->GetDiffuseColor(), 
+	//			_Camera->GetPosition(),
+	//			/*color,*/ _Light->GetSpecularColor(),
+	//			_Light->GetSpecularPower(),
+	//			fogStart,
+	//			fogEnd,
+	//			clipPlane,
+	//			textureTranslation,
+	//			blendAmount,
+	//			_Model->GetTextureArray()[0], //@TODO: must fix
+	//			_Camera->GetReflectionViewMatrix());//viewMatrix); // @TODO: 
+	//		if (!result)
+	//		{
+	//			return false;
+	//		}
 
-			// Reset to the original world matrix.
-			_D3D->GetWorldMatrix(worldPosition);
+	//		// Reset to the original world matrix.
+	//		_D3D->GetWorldMatrix(worldPosition);
 
-			// Since this model was rendered then increase the count for this frame.
-			renderCount++;
-		}
+	//		// Since this model was rendered then increase the count for this frame.
+	//		renderCount++;
+	//	}
+	//}
 
-		///////////// RENDER REFLECTIVE FLOOR ///////////////////
-		// Get the world matrix again and translate down for the floor model to render underneath the cube.
-		_D3D->GetWorldMatrix(worldPosition);
-		XMMATRIX translation = XMMatrixTranslation(0.0f, -1.5f, 0.0f);
-		worldPosition = XMMatrixMultiply(worldPosition, translation);
+	//_D3D->DisableAlphaBlending();
 
-		// Get the camera reflection view matrix.
-		XMMATRIX reflectionMatrix = _Camera->GetReflectionViewMatrix();
+#pragma endregion
 
-		// Put the floor model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-		_FloorModel->Render(_D3D->GetDeviceContext());
+	//result = 
+	//	_ShaderManager->RenderReflectionShader(
+	//		_D3D->GetDeviceContext(), 
+	//		_Model->GetIndexCount(), 
+	//		worldMatrix, 
+	//		reflectionViewMatrix,
+	//		projectionMatrix, 
+	//		_Model->GetTextureArray()[0],
+	//		_FloorModel->);
 
-		//@TODO: DONT USE LIGHT SHADER for this anymore - use dedicated reflection shader instead
-		result = _ShaderManager->RenderLightShader(
-			_D3D->GetDeviceContext(),
-			_Model->GetIndexCount(),
-			worldPosition,
-			viewMatrix,
-			projectionMatrix,
-			_FloorModel->GetTextureArray(),
-			_Light->GetDirection(),
-			/*color,*/ _Light->GetAmbientColor(),
-			color, //_Light->GetDiffuseColor(), 
-			_Camera->GetPosition(),
-			/*color,*/ _Light->GetSpecularColor(),
-			_Light->GetSpecularPower(),
-			fogStart,
-			fogEnd,
-			clipPlane,
-			0.f,
-			blendAmount,
-			_RenderTexture->GetShaderResourceView(),
-			reflectionMatrix);
-		if (!result)
-		{
-			return false;
-		}
-	}
+	//result = _ShaderManager->RenderLightShader(
+	//	_D3D->GetDeviceContext(),
+	//	_FloorModel->GetIndexCount(),
+	//	worldPosition,
+	//	viewMatrix,
+	//	projectionMatrix,
+	//	_FloorModel->GetTextureArray(),
+	//	_Light->GetDirection(),
+	//	/*color,*/ _Light->GetAmbientColor(),
+	//	color, //_Light->GetDiffuseColor(), 
+	//	_Camera->GetPosition(),
+	//	/*color,*/ _Light->GetSpecularColor(),
+	//	_Light->GetSpecularPower(),
+	//	fogStart,
+	//	fogEnd,
+	//	clipPlane,
+	//	0.f,
+	//	blendAmount,
+	//	_RenderTexture->GetShaderResourceView(),
+	//	reflectionMatrix);
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
 	return true;
 }

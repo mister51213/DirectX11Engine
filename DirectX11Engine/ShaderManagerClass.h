@@ -8,9 +8,9 @@
 ///////////////////////
 #include "d3dclass.h"
 
-#include "textureshaderclass.h"
-#include "lightshaderclass.h"
-#include "fontShaderClass.h"
+#include "TextureShaderClass.h"
+#include "LightShaderClass.h"
+#include "FontShaderClass.h"
 #include "ReflectionShaderClass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
