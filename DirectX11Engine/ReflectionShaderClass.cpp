@@ -219,32 +219,8 @@ bool ReflectionShaderClass::SetShaderParameters(ID3D11DeviceContext * deviceCont
 
 	ReflectionBufferType* dataPtr2;
 
-	// Transpose the matrices to prepare them for the shader.
-	//D3DXMatrixTranspose(&worldMatrix, &worldMatrix);
-	//D3DXMatrixTranspose(&viewMatrix, &viewMatrix);
-	//D3DXMatrixTranspose(&projectionMatrix, &projectionMatrix);
-
 	// Transpose the relfection matrix to prepare it for the shader.
 	reflectionMatrix = XMMatrixTranspose(reflectionMatrix);
-
-	// Lock the matrix constant buffer so it can be written to.
-	//result = deviceContext->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	//if (FAILED(result))
-	//{
-	//	return false;
-	//}
-	// Get a pointer to the data in the matrix constant buffer.
-	//dataPtr = (MatrixBufferType*)mappedResource.pData;
-	//// Copy the matrices into the matrix constant buffer.
-	//dataPtr->world = worldMatrix;
-	//dataPtr->view = viewMatrix;
-	//dataPtr->projection = projectionMatrix;
-	//// Unlock the matrix constant buffer.
-	//deviceContext->Unmap(_matrixBuffer, 0);
-	// Now set the matrix constant buffer in the vertex shader with the updated values.
-	//deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_matrixBuffer);
-	//// Set the position of the matrix constant buffer in the vertex shader.
-	//bufferNumber = 0;
 
 	// Lock the reflection constant buffer so it can be written to.
 	result = deviceContext->Map(_reflectionBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

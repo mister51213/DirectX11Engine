@@ -14,7 +14,7 @@ Texture2D shaderTextures[6];
 // allows modifying how pixels are written to the polygon face, for example choosing which to draw. 
 SamplerState SampleType;
 
-Texture2D reflectionTexture;
+//Texture2D reflectionTexture;
 
 //////////////////////
 // CONSTANT BUFFERS //
@@ -54,7 +54,7 @@ struct PixelInputType
     float3 viewDirection : TEXCOORD1;
 	float fogFactor : FOG;
 	float clip : SV_ClipDistance0;
-    float4 reflectionPosition : TEXCOORD2;
+    //float4 reflectionPosition : TEXCOORD2;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,8 +88,8 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	float gamma = 1.5f;
 
 	//////////// REFLECTION /////////////////////
-	float2 reflectTexCoord;
-    float4 reflectionColor;
+	//float2 reflectTexCoord;
+   // float4 reflectionColor;
 
 	// Translate the position where we sample the pixel from.
     input.tex.x += textureTranslation;
@@ -184,14 +184,14 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 	/////////////// REFLECTION ///////////////////////
 	// Calculate the projected reflection texture coordinates.
-    reflectTexCoord.x = input.reflectionPosition.x / input.reflectionPosition.w / 2.0f + 0.5f;
-    reflectTexCoord.y = -input.reflectionPosition.y / input.reflectionPosition.w / 2.0f + 0.5f;
+    //reflectTexCoord.x = input.reflectionPosition.x / input.reflectionPosition.w / 2.0f + 0.5f;
+   // reflectTexCoord.y = -input.reflectionPosition.y / input.reflectionPosition.w / 2.0f + 0.5f;
 
 	// Sample the texture pixel from the reflection texture using the projected texture coordinates.
-    reflectionColor = reflectionTexture.Sample(SampleType, reflectTexCoord);
+   // reflectionColor = reflectionTexture.Sample(SampleType, reflectTexCoord);
 
 	// Do a linear interpolation between the two textures for a blend effect.
-    color = lerp(color, reflectionColor, 0.15f);
+    //color = lerp(color, reflectionColor, 0.15f);
 
     return color;
 }

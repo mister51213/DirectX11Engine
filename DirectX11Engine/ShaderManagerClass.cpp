@@ -145,8 +145,8 @@ bool ShaderManagerClass::RenderLightShader(ID3D11DeviceContext* deviceContext, i
 	// Render the model using the light shader.
 	bool result = _LightShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix,
 		projectionMatrix, textureArray, lightDirection, ambientColor, diffuseColor,
-		cameraPosition, specularColor, specularPower, fogStart, fogEnd, clipPlane, translation, transparency,
-		reflectionTexture, reflectionMatrix); // @TODO: REMOVE REFLECTION FROM INSIDE HERE!!!!!! This is just for lighting effects
+		cameraPosition, specularColor, specularPower, fogStart, fogEnd, clipPlane, translation, transparency/*,
+		reflectionTexture, reflectionMatrix*/); // @TODO: REMOVE REFLECTION FROM INSIDE HERE!!!!!! This is just for lighting effects
 	if (!result)
 	{
 		return false;

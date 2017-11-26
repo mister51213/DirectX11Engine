@@ -28,7 +28,7 @@ public:
 	DebugWindowClass(const DebugWindowClass&);
 	~DebugWindowClass();
 
-	bool Initialize(ID3D11Device*, int, int, int, int);
+	bool Initialize(ID3D11Device* device, int screenWidth, int screenHeight, int bitmapWidth, int bitmapHeight);
 	void Shutdown();
 	bool Render(ID3D11DeviceContext*, int, int);
 

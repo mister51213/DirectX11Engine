@@ -35,12 +35,12 @@ cbuffer ClipPlaneBuffer:register(b2)
     float4 clipPlane;
 };
 
-cbuffer ReflectionBuffer:register(b3)
-{
-    matrix reflectionMatrix;
-};
+//cbuffer ReflectionBuffer:register(b3)
+//{
+//    matrix reflectionMatrix;
+//};
 
-cbuffer FogBuffer:register(b4)
+cbuffer FogBuffer:register(b3)
 {
     float fogStart;
     float fogEnd;
@@ -74,7 +74,7 @@ struct PixelInputType
 	float3 viewDirection : TEXCOORD1;
 	float fogFactor : FOG; 
 	float clip : SV_ClipDistance0; //@TODO: Properly byte alligned?
-	float4 reflectionPosition : TEXCOORD2;
+	//float4 reflectionPosition : TEXCOORD2;
 };
 
 // The output of the vertex shader will be sent to the pixel shader.
@@ -85,7 +85,7 @@ PixelInputType LightVertexShader(VertexInputType input)
 {
 	PixelInputType output;
 	float4 worldPosition;
-    matrix reflectProjectWorld;
+    //matrix reflectProjectWorld;
 
 	// Change the position vector to be 4 units for proper matrix calculations.
 	input.position.w = 1.0f;
@@ -98,8 +98,8 @@ PixelInputType LightVertexShader(VertexInputType input)
 
 	/////////////// REFLECTION ////////////////
 	// Create the reflection projection world matrix.
-    reflectProjectWorld = mul(reflectionMatrix, projectionMatrix);
-    reflectProjectWorld = mul(worldMatrix, reflectProjectWorld);
+   // reflectProjectWorld = mul(reflectionMatrix, projectionMatrix);
+   // reflectProjectWorld = mul(worldMatrix, reflectProjectWorld);
 
 	// Store the input color for the pixel shader to use.
 	output.tex  = input.tex;
@@ -151,7 +151,7 @@ All three equations produce a fog factor. To apply that fog factor to the model'
 
 	////////////////////////// REFLECTION ////////////////////////
 	// Calculate the input position against the reflectProjectWorld matrix.
-    output.reflectionPosition = mul(input.position, reflectProjectWorld);
+    //output.reflectionPosition = mul(input.position, reflectProjectWorld);
 	
 	// Set the clipping plane.
     output.clip = dot(mul(input.position, worldMatrix), clipPlane);

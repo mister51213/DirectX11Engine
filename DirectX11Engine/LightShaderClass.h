@@ -47,10 +47,10 @@ private:
 		float blendAmount;
 		XMFLOAT3 padding;
 	};
-	struct ReflectionBufferType
-	{
-		XMMATRIX reflectionMatrix;
-	};
+	//struct ReflectionBufferType
+	//{
+	//	XMMATRIX reflectionMatrix;
+	//};
 
 public:
 	LightShaderClass();
@@ -59,14 +59,14 @@ public:
 
 	bool Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 		XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
-		XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency,
-		ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix);
+		XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency/*,
+		ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix*/);
 
 private:
 	bool InitializeShader(ID3D11Device*, HWND, WCHAR*, WCHAR*);
 	virtual void ShutdownShader() override;
 
-	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView** textureArray, XMFLOAT3, XMFLOAT4 ambientColor, XMFLOAT4, XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float texTranslation, float transparency, ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix);
+	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView** textureArray, XMFLOAT3, XMFLOAT4 ambientColor, XMFLOAT4, XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float texTranslation, float transparency/*, ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix*/);
 
 private:
 	ID3D11Buffer* _cameraBuffer;
@@ -75,5 +75,5 @@ private:
 	ID3D11Buffer* _clipPlaneBuffer;
 	ID3D11Buffer* _translateBuffer;
 	ID3D11Buffer* _transparentBuffer;
-	ID3D11Buffer* _reflectionBuffer;
+	//ID3D11Buffer* _reflectionBuffer;
 };

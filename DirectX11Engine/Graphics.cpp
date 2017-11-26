@@ -396,7 +396,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	result = _ModelSingle->Initialize(
 		_D3D->GetDevice(),
 		_D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/cube.txt",
+		"../DirectX11Engine/data/sphere.txt",
 		"../DirectX11Engine/data/stone.tga", // tex1
 		"../DirectX11Engine/data/dirt.tga", // tex2
 		"../DirectX11Engine/data/light.tga", // lightmap
@@ -475,29 +475,6 @@ void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of inti
 		delete _Light;
 		_Light = 0;
 	}
-
-	//// Release the light shader object.
-	//if (_LightShader)
-	//{
-	//	_LightShader->Shutdown();
-	//	delete _LightShader;
-	//	_LightShader = 0;
-	//}
-	//// Release the light shader object.
-	//if (_FontShader)
-	//{
-	//	_FontShader->Shutdown();
-	//	delete _FontShader;
-	//	_FontShader = 0;
-	//}
-	//
-	//// Release the texture shader object.
-	//if (_TextureShader)
-	//{
-	//	_TextureShader->Shutdown();
-	//	delete _TextureShader;
-	//	_TextureShader = 0;
-	//}
 
 	// Release the model object.
 	if (_Model)
@@ -633,7 +610,6 @@ bool Graphics::Render(float frameTime)
 	_D3D->BeginScene(fogColor.x, fogColor.y, fogColor.z, 1.0f);
 
 	// Render the scene as normal to the back buffer.
-	//XMMATRIX viewMatrix;	_Camera->GetViewMatrix(viewMatrix);
 	result = RenderScene(fogStart, fogEnd, frameTime);
 	if (!result) { return false; }
 
@@ -656,6 +632,7 @@ bool Graphics::Render(float frameTime)
 
 	RenderText();
 	_D3D->TurnZBufferOn(); // Turn the Z buffer back on now that all 2D rendering has completed.
+
 	_D3D->EndScene(); // Present the rendered scene to the screen.
 
 	return true;
@@ -665,6 +642,7 @@ bool Graphics::RenderToReflection(float time) // same as rendertotexture in rast
 {
 	XMMATRIX worldMatrix, reflectionViewMatrix, projectionMatrix;
 	static float rotation = 0.0f;
+	bool result;
 
 	// Set the render target to be the render to texture.
 	_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
@@ -674,7 +652,7 @@ bool Graphics::RenderToReflection(float time) // same as rendertotexture in rast
 
 	// Use the camera to calculate the reflection matrix.
 	_Camera->RenderReflection(-1.f); //@TODO - must be same as rendering height
-
+	
 	// Get the camera reflection view matrix instead of the normal view matrix.
 	reflectionViewMatrix = _Camera->GetReflectionViewMatrix();
 
@@ -691,72 +669,39 @@ bool Graphics::RenderToReflection(float time) // same as rendertotexture in rast
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	_ModelSingle->Render(_D3D->GetDeviceContext());
 
-	// Render the model using the texture shader and the reflection view matrix.
-	_ShaderManager->RenderTextureShader(_D3D->GetDeviceContext(), _Model->GetIndexCount(), worldMatrix, reflectionViewMatrix,
-		projectionMatrix, _Model->GetTextureArray()[0]);
+	// Render the model IMAGE upside down in the reflective surface.
+	XMFLOAT3 fogColor(.6f, .6f, .6f);	float fogStart = 0.0f;	float fogEnd = 3.f;
+	XMFLOAT4 clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, 0.0f);
+	result = _ShaderManager->RenderLightShader(
+		_D3D->GetDeviceContext(),
+		_Model->GetIndexCount(),
+		worldMatrix,
+		reflectionViewMatrix,
+		projectionMatrix,
+		_ModelSingle->GetTextureArray(),
+		_Light->GetDirection(),
+		_Light->GetAmbientColor(),
+		_Light->GetDiffuseColor(),
+		_Camera->GetPosition(),
+		_Light->GetSpecularColor(),
+		_Light->GetSpecularPower(),
+		fogStart,
+		fogEnd,
+		clipPlane,
+		0.f,
+		.5f,
+		_RenderTexture->GetShaderResourceView(),
+		reflectionViewMatrix);
+	if (!result)
+	{
+		return false;
+	}
 
-	//@TODO: must now pass in view matrix here
-	//bool result = RenderScene(reflectionViewMatrix, 0.f, 10.f, time); //@REFACTOR later
-	//if (!result)
-	//{
-	//	return false;
-	//}
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
 	_D3D->SetBackBufferRenderTarget();
 
 	return true;
-}
-
-//bool Graphics::RenderToTexture(float frameTime)
-//{
-//	// Set the render target to be the render to texture.
-//	_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
-//
-//	// Clear the render to texture.
-//	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 1.0f, 1.0f);
-//
-//	// Render the scene now and it will draw to the render to texture instead of the back buffer.
-//	XMMATRIX viewMatrix;
-//	_Camera->GetViewMatrix(viewMatrix);
-//	bool result = RenderScene(viewMatrix, 0.f,10.f, frameTime); //@REFACTOR later
-//	if (!result)
-//	{
-//		return false;
-//	}
-//
-//	// Reset the render target back to the original back buffer and not the render to texture anymore.
-//	_D3D->SetBackBufferRenderTarget();
-//
-//	return result;
-//}
-
-void Graphics::RenderText(/*const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATRIX &baseViewMatrix, const DirectX::XMMATRIX &orthoMatrix*/)
-{
-	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
-
-	_D3D->GetWorldMatrix(worldMatrix);
-	_Camera->GetBaseViewMatrix(baseViewMatrix);
-	_D3D->GetOrthoMatrix(orthoMatrix);
-
-	// Turn on the alpha blending before rendering the text.
-	_D3D->EnableAlphaBlending();
-
-	// Render the fps string.
-	_FpsString->Render(_D3D->GetDeviceContext(), _ShaderManager,/*_FontShader),*/ worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, _Font1->GetTexture());
-	// Render the position and rotation strings.
-	for (int i = 0; i<6; i++)
-	{
-		_PositionStrings[i].Render(_D3D->GetDeviceContext(), _ShaderManager/*_FontShader*/, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, _Font1->GetTexture());
-	}
-	// Render the render count strings.
-	for (int i = 0; i<3; i++)
-	{
-		_RenderCountStrings[i].Render(_D3D->GetDeviceContext(), _ShaderManager/*_FontShader*/, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, _Font1->GetTexture());
-	}
-
-	// Turn off alpha blending after rendering the text.
-	_D3D->DisableAlphaBlending();
 }
 
 bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
@@ -919,6 +864,60 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 
 	return true;
 }
+
+
+//bool Graphics::RenderToTexture(float frameTime)
+//{
+//	// Set the render target to be the render to texture.
+//	_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
+//
+//	// Clear the render to texture.
+//	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 1.0f, 1.0f);
+//
+//	// Render the scene now and it will draw to the render to texture instead of the back buffer.
+//	XMMATRIX viewMatrix;
+//	_Camera->GetViewMatrix(viewMatrix);
+//	bool result = RenderScene(viewMatrix, 0.f,10.f, frameTime); //@REFACTOR later
+//	if (!result)
+//	{
+//		return false;
+//	}
+//
+//	// Reset the render target back to the original back buffer and not the render to texture anymore.
+//	_D3D->SetBackBufferRenderTarget();
+//
+//	return result;
+//}
+
+
+void Graphics::RenderText(/*const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATRIX &baseViewMatrix, const DirectX::XMMATRIX &orthoMatrix*/)
+{
+	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
+
+	_D3D->GetWorldMatrix(worldMatrix);
+	_Camera->GetBaseViewMatrix(baseViewMatrix);
+	_D3D->GetOrthoMatrix(orthoMatrix);
+
+	// Turn on the alpha blending before rendering the text.
+	_D3D->EnableAlphaBlending();
+
+	// Render the fps string.
+	_FpsString->Render(_D3D->GetDeviceContext(), _ShaderManager,/*_FontShader),*/ worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+	// Render the position and rotation strings.
+	for (int i = 0; i<6; i++)
+	{
+		_PositionStrings[i].Render(_D3D->GetDeviceContext(), _ShaderManager/*_FontShader*/, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+	}
+	// Render the render count strings.
+	for (int i = 0; i<3; i++)
+	{
+		_RenderCountStrings[i].Render(_D3D->GetDeviceContext(), _ShaderManager/*_FontShader*/, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+	}
+
+	// Turn off alpha blending after rendering the text.
+	_D3D->DisableAlphaBlending();
+}
+
 
 bool Graphics::UpdateFpsString(ID3D11DeviceContext* deviceContext, int fps)
 {
