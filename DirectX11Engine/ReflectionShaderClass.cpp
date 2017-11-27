@@ -32,8 +32,8 @@ bool ReflectionShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, W
 {
 	HRESULT result;
 	ID3D10Blob* errorMessage;
-	ID3D10Blob* vertexShaderBuffer;
-	ID3D10Blob* pixelShaderBuffer;
+	//ID3D10Blob* vertexShaderBuffer;
+	//ID3D10Blob* pixelShaderBuffer;
 
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[2];
 	unsigned int numElements;
@@ -45,59 +45,59 @@ bool ReflectionShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, W
 
 	// Initialize the pointers this function will use to null.
 	errorMessage = 0;
-	vertexShaderBuffer = 0;
-	pixelShaderBuffer = 0;
+	//vertexShaderBuffer = 0;
+	//pixelShaderBuffer = 0;
 
-	//result = CompileShaders(device, vertexShaderBuffer, pixelShaderBuffer, hwnd, vsFilename, psFilename, "ReflectionVertexShader", "ReflectionPixelShader", errorMessage);
+	result = CompileShaders(device, hwnd, vsFilename, psFilename, "ReflectionVertexShader", "ReflectionPixelShader", errorMessage);
 
-	// Compile the vertex shader code.
-	result = D3DCompileFromFile(vsFilename, NULL, NULL, "ReflectionVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
-			0, &vertexShaderBuffer, &errorMessage);
-	if (FAILED(result))
-	{
-		// If the shader failed to compile it should have writen something to the error message.
-		if (errorMessage)
-		{
-			OutputShaderErrorMessage(errorMessage, hwnd, vsFilename);
-		}
-		// If there was  nothing in the error message then it simply could not find the shader file itself.
-		else
-		{
-			MessageBox(hwnd, vsFilename, L"Missing Shader File", MB_OK);
-		}
-		return false;
-	}
-	// Compile the pixel shader code.
-	result = D3DCompileFromFile(psFilename, NULL, NULL, "ReflectionPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
-		0, &pixelShaderBuffer, &errorMessage);
-	if (FAILED(result))
-	{
-		// If the shader failed to compile it should have writen something to the error message.
-		if (errorMessage)
-		{
-			OutputShaderErrorMessage(errorMessage, hwnd, psFilename);
-		}
-		// If there was  nothing in the error message then it simply could not find the file itself.
-		else
-		{
-			MessageBox(hwnd, psFilename, L"Missing Shader File", MB_OK);
-		}
-		return false;
-	}
-	// Create the vertex shader from the buffer.
-	result = device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL,
-		&_vertexShader);
-	if (FAILED(result))
-	{
-		return false;
-	}
-	// Create the vertex shader from the buffer.
-	result = device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL,
-		&_pixelShader);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	//// Compile the vertex shader code.
+	//result = D3DCompileFromFile(vsFilename, NULL, NULL, "ReflectionVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
+	//		0, &vertexShaderBuffer, &errorMessage);
+	//if (FAILED(result))
+	//{
+	//	// If the shader failed to compile it should have writen something to the error message.
+	//	if (errorMessage)
+	//	{
+	//		OutputShaderErrorMessage(errorMessage, hwnd, vsFilename);
+	//	}
+	//	// If there was  nothing in the error message then it simply could not find the shader file itself.
+	//	else
+	//	{
+	//		MessageBox(hwnd, vsFilename, L"Missing Shader File", MB_OK);
+	//	}
+	//	return false;
+	//}
+	//// Compile the pixel shader code.
+	//result = D3DCompileFromFile(psFilename, NULL, NULL, "ReflectionPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
+	//	0, &pixelShaderBuffer, &errorMessage);
+	//if (FAILED(result))
+	//{
+	//	// If the shader failed to compile it should have writen something to the error message.
+	//	if (errorMessage)
+	//	{
+	//		OutputShaderErrorMessage(errorMessage, hwnd, psFilename);
+	//	}
+	//	// If there was  nothing in the error message then it simply could not find the file itself.
+	//	else
+	//	{
+	//		MessageBox(hwnd, psFilename, L"Missing Shader File", MB_OK);
+	//	}
+	//	return false;
+	//}
+	//// Create the vertex shader from the buffer.
+	//result = device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL,
+	//	&_vertexShader);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
+	//// Create the vertex shader from the buffer.
+	//result = device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL,
+	//	&_pixelShader);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
 
 	// Create the vertex input layout description.
 	// This setup needs to match the VertexType stucture in the ModelClass and in the shader.

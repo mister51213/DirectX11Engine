@@ -74,7 +74,6 @@ struct PixelInputType
 	float3 viewDirection : TEXCOORD1;
 	float fogFactor : FOG; 
 	float clip : SV_ClipDistance0; //@TODO: Properly byte alligned?
-	//float4 reflectionPosition : TEXCOORD2;
 };
 
 // The output of the vertex shader will be sent to the pixel shader.

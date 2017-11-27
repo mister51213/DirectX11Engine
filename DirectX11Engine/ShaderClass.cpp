@@ -52,10 +52,8 @@ bool ShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, WCHAR * vsF
 	return false;
 }
 
-bool ShaderClass::CompileShaders(ID3D11Device * device, ID3D10Blob* vertexShaderBuffer, ID3D10Blob* pixelShaderBuffer, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename, char* vsDesc, char* psDesc, ID3D10Blob* errorMessage)
+bool ShaderClass::CompileShaders(ID3D11Device * device, /*ID3D10Blob* vertexShaderBuffer, ID3D10Blob** pixelShaderBuffer, */HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename, char* vsDesc, char* psDesc, ID3D10Blob* errorMessage)
 {
-	//@TODO!!!!!!WATCH OUT FOR NULL POINTERS HERE!!!!!
-		//@TODO!!!!!!WATCH OUT FOR NULL POINTERS HERE!!!!!
 	// Compile the vertex shader code. @TODO!!!!!! WATCH OUT FOR NULL POINTERS HERE!!!!!
 	bool result = D3DCompileFromFile(vsFilename, NULL, NULL, vsDesc, "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
 		0, &vertexShaderBuffer, &errorMessage);

@@ -48,10 +48,12 @@ bool FontShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* v
 	
 	// Initialize the pointers this function will use to null.
 	errorMessage = 0;
-	vertexShaderBuffer = 0;
-	pixelShaderBuffer = 0;
+	//vertexShaderBuffer = 0;
+	//pixelShaderBuffer = 0;
 
 	// Compile the vertex shader code.
+	//result = CompileShaders(device, hwnd, vsFilename, psFilename, "FontVertexShader", "FontPixelShader", errorMessage);
+
 	result = D3DCompileFromFile(vsFilename, NULL, NULL, "FontVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &vertexShaderBuffer,
 		&errorMessage);
 	if (FAILED(result))

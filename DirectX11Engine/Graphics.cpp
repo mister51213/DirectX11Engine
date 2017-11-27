@@ -753,9 +753,7 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 		fogEnd,
 		clipPlane,
 		0.f,
-		.5f/*,
-		_RenderTexture->GetShaderResourceView(),
-		reflectionMatrix*/);
+		.5f);
 	if (!result)
 	{
 		return false;

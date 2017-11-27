@@ -93,13 +93,13 @@
     <ClCompile Include="TextureShaderClass.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="ReflectionShaderClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ShaderClass.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="ShaderManagerClass.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="ReflectionShaderClass.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
   </ItemGroup>

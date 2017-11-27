@@ -39,10 +39,14 @@ public:
 	void Shutdown();
 	bool Initialize(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename);
 
+	// Temp holders //
+	ID3D10Blob* vertexShaderBuffer = 0;
+	ID3D10Blob* pixelShaderBuffer = 0;
+
 protected:
 	virtual bool InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFileName, WCHAR* psFileName);
 
-	bool CompileShaders(ID3D11Device * device, ID3D10Blob* vertexShaderBuffer, ID3D10Blob* pixelShaderBuffer, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename, char* vsDesc, char* psDesc, ID3D10Blob* errorMessage);
+	bool CompileShaders(ID3D11Device * device, /*ID3D10Blob* vertexShaderBuffer, ID3D10Blob** pixelShaderBuffer, */HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename, char* vsDesc, char* psDesc, ID3D10Blob* errorMessage);
 
 	virtual void ShutdownShader();
 	void OutputShaderErrorMessage(ID3D10Blob*, HWND hwnd, WCHAR*);
@@ -55,4 +59,6 @@ protected:
 	ID3D11InputLayout* _layout;
 	ID3D11Buffer* _matrixBuffer;
 	ID3D11SamplerState* _sampleState;
+
+
 };
