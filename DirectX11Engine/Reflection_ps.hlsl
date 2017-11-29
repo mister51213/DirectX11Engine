@@ -36,8 +36,8 @@ float4 ReflectionPixelShader(PixelInputType input) : SV_TARGET
 
 	// To convert input reflection position homogenous coordinates to proper texture coodrinates, first divide by the W coordinate. 
 	// This leaves us with tu and tv coordinates in the -1 to +1 range. To fix it to map to a 0 to +1 range just divide by 2 and add 0.5.
-    reflectTexCoord.x = input.reflectionPosition.x / input.reflectionPosition.w / 2.0f + 0.5f;
-    reflectTexCoord.y = -input.reflectionPosition.y / input.reflectionPosition.w / 2.0f + 0.5f;
+    reflectTexCoord.x = input.reflectionPosition.x / (input.reflectionPosition.w) / 2.0f + 0.5f;
+    reflectTexCoord.y = -input.reflectionPosition.y / (input.reflectionPosition.w) / 2.0f + 0.5f;
 
     // Sample the texture pixel from the reflection texture using the projected texture coordinates.
     reflectionColor = reflectionTexture.Sample(SampleType, reflectTexCoord);
