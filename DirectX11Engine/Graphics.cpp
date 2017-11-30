@@ -14,6 +14,12 @@ Graphics::Graphics()
 	//_TextureShader(nullptr),
 	_Light(nullptr),
 	_ModelList(nullptr),
+	_GroundModel(nullptr),
+	_WallModel(nullptr),
+	_BathModel(nullptr),
+	_WaterModel(nullptr),
+	_RefractionTexture(nullptr),
+	//_ReflectionTexture(nullptr),
 	_Frustum(nullptr),
 	_Font1(nullptr),
 	_FpsString(nullptr),
@@ -27,8 +33,7 @@ Graphics::Graphics()
 {}
 
 Graphics::Graphics(const Graphics& other)
-{
-}
+{}
 
 Graphics::~Graphics()
 {
@@ -94,37 +99,142 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	//_Camera->RenderBaseViewMatrix();
 	//_Camera->GetViewMatrix(baseViewMatrix); // needed for text class
 
+	///////////////// WATER /////////////////////
+	// Create the ground model object.
+	_GroundModel = new Model;
+	if (!_GroundModel)
+	{
+		return false;
+	}
+
+	// Initialize the ground model object.
+	result = _GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+		"../DirectX11Engine/data/ground.txt",
+		"../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the ground model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the wall model object.
+	_WallModel = new Model;
+	if (!_WallModel)
+	{
+		return false;
+	}
+
+	// Initialize the wall model object.
+	result = _WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
+		"../DirectX11Engine/data/wall.txt", 
+		"../DirectX11Engine/data/wall01.tga ", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the wall model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the bath model object.
+	_BathModel = new Model;
+	if (!_BathModel)
+	{
+		return false;
+	}
+
+	// Initialize the bath model object.
+	result = _BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
+		"../DirectX11Engine/data/bath.txt", 
+		"../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the bath model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the water model object.
+	_WaterModel = new Model;
+	if (!_WaterModel)
+	{
+		return false;
+	}
+
+	// Initialize the water model object.
+	result = _WaterModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+		"../DirectX11Engine/data/water.txt", 
+		"../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga","../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the water model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the refraction render to texture object.
+	_RefractionTexture = new RenderTextureClass;
+	if (!_RefractionTexture)
+	{
+		return false;
+	}
+
+	// Initialize the refraction render to texture object.
+	result = _RefractionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the refraction render to texture object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the reflection render to texture object.
+	_ReflectionTexture = new RenderTextureClass;
+	if (!_ReflectionTexture)
+	{
+		return false;
+	}
+
+	// Initialize the reflection render to texture object.
+	result = _ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the reflection render to texture object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Set the height of the water.
+	_waterHeight = 2.75f;
+
+	// Initialize the position of the water.
+	_waterTranslation = 0.0f;
+
+	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+	///////////////////////// WATER ////////////////////////
+
 	////////////////
 	// UI RELATED //
 	////////////////
 	// Create the render to texture object.
-	_RenderTexture = new RenderTextureClass;
-	if (!_RenderTexture)
-	{
-		return false;
-	}
-
-	// Initialize the render to texture object.
-	result = _RenderTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
-	if (!result)
-	{
-		return false;
-	}
-
+	//_RenderTexture = new RenderTextureClass;
+	//if (!_RenderTexture)
+	//{
+	//	return false;
+	//}
+	//// Initialize the render to texture object.
+	//result = _RenderTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
+	//if (!result)
+	//{
+	//	return false;
+	//}
 	// Create the debug window object.
-	_DebugWindow = new DebugWindowClass;
-	if (!_DebugWindow)
-	{
-		return false;
-	}
-
-	// Initialize the debug window object.
-	result = _DebugWindow->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, 100, 100);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the debug window object.", L"Error", MB_OK);
-		return false;
-	}
+	//_DebugWindow = new DebugWindowClass;
+	//if (!_DebugWindow)
+	//{
+	//	return false;
+	//}
+	//// Initialize the debug window object.
+	//result = _DebugWindow->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, 100, 100);
+	//if (!result)
+	//{
+	//	MessageBox(hwnd, L"Could not initialize the debug window object.", L"Error", MB_OK);
+	//	return false;
+	//}
 
 	//// Create the texture shader object.
 	//_TextureShader = new TextureShaderClass;
@@ -141,6 +251,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	//	return false;
 	//}
 
+#pragma region TEXT
 	// Create the first font object.
 	_Font1 = new FontClass;
 	if (!_Font1)
@@ -275,6 +386,8 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// SCENE RELATED //
 	////////////////
 
+#pragma endregion
+
 	// Create the model object.
 	_Model = new Model;
 	if (!_Model)
@@ -322,9 +435,9 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the light object.
-	_Light->SetAmbientColor(.2f, .2f, .2f, 1.0f);
+	_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_Light->SetDirection(0.0f, 0.0f, 1.0f);
+	_Light->SetDirection(0.0f, -1.0f, 0.5f);
 	_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_Light->SetSpecularPower(16.0f); // the lower the power, the higher the effect intensity
 
@@ -357,35 +470,35 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Initialize the render to texture object.
-	result = _ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
-	if (!result)
-	{
-		return false;
-	}
+	//// Initialize the render to texture object.
+	//result = _ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
-	//Create and initialize the blue floor model object.
-	_FloorModel = new Model;
-	if (!_FloorModel)
-	{
-		return false;
-	}
+	////Create and initialize the blue floor model object.
+	//_FloorModel = new Model;
+	//if (!_FloorModel)
+	//{
+	//	return false;
+	//}
 
-	// Initialize the floor model object. //TODO: make tga
-	result = _FloorModel->Initialize(_D3D->GetDevice(),
-		_D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/floor.txt",
-		"../DirectX11Engine/data/blue01.tga", 
-		"../DirectX11Engine/data/blue01.tga",
-		"../DirectX11Engine/data/blue01.tga",
-		"../DirectX11Engine/data/blue01.tga",
-		"../DirectX11Engine/data/blue01.tga",
-		"../DirectX11Engine/data/blue01.tga");
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the floor model object.", L"Error", MB_OK);
-		return false;
-	}
+	//// Initialize the floor model object. //TODO: make tga
+	//result = _FloorModel->Initialize(_D3D->GetDevice(),
+	//	_D3D->GetDeviceContext(),
+	//	"../DirectX11Engine/data/floor.txt",
+	//	"../DirectX11Engine/data/blue01.tga", 
+	//	"../DirectX11Engine/data/blue01.tga",
+	//	"../DirectX11Engine/data/blue01.tga",
+	//	"../DirectX11Engine/data/blue01.tga",
+	//	"../DirectX11Engine/data/blue01.tga",
+	//	"../DirectX11Engine/data/blue01.tga");
+	//if (!result)
+	//{
+	//	MessageBox(hwnd, L"Could not initialize the floor model object.", L"Error", MB_OK);
+	//	return false;
+	//}
 
 	_ModelSingle = new Model;
 	if (!_ModelSingle)
@@ -414,6 +527,46 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of intialization
 {
+	// Release the refraction render to texture object.
+	if (_RefractionTexture)
+	{
+		_RefractionTexture->Shutdown();
+		delete _RefractionTexture;
+		_RefractionTexture = 0;
+	}
+
+	// Release the water model object.
+	if (_WaterModel)
+	{
+		_WaterModel->Shutdown();
+		delete _WaterModel;
+		_WaterModel = 0;
+	}
+
+	// Release the bath model object.
+	if (_BathModel)
+	{
+		_BathModel->Shutdown();
+		delete _BathModel;
+		_BathModel = 0;
+	}
+
+	// Release the wall model object.
+	if (_WallModel)
+	{
+		_WallModel->Shutdown();
+		delete _WallModel;
+		_WallModel = 0;
+	}
+
+	// Release the ground model object.
+	if (_GroundModel)
+	{
+		_GroundModel->Shutdown();
+		delete _GroundModel;
+		_GroundModel = 0;
+	}
+
 	// Release the floor model object.
 	if (_ModelSingle)
 	{
@@ -532,8 +685,7 @@ void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of inti
 		delete[] _VideoStrings;
 		_VideoStrings = 0;
 	}
-
-
+	
 	// Release the fps text string.
 	if (_FpsString)
 	{
@@ -557,6 +709,13 @@ bool Graphics::Frame(float frameTime, int fps, float posX, float posY, float pos
 {
 	bool result;
 
+	// Update the position of the water to simulate motion.
+	_waterTranslation += 0.001f;
+	if (_waterTranslation > 1.0f)
+	{
+		_waterTranslation -= 1.0f;
+	}
+
 	// Set the position of the camera.
 	_Camera->SetPosition(posX, posY, posZ);
 
@@ -574,7 +733,7 @@ bool Graphics::Frame(float frameTime, int fps, float posX, float posY, float pos
 	{
 		_modelRotation -= 360.0f;
 	}
-
+	
 	// Update the fps string. //@TODO
 	result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
 	if (!result)
@@ -604,10 +763,25 @@ bool Graphics::Render(float frameTime)
 {
 	XMFLOAT3 fogColor(.6f, .6f, .6f);	float fogStart = 0.0f;	float fogEnd = 3.f;
 
-	bool result = RenderToReflection(frameTime);
-	if (!result) { return false; }
+//	bool result = RenderToReflection(frameTime);
+//	if (!result) { return false; }
 
-	_D3D->BeginScene(fogColor.x, fogColor.y, fogColor.z, 1.0f);
+//	_D3D->BeginScene(fogColor.x, fogColor.y, fogColor.z, 1.0f);
+
+
+// Render the refraction of the scene to a texture.
+	bool result = RenderRefractionToTexture();
+	if (!result)
+	{
+		return false;
+	}
+
+	// Render the reflection of the scene to a texture.
+	result = RenderReflectionToTexture();
+	if (!result)
+	{
+		return false;
+	}
 
 	// Render the scene as normal to the back buffer.
 	result = RenderScene(fogStart, fogEnd, frameTime);
@@ -695,6 +869,91 @@ bool Graphics::RenderToReflection(float time) // same as rendertotexture in rast
 		return false;
 	}
 
+	// Reset the render target back to the original back buffer and not the render to texture anymore.
+	_D3D->SetBackBufferRenderTarget();
+
+	return true;
+}
+
+bool Graphics::RenderRefractionToTexture()
+{
+	XMFLOAT4 clipPlane;
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	bool result;
+
+	// Setup a clipping plane based on the height of the water to clip everything above it.
+	clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, _waterHeight + 0.1f);
+
+	// Set the render target to be the refraction render to texture.
+	_RefractionTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
+
+	// Clear the refraction render to texture.
+	_RefractionTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Generate the view matrix based on the camera's position.
+	_Camera->Render();
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	_D3D->GetWorldMatrix(worldMatrix);
+	_Camera->GetViewMatrix(viewMatrix);
+	_D3D->GetProjectionMatrix(projectionMatrix);
+
+	// Translate to where the bath model will be rendered.
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0.0f, 2.0f, 0.0f));
+
+	// Put the bath model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	_BathModel->Render(_D3D->GetDeviceContext());
+
+	// Render the bath model using the light shader.
+	result = _ShaderManager->RenderRefractionShader(_D3D->GetDeviceContext(), _BathModel->GetIndexCount(), worldMatrix, viewMatrix,
+		projectionMatrix, _BathModel->GetTextureArray()[0], _Light->GetDirection(),
+		_Light->GetAmbientColor(), _Light->GetDiffuseColor(), clipPlane);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Reset the render target back to the original back buffer and not the render to texture anymore.
+	_D3D->SetBackBufferRenderTarget();
+
+	return true;
+}
+
+bool Graphics::RenderReflectionToTexture()
+{
+	XMMATRIX reflectionViewMatrix, worldMatrix, projectionMatrix;
+	bool result;
+	
+	// Set the render target to be the reflection render to texture.
+	_ReflectionTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
+
+	// Clear the reflection render to texture.
+	_ReflectionTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Use the camera to render the reflection and create a reflection view matrix.
+	_Camera->RenderReflection(_waterHeight);
+
+	// Get the camera reflection view matrix instead of the normal view matrix.
+	reflectionViewMatrix = _Camera->GetReflectionViewMatrix();
+
+	// Get the world and projection matrices from the d3d object.
+	_D3D->GetWorldMatrix(worldMatrix);
+	_D3D->GetProjectionMatrix(projectionMatrix);
+
+	// Translate to where the wall model will be rendered.
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0.0f, 6.0f, 8.0f));
+
+	// Put the wall model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	_WallModel->Render(_D3D->GetDeviceContext());
+
+	// Render the wall model using the light shader and the reflection view matrix.
+	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, reflectionViewMatrix,
+		projectionMatrix, _WallModel->GetTextureArray(), _Light->GetDirection(),
+		_Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), 0, 0, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
+	if (!result)
+	{
+		return false;
+	}
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
 	_D3D->SetBackBufferRenderTarget();
@@ -704,77 +963,159 @@ bool Graphics::RenderToReflection(float time) // same as rendertotexture in rast
 
 bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 {
-	XMMATRIX worldPosition, viewMatrix, projectionMatrix;
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix;
 	bool result;
 
-	_Camera->Render(); // Generate the view matrix based on the camera's position.
+#pragma region WATER
+	// Clear the buffers to begin the scene.
+	_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
-     ///////////// RENDER SPINNING CUBE ///////////////////
-	_D3D->GetWorldMatrix(worldPosition);
+	// Generate the view matrix based on the camera's position.
+	_Camera->Render();
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	_D3D->GetWorldMatrix(worldMatrix);
 	_Camera->GetViewMatrix(viewMatrix);
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
-	// Update the rotation variable each frame.
-	static float rotation = 0.0f;
-	rotation += (float)XM_PI * 0.001f;
-	if (rotation > 360.0f) { rotation -= 360.0f; }
-	XMMATRIX rotMat = XMMatrixRotationY(rotation);
-	worldPosition = XMMatrixMultiply(worldPosition, rotMat);
+	// Translate to where the ground model will be rendered.
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0.0f, 1.0f, 0.0f));
 
-	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	_ModelSingle->Render(_D3D->GetDeviceContext());
+	// Put the ground model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	_GroundModel->Render(_D3D->GetDeviceContext());
 
-	// @OPTIMIZATION: Render the model with the texture shader.
-	//result = _ShaderManager->RenderTextureShader(
-	//	_D3D->GetDeviceContext(), _Model->GetIndexCount(), worldPosition, 
-	//	viewMatrix,	projectionMatrix, _ModelSingle->GetTextureArray()[0]);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	/// TEST - use light shader on cube instead
-	XMMATRIX reflectionMatrix = _Camera->GetReflectionViewMatrix();
-	XMFLOAT4 clipPlane = XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f);
-	result = _ShaderManager->RenderLightShader(
-		_D3D->GetDeviceContext(),
-		_Model->GetIndexCount(),
-		worldPosition,
-		viewMatrix,
-		projectionMatrix,
-		_ModelSingle->GetTextureArray(),
-		_Light->GetDirection(),
-		_Light->GetAmbientColor(),
-		_Light->GetDiffuseColor(), 
-		_Camera->GetPosition(),
-		 _Light->GetSpecularColor(),
-		_Light->GetSpecularPower(),
-		fogStart,
-		fogEnd,
-		clipPlane,
-		0.f,
-		.5f);
+	// Render the ground model using the light shader.
+	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix,
+		projectionMatrix, _GroundModel->GetTextureArray(), _Light->GetDirection(),_Light->GetAmbientColor(), _Light->GetDiffuseColor(),_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), fogStart, fogEnd, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
 	if (!result)
 	{
 		return false;
 	}
-	
-	///////////// RENDER REFLECTIVE FLOOR ///////////////////
-	// Get the world matrix again and translate down for the floor model to render underneath the cube.
-	_D3D->GetWorldMatrix(worldPosition);
-	XMMATRIX translation = XMMatrixTranslation(0.0f, -1.f, 0.0f);
-	worldPosition = XMMatrixMultiply(worldPosition, translation);
+
+	// Reset the world matrix.
+	_D3D->GetWorldMatrix(worldMatrix);
+
+	// Translate to where the wall model will be rendered.
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0.0f, 6.0f, 8.0f));
+
+	// Put the wall model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	_WallModel->Render(_D3D->GetDeviceContext());
+
+	// Render the wall model using the light shader.
+	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, viewMatrix,
+		projectionMatrix, _WallModel->GetTextureArray(),_Light->GetDirection(),
+		_Light->GetAmbientColor(), _Light->GetDiffuseColor(),_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), fogStart, fogEnd, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Reset the world matrix.
+	_D3D->GetWorldMatrix(worldMatrix);
+
+	// Translate to where the bath model will be rendered.
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0.0f, 2.0f, 0.0f));
+
+	// Put the bath model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	_BathModel->Render(_D3D->GetDeviceContext());
+
+	// Render the bath model using the light shader.
+	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _BathModel->GetIndexCount(), worldMatrix, viewMatrix,
+		projectionMatrix, _BathModel->GetTextureArray(), _Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(),
+		_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), fogStart, fogEnd, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
+
+	if (!result)
+	{
+		return false;
+	}
+
+	// Reset the world matrix.
+	_D3D->GetWorldMatrix(worldMatrix);
 
 	// Get the camera reflection view matrix.
+	reflectionMatrix = _Camera->GetReflectionViewMatrix();
+
+	// Translate to where the water model will be rendered.
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0.0f, _waterHeight, 0.0f));
+
+	// Put the water model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	_WaterModel->Render(_D3D->GetDeviceContext());
+
+	// Render the water model using the water shader.
+	result = _ShaderManager->RenderWaterShader(_D3D->GetDeviceContext(), _WaterModel->GetIndexCount(), worldMatrix, viewMatrix,
+		projectionMatrix, reflectionMatrix, _ReflectionTexture->GetShaderResourceView(), _RefractionTexture->GetShaderResourceView(), _WaterModel->GetTextureArray()[0],
+		_waterTranslation, 0.01f);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Present the rendered scene to the screen.
+	_D3D->EndScene();
+
+#pragma endregion
+
+#pragma region SINGLE_REFLECTION
+	//_Camera->Render(); // Generate the view matrix based on the camera's position.
+
+ //    ///////////// RENDER SPINNING CUBE ///////////////////
+	//_D3D->GetWorldMatrix(worldPosition);
+	//_Camera->GetViewMatrix(viewMatrix);
+	//_D3D->GetProjectionMatrix(projectionMatrix);
+
+	//// Update the rotation variable each frame.
+	//static float rotation = 0.0f;
+	//rotation += (float)XM_PI * 0.001f;
+	//if (rotation > 360.0f) { rotation -= 360.0f; }
+	//XMMATRIX rotMat = XMMatrixRotationY(rotation);
+	//worldPosition = XMMatrixMultiply(worldPosition, rotMat);
+
+	//// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	//_ModelSingle->Render(_D3D->GetDeviceContext());
+
 	//XMMATRIX reflectionMatrix = _Camera->GetReflectionViewMatrix();
+	//XMFLOAT4 clipPlane = XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f);
+	//result = _ShaderManager->RenderLightShader(
+	//	_D3D->GetDeviceContext(),
+	//	_Model->GetIndexCount(),
+	//	worldPosition,
+	//	viewMatrix,
+	//	projectionMatrix,
+	//	_ModelSingle->GetTextureArray(),
+	//	_Light->GetDirection(),
+	//	_Light->GetAmbientColor(),
+	//	_Light->GetDiffuseColor(), 
+	//	_Camera->GetPosition(),
+	//	 _Light->GetSpecularColor(),
+	//	_Light->GetSpecularPower(),
+	//	fogStart,
+	//	fogEnd,
+	//	clipPlane,
+	//	0.f,
+	//	.5f);
+	//if (!result)
+	//{
+	//	return false;
+	//}
+	//
+	/////////////// RENDER REFLECTIVE FLOOR ///////////////////
+	//// Get the world matrix again and translate down for the floor model to render underneath the cube.
+	//_D3D->GetWorldMatrix(worldPosition);
+	//XMMATRIX translation = XMMatrixTranslation(0.0f, -1.f, 0.0f);
+	//worldPosition = XMMatrixMultiply(worldPosition, translation);
 
-	// Put the floor model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	_FloorModel->Render(_D3D->GetDeviceContext());
+	//// Get the camera reflection view matrix.
+	////XMMATRIX reflectionMatrix = _Camera->GetReflectionViewMatrix();
 
-	// Render the floor model using the reflection shader, reflection texture, and reflection view matrix.
-	result = _ShaderManager->RenderReflectionShader(_D3D->GetDeviceContext(), _FloorModel->GetIndexCount(), worldPosition, viewMatrix,
-		projectionMatrix, _FloorModel->GetTextureArray()[0], _RenderTexture->GetShaderResourceView(),
-		reflectionMatrix);
+	//// Put the floor model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	//_FloorModel->Render(_D3D->GetDeviceContext());
+
+	//// Render the floor model using the reflection shader, reflection texture, and reflection view matrix.
+	//result = _ShaderManager->RenderReflectionShader(_D3D->GetDeviceContext(), _FloorModel->GetIndexCount(), worldPosition, viewMatrix,
+	//	projectionMatrix, _FloorModel->GetTextureArray()[0], _RenderTexture->GetShaderResourceView(),
+	//	reflectionMatrix);
+
+#pragma endregion
 
 #pragma region MULTIMODELS
 	//textureTranslation += .004f;	if (textureTranslation > 1.0f) { textureTranslation -= 1.0f; }
@@ -861,7 +1202,6 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	return true;
 }
 
-
 //bool Graphics::RenderToTexture(float frameTime)
 //{
 //	// Set the render target to be the render to texture.
@@ -884,7 +1224,6 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 //
 //	return result;
 //}
-
 
 void Graphics::RenderText(/*const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATRIX &baseViewMatrix, const DirectX::XMMATRIX &orthoMatrix*/)
 {
@@ -913,7 +1252,6 @@ void Graphics::RenderText(/*const DirectX::XMMATRIX &worldMatrix, const DirectX:
 	// Turn off alpha blending after rendering the text.
 	_D3D->DisableAlphaBlending();
 }
-
 
 bool Graphics::UpdateFpsString(ID3D11DeviceContext* deviceContext, int fps)
 {

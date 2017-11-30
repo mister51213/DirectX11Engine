@@ -388,7 +388,6 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	TranslateBufferType* pTranslateBuff;
 	TransparentBufferType* pTransparentBuff;
 	//ReflectionBufferType* dataPtr8;
-
 	//reflectionMatrix = XMMatrixTranspose(reflectionMatrix);
 
 	///////////////////////////////////////////////////////////////

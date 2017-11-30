@@ -163,6 +163,7 @@
     <ClCompile Include="ModelListClass.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="ReflectionShaderClass.cpp" />
+    <ClCompile Include="RefractionShaderClass.cpp" />
     <ClCompile Include="RenderTextureClass.cpp" />
     <ClCompile Include="ShaderClass.cpp" />
     <ClCompile Include="ShaderManagerClass.cpp" />
@@ -176,6 +177,7 @@
     <ClCompile Include="System.cpp" />
     <ClCompile Include="TextureShaderClass.cpp" />
     <ClCompile Include="TimerClass.cpp" />
+    <ClCompile Include="WaterShaderClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -190,6 +192,7 @@
     <ClInclude Include="ModelListClass.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="ReflectionShaderClass.h" />
+    <ClInclude Include="RefractionShaderClass.h" />
     <ClInclude Include="RenderTextureClass.h" />
     <ClInclude Include="ShaderClass.h" />
     <ClInclude Include="ShaderManagerClass.h" />
@@ -203,6 +206,7 @@
     <ClInclude Include="TextureShaderClass.h" />
     <ClInclude Include="TimerClass.h" />
     <ClInclude Include="VectorMath.h" />
+    <ClInclude Include="WaterShaderClass.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="font.ps" />
@@ -250,6 +254,38 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="WaterShader_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <FileType>Document</FileType>
+    </None>
+    <None Include="WaterShader_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Refraction_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <FileType>Document</FileType>
+    </None>
+    <None Include="Refraction_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <FileType>Document</FileType>
     </None>
   </ItemGroup>

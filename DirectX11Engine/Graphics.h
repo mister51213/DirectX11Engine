@@ -48,12 +48,15 @@ public:
 
 	bool RenderToReflection(float time);
 
+	bool RenderRefractionToTexture();
+
 	void RenderText(/*const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATRIX &baseViewMatrix, const DirectX::XMMATRIX &orthoMatrix*/);
 
 	inline Camera* GetCamera() { return _Camera; }
 	bool UpdateRenderCounts(ID3D11DeviceContext*, int, int, int);
 
 private:
+	bool RenderReflectionToTexture();
 	//bool RenderToTexture(float frameTime);
 	bool RenderScene(float fogStart, float fogEnd, float frameTime);
 
@@ -83,8 +86,16 @@ private:
 	ShaderManagerClass* _ShaderManager;
 
 	/////////// REFLECTION //////////////////
-	RenderTextureClass* _ReflectionTexture;
+//	RenderTextureClass* _ReflectionTexture;
 	Model* _FloorModel;
 
 	float _modelRotation = 0.0f;
+
+	/////////// WATER ////////////////
+	Model *_GroundModel, *_WallModel, *_BathModel, *_WaterModel;
+	//LightClass* _Light;
+
+	RenderTextureClass *_RefractionTexture, *_ReflectionTexture;
+
+	float _waterHeight, _waterTranslation;
 };

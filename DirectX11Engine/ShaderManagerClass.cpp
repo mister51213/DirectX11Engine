@@ -81,11 +81,44 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 		return false;
 	}
 
+	_WaterShader = new WaterShaderClass;
+
+	result = _WaterShader->Initialize(device, hwnd, L"../DirectX11Engine/WaterShader_vs.hlsl", L"../DirectX11Engine/WaterShader_ps.hlsl");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the bump map shader object.", L"Error", MB_OK);
+		return false;
+	}
+
+	_RefractionShader = new RefractionShaderClass;
+
+	result = _RefractionShader->Initialize(device, hwnd, L"../DirectX11Engine/Refraction_vs.hlsl", L"../DirectX11Engine/Refraction_ps.hlsl");
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the bump map shader object.", L"Error", MB_OK);
+		return false;
+	}
+
 	return true;
 }
 
 void ShaderManagerClass::Shutdown()
 {
+	if (_RefractionShader)
+	{
+		_RefractionShader->Shutdown();
+		delete _RefractionShader;
+		_RefractionShader = 0;
+	}
+
+	// Release water shader
+	if (_WaterShader)
+	{
+		_WaterShader->Shutdown();
+		delete _WaterShader;
+		_WaterShader = 0;
+	}
+
 	// Release reflection shader
 	if (_ReflectionShader)
 	{
@@ -136,7 +169,6 @@ bool ShaderManagerClass::RenderTextureShader(ID3D11DeviceContext* device, int in
 	return true;
 }
 
-
 bool ShaderManagerClass::RenderLightShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
 	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency/*,
@@ -154,7 +186,6 @@ bool ShaderManagerClass::RenderLightShader(ID3D11DeviceContext* deviceContext, i
 
 	return true;
 }
-
 
 bool ShaderManagerClass::RenderFontShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT4 pixelColor)
@@ -178,6 +209,34 @@ bool ShaderManagerClass::RenderReflectionShader(ID3D11DeviceContext* deviceConte
 
 	// Render the model using the reflection shader. 
 	result = _ReflectionShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, reflectionTexture, reflectionMatrix);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool ShaderManagerClass::RenderWaterShader(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView * reflectionTexture, ID3D11ShaderResourceView * refractionTexture, ID3D11ShaderResourceView * normalTexture, float waterTranslation, float reflectRefractScale)
+{
+	bool result;
+
+	// Render the model using the reflection shader. 
+	result = _WaterShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, reflectionTexture, refractionTexture, normalTexture, waterTranslation, reflectRefractScale);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool ShaderManagerClass::RenderRefractionShader(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, ID3D11ShaderResourceView * texture, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT4 clipPlane)
+{
+	bool result;
+
+	// Render the model using the reflection shader. 
+	result = _RefractionShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, lightDirection, ambientColor, diffuseColor, clipPlane);
 	if (!result)
 	{
 		return false;
