@@ -110,7 +110,13 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Initialize the ground model object.
 	result = _GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/ground.txt",
-		"../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga");
+		"../DirectX11Engine/data/ground01.tga", 
+		"../DirectX11Engine/data/dirt.tga", // tex2
+		"../DirectX11Engine/data/light.tga", // lightmap
+		"../DirectX11Engine/data/alpha.tga", // alpha
+		"../DirectX11Engine/data/bumpMap.tga", // normal map
+		"../DirectX11Engine/data/specMap.tga"); // specMap
+		//"../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the ground model object.", L"Error", MB_OK);
@@ -127,7 +133,13 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Initialize the wall model object.
 	result = _WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
 		"../DirectX11Engine/data/wall.txt", 
-		"../DirectX11Engine/data/wall01.tga ", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga");
+		"../DirectX11Engine/data/wall01.tga ", 
+		"../DirectX11Engine/data/dirt.tga", // tex2
+		"../DirectX11Engine/data/light.tga", // lightmap
+		"../DirectX11Engine/data/alpha.tga", // alpha
+		"../DirectX11Engine/data/bumpMap.tga", // normal map
+		"../DirectX11Engine/data/specMap.tga"); // specMap
+		//"../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the wall model object.", L"Error", MB_OK);
@@ -144,7 +156,13 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Initialize the bath model object.
 	result = _BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
 		"../DirectX11Engine/data/bath.txt", 
-		"../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga");
+		"../DirectX11Engine/data/marble01.tga",
+		"../DirectX11Engine/data/dirt.tga", // tex2
+		"../DirectX11Engine/data/light.tga", // lightmap
+		"../DirectX11Engine/data/alpha.tga", // alpha
+		"../DirectX11Engine/data/bumpMap.tga", // normal map
+		"../DirectX11Engine/data/specMap.tga"); // specMap
+		//"../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the bath model object.", L"Error", MB_OK);
@@ -161,6 +179,12 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Initialize the water model object.
 	result = _WaterModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/water.txt", 
+		////"../DirectX11Engine/data/water01.tga",
+		////"../DirectX11Engine/data/dirt.tga", // tex2
+		////"../DirectX11Engine/data/light.tga", // lightmap
+		////"../DirectX11Engine/data/alpha.tga", // alpha
+		////"../DirectX11Engine/data/bumpMap.tga", // normal map
+		////"../DirectX11Engine/data/specMap.tga"); // specMap
 		"../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga","../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga");
 	if (!result)
 	{
@@ -207,6 +231,8 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
 	///////////////////////// WATER ////////////////////////
 
+#pragma region UI
+
 	////////////////
 	// UI RELATED //
 	////////////////
@@ -250,6 +276,8 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	//	MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
 	//	return false;
 	//}
+
+#pragma endregion
 
 #pragma region TEXT
 	// Create the first font object.
@@ -586,7 +614,7 @@ void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of inti
 	// Release the render to texture object.
 	if (_ReflectionTexture)
 	{
-		_RenderTexture->Shutdown();
+		_ReflectionTexture->Shutdown();
 		delete _ReflectionTexture;
 		_ReflectionTexture = 0;
 	}
@@ -947,13 +975,18 @@ bool Graphics::RenderReflectionToTexture()
 	_WallModel->Render(_D3D->GetDeviceContext());
 
 	// Render the wall model using the light shader and the reflection view matrix.
-	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, reflectionViewMatrix,
-		projectionMatrix, _WallModel->GetTextureArray(), _Light->GetDirection(),
-		_Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), 0, 0, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
+	//result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, reflectionViewMatrix,
+	//	projectionMatrix, _WallModel->GetTextureArray(), _Light->GetDirection(),
+	//	_Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), 0, 0, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
+
+	result = _ShaderManager->RenderTextureShader(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, reflectionViewMatrix,
+		projectionMatrix, _WallModel->GetTextureArray()[0]/*, _Light->GetDirection(),
+		_Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), 0, 0, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f*/);
 	if (!result)
 	{
 		return false;
 	}
+
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
 	_D3D->SetBackBufferRenderTarget();

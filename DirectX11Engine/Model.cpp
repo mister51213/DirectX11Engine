@@ -240,7 +240,7 @@ bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContex
 	}
 
 	// Initialize the texture object.
-	result = _TextureArray->Initialize(device, deviceContext, fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6);
+	result = _TextureArray->InitializeArray(device, deviceContext, fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6);
 	if (!result)
 	{
 		return false;

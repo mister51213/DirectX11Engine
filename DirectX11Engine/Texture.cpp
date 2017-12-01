@@ -2,19 +2,32 @@
 // Filename: texture.cpp
 ////////////////////////////////////////////////////////////////////////////////
 #include "texture.h"
+#include "DDSTextureLoader.h"
+
+using namespace DirectX;
 
 TextureClass::TextureClass()
 	:
 	_targaData1(0),
 	_targaData2(0),
 	_texture1(0),
-	_texture2(0)
+	_texture2(0),
+	_textureView(0)
+
 	//_texture(0),
 	//_textureView(0),
 {
-	_textureViews[0] = 0;
-	_textureViews[1] = 0;
-	_textureViews[2] = 0;
+	int numElements = sizeof(_textureViews) / sizeof(ID3D11ShaderResourceView*);
+
+	for (int i = 0; i < numElements; i++)
+	{
+		_textureViews[0] = 0;
+		_textureViews[1] = 0;
+		_textureViews[2] = 0;
+		_textureViews[3] = 0;
+		_textureViews[4] = 0;
+		_textureViews[5] = 0;
+	}
 }
 
 TextureClass::TextureClass(const TextureClass& other)
@@ -25,7 +38,7 @@ TextureClass::~TextureClass()
 {
 }
 
-bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename1, char* filename2, char* filename3, char* filename4, char* filename5, char* filename6SpecMap)
+bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename1, char* filename2, char* filename3, char* filename4, char* filename5, char* filename6SpecMap)
 {
 	bool result;
 
@@ -251,14 +264,29 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	return true;
 }
 
+bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* d3dContext, WCHAR* filename, ID3D11ShaderResourceView** textureView)
+{
+	HRESULT result;
+
+	// Load the texture in.
+	result = CreateDDSTextureFromFile(device, d3dContext, filename, &_texture, &_textureView);
+
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	return true;
+}
+
 void TextureClass::Shutdown()
 {
-	//// Release the texture view resource.
-	//if (_textureView)
-	//{
-	//	_textureView->Release();
-	//	_textureView = 0;
-	//}
+	// release the texture view resource.
+	if (_textureView)
+	{
+		_textureView->Release();
+		_textureView = 0;
+	}
 	//// Release the texture.
 	//if (_texture)
 	//{
@@ -267,43 +295,51 @@ void TextureClass::Shutdown()
 	//}
 
 	// Release the texture resources.
-	if (_textureViews[0])
+	int numElements = sizeof(_textureViews) / sizeof(ID3D11ShaderResourceView*);
+	for (int i = numElements-1; i >= 0; i--)
 	{
-		_textureViews[0]->Release();
-		_textureViews[0] = 0;
+		if (_textureViews[i])
+		{
+			_textureViews[i]->Release();
+			_textureViews[i] = 0;
+		}
 	}
 
-	if (_textureViews[1])
-	{
-		_textureViews[1]->Release();
-		_textureViews[1] = 0;
-	}
-
-	if (_textureViews[2])
-	{
-		_textureViews[2]->Release();
-		_textureViews[2] = 0;
-	}
-
-	if (_textureViews[3])
-	{
-		_textureViews[3]->Release();
-		_textureViews[3] = 0;
-	}
-
-	if (_textureViews[4])
-	{
-		_textureViews[4]->Release();
-		_textureViews[4] = 0;
-	}
-
-	if (_textureViews[5])
-	{
-		_textureViews[5]->Release();
-		_textureViews[5] = 0;
-	}
+	//if (_textureViews[0])
+	//{
+	//	_textureViews[0]->Release();
+	//	_textureViews[0] = 0;
+	//}
+	//if (_textureViews[1])
+	//{
+	//	_textureViews[1]->Release();
+	//	_textureViews[1] = 0;
+	//}
+	//if (_textureViews[2])
+	//{
+	//	_textureViews[2]->Release();
+	//	_textureViews[2] = 0;
+	//}
+	//if (_textureViews[3])
+	//{
+	//	_textureViews[3]->Release();
+	//	_textureViews[3] = 0;
+	//}
+	//if (_textureViews[4])
+	//{
+	//	_textureViews[4]->Release();
+	//	_textureViews[4] = 0;
+	//}
+	//if (_textureViews[5])
+	//{
+	//	_textureViews[5]->Release();
+	//	_textureViews[5] = 0;
+	//}
 
 	// Release the targa data. //@CLEANUP: Why done twice?
+	//numElements = sizeof(_textureViews) / sizeof(ID3D11ShaderResourceView*);
+
+	
 	if (_targaData6)
 	{
 		delete[] _targaData6;
@@ -352,7 +388,7 @@ ID3D11ShaderResourceView** TextureClass::GetTextureArray()
 
 ID3D11ShaderResourceView* TextureClass::GetTexture()
 {
-	return _textureViewSingle;
+	return _textureView;
 }
 
 unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, unsigned char* pTargaData)

@@ -92,7 +92,7 @@ private:
 	float _modelRotation = 0.0f;
 
 	/////////// WATER ////////////////
-	Model *_GroundModel, *_WallModel, *_BathModel, *_WaterModel;
+	Model*_GroundModel, *_WallModel, *_BathModel, *_WaterModel;
 	//LightClass* _Light;
 
 	RenderTextureClass *_RefractionTexture, *_ReflectionTexture;

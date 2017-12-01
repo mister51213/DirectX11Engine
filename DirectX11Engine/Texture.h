@@ -26,7 +26,10 @@ public:
 	TextureClass(const TextureClass&);
 	~TextureClass();
 
-	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename1, char* filename2, char* filename3, char* filename4, char* filename5, char* filename6);
+	bool InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename1, char* filename2, char* filename3, char* filename4, char* filename5, char* filename6);
+	
+	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* d3dContext, WCHAR* filename, ID3D11ShaderResourceView** textureView);
+	
 	void Shutdown();
 
 	ID3D11ShaderResourceView* GetTexture();
@@ -47,7 +50,9 @@ private:
 	ID3D11Texture2D* _texture4;
 	ID3D11Texture2D* _texture5;
 	ID3D11Texture2D* _texture6;
-	ID3D11ShaderResourceView* _textureViewSingle;
 	ID3D11ShaderResourceView* _textureViews[6];
-
+	
+	///////// SINGLE TEXTURE /////////////
+	ID3D11Resource* _texture;
+	ID3D11ShaderResourceView* _textureView;
 };
