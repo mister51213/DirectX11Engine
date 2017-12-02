@@ -264,6 +264,8 @@ bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* de
 	return true;
 }
 
+
+
 bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* d3dContext, WCHAR* filename, ID3D11ShaderResourceView** textureView)
 {
 	HRESULT result;
