@@ -25,7 +25,7 @@ public:
 
 	bool Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight);
 	void Shutdown();
-	bool Frame();
+	bool Tick();
 
 	bool IsEscapePressed();
 	bool IsLeftArrowPressed();

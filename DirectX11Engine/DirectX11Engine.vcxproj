@@ -177,7 +177,9 @@
     <ClCompile Include="System.cpp" />
     <ClCompile Include="TextureShaderClass.cpp" />
     <ClCompile Include="TimerClass.cpp" />
+    <ClCompile Include="UI.cpp" />
     <ClCompile Include="WaterShaderClass.cpp" />
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -205,8 +207,10 @@
     <ClInclude Include="System.h" />
     <ClInclude Include="TextureShaderClass.h" />
     <ClInclude Include="TimerClass.h" />
+    <ClInclude Include="UI.h" />
     <ClInclude Include="VectorMath.h" />
     <ClInclude Include="WaterShaderClass.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="font.ps" />

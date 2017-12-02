@@ -123,7 +123,7 @@ void Input::Shutdown()
 	return;
 }
 
-bool Input::Frame()
+bool Input::Tick()
 {
 	bool result;
 

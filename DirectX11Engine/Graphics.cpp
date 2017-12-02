@@ -733,7 +733,7 @@ void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of inti
 	return;
 }
 
-bool Graphics::Frame(float frameTime, int fps, float posX, float posY, float posZ, float rotX, float rotY, float rotZ)
+bool Graphics::ComposeFrame(float frameTime, int fps, float posX, float posY, float posZ, float rotX, float rotY, float rotZ)
 {
 	bool result;
 
@@ -778,7 +778,7 @@ bool Graphics::Frame(float frameTime, int fps, float posX, float posY, float pos
 
 	// @DEBUG why do they now disable rendering inside frame?
 	// Render the graphics scene.
-	result = Render(frameTime/*_modelRotation*/);
+	result = DrawFrame(frameTime/*_modelRotation*/);
 	if (!result)
 	{
 		return false;
@@ -787,7 +787,7 @@ bool Graphics::Frame(float frameTime, int fps, float posX, float posY, float pos
 	return true;
 }
 
-bool Graphics::Render(float frameTime)
+bool Graphics::DrawFrame(float frameTime)
 {
 	XMFLOAT3 fogColor(.6f, .6f, .6f);	float fogStart = 0.0f;	float fogEnd = 3.f;
 

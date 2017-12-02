@@ -10,17 +10,25 @@
 // INCLUDES //
 //////////////
 #include <windows.h>
+#include <memory>
+
 
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
 #include "Input.h"
 #include "Graphics.h"
-#include "FpsClass.h"
-#include "CpuClass.h"
-#include "TimerClass.h"
-#include "Position.h"
+#include "World.h"
+#include "UI.h"
 
+#include "FpsClass.h" // put in UI
+#include "CpuClass.h" // put in UI
+
+#include "TimerClass.h"
+
+#include "Position.h" // put in world
+
+using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: SystemClass
@@ -39,7 +47,7 @@ public:
 	LRESULT CALLBACK MessageHandler(HWND, UINT, WPARAM, LPARAM);
 
 private:
-	bool Frame();
+	bool Tick();
 	void ProcessInput(); //@custom
 	void InitializeWindows(int&, int&);
 	void ShutdownWindows();
@@ -50,7 +58,9 @@ private:
 	HWND _hwnd;
 
 	Input* _Input;
+	unique_ptr<World> _World;
 	Graphics* _Graphics;
+	unique_ptr<UI> _UI;
 
 	FpsClass* _Fps;
 	CpuClass* _Cpu;

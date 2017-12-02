@@ -49,6 +49,8 @@ bool System::Initialize()
 		return false;
 	}
 
+	_World.reset(new World);
+
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
 	_Graphics = new Graphics;
 	if (!_Graphics)
@@ -62,6 +64,8 @@ bool System::Initialize()
 	{
 		return false;
 	}
+
+	_UI.reset(new UI);
 
 	// Create the timer object.
 	_Timer = new TimerClass;
@@ -188,7 +192,7 @@ void System::Run()
 		else
 		{
 			// Otherwise do the frame processing.
-			result = Frame();
+			result = Tick();
 			if (!result)
 			{
 				MessageBox(_hwnd, L"Frame Processing Failed", L"Error", MB_OK);
@@ -207,53 +211,30 @@ void System::Run()
 	return;
 }
 
-bool System::Frame()
+bool System::Tick()
 {
-	bool keyDown, result;
-	int mouseX = 0; 
+	bool keyDown;
+	int mouseX = 0;
 	int mouseY = 0;
 	float rotationY = 0;
 	XMFLOAT3 orientation;
 	XMFLOAT3 position;
+	
+	// 1. Timer tick
+	_Timer->Tick();
 
-	//// Check if the left or right arrow key has been pressed, if so rotate the camera accordingly. //@custom
-	ProcessInput();
+	// 2. Input Tick
+	bool result = _Input->Tick();	ProcessInput();	if (!result)return false;		
 
-	// Update the system stats.
-	_Timer->Frame();
-	_Fps->Frame();
-	_Cpu->Frame();
+	// 3. World Tick
+	_World->Tick(_Timer->GetTime()); 	_CamPosition->SetFrameTime(_Timer->GetTime());	_CamPosition->GetOrientation(orientation);	_CamPosition->GetPosition(position);
 
-	// Do the input frame processing.
-	result = _Input->Frame();
-	if (!result)
-	{
-		return false;
-	}
+	// 4. Graphics Draw
+	result = _Graphics->ComposeFrame(_Timer->GetTime(), _Fps->GetFps(), position.x, position.y, position.z, orientation.x, orientation.y, orientation.z); if (!result)return false;
+	result = _Graphics->DrawFrame(_Timer->GetTime()); if (!result)return false;
 
-	// Set the frame time for calculating the updated position.
-	_CamPosition->SetFrameTime(_Timer->GetTime());
-
-	//// Get the current view point rotation.
-	//_CamPosition->GetRotation(rotationY);
-	_CamPosition->GetOrientation(orientation);
-	_CamPosition->GetPosition(position);
-
-
-	// Do the frame processing for the graphics object.
-	//result = _Graphics->Frame(rotationY, mouseX, mouseY, _Fps->GetFps(), _Cpu->GetCpuPercentage(), _Timer->GetTime());
-	result = _Graphics->Frame(_Timer->GetTime(), _Fps->GetFps(), position.x, position.y, position.z, orientation.x, orientation.y, orientation.z);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Finally render the graphics to the screen.
-	result = _Graphics->Render(_Timer->GetTime());
-	if (!result)
-	{
-		return false;
-	}
+	// 5. UI Tick
+	_UI->Tick();	_Fps->Frame();_Cpu->Frame();
 
 	return true;
 }
