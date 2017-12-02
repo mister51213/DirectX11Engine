@@ -260,7 +260,7 @@ void Input::GetMouseLocation(int& mouseX, int& mouseY)
 	return;
 }
 
-long int Input::GetMouseXY()
+__int64 Input::GetMouseXY()
 {
-	return ((long int)_mouseX << 32) | (long int)_mouseY;
+	return (__int64(_mouseX) << 32) | __int64(_mouseY);
 }

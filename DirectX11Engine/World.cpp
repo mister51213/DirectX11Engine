@@ -29,12 +29,12 @@ void World::ProcessInput(float deltaTime, Input* pInput)
 {
 	_CamPosition->SetFrameTime(deltaTime);
 
-	int mouseX = 0.f; int mouseY = 0.f;
-	pInput->GetMouseLocation(mouseX, mouseY);
+	//int mouseX = 0.f; int mouseY = 0.f;
+	//pInput->GetMouseLocation(mouseX, mouseY);
 
-	//long int mouseY = pInput->GetMouseXY() & 0xFFFFFFFF;
-	//long int mouseX = (pInput->GetMouseXY() >> 32) & 0xFFFFFFFF;
-
+	__int64 mouseXY = pInput->GetMouseXY();
+	__int64 mouseY = mouseXY & 0xFFFFFFFF;
+	__int64 mouseX = (mouseXY >> 32) & 0xFFFFFFFF;
 	_CamPosition->SetOrientation(XMFLOAT3((float)mouseY, (float)mouseX, 0.f));
 
 	//@STUDY command vs observer pattern
