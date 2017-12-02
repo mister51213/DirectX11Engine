@@ -216,6 +216,9 @@ bool System::Frame()
 	XMFLOAT3 orientation;
 	XMFLOAT3 position;
 
+	//// Check if the left or right arrow key has been pressed, if so rotate the camera accordingly. //@custom
+	ProcessInput();
+
 	// Update the system stats.
 	_Timer->Frame();
 	_Fps->Frame();
@@ -236,8 +239,6 @@ bool System::Frame()
 	_CamPosition->GetOrientation(orientation);
 	_CamPosition->GetPosition(position);
 
-	//// Check if the left or right arrow key has been pressed, if so rotate the camera accordingly. //@custom
-	ProcessInput();
 
 	// Do the frame processing for the graphics object.
 	//result = _Graphics->Frame(rotationY, mouseX, mouseY, _Fps->GetFps(), _Cpu->GetCpuPercentage(), _Timer->GetTime());

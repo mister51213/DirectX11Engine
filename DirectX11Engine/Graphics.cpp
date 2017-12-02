@@ -95,7 +95,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Set the initial position of the camera.
 	_Camera->SetPosition(0.0f, 0.0f, -4.f);
-	_Camera->Render();
+	_Camera->UpdateViewFromPosition();
 	//_Camera->RenderBaseViewMatrix();
 	//_Camera->GetViewMatrix(baseViewMatrix); // needed for text class
 
@@ -919,7 +919,7 @@ bool Graphics::RenderRefractionToTexture()
 	_RefractionTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Generate the view matrix based on the camera's position.
-	_Camera->Render();
+	_Camera->UpdateViewFromPosition();
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	_D3D->GetWorldMatrix(worldMatrix);
@@ -1004,7 +1004,7 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Generate the view matrix based on the camera's position.
-	_Camera->Render();
+	_Camera->UpdateViewFromPosition();
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	_D3D->GetWorldMatrix(worldMatrix);
