@@ -21,12 +21,12 @@
 #include "World.h"
 #include "UI.h"
 
-#include "FpsClass.h" // put in UI
-#include "CpuClass.h" // put in UI
+//#include "FpsClass.h" // put in UI
+//#include "CpuClass.h" // put in UI
 
 #include "TimerClass.h"
 
-#include "Position.h" // put in world
+//#include "Position.h" // put in world
 
 using namespace std;
 
@@ -48,7 +48,6 @@ public:
 
 private:
 	bool Tick();
-	void ProcessInput(); //@custom
 	void InitializeWindows(int&, int&);
 	void ShutdownWindows();
 
@@ -62,8 +61,8 @@ private:
 	Graphics* _Graphics;
 	unique_ptr<UI> _UI;
 
-	FpsClass* _Fps;
-	CpuClass* _Cpu;
+	//FpsClass* _Fps;
+	//CpuClass* _Cpu;
 	TimerClass* _Timer;
 	PositionClass* _CamPosition;
 };

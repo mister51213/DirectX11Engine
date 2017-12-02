@@ -1,15 +1,13 @@
 #include "System.h"
 #include <dinput.h>
 #include <DirectXMath.h>
+#include "Position.h"
 
 System::System()
 	:
 	_Input(nullptr),
 	_Graphics(nullptr),
-	_Fps(nullptr),
-	_Cpu(nullptr),
-	_Timer(nullptr),
-	_CamPosition(nullptr)
+	_Timer(nullptr)
 {}
 
 System::System(const System& other)
@@ -37,10 +35,6 @@ bool System::Initialize()
 		return false;
 	}
 
-	//@OLD
-	// Initialize the input object.
-	//_Input->Initialize();
-
 	// Initialize the input object.
 	result = _Input->Initialize(_hinstance, _hwnd, screenWidth, screenHeight);
 	if (!result)
@@ -50,6 +44,7 @@ bool System::Initialize()
 	}
 
 	_World.reset(new World);
+	if (_World) result = _World->Initialize();
 
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
 	_Graphics = new Graphics;
@@ -64,8 +59,6 @@ bool System::Initialize()
 	{
 		return false;
 	}
-
-	_UI.reset(new UI);
 
 	// Create the timer object.
 	_Timer = new TimerClass;
@@ -82,60 +75,14 @@ bool System::Initialize()
 		return false;
 	}
 
-	// Create the fps object.
-	_Fps = new FpsClass;
-	if (!_Fps)
-	{
-		return false;
-	}
-
-	// Initialize the fps object.
-	_Fps->Initialize();
-
-	// Create the cpu object.
-	_Cpu = new CpuClass;
-	if (!_Cpu)
-	{
-		return false;
-	}
-
-	// Initialize the cpu object.
-	_Cpu->Initialize();
-
-	// Create the position object.
-	_CamPosition = new PositionClass;
-	if (!_CamPosition)
-	{
-		return false;
-	}
+	_UI.reset(new UI);
+	result = _UI->Initialize();
 
 	return true;
 }
 
 void System::Shutdown()
 {
-	// Release the position object.
-	if (_CamPosition)
-	{
-		delete _CamPosition;
-		_CamPosition = 0;
-	}
-
-	// Release the cpu object.
-	if (_Cpu)
-	{
-		_Cpu->Shutdown();
-		delete _Cpu;
-		_Cpu = 0;
-	}
-
-	// Release the fps object.
-	if (_Fps)
-	{
-		delete _Fps;
-		_Fps = 0;
-	}
-
 	// Release the timer object.
 	if (_Timer)
 	{
@@ -213,47 +160,23 @@ void System::Run()
 
 bool System::Tick()
 {
-	bool keyDown;
-	int mouseX = 0;
-	int mouseY = 0;
-	float rotationY = 0;
-	XMFLOAT3 orientation;
-	XMFLOAT3 position;
-	
 	// 1. Timer tick
 	_Timer->Tick();
 
 	// 2. Input Tick
-	bool result = _Input->Tick();	ProcessInput();	if (!result)return false;		
+	bool result = _Input->Tick();	if (!result)return false;
 
 	// 3. World Tick
-	_World->Tick(_Timer->GetTime()); 	_CamPosition->SetFrameTime(_Timer->GetTime());	_CamPosition->GetOrientation(orientation);	_CamPosition->GetPosition(position);
+	_World->Tick(_Timer->GetTime(), _Input);
 
 	// 4. Graphics Draw
-	result = _Graphics->ComposeFrame(_Timer->GetTime(), _Fps->GetFps(), position.x, position.y, position.z, orientation.x, orientation.y, orientation.z); if (!result)return false;
+	result = _Graphics->ComposeFrame(_Timer->GetTime(), _UI->_Fps->GetFps(), _World->_CamPosition->GetPosition().x, _World->_CamPosition->GetPosition().y, _World->_CamPosition->GetPosition().z, _World->_CamPosition->GetOrientation().x, _World->_CamPosition->GetOrientation().y, _World->_CamPosition->GetOrientation().z); if (!result)return false;
 	result = _Graphics->DrawFrame(_Timer->GetTime()); if (!result)return false;
 
 	// 5. UI Tick
-	_UI->Tick();	_Fps->Frame();_Cpu->Frame();
+	_UI->Tick();
 
 	return true;
-}
-
-//@CUSTOM @TODO - rewrite
-void System::ProcessInput()
-{
-	int mouseX = 0.f;
-	int mouseY = 0.f;
-	_Input->GetMouseLocation(mouseX, mouseY);
-	_CamPosition->SetOrientation(XMFLOAT3((float)mouseY, (float)mouseX, 0.f));
-
-	//@STUDY command vs observer pattern
-	//_CamPosition->TurnLeft(_Input->IsLeftArrowPressed());
-	//_CamPosition->TurnRight(_Input->IsRightArrowPressed());
-	_CamPosition->MoveForward(_Input->IsKeyDown(DIK_W));
-	_CamPosition->MoveBack(_Input->IsKeyDown(DIK_S));
-	_CamPosition->MoveLeft(_Input->IsKeyDown(DIK_A));
-	_CamPosition->MoveRight(_Input->IsKeyDown(DIK_D));
 }
 
 LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)

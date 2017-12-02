@@ -40,22 +40,14 @@ float PositionClass::GetFrameTime(float)
 	return _frameTime;
 }
 
-void PositionClass::GetRotation(float& y) const
+XMFLOAT3 PositionClass::GetOrientation() const
 {
-	y = _rotationY;
-	return;
+	return _orientation;
 }
 
-void PositionClass::GetOrientation(XMFLOAT3& destination) const
+XMFLOAT3 PositionClass::GetPosition() const
 {
-	destination = _orientation;
-	return;
-}
-
-void PositionClass::GetPosition(XMFLOAT3& destination) const
-{
-	destination = _position;
-	return;
+	return _position;
 }
 
 void PositionClass::SetOrientation(XMFLOAT3& newOrientation)

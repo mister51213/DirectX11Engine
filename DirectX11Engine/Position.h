@@ -23,9 +23,8 @@ public:
 
 	void SetFrameTime(float);
 	float GetFrameTime(float);
-	void GetRotation(float&) const;
-	void GetOrientation(XMFLOAT3& destination) const;
-	void GetPosition(XMFLOAT3& destination) const;
+	XMFLOAT3 GetOrientation() const;
+	XMFLOAT3 GetPosition() const;
 	void SetOrientation(XMFLOAT3 & newOrientation);
 	void TurnLeft(bool);
 	void TurnRight(bool);
