@@ -259,3 +259,8 @@ void Input::GetMouseLocation(int& mouseX, int& mouseY)
 	mouseY = _mouseY;
 	return;
 }
+
+long int Input::GetMouseXY()
+{
+	return ((long int)_mouseX << 32) | (long int)_mouseY;
+}

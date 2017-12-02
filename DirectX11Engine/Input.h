@@ -33,6 +33,8 @@ public:
 	bool IsRightArrowPressed();
 	void GetMouseLocation(int&, int&);
 
+	long int GetMouseXY();
+
 private:
 	bool ReadKeyboard();
 	bool ReadMouse();

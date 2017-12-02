@@ -4,6 +4,8 @@
 #include "lightshaderclass.h"
 #include "lightclass.h"
 #include "Graphics.h"
+#include "World.h"
+
 
 Graphics::Graphics()
 	:
@@ -733,7 +735,7 @@ void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of inti
 	return;
 }
 
-bool Graphics::ComposeFrame(float frameTime, int fps, float posX, float posY, float posZ, float rotX, float rotY, float rotZ)
+bool Graphics::ComposeFrame(float frameTime, World* world, int fps, float camX, float camY, float camZ, float rotX, float rotY, float rotZ)
 {
 	bool result;
 
@@ -745,22 +747,12 @@ bool Graphics::ComposeFrame(float frameTime, int fps, float posX, float posY, fl
 	}
 
 	// Set the position of the camera.
-	_Camera->SetPosition(posX, posY, posZ);
+	_Camera->SetPosition(camX, camY, camZ);
 
 	// Set the rotation of the camera.
-	_Camera->SetRotation(rotX, rotY/*rotationY*/, rotZ);
+	_Camera->SetRotation(rotX, rotY, rotZ);
 
-	if (Camera* cam = GetCamera())
-	{
-		_Camera->Tick();
-	}
-
-	// Update the rotation variable each frame.
-	_modelRotation += (float)XM_PI * 0.0003f;
-	if (_modelRotation > 360.0f)
-	{
-		_modelRotation -= 360.0f;
-	}
+	//@TODO: SET ALL MODEL POSITIONS HERE
 	
 	// Update the fps string. //@TODO
 	result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
@@ -770,15 +762,14 @@ bool Graphics::ComposeFrame(float frameTime, int fps, float posX, float posY, fl
 	}
 
 	// Update the position strings.
-	result = UpdatePositionStrings(_D3D->GetDeviceContext(), posX, posY, posZ, rotX, rotY, rotZ);
+	result = UpdatePositionStrings(_D3D->GetDeviceContext(), camX, camY, camZ, rotX, rotY, rotZ);
 	if (!result)
 	{
 		return false;
 	}
 
-	// @DEBUG why do they now disable rendering inside frame?
 	// Render the graphics scene.
-	result = DrawFrame(frameTime/*_modelRotation*/);
+	result = DrawFrame(frameTime);
 	if (!result)
 	{
 		return false;
