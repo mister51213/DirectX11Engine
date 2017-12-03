@@ -12,6 +12,8 @@
 // INCLUDES //
 //////////////
 #include <dinput.h>
+#include <cstdint>
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: Input
@@ -33,7 +35,7 @@ public:
 	bool IsRightArrowPressed();
 	void GetMouseLocation(int&, int&);
 
-	__int64 GetMouseXY();
+	uint64_t GetMouseXY();
 
 private:
 	bool ReadKeyboard();

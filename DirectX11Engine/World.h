@@ -1,7 +1,10 @@
 #pragma once
 
 #include <memory>
+#include <vector>
+
 #include "Position.h" 
+#include "LightClass.h"
 
 using namespace std;
 
@@ -15,5 +18,7 @@ public:
 	void ProcessInput(float deltaTime, Input * pInput);
 	
 	unique_ptr<PositionClass> _CamPosition;
+	vector<unique_ptr<PositionClass>> _ActorPositions;
+	vector<unique_ptr<LightClass>> _Lights;
 };
 

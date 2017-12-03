@@ -31,14 +31,14 @@
     <Filter Include="Header Files\Tier2">
       <UniqueIdentifier>{1ed83535-181f-4e58-a18d-e7a3381b7053}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Tier1">
+      <UniqueIdentifier>{26f01202-9652-4d23-86ba-6c87a3f3e82e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Tier1">
+      <UniqueIdentifier>{0ea0e3eb-c95e-4a87-b163-7cb8707d3fcf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Graphics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="FontShaderClass.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
@@ -62,12 +62,6 @@
     </ClCompile>
     <ClCompile Include="RefractionShaderClass.cpp">
       <Filter>Source Files\Shaders</Filter>
-    </ClCompile>
-    <ClCompile Include="World.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="UI.cpp">
-      <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Tier2</Filter>
@@ -120,14 +114,20 @@
     <ClCompile Include="TimerClass.cpp">
       <Filter>Source Files\Tier2</Filter>
     </ClCompile>
+    <ClCompile Include="Graphics.cpp">
+      <Filter>Source Files\Tier1</Filter>
+    </ClCompile>
+    <ClCompile Include="Input.cpp">
+      <Filter>Source Files\Tier1</Filter>
+    </ClCompile>
+    <ClCompile Include="UI.cpp">
+      <Filter>Source Files\Tier1</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>Source Files\Tier1</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Input.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Graphics.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="VectorMath.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
@@ -154,12 +154,6 @@
     </ClInclude>
     <ClInclude Include="RefractionShaderClass.h">
       <Filter>Header Files\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="World.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UI.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Tier2</Filter>
@@ -208,6 +202,21 @@
     </ClInclude>
     <ClInclude Include="TimerClass.h">
       <Filter>Header Files\Tier2</Filter>
+    </ClInclude>
+    <ClInclude Include="GfxUtil.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphics.h">
+      <Filter>Header Files\Tier1</Filter>
+    </ClInclude>
+    <ClInclude Include="Input.h">
+      <Filter>Header Files\Tier1</Filter>
+    </ClInclude>
+    <ClInclude Include="UI.h">
+      <Filter>Header Files\Tier1</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>Header Files\Tier1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
