@@ -43,67 +43,56 @@ Graphics::~Graphics()
 
 bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
-	////////////////
-	// UI RELATED //
-	////////////////
 	bool result;
-	char videoCard[128];
-	int videoMemory;
-	char videoString[144];
-	char memoryString[32];
-	char tempString[16];
-	////////////////
-	// UI RELATED //
-	////////////////
-
-	XMMATRIX baseViewMatrix;
 
 	// Create the Direct3D object.
 	_D3D = new D3DClass;
-	if (!_D3D)
-	{
-		return false;
-	}
+	if (!_D3D){return false;}
 
 	// Initialize the Direct3D object.
 	result = _D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
-		return false;
-	}
+	if (!result){MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);return false;}
 
-	// Create the shader manager object.
-	_ShaderManager = new ShaderManagerClass;
-	if (!_ShaderManager)
-	{
-		return false;
-	}
-
-	// Initialize the shader manager object.
+	// Create / initialize the shader manager object.
+	_ShaderManager = new ShaderManagerClass;	if (!_ShaderManager){return false;}
 	result = _ShaderManager->Initialize(_D3D->GetDevice(), hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the shader manager object.", L"Error", MB_OK);
-		return false;
-	}
+	if (!result){MessageBox(hwnd, L"Could not initialize the shader manager object.", L"Error", MB_OK);	return false;}
 
 	// Create the camera object.
-	_Camera = new Camera;
-	if (!_Camera)
-	{
-		return false;
-	}
+	_Camera = new Camera;if (!_Camera){	return false;}	_Camera->SetPosition(0.0f, 0.0f, -4.f);	_Camera->UpdateViewFromPosition();
 
-	// Set the initial position of the camera.
-	_Camera->SetPosition(0.0f, 0.0f, -4.f);
-	_Camera->UpdateViewFromPosition();
-	//_Camera->RenderBaseViewMatrix();
-	//_Camera->GetViewMatrix(baseViewMatrix); // needed for text class
+	// InitializeModels
+	result = InitializeModels(hwnd, screenWidth, screenHeight);
 
+	// Initialize Lights
+	result = InitializeLights();
+
+	// Initialize UI
+	result = InitializeUI(screenWidth, screenHeight);
+	
+	return true;
+}
+
+bool Graphics::InitializeLights()
+{
+	// Create the light object.
+	_Light = new LightClass; if (!_Light) { return false; }
+
+	// Initialize the light object.
+	_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
+	_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	_Light->SetDirection(0.0f, -1.0f, 0.5f);
+	_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
+	_Light->SetSpecularPower(16.0f); // the lower the power, the higher the effect intensity
+
+	return true;
+}
+
+bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight)
+{
 	///////////////// WATER /////////////////////
 	// Create the ground model object.
-	_GroundModel = new Model;
+	bool result = _GroundModel = new Model;
 	if (!_GroundModel)
 	{
 		return false;
@@ -112,13 +101,13 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Initialize the ground model object.
 	result = _GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/ground.txt",
-		"../DirectX11Engine/data/ground01.tga", 
+		"../DirectX11Engine/data/ground01.tga",
 		"../DirectX11Engine/data/dirt.tga", // tex2
 		"../DirectX11Engine/data/light.tga", // lightmap
 		"../DirectX11Engine/data/alpha.tga", // alpha
 		"../DirectX11Engine/data/bumpMap.tga", // normal map
 		"../DirectX11Engine/data/specMap.tga"); // specMap
-		//"../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga");
+												//"../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the ground model object.", L"Error", MB_OK);
@@ -133,15 +122,15 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the wall model object.
-	result = _WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
-		"../DirectX11Engine/data/wall.txt", 
-		"../DirectX11Engine/data/wall01.tga ", 
+	result = _WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+		"../DirectX11Engine/data/wall.txt",
+		"../DirectX11Engine/data/wall01.tga ",
 		"../DirectX11Engine/data/dirt.tga", // tex2
 		"../DirectX11Engine/data/light.tga", // lightmap
 		"../DirectX11Engine/data/alpha.tga", // alpha
 		"../DirectX11Engine/data/bumpMap.tga", // normal map
 		"../DirectX11Engine/data/specMap.tga"); // specMap
-		//"../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga");
+												//"../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga", "../DirectX11Engine/data/wall01.tga");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the wall model object.", L"Error", MB_OK);
@@ -156,15 +145,15 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the bath model object.
-	result = _BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
-		"../DirectX11Engine/data/bath.txt", 
+	result = _BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+		"../DirectX11Engine/data/bath.txt",
 		"../DirectX11Engine/data/marble01.tga",
 		"../DirectX11Engine/data/dirt.tga", // tex2
 		"../DirectX11Engine/data/light.tga", // lightmap
 		"../DirectX11Engine/data/alpha.tga", // alpha
 		"../DirectX11Engine/data/bumpMap.tga", // normal map
 		"../DirectX11Engine/data/specMap.tga"); // specMap
-		//"../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga");
+												//"../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga", "../DirectX11Engine/data/marble01.tga");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the bath model object.", L"Error", MB_OK);
@@ -180,14 +169,14 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Initialize the water model object.
 	result = _WaterModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/water.txt", 
+		"../DirectX11Engine/data/water.txt",
 		////"../DirectX11Engine/data/water01.tga",
 		////"../DirectX11Engine/data/dirt.tga", // tex2
 		////"../DirectX11Engine/data/light.tga", // lightmap
 		////"../DirectX11Engine/data/alpha.tga", // alpha
 		////"../DirectX11Engine/data/bumpMap.tga", // normal map
 		////"../DirectX11Engine/data/specMap.tga"); // specMap
-		"../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga","../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga");
+		"../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga", "../DirectX11Engine/data/water01.tga");
 	if (!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the water model object.", L"Error", MB_OK);
@@ -233,8 +222,123 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
 	///////////////////////// WATER ////////////////////////
 
-#pragma region UI
+	// Create the model object.
+	_Model = new Model;
+	if (!_Model)
+	{
+		return false;
+	}
 
+	// Initialize the model object.
+	result = _Model->Initialize(
+		_D3D->GetDevice(),
+		_D3D->GetDeviceContext(),
+		"../DirectX11Engine/data/sphere.txt",
+		"../DirectX11Engine/data/stone.tga", // tex1
+		"../DirectX11Engine/data/dirt.tga", // tex2
+		"../DirectX11Engine/data/light.tga", // lightmap
+		"../DirectX11Engine/data/alpha.tga", // alpha
+		"../DirectX11Engine/data/bumpMap.tga", // normal map
+		"../DirectX11Engine/data/specMap.tga"); // specMap
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the frustum object.
+	_Frustum = new FrustumClass;
+	if (!_Frustum)
+	{
+		return false;
+	}
+
+	// Create the model list object.
+	_ModelList = new ModelListClass;
+	if (!_ModelList)
+	{
+		return false;
+	}
+
+	// Initialize the model list object.
+	result = _ModelList->Initialize(20);
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the model list object.", L"Error", MB_OK);
+		return false;
+	}
+
+	// Create the render to texture object.
+	_ReflectionTexture = new RenderTextureClass;
+	if (!_ReflectionTexture)
+	{
+		return false;
+	}
+
+	_ModelSingle = new Model;
+	if (!_ModelSingle)
+	{
+		return false;
+	}
+
+	result = _ModelSingle->Initialize(
+		_D3D->GetDevice(),
+		_D3D->GetDeviceContext(),
+		"../DirectX11Engine/data/sphere.txt",
+		"../DirectX11Engine/data/stone.tga", // tex1
+		"../DirectX11Engine/data/dirt.tga", // tex2
+		"../DirectX11Engine/data/light.tga", // lightmap
+		"../DirectX11Engine/data/alpha.tga", // alpha
+		"../DirectX11Engine/data/bumpMap.tga", // normal map
+		"../DirectX11Engine/data/specMap.tga"); // specMap
+	if (!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
+		return false;
+	}
+
+	//// Initialize the render to texture object.
+	//result = _ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
+	//if (!result)
+	//{
+	//	return false;
+	//}
+
+	////Create and initialize the blue floor model object.
+	//_FloorModel = new Model;
+	//if (!_FloorModel)
+	//{
+	//	return false;
+	//}
+
+	//// Initialize the floor model object. //TODO: make tga
+	//result = _FloorModel->Initialize(_D3D->GetDevice(),
+	//	_D3D->GetDeviceContext(),
+	//	"../DirectX11Engine/data/floor.txt",
+	//	"../DirectX11Engine/data/blue01.tga", 
+	//	"../DirectX11Engine/data/blue01.tga",
+	//	"../DirectX11Engine/data/blue01.tga",
+	//	"../DirectX11Engine/data/blue01.tga",
+	//	"../DirectX11Engine/data/blue01.tga",
+	//	"../DirectX11Engine/data/blue01.tga");
+	//if (!result)
+	//{
+	//	MessageBox(hwnd, L"Could not initialize the floor model object.", L"Error", MB_OK);
+	//	return false;
+	//}
+
+	return true;
+}
+
+bool Graphics::InitializeUI(int screenWidth, int screenHeight)
+{
+	bool result;
+
+	char videoCard[128];
+	int videoMemory;
+	char videoString[144];
+	char memoryString[32];
+	char tempString[16];
 	////////////////
 	// UI RELATED //
 	////////////////
@@ -279,9 +383,6 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	//	return false;
 	//}
 
-#pragma endregion
-
-#pragma region TEXT
 	// Create the first font object.
 	_Font1 = new FontClass;
 	if (!_Font1)
@@ -394,164 +495,24 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Initialize the render count strings.
-	result = _RenderCountStrings[0].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1,	"Polys Drawn: 0", 10, 260, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[0].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1, "Polys Drawn: 0", 10, 260, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
 	}
 
-	result = _RenderCountStrings[1].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1,	"Cells Drawn: 0", 10, 280, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[1].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1, "Cells Drawn: 0", 10, 280, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
 	}
 
-	result = _RenderCountStrings[2].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1,	"Cells Culled: 0", 10, 300, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[2].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1, "Cells Culled: 0", 10, 300, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
 	}
-
-	////////////////
-	// SCENE RELATED //
-	////////////////
-
-#pragma endregion
-
-	// Create the model object.
-	_Model = new Model;
-	if (!_Model)
-	{
-		return false;
-	}
-
-	// Initialize the model object.
-	result = _Model->Initialize(
-		_D3D->GetDevice(),
-		_D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/sphere.txt",
-			"../DirectX11Engine/data/stone.tga", // tex1
-			"../DirectX11Engine/data/dirt.tga", // tex2
-				"../DirectX11Engine/data/light.tga", // lightmap
-		"../DirectX11Engine/data/alpha.tga", // alpha
-			"../DirectX11Engine/data/bumpMap.tga", // normal map
-		"../DirectX11Engine/data/specMap.tga"); // specMap
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-		return false;
-	}
-
-	//// Create the light shader object.
-	//_LightShader = new LightShaderClass;
-	//if (!_LightShader)
-	//{
-	//	return false;
-	//}
-
-	//// Initialize the light shader object.
-	//result = _LightShader->Initialize(_D3D->GetDevice(), hwnd);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	// Create the light object.
-	_Light = new LightClass;
-	if (!_Light)
-	{
-		return false;
-	}
-
-	// Initialize the light object.
-	_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-	_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_Light->SetDirection(0.0f, -1.0f, 0.5f);
-	_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_Light->SetSpecularPower(16.0f); // the lower the power, the higher the effect intensity
-
-	// Create the model list object.
-	_ModelList = new ModelListClass;
-	if (!_ModelList)
-	{
-		return false;
-	}
-
-	// Initialize the model list object.
-	result = _ModelList->Initialize(20);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the model list object.", L"Error", MB_OK);
-		return false;
-	}
-
-	// Create the frustum object.
-	_Frustum = new FrustumClass;
-	if (!_Frustum)
-	{
-		return false;
-	}
-
-	// Create the render to texture object.
-	_ReflectionTexture = new RenderTextureClass;
-	if (!_ReflectionTexture)
-	{
-		return false;
-	}
-
-	//// Initialize the render to texture object.
-	//result = _ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	////Create and initialize the blue floor model object.
-	//_FloorModel = new Model;
-	//if (!_FloorModel)
-	//{
-	//	return false;
-	//}
-
-	//// Initialize the floor model object. //TODO: make tga
-	//result = _FloorModel->Initialize(_D3D->GetDevice(),
-	//	_D3D->GetDeviceContext(),
-	//	"../DirectX11Engine/data/floor.txt",
-	//	"../DirectX11Engine/data/blue01.tga", 
-	//	"../DirectX11Engine/data/blue01.tga",
-	//	"../DirectX11Engine/data/blue01.tga",
-	//	"../DirectX11Engine/data/blue01.tga",
-	//	"../DirectX11Engine/data/blue01.tga",
-	//	"../DirectX11Engine/data/blue01.tga");
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the floor model object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	_ModelSingle = new Model;
-	if (!_ModelSingle)
-	{
-		return false;
-	}
-
-	result = _ModelSingle->Initialize(
-		_D3D->GetDevice(),
-		_D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/sphere.txt",
-		"../DirectX11Engine/data/stone.tga", // tex1
-		"../DirectX11Engine/data/dirt.tga", // tex2
-		"../DirectX11Engine/data/light.tga", // lightmap
-		"../DirectX11Engine/data/alpha.tga", // alpha
-		"../DirectX11Engine/data/bumpMap.tga", // normal map
-		"../DirectX11Engine/data/specMap.tga"); // specMap
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-		return false;
-	}
-
+	
 	return true;
 }
 
@@ -822,6 +783,7 @@ bool Graphics::DrawFrame(float frameTime)
 	//}
 
 	RenderText();
+
 	_D3D->TurnZBufferOn(); // Turn the Z buffer back on now that all 2D rendering has completed.
 
 	_D3D->EndScene(); // Present the rendered scene to the screen.
