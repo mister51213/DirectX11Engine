@@ -9,8 +9,7 @@ UI::UI()
 }
 
 UI::~UI()
-{
-}
+{}
 
 bool UI::Initialize()
 {

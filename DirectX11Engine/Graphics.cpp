@@ -108,18 +108,12 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		"../DirectX11Engine/data/bumpMap.tga", // normal map
 		"../DirectX11Engine/data/specMap.tga"); // specMap
 												//"../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga", "../DirectX11Engine/data/ground01.tga");
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the ground model object.", L"Error", MB_OK);
-		return false;
-	}
+	if (!result){MessageBox(hwnd, L"Could not initialize the ground model object.", L"Error", MB_OK);
+		return false;}
 
 	// Create the wall model object.
 	_WallModel = new Model;
-	if (!_WallModel)
-	{
-		return false;
-	}
+	if (!_WallModel){return false;}
 
 	// Initialize the wall model object.
 	result = _WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
@@ -712,27 +706,12 @@ bool Graphics::UpdateFrame(float frameTime, World* world, int fps, float camX, f
 
 	//@TODO: SET ALL MODEL POSITIONS HERE
 	
-	result = UpdateUI(fps, camX, camY, camZ, rotX, rotY, rotZ);
+	// UPDATE UI
+	result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
 	if (!result){return false;}
 
-	return true;
-}
-
-bool Graphics::UpdateUI(int fps, float camX, float camY, float camZ, float rotX, float rotY, float rotZ)
-{
-	// Update the fps string. 
-	bool result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Update the position strings.
 	result = UpdatePositionStrings(_D3D->GetDeviceContext(), camX, camY, camZ, rotX, rotY, rotZ);
-	if (!result)
-	{
-		return false;
-	}
+	if (!result){return false;}
 
 	return true;
 }
@@ -747,19 +726,13 @@ bool Graphics::DrawFrame(float frameTime)
 //	_D3D->BeginScene(fogColor.x, fogColor.y, fogColor.z, 1.0f);
 
 
-// Render the refraction of the scene to a texture.
+	// Render the refraction of the scene to a texture.
 	bool result = RenderRefractionToTexture();
-	if (!result)
-	{
-		return false;
-	}
+	if (!result){return false;}
 
 	// Render the reflection of the scene to a texture.
 	result = RenderReflectionToTexture();
-	if (!result)
-	{
-		return false;
-	}
+	if (!result){return false;}
 
 	// Render the scene as normal to the back buffer.
 	result = RenderScene(fogStart, fogEnd, frameTime);

@@ -15,7 +15,6 @@ const float SCREEN_NEAR = 0.1f;
 //////////////
 // INCLUDES //
 //////////////
-//#include <windows.h>
 #include "d3dclass.h"
 #include "camera.h"
 #include "textclass.h"
@@ -26,8 +25,7 @@ const float SCREEN_NEAR = 0.1f;
 #include "modellistclass.h"
 #include "frustumclass.h"
 #include "shadermanagerclass.h"
-//#include "textureshaderclass.h"
-//#include "LightShaderClass.h"
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
@@ -48,15 +46,13 @@ public:
 	bool UpdateFrame(float frameTime, class World* world, int fps, float posX, float posY, float posZ,
 		float rotX, float rotY, float rotZ);
 
-	bool UpdateUI(int fps, float camX, float camY, float camZ, float rotX, float rotY, float rotZ);
-
 	bool DrawFrame(float frameTime);
 
 	bool RenderToReflection(float time);
 
 	bool RenderRefractionToTexture();
 
-	void RenderText(/*const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATRIX &baseViewMatrix, const DirectX::XMMATRIX &orthoMatrix*/);
+	void RenderText();
 
 	inline Camera* GetCamera() { return _Camera; }
 	bool UpdateRenderCounts(ID3D11DeviceContext*, int, int, int);
@@ -99,7 +95,6 @@ private:
 
 	/////////// WATER ////////////////
 	Model*_GroundModel, *_WallModel, *_BathModel, *_WaterModel;
-	//LightClass* _Light;
 
 	RenderTextureClass *_RefractionTexture, *_ReflectionTexture;
 
