@@ -42,8 +42,11 @@ public:
 	// Create the D3DClass object and call the D3DClass Initialize function.
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool ComposeFrame(float frameTime, class World* world, int fps, float posX, float posY, float posZ,
+	bool UpdateFrame(float frameTime, class World* world, int fps, float posX, float posY, float posZ,
 		float rotX, float rotY, float rotZ);
+
+	bool UpdateUI(int fps, float camX, float camY, float camZ, float rotX, float rotY, float rotZ);
+
 	bool DrawFrame(float frameTime);
 
 	bool RenderToReflection(float time);

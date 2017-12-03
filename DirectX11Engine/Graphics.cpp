@@ -735,7 +735,7 @@ void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of inti
 	return;
 }
 
-bool Graphics::ComposeFrame(float frameTime, World* world, int fps, float camX, float camY, float camZ, float rotX, float rotY, float rotZ)
+bool Graphics::UpdateFrame(float frameTime, World* world, int fps, float camX, float camY, float camZ, float rotX, float rotY, float rotZ)
 {
 	bool result;
 
@@ -746,16 +746,21 @@ bool Graphics::ComposeFrame(float frameTime, World* world, int fps, float camX, 
 		_waterTranslation -= 1.0f;
 	}
 
-	// Set the position of the camera.
 	_Camera->SetPosition(camX, camY, camZ);
-
-	// Set the rotation of the camera.
 	_Camera->SetRotation(rotX, rotY, rotZ);
 
 	//@TODO: SET ALL MODEL POSITIONS HERE
 	
-	// Update the fps string. //@TODO
-	result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
+	result = UpdateUI(fps, camX, camY, camZ, rotX, rotY, rotZ);
+	if (!result){return false;}
+
+	return true;
+}
+
+bool Graphics::UpdateUI(int fps, float camX, float camY, float camZ, float rotX, float rotY, float rotZ)
+{
+	// Update the fps string. 
+	bool result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
 	if (!result)
 	{
 		return false;
@@ -763,13 +768,6 @@ bool Graphics::ComposeFrame(float frameTime, World* world, int fps, float camX, 
 
 	// Update the position strings.
 	result = UpdatePositionStrings(_D3D->GetDeviceContext(), camX, camY, camZ, rotX, rotY, rotZ);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Render the graphics scene.
-	result = DrawFrame(frameTime);
 	if (!result)
 	{
 		return false;
