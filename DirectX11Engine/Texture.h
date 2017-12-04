@@ -8,6 +8,9 @@
 //////////////
 #include <d3d11.h>
 #include <stdio.h>
+#include <memory>
+
+using namespace std;
 
 class TextureClass
 {
@@ -27,6 +30,7 @@ public:
 	~TextureClass();
 
 	bool InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename1, char* filename2, char* filename3, char* filename4, char* filename5, char* filename6);
+	bool InitializeArrayDDS(ID3D11Device* device, ID3D11DeviceContext* deviceContext, WCHAR* filename1, char* filename2, char* filename3, char* filename4, char* filename5, char* filename6);
 	
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* d3dContext, WCHAR* filename, ID3D11ShaderResourceView** textureView);
 	
@@ -55,4 +59,23 @@ private:
 	///////// SINGLE TEXTURE /////////////
 	ID3D11Resource* _texture;
 	ID3D11ShaderResourceView* _textureView;
+
+	////////// DDS VERSION ////////////////
+	unique_ptr<ID3D11Resource> texDDS1;
+	//ID3D11Resource* texDDS1;
+	ID3D11Resource* texDDS2;
+	ID3D11Resource* texDDS3;
+	ID3D11Resource* texDDS4;
+	ID3D11Resource* texDDS5;
+	ID3D11Resource* texDDS6;
+
+	ID3D11ShaderResourceView* _textureView1;
+	//unique_ptr<ID3D11ShaderResourceView> _textureView1;
+	ID3D11ShaderResourceView* _textureView2;
+	ID3D11ShaderResourceView* _textureView3;
+	ID3D11ShaderResourceView* _textureView4;
+	ID3D11ShaderResourceView* _textureView5;
+	ID3D11ShaderResourceView* _textureView6;
+
+
 };
