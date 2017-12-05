@@ -1,5 +1,5 @@
 ////////////////////////////////////////////
-// Filename: GfxUtilites.h
+// Filename: GfxUtil.h
 // Contains useful functions and operator overloads for working with Graphics
 ///////////////////////////////////////////////
 #pragma once
@@ -13,8 +13,28 @@
 
 using namespace DirectX;
 
-namespace GfxUtilities
+namespace GfxUtil
 {
+	static wchar_t* charToWChar(const char* text)
+	{
+		const size_t size = strlen(text) +1;
+		wchar_t* wText = new wchar_t[size];
+		mbstowcs(wText, text, size);
+		return wText;
+	}
+
+	static wchar_t* charToWChar_S(const char* text)
+	{
+		size_t origsize = strlen(text) + 1;
+		const size_t newsize = 100;
+		size_t convertedChars = 0;
+		wchar_t wcstring[newsize];
+		mbstowcs_s(&convertedChars, wcstring, origsize, text, _TRUNCATE);
+		wcscat_s(wcstring, L" (wchar_t *)");
+
+		return wcstring;
+	}
+
 	enum EShaderType
 	{
 		ETEXTURE = 0,

@@ -3,7 +3,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "texture.h"
 #include "DDSTextureLoader.h"
+#include <stdlib.h>
+#include <stdexcept>
+#include <string>
 
+using namespace std;
 using namespace DirectX;
 
 TextureClass::TextureClass()
@@ -45,7 +49,7 @@ bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* de
 	HRESULT hResult;
 	unsigned int rowPitch;
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	
+
 	/*
 	TODO: Need to use new version of D3DX11CreateShaderResourceViewFromFile here
 	so we can work with any image type
@@ -266,40 +270,45 @@ bool TextureClass::InitializeArrayDDS(ID3D11Device * device, ID3D11DeviceContext
 {
 	//@CAUTION @CAUTION @CAUTION For creation functions, use &texDDS1, for set functions use .GetAddressOf
 	// IASetVertexBuffers, SetRenderTargets, ID3D11Resource** tex1 = texDDS1.GetAddressOf();
-
 	bool result = CreateDDSTextureFromFile(device, deviceContext, filename1, &_texDDS1, &_textureView1);
 	if (FAILED(result))
 	{
+		throw std::runtime_error("Failed to create dds texture: " + std::to_string(__LINE__));
 		return false;
 	}
 
 	result = CreateDDSTextureFromFile(device, deviceContext, filename2, &_texDDS2, &_textureView2);
 	if (FAILED(result))
 	{
+		throw std::runtime_error("Failed to create dds texture: "  + std::to_string(__LINE__));
 		return false;
 	}
 
 	result = CreateDDSTextureFromFile(device, deviceContext, filename3, &_texDDS3, &_textureView3);
 	if (FAILED(result))
 	{
+		throw std::runtime_error("Failed to create dds texture: "  + std::to_string(__LINE__));
 		return false;
 	}
 
 	result = CreateDDSTextureFromFile(device, deviceContext, filename4, &_texDDS4, &_textureView4);
 	if (FAILED(result))
 	{
+		throw std::runtime_error("Failed to create dds texture: "  + std::to_string(__LINE__));
 		return false;
 	}
 
 	result = CreateDDSTextureFromFile(device, deviceContext, filename5, &_texDDS5, &_textureView5);
 	if (FAILED(result))
 	{
+		throw std::runtime_error("Failed to create dds texture: "  + std::to_string(__LINE__));
 		return false;
 	}
 
 	result = CreateDDSTextureFromFile(device, deviceContext, filename6, &_texDDS6, &_textureView6);
 	if (FAILED(result))
 	{
+		throw std::runtime_error("Failed to create dds texture: " + std::to_string(__LINE__));
 		return false;
 	}
 

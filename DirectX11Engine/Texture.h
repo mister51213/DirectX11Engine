@@ -63,7 +63,7 @@ private:
 	ID3D11ShaderResourceView* _textureView;
 
 	////////// DDS VERSION ////////////////
-	//@TODO: change all of thse to ID3D11Texture2D 
+	//@NOTE - it wont work with Texture2D for some reason
 	//unique_ptr<ID3D11Resource> texDDS1;
 	//Microsoft::WRL::ComPtr <ID3D11Texture2D> texDDS1;
 	Microsoft::WRL::ComPtr <ID3D11Resource> _texDDS1;
@@ -72,11 +72,6 @@ private:
 	Microsoft::WRL::ComPtr <ID3D11Resource> _texDDS4;
 	Microsoft::WRL::ComPtr <ID3D11Resource> _texDDS5;
 	Microsoft::WRL::ComPtr <ID3D11Resource> _texDDS6;
-	//ID3D11Resource* texDDS2;
-	//ID3D11Resource* texDDS3;
-	//ID3D11Resource* texDDS4;
-	//ID3D11Resource* texDDS5;
-	//ID3D11Resource* texDDS6;
 
 	Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> _textureView1;
 	Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> _textureView2;
@@ -84,10 +79,4 @@ private:
 	Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> _textureView4;
 	Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> _textureView5;
 	Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> _textureView6;
-	//ID3D11ShaderResourceView* _textureView1;
-	//ID3D11ShaderResourceView* _textureView2;
-	//ID3D11ShaderResourceView* _textureView3;
-	//ID3D11ShaderResourceView* _textureView4;
-	//ID3D11ShaderResourceView* _textureView5;
-	//ID3D11ShaderResourceView* _textureView6;
 };

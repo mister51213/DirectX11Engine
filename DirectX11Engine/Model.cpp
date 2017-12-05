@@ -4,6 +4,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "Model.h"
 
+using namespace GfxUtil;
+
 Model::Model()
 	:
 	_vertexBuffer(0),
@@ -240,7 +242,16 @@ bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContex
 	}
 
 	// Initialize the texture object.
-	result = _TextureArray->InitializeArray(device, deviceContext, fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6);
+	//result = _TextureArray->InitializeArray(device, deviceContext, fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6);
+
+	WCHAR* wstr = (WCHAR*)fileName1; // not working
+	WCHAR* wstr2 = reinterpret_cast<WCHAR*>(fileName1); // not working
+	const WCHAR *pwcsName2 = charToWChar(fileName1);
+	const WCHAR *pwcsName3 = charToWChar_S(fileName1);
+
+
+	result = _TextureArray->InitializeArrayDDS(device, deviceContext, 
+		charToWChar_S(fileName1), charToWChar_S(fileName2), charToWChar_S(fileName3), charToWChar_S(fileName4), charToWChar_S(normalMapFileName), charToWChar_S(specMapFilename6));
 	if (!result)
 	{
 		return false;
@@ -418,9 +429,9 @@ void Model::ReleaseTextures()
 	// Release the texture object.
 	if (_TextureArray)
 	{
-		_TextureArray->Shutdown();
-		delete _TextureArray;
-		_TextureArray = 0;
+		//_TextureArray->Shutdown();
+		//delete _TextureArray;
+		//_TextureArray = 0;
 	}
 
 	return;

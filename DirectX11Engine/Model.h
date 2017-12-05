@@ -9,6 +9,7 @@
 #include <d3d11.h>
 #include <directxmath.h>
 #include <fstream>
+#include <string>
 
 using namespace std;
 using namespace DirectX;
@@ -17,6 +18,7 @@ using namespace DirectX;
 // CUSTOM INCLUDES //
 /////////////////////
 #include "texture.h"
+#include "GfxUtil.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: ModelClass
