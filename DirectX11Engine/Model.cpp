@@ -282,7 +282,7 @@ bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContex
 
 	//@CAUTION NOT WORKING
 	result = _TextureArray->InitializeArrayDDS(device, deviceContext, 
-		charToWChar_S(fileName1), charToWChar_S(fileName2), charToWChar_S(fileName3), charToWChar_S(fileName4), charToWChar_S(normalMapFileName), charToWChar_S(specMapFilename6));
+		charToWChar(fileName1), charToWChar(fileName2), charToWChar(fileName3), charToWChar(fileName4), charToWChar(normalMapFileName), charToWChar(specMapFilename6));
 	if (!result)
 	{
 		return false;

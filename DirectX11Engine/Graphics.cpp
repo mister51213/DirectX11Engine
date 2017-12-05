@@ -712,10 +712,10 @@ bool Graphics::UpdateFrame(float frameTime, World* world, int fps, float camX, f
 	//@TODO: SET ALL MODEL POSITIONS HERE
 	
 	// 4. Update UI
-	//result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
-	//if (!result){return false;}
-	//result = UpdatePositionStrings(_D3D->GetDeviceContext(), camX, camY, camZ, rotX, rotY, rotZ);
-	//if (!result){return false;}
+	result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
+	if (!result){return false;}
+	result = UpdatePositionStrings(_D3D->GetDeviceContext(), camX, camY, camZ, rotX, rotY, rotZ);
+	if (!result){return false;}
 
 	result = DrawFrame(frameTime); if (!result)return false;
 
