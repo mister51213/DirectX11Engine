@@ -40,6 +40,7 @@ public:
 
 	ID3D11ShaderResourceView* GetTexture();
 	ID3D11ShaderResourceView** GetTextureArray();
+	ID3D11ShaderResourceView** GetTextureArrayDDS();
 
 private:
 	unsigned char* LoadTarga(char*, int&, int&, unsigned char* pTargaData);
@@ -57,7 +58,8 @@ private:
 	ID3D11Texture2D* _texture5;
 	ID3D11Texture2D* _texture6;
 	ID3D11ShaderResourceView* _textureViews[6];
-	
+	ID3D11ShaderResourceView* _textureViewsDDS[6];
+
 	///////// SINGLE TEXTURE /////////////
 	ID3D11Resource* _texture;
 	ID3D11ShaderResourceView* _textureView;
@@ -73,6 +75,7 @@ private:
 	Microsoft::WRL::ComPtr <ID3D11Resource> _texDDS5;
 	Microsoft::WRL::ComPtr <ID3D11Resource> _texDDS6;
 
+	//Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> _textureViewsDDS[5];
 	Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> _textureView1;
 	Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> _textureView2;
 	Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> _textureView3;

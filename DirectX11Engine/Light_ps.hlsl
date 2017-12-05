@@ -85,7 +85,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     float4 bumpMap;
     float3 bumpNormal;
 
-	float gamma = 1.5f;
+	float gamma = 2.5f;
 
 	//////////// REFLECTION /////////////////////
 	//float2 reflectTexCoord;
@@ -192,6 +192,10 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 	// Do a linear interpolation between the two textures for a blend effect.
     //color = lerp(color, reflectionColor, 0.15f);
+
+	/////////////////////////////////////////////
+	////// TEST /////////////////////////////
+	//color = shaderTextures[0].Sample(SampleType, input.tex);
 
     return color;
 }
