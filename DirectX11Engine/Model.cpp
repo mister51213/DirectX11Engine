@@ -272,15 +272,13 @@ bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContex
 		return false;
 	}
 
-	// Initialize the texture object.
-	//result = _TextureArray->InitializeArray(device, deviceContext, fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6);
-
+	// TESTING AREA for different strong functions
 	WCHAR* wstr = (WCHAR*)fileName1; // not working
 	WCHAR* wstr2 = reinterpret_cast<WCHAR*>(fileName1); // not working
-	const WCHAR *pwcsName2 = charToWChar(fileName1);
+	const WCHAR *pwcsName2 = charToWChar(fileName1); // works even though Microsoft doesnt like it
 	const WCHAR *pwcsName3 = charToWChar_S(fileName1); // BAD
+	// TESTING AREA
 
-	//@CAUTION NOT WORKING
 	result = _TextureArray->InitializeArray(device, deviceContext, 
 		fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6);
 	if (!result)
