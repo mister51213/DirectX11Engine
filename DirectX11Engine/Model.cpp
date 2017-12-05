@@ -51,6 +51,37 @@ bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 	return true;
 }
 
+bool Model::InitializeDDS(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, WCHAR* textureFilename1, WCHAR* textureFilename2, WCHAR* lightMapFileName3, WCHAR* alphaFileName4, WCHAR* normalMapFilename5, WCHAR* specMapFilename6)
+{
+	bool result;
+
+	// Load in the model data
+	result = LoadModel(modelFilename);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Calculate the normal, tangent, and binormal vectors for the model.
+	CalculateModelVectors();
+
+	// Initialize the vertex and index buffers.
+	result = InitializeBuffers(device);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Load the texture for this model.
+	result = LoadTexturesDDS(device, deviceContext, textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
 void Model::Shutdown()
 {
 	// Release the model texture.
@@ -249,9 +280,31 @@ bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContex
 	const WCHAR *pwcsName2 = charToWChar(fileName1);
 	const WCHAR *pwcsName3 = charToWChar_S(fileName1);
 
-
+	//@CAUTION NOT WORKING
 	result = _TextureArray->InitializeArrayDDS(device, deviceContext, 
 		charToWChar_S(fileName1), charToWChar_S(fileName2), charToWChar_S(fileName3), charToWChar_S(fileName4), charToWChar_S(normalMapFileName), charToWChar_S(specMapFilename6));
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool Model::LoadTexturesDDS(ID3D11Device* device, ID3D11DeviceContext* deviceContext, WCHAR* fileName1, WCHAR* fileName2, WCHAR* fileName3, WCHAR* fileName4, WCHAR* normalMapFileName, WCHAR* specMapFilename6)
+{
+	bool result;
+
+	// Create the texture object.
+	_TextureArray = new TextureClass;
+	if (!_TextureArray)
+	{
+		return false;
+	}
+
+	// Initialize the texture object.
+	result = _TextureArray->InitializeArrayDDS(device, deviceContext, fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6);
+
 	if (!result)
 	{
 		return false;

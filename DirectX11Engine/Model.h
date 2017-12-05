@@ -65,6 +65,7 @@ public:
 	~Model();
 
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename1, char* textureFilename2, char* textureFilename3, char* textureFilename4, char* textureFilename5, char* textureFilename6);
+	bool InitializeDDS(ID3D11Device * device, ID3D11DeviceContext * deviceContext, char * modelFilename, WCHAR * textureFilename1, WCHAR * textureFilename2, WCHAR * lightMapFileName3, WCHAR * alphaFileName4, WCHAR * normalMapFilename5, WCHAR * specMapFilename6);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
@@ -84,6 +85,7 @@ private:
 	void RenderBuffers(ID3D11DeviceContext* deviceContext);
 
 	bool LoadTextures(ID3D11Device*, ID3D11DeviceContext*, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* textureFileName5, char* texFileName6);
+	bool LoadTexturesDDS(ID3D11Device * device, ID3D11DeviceContext * deviceContext, WCHAR * fileName1, WCHAR * fileName2, WCHAR * fileName3, WCHAR * fileName4, WCHAR * normalMapFileName, WCHAR * specMapFilename6);
 	void ReleaseTextures();
 
 	//functions for calculating the tangent and binormal vectors for the model.
