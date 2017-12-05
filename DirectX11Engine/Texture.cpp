@@ -31,12 +31,10 @@ TextureClass::TextureClass()
 }
 
 TextureClass::TextureClass(const TextureClass& other)
-{
-}
+{}
 
 TextureClass::~TextureClass()
-{
-}
+{}
 
 bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename1, char* filename2, char* filename3, char* filename4, char* filename5, char* filename6SpecMap)
 {
@@ -266,9 +264,40 @@ bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* de
 
 bool TextureClass::InitializeArrayDDS(ID3D11Device * device, ID3D11DeviceContext * deviceContext, WCHAR * filename1, char * filename2, char * filename3, char * filename4, char * filename5, char * filename6)
 {
-
 	ID3D11Resource* tex1 = texDDS1.get();
 	bool result = CreateDDSTextureFromFile(device, deviceContext, filename1, &tex1, &_textureView1);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	//result = D3DX11CreateShaderResourceViewFromFile(device, filename2, NULL, NULL, &m_textures[1], NULL);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
+
+	//result = D3DX11CreateShaderResourceViewFromFile(device, filename2, NULL, NULL, &m_textures[1], NULL);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
+	//result = D3DX11CreateShaderResourceViewFromFile(device, filename2, NULL, NULL, &m_textures[1], NULL);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
+	//result = D3DX11CreateShaderResourceViewFromFile(device, filename2, NULL, NULL, &m_textures[1], NULL);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
+	//result = D3DX11CreateShaderResourceViewFromFile(device, filename2, NULL, NULL, &m_textures[1], NULL);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
+
 
 	//@REFERENCE
 	//HRESULT __cdecl CreateDDSTextureFromFile(
@@ -280,10 +309,6 @@ bool TextureClass::InitializeArrayDDS(ID3D11Device * device, ID3D11DeviceContext
 	//	_In_ size_t maxsize = 0,
 	//	_Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr);
 
-	if (FAILED(result))
-	{
-		return false;
-	}
 
 	return true;
 }

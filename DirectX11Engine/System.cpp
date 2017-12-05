@@ -168,7 +168,9 @@ bool System::Tick()
 
 	// 4. Graphics Draw
 	result = _Graphics->UpdateFrame(_Timer->GetTime(), _World.get(), _UI->_Fps->GetFps(), _World->_CamPosition->GetPosition().x, _World->_CamPosition->GetPosition().y, _World->_CamPosition->GetPosition().z, _World->_CamPosition->GetOrientation().x, _World->_CamPosition->GetOrientation().y, _World->_CamPosition->GetOrientation().z); if (!result)return false;
-	result = _Graphics->DrawFrame(_Timer->GetTime()); if (!result)return false;
+	//result = _Graphics->DrawFrame(_Timer->GetTime()); if (!result)return false;
+
+	// @TODO: change world pointer to shared pointer
 
 	// 5. UI Tick
 	_UI->Tick();

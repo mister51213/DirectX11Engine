@@ -694,24 +694,25 @@ bool Graphics::UpdateFrame(float frameTime, World* world, int fps, float camX, f
 {
 	bool result;
 
-	// Update the position of the water to simulate motion.
+	// 1. Update Effects
 	_waterTranslation += 0.001f;
 	if (_waterTranslation > 1.0f)
-	{
-		_waterTranslation -= 1.0f;
-	}
+	{_waterTranslation -= 1.0f;	}
 
+	// 2. Update Camera
 	_Camera->SetPosition(camX, camY, camZ);
 	_Camera->SetRotation(rotX, rotY, rotZ);
 
+	// 3. Update World Actors
 	//@TODO: SET ALL MODEL POSITIONS HERE
 	
-	// UPDATE UI
+	// 4. Update UI
 	result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
 	if (!result){return false;}
-
 	result = UpdatePositionStrings(_D3D->GetDeviceContext(), camX, camY, camZ, rotX, rotY, rotZ);
 	if (!result){return false;}
+
+	result = DrawFrame(frameTime); if (!result)return false;
 
 	return true;
 }
@@ -724,7 +725,6 @@ bool Graphics::DrawFrame(float frameTime)
 //	if (!result) { return false; }
 
 //	_D3D->BeginScene(fogColor.x, fogColor.y, fogColor.z, 1.0f);
-
 
 	// Render the refraction of the scene to a texture.
 	bool result = RenderRefractionToTexture();
