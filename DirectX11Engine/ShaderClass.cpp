@@ -29,7 +29,7 @@ void ShaderClass::Shutdown()
 	return;
 }
 
-bool ShaderClass::Initialize(ID3D11Device * device, HWND hwnd, WCHAR * vsFilename, WCHAR * psFilename)
+bool ShaderClass::Initialize(ID3D11Device * device, HWND hwnd, char * vsFilename, char * psFilename)
 {
 	bool result;
 
@@ -47,15 +47,18 @@ bool ShaderClass::Initialize(ID3D11Device * device, HWND hwnd, WCHAR * vsFilenam
 	return true;
 }
 
-bool ShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, WCHAR * vsFileName, WCHAR * psFileName)
+bool ShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, char * vsFileName, char * psFileName)
 {
 	return false;
 }
 
-bool ShaderClass::CompileShaders(ID3D11Device * device, /*ID3D10Blob* vertexShaderBuffer, ID3D10Blob** pixelShaderBuffer, */HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename, char* vsDesc, char* psDesc, ID3D10Blob* errorMessage)
+bool ShaderClass::CompileShaders(ID3D11Device * device, /*ID3D10Blob* vertexShaderBuffer, ID3D10Blob** pixelShaderBuffer, */HWND hwnd, char* vsFilename, char* psFilename, char* vsDesc, char* psDesc, ID3D10Blob* errorMessage)
 {
+	WCHAR* vsFilenameW = charToWChar(vsFilename);
+	WCHAR* psFilenameW = charToWChar(psFilename);
+
 	// Compile the vertex shader code. @TODO!!!!!! WATCH OUT FOR NULL POINTERS HERE!!!!!
-	bool result = D3DCompileFromFile(vsFilename, NULL, NULL, vsDesc, "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
+	bool result = D3DCompileFromFile(vsFilenameW, NULL, NULL, vsDesc, "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
 		0, &vertexShaderBuffer, &errorMessage);
 	if (FAILED(result))
 	{
@@ -67,14 +70,14 @@ bool ShaderClass::CompileShaders(ID3D11Device * device, /*ID3D10Blob* vertexShad
 		// If there was  nothing in the error message then it simply could not find the shader file itself.
 		else
 		{
-			MessageBox(hwnd, vsFilename, L"Missing Shader File", MB_OK);
+			MessageBox(hwnd, vsFilename, "Missing Shader File", MB_OK);
 		}
 
 		return false;
 	}
 
 	// Compile the pixel shader code.
-	result = D3DCompileFromFile(psFilename, NULL, NULL, psDesc, "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
+	result = D3DCompileFromFile(psFilenameW, NULL, NULL, psDesc, "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
 		0, &pixelShaderBuffer, &errorMessage);
 	if (FAILED(result))
 	{
@@ -86,7 +89,7 @@ bool ShaderClass::CompileShaders(ID3D11Device * device, /*ID3D10Blob* vertexShad
 		// If there was  nothing in the error message then it simply could not find the file itself.
 		else
 		{
-			MessageBox(hwnd, psFilename, L"Missing Shader File", MB_OK);
+			MessageBox(hwnd, psFilename, "Missing Shader File", MB_OK);
 		}
 
 		return false;
@@ -149,7 +152,7 @@ void ShaderClass::ShutdownShader()
 	}
 }
 
-void ShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR* shaderFilename)
+void ShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, char* shaderFilename)
 {
 	char* compileErrors;
 	unsigned long long bufferSize, i;
@@ -178,7 +181,7 @@ void ShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, 
 	errorMessage = 0;
 
 	// Pop a message up on the screen to notify the user to check the text file for compile errors.
-	MessageBox(hwnd, L"Error compiling shader.  Check shader-error.txt for message.", shaderFilename, MB_OK);
+	MessageBox(hwnd, "Error compiling shader.  Check shader-error.txt for message.", shaderFilename, MB_OK);
 
 	return;
 }

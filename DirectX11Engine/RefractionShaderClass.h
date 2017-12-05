@@ -28,7 +28,7 @@ public:
 		XMFLOAT4 clipPlane);
 
 private:
-	bool InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename);
+	bool InitializeShader(ID3D11Device* device, HWND hwnd, char* vsFilename, char* psFilename);
 	void ShutdownShader();
 	bool SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 		XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture,

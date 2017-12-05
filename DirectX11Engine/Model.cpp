@@ -51,7 +51,7 @@ bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 	return true;
 }
 
-bool Model::InitializeDDS(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, WCHAR* textureFilename1, WCHAR* textureFilename2, WCHAR* lightMapFileName3, WCHAR* alphaFileName4, WCHAR* normalMapFilename5, WCHAR* specMapFilename6)
+bool Model::InitializeDDS(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename1, char* textureFilename2, char* lightMapFileName3, char* alphaFileName4, char* normalMapFilename5, char* specMapFilename6)
 {
 	bool result;
 
@@ -278,11 +278,11 @@ bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContex
 	WCHAR* wstr = (WCHAR*)fileName1; // not working
 	WCHAR* wstr2 = reinterpret_cast<WCHAR*>(fileName1); // not working
 	const WCHAR *pwcsName2 = charToWChar(fileName1);
-	const WCHAR *pwcsName3 = charToWChar_S(fileName1);
+	const WCHAR *pwcsName3 = charToWChar_S(fileName1); // BAD
 
 	//@CAUTION NOT WORKING
 	result = _TextureArray->InitializeArrayDDS(device, deviceContext, 
-		charToWChar(fileName1), charToWChar(fileName2), charToWChar(fileName3), charToWChar(fileName4), charToWChar(normalMapFileName), charToWChar(specMapFilename6));
+		fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6);
 	if (!result)
 	{
 		return false;
@@ -291,7 +291,7 @@ bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContex
 	return true;
 }
 
-bool Model::LoadTexturesDDS(ID3D11Device* device, ID3D11DeviceContext* deviceContext, WCHAR* fileName1, WCHAR* fileName2, WCHAR* fileName3, WCHAR* fileName4, WCHAR* normalMapFileName, WCHAR* specMapFilename6)
+bool Model::LoadTexturesDDS(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* normalMapFileName, char* specMapFilename6)
 {
 	bool result;
 

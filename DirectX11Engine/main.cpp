@@ -32,9 +32,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline,
 	catch (const std::runtime_error& e)
 	{
 		const std::string errMsg = e.what();
-		const std::wstring wErrMsg(errMsg.begin(), errMsg.end());
+		const std::string ErrMsg(errMsg.begin(), errMsg.end());
 
-		MessageBox(nullptr, wErrMsg.c_str(), L"Runtime error.", MB_OK);
+		MessageBox(nullptr, ErrMsg.c_str(), "Runtime error.", MB_OK);
 	}
 
 	return 0;

@@ -37,8 +37,11 @@ bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount
 	return true;
 }
 
-bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename)
+bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* vsFilename, char* psFilename)
 {
+	WCHAR* vsFilenameW = charToWChar(vsFilename);
+	WCHAR* psFilenameW = charToWChar(psFilename);
+
 	HRESULT result;
 	ID3D10Blob* errorMessage;
 	ID3D10Blob* vertexShaderBuffer;
@@ -65,7 +68,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	// Compile the vertex shader code.
 	result = 
 		D3DCompileFromFile(
-			vsFilename, 
+			vsFilenameW,
 			NULL, 
 			NULL, 
 			"LightVertexShader", 
@@ -84,7 +87,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 		// If there was nothing in the error message then it simply could not find the shader file itself.
 		else
 		{
-			MessageBox(hwnd, vsFilename, L"Missing Shader File", MB_OK);
+			MessageBox(hwnd, vsFilename, "Missing Shader File", MB_OK);
 		}
 
 		return false;
@@ -92,7 +95,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 
 		// Compile the pixel shader code.
 		result = D3DCompileFromFile(
-			psFilename, 
+			psFilenameW, 
 			NULL, 
 			NULL, 
 			"LightPixelShader", 
@@ -111,7 +114,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 		// If there was nothing in the error message then it simply could not find the file itself.
 		else
 		{
-			MessageBox(hwnd, psFilename, L"Missing Shader File", MB_OK);
+			MessageBox(hwnd, psFilename, "Missing Shader File", MB_OK);
 		}
 
 		return false;

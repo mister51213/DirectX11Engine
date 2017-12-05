@@ -36,7 +36,7 @@ bool System::Initialize()
 	result = _Input->Initialize(_hinstance, _hwnd, screenWidth, screenHeight);
 	if (!result)
 	{
-		MessageBox(_hwnd, L"Could not initialize the input object.", L"Error", MB_OK);
+		MessageBox(_hwnd, "Could not initialize the input object.", "Error", MB_OK);
 		return false;
 	}
 
@@ -68,7 +68,7 @@ bool System::Initialize()
 	result = _Timer->Initialize();
 	if (!result)
 	{
-		MessageBox(_hwnd, L"Could not initialize the Timer object.", L"Error", MB_OK);
+		MessageBox(_hwnd, "Could not initialize the Timer object.", "Error", MB_OK);
 		return false;
 	}
 
@@ -139,7 +139,7 @@ void System::Run()
 			result = Tick();
 			if (!result)
 			{
-				MessageBox(_hwnd, L"Frame Processing Failed", L"Error", MB_OK);
+				MessageBox(_hwnd, "Frame Processing Failed", "Error", MB_OK);
 				done = true;
 			}
 		}
@@ -197,7 +197,7 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 	_hinstance = GetModuleHandle(NULL);
 
 	// Give the application a name.
-	_applicationName = L"Engine";
+	_applicationName = "Engine";
 
 	// Setup the windows class with default settings.
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;

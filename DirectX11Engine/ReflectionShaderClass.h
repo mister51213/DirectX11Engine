@@ -18,7 +18,7 @@ bool Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMa
 	ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix);
 
 private:
-	bool InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename);
+	bool InitializeShader(ID3D11Device* device, HWND hwnd, char* vsFilename, char* psFilename);
 	virtual void ShutdownShader() override;
 
 	bool SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,

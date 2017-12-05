@@ -51,12 +51,12 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Initialize the Direct3D object.
 	result = _D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
-	if (!result){MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);return false;}
+	if (!result){MessageBox(hwnd, "Could not initialize Direct3D", "Error", MB_OK);return false;}
 
 	// Create / initialize the shader manager object.
 	_ShaderManager = new ShaderManagerClass;	if (!_ShaderManager){return false;}
 	result = _ShaderManager->Initialize(_D3D->GetDevice(), hwnd);
-	if (!result){MessageBox(hwnd, L"Could not initialize the shader manager object.", L"Error", MB_OK);	return false;}
+	if (!result){MessageBox(hwnd, "Could not initialize the shader manager object.", "Error", MB_OK);	return false;}
 
 	// Create the camera object.
 	_Camera = new Camera;if (!_Camera){	return false;}	_Camera->SetPosition(0.0f, 0.0f, -4.f);	_Camera->UpdateViewFromPosition();
@@ -101,14 +101,14 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	// Initialize the ground model object.
 	result = _GroundModel->InitializeDDS(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/ground.txt",
-		L"../DirectX11Engine/data/ground01.dds",
-		L"../DirectX11Engine/data/dirt.dds", // tex2
-		L"../DirectX11Engine/data/light.dds", // lightmap
-		L"../DirectX11Engine/data/alpha.dds", // alpha
-		L"../DirectX11Engine/data/bumpMap.dds", // normal map
-		L"../DirectX11Engine/data/specMap.dds"); // specMap
+		"../DirectX11Engine/data/ground01.dds",
+		"../DirectX11Engine/data/dirt.dds", // tex2
+		"../DirectX11Engine/data/light.dds", // lightmap
+		"../DirectX11Engine/data/alpha.dds", // alpha
+		"../DirectX11Engine/data/bumpMap.dds", // normal map
+		"../DirectX11Engine/data/specMap.dds"); // specMap
 												//"../DirectX11Engine/data/ground01.dds", "../DirectX11Engine/data/ground01.dds", "../DirectX11Engine/data/ground01.dds", "../DirectX11Engine/data/ground01.dds", "../DirectX11Engine/data/ground01.dds");
-	if (!result){MessageBox(hwnd, L"Could not initialize the ground model object.", L"Error", MB_OK);
+	if (!result){MessageBox(hwnd, "Could not initialize the ground model object.", "Error", MB_OK);
 		return false;}
 
 	// Create the wall model object.
@@ -118,16 +118,16 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	// Initialize the wall model object.
 	result = _WallModel->InitializeDDS(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/wall.txt",
-		L"../DirectX11Engine/data/wall01.dds ",
-		L"../DirectX11Engine/data/dirt.dds", // tex2
-		L"../DirectX11Engine/data/light.dds", // lightmap
-		L"../DirectX11Engine/data/alpha.dds", // alpha
-		L"../DirectX11Engine/data/bumpMap.dds", // normal map
-		L"../DirectX11Engine/data/specMap.dds"); // specMap
+		"../DirectX11Engine/data/wall01.dds ",
+		"../DirectX11Engine/data/dirt.dds", // tex2
+		"../DirectX11Engine/data/light.dds", // lightmap
+		"../DirectX11Engine/data/alpha.dds", // alpha
+		"../DirectX11Engine/data/bumpMap.dds", // normal map
+		"../DirectX11Engine/data/specMap.dds"); // specMap
 												//"../DirectX11Engine/data/wall01.dds", "../DirectX11Engine/data/wall01.dds", "../DirectX11Engine/data/wall01.dds", "../DirectX11Engine/data/wall01.dds", "../DirectX11Engine/data/wall01.dds");
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the wall model object.", L"Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the wall model object.", "Error", MB_OK);
 		return false;
 	}
 
@@ -141,16 +141,16 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	// Initialize the bath model object.
 	result = _BathModel->InitializeDDS(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/bath.txt",
-		L"../DirectX11Engine/data/marble01.dds",
-		L"../DirectX11Engine/data/dirt.dds", // tex2
-		L"../DirectX11Engine/data/light.dds", // lightmap
-		L"../DirectX11Engine/data/alpha.dds", // alpha
-		L"../DirectX11Engine/data/bumpMap.dds", // normal map
-		L"../DirectX11Engine/data/specMap.dds"); // specMap
+		"../DirectX11Engine/data/marble01.dds",
+		"../DirectX11Engine/data/dirt.dds", // tex2
+		"../DirectX11Engine/data/light.dds", // lightmap
+		"../DirectX11Engine/data/alpha.dds", // alpha
+		"../DirectX11Engine/data/bumpMap.dds", // normal map
+		"../DirectX11Engine/data/specMap.dds"); // specMap
 												//"../DirectX11Engine/data/marble01.dds", "../DirectX11Engine/data/marble01.dds", "../DirectX11Engine/data/marble01.dds", "../DirectX11Engine/data/marble01.dds", "../DirectX11Engine/data/marble01.dds", "../DirectX11Engine/data/marble01.dds");
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the bath model object.", L"Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the bath model object.", "Error", MB_OK);
 		return false;
 	}
 
@@ -170,15 +170,15 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		////"../DirectX11Engine/data/alpha.dds", // alpha
 		////"../DirectX11Engine/data/bumpMap.dds", // normal map
 		////"../DirectX11Engine/data/specMap.dds"); // specMap
-		L"../DirectX11Engine/data/water01.dds", 
-		L"../DirectX11Engine/data/water01.dds", 
-		L"../DirectX11Engine/data/water01.dds", 
-		L"../DirectX11Engine/data/water01.dds", 
-		L"../DirectX11Engine/data/water01.dds", 
-		L"../DirectX11Engine/data/water01.dds");
+		"../DirectX11Engine/data/water01.dds", 
+		"../DirectX11Engine/data/water01.dds", 
+		"../DirectX11Engine/data/water01.dds", 
+		"../DirectX11Engine/data/water01.dds", 
+		"../DirectX11Engine/data/water01.dds", 
+		"../DirectX11Engine/data/water01.dds");
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the water model object.", L"Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the water model object.", "Error", MB_OK);
 		return false;
 	}
 
@@ -193,7 +193,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	result = _RefractionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the refraction render to texture object.", L"Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the refraction render to texture object.", "Error", MB_OK);
 		return false;
 	}
 
@@ -208,7 +208,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	result = _ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the reflection render to texture object.", L"Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the reflection render to texture object.", "Error", MB_OK);
 		return false;
 	}
 
@@ -233,15 +233,15 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		_D3D->GetDevice(),
 		_D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/sphere.txt",
-		L"../DirectX11Engine/data/stone.dds", // tex1
-		L"../DirectX11Engine/data/dirt.dds", // tex2
-		L"../DirectX11Engine/data/light.dds", // lightmap
-		L"../DirectX11Engine/data/alpha.dds", // alpha
-		L"../DirectX11Engine/data/bumpMap.dds", // normal map
-		L"../DirectX11Engine/data/specMap.dds"); // specMap
+		"../DirectX11Engine/data/stone.dds", // tex1
+		"../DirectX11Engine/data/dirt.dds", // tex2
+		"../DirectX11Engine/data/light.dds", // lightmap
+		"../DirectX11Engine/data/alpha.dds", // alpha
+		"../DirectX11Engine/data/bumpMap.dds", // normal map
+		"../DirectX11Engine/data/specMap.dds"); // specMap
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
 		return false;
 	}
 
@@ -263,7 +263,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	result = _ModelList->Initialize(20);
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the model list object.", L"Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the model list object.", "Error", MB_OK);
 		return false;
 	}
 
@@ -292,7 +292,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		"../DirectX11Engine/data/specMap.dds"); // specMap
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
 		return false;
 	}
 
@@ -322,7 +322,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	//	"../DirectX11Engine/data/blue01.dds");
 	//if (!result)
 	//{
-	//	MessageBox(hwnd, L"Could not initialize the floor model object.", L"Error", MB_OK);
+	//	MessageBox(hwnd, "Could not initialize the floor model object.", "Error", MB_OK);
 	//	return false;
 	//}
 
@@ -363,7 +363,7 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	//result = _DebugWindow->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, 100, 100);
 	//if (!result)
 	//{
-	//	MessageBox(hwnd, L"Could not initialize the debug window object.", L"Error", MB_OK);
+	//	MessageBox(hwnd, "Could not initialize the debug window object.", "Error", MB_OK);
 	//	return false;
 	//}
 
@@ -378,7 +378,7 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	//result = _TextureShader->Initialize(_D3D->GetDevice(), hwnd);
 	//if (!result)
 	//{
-	//	MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
+	//	MessageBox(hwnd, "Could not initialize the texture shader object.", "Error", MB_OK);
 	//	return false;
 	//}
 
@@ -408,7 +408,7 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	//result = _FontShader->Initialize(_D3D->GetDevice(), hwnd);
 	//if (!result)
 	//{
-	//	MessageBox(hwnd, L"Could not initialize the font shader object.", L"Error", MB_OK);
+	//	MessageBox(hwnd, "Could not initialize the font shader object.", "Error", MB_OK);
 	//	return false;
 	//}
 

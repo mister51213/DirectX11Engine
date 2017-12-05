@@ -55,7 +55,7 @@ private:
 	void ShutdownWindows();
 
 private:
-	LPCWSTR _applicationName;
+	LPCSTR _applicationName;
 	HINSTANCE _hinstance;
 	HWND _hwnd;
 

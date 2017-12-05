@@ -24,7 +24,7 @@ public:
 
 private:
 	/** actually loads the shader files and makes it usable to DirectX and the GPU. */
-	virtual bool InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFileName, WCHAR* psFileName) override;
+	virtual bool InitializeShader(ID3D11Device* device, HWND hwnd, char* vsFileName, char* psFileName) override;
 	virtual void ShutdownShader() override;
 
 	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture);

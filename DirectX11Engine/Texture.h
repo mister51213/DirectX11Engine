@@ -32,7 +32,7 @@ public:
 	~TextureClass();
 
 	bool InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename1, char* filename2, char* filename3, char* filename4, char* filename5, char* filename6);
-	bool InitializeArrayDDS(ID3D11Device* device, ID3D11DeviceContext* deviceContext, WCHAR* filename1, WCHAR* filename2, WCHAR* filename3, WCHAR* filename4, WCHAR* filename5, WCHAR* filename6);
+	bool InitializeArrayDDS(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename1, char* filename2, char* filename3, char* filename4, char* filename5, char* filename6);
 	
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* d3dContext, WCHAR* filename, ID3D11ShaderResourceView** textureView);
 	

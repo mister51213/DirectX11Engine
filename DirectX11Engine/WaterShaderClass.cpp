@@ -31,8 +31,11 @@ bool WaterShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCoun
 	return true;
 }
 
-bool WaterShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename)
+bool WaterShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* vsFilename, char* psFilename)
 {
+	WCHAR* vsFilenameW = charToWChar(vsFilename);
+	WCHAR* psFilenameW = charToWChar(psFilename);
+
 	HRESULT result;
 	ID3D10Blob* errorMessage;
 	//ID3D10Blob* vertexShaderBuffer;
@@ -51,7 +54,7 @@ bool WaterShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 	pixelShaderBuffer = 0;
 
 	// Compile the vertex shader code.
-	result = D3DCompileFromFile(vsFilename, NULL, NULL, "WaterVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
+	result = D3DCompileFromFile(vsFilenameW, NULL, NULL, "WaterVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
 			&vertexShaderBuffer, &errorMessage);
 	if (FAILED(result))
 	{
@@ -63,14 +66,14 @@ bool WaterShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 		// If there was  nothing in the error message then it simply could not find the shader file itself.
 		else
 		{
-			MessageBox(hwnd, vsFilename, L"Missing Shader File", MB_OK);
+			MessageBox(hwnd, vsFilename, "Missing Shader File", MB_OK);
 		}
 
 		return false;
 	}
 
 	// Compile the pixel shader code.
-	result = D3DCompileFromFile(psFilename, NULL, NULL, "WaterPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
+	result = D3DCompileFromFile(psFilenameW, NULL, NULL, "WaterPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0,
 			&pixelShaderBuffer, &errorMessage);
 	if (FAILED(result))
 	{
@@ -82,7 +85,7 @@ bool WaterShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* 
 		// If there was  nothing in the error message then it simply could not find the file itself.
 		else
 		{
-			MessageBox(hwnd, psFilename, L"Missing Shader File", MB_OK);
+			MessageBox(hwnd, psFilename, "Missing Shader File", MB_OK);
 		}
 
 		return false;

@@ -29,10 +29,10 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	// Initialize the texture shader object.
-	result = _TextureShader->Initialize(device, hwnd, L"../DirectX11Engine/texture_vs.hlsl", L"../DirectX11Engine/texture_ps.hlsl");
+	result = _TextureShader->Initialize(device, hwnd, "../DirectX11Engine/texture_vs.hlsl", "../DirectX11Engine/texture_ps.hlsl");
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the texture shader object.", "Error", MB_OK);
 		return false;
 	}
 
@@ -44,10 +44,10 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	// Initialize the light shader object.
-	result = _LightShader->Initialize(device, hwnd, L"../DirectX11Engine/Light_vs.hlsl", L"../DirectX11Engine/Light_ps.hlsl");
+	result = _LightShader->Initialize(device, hwnd, "../DirectX11Engine/Light_vs.hlsl", "../DirectX11Engine/Light_ps.hlsl");
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the light shader object.", "Error", MB_OK);
 		return false;
 	}
 
@@ -59,10 +59,10 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	// Initialize the bump map shader object.
-	result = _FontShader->Initialize(device, hwnd, L"../DirectX11Engine/font.vs", L"../DirectX11Engine/font.ps");
+	result = _FontShader->Initialize(device, hwnd, "../DirectX11Engine/font.vs", "../DirectX11Engine/font.ps");
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the bump map shader object.", L"Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the bump map shader object.", "Error", MB_OK);
 		return false;
 	}
 
@@ -74,28 +74,28 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	// Initialize the bump map shader object.
-	result = _ReflectionShader->Initialize(device, hwnd, L"../DirectX11Engine/Reflection_vs.hlsl", L"../DirectX11Engine/Reflection_ps.hlsl");
+	result = _ReflectionShader->Initialize(device, hwnd, "../DirectX11Engine/Reflection_vs.hlsl", "../DirectX11Engine/Reflection_ps.hlsl");
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the bump map shader object.", L"Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the bump map shader object.", "Error", MB_OK);
 		return false;
 	}
 
 	_WaterShader = new WaterShaderClass;
 
-	result = _WaterShader->Initialize(device, hwnd, L"../DirectX11Engine/WaterShader_vs.hlsl", L"../DirectX11Engine/WaterShader_ps.hlsl");
+	result = _WaterShader->Initialize(device, hwnd, "../DirectX11Engine/WaterShader_vs.hlsl", "../DirectX11Engine/WaterShader_ps.hlsl");
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the bump map shader object.", L"Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the bump map shader object.", "Error", MB_OK);
 		return false;
 	}
 
 	_RefractionShader = new RefractionShaderClass;
 
-	result = _RefractionShader->Initialize(device, hwnd, L"../DirectX11Engine/Refraction_vs.hlsl", L"../DirectX11Engine/Refraction_ps.hlsl");
+	result = _RefractionShader->Initialize(device, hwnd, "../DirectX11Engine/Refraction_vs.hlsl", "../DirectX11Engine/Refraction_ps.hlsl");
 	if (!result)
 	{
-		MessageBox(hwnd, L"Could not initialize the bump map shader object.", L"Error", MB_OK);
+		MessageBox(hwnd, "Could not initialize the bump map shader object.", "Error", MB_OK);
 		return false;
 	}
 
