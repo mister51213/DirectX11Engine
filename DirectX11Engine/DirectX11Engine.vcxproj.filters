@@ -87,9 +87,6 @@
     <ClCompile Include="LightClass.cpp">
       <Filter>Source Files\Tier2</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files\Tier2</Filter>
-    </ClCompile>
     <ClCompile Include="Model.cpp">
       <Filter>Source Files\Tier2</Filter>
     </ClCompile>
@@ -124,6 +121,9 @@
       <Filter>Source Files\Tier1</Filter>
     </ClCompile>
     <ClCompile Include="World.cpp">
+      <Filter>Source Files\Tier1</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
       <Filter>Source Files\Tier1</Filter>
     </ClCompile>
   </ItemGroup>
@@ -191,9 +191,6 @@
     <ClInclude Include="RenderTextureClass.h">
       <Filter>Header Files\Tier2</Filter>
     </ClInclude>
-    <ClInclude Include="System.h">
-      <Filter>Header Files\Tier2</Filter>
-    </ClInclude>
     <ClInclude Include="TextClass.h">
       <Filter>Header Files\Tier2</Filter>
     </ClInclude>
@@ -216,6 +213,9 @@
       <Filter>Header Files\Tier1</Filter>
     </ClInclude>
     <ClInclude Include="World.h">
+      <Filter>Header Files\Tier1</Filter>
+    </ClInclude>
+    <ClInclude Include="System.h">
       <Filter>Header Files\Tier1</Filter>
     </ClInclude>
   </ItemGroup>

@@ -21,6 +21,9 @@
 #include "World.h"
 #include "UI.h"
 
+#include <wrl/client.h>
+
+
 //#include "FpsClass.h" // put in UI
 //#include "CpuClass.h" // put in UI
 

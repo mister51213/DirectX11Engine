@@ -262,42 +262,46 @@ bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* de
 	return true;
 }
 
-bool TextureClass::InitializeArrayDDS(ID3D11Device * device, ID3D11DeviceContext * deviceContext, WCHAR * filename1, char * filename2, char * filename3, char * filename4, char * filename5, char * filename6)
+bool TextureClass::InitializeArrayDDS(ID3D11Device * device, ID3D11DeviceContext * deviceContext, WCHAR * filename1, WCHAR * filename2, WCHAR * filename3, WCHAR * filename4, WCHAR * filename5, WCHAR * filename6)
 {
-	ID3D11Resource* tex1 = texDDS1.get();
-	bool result = CreateDDSTextureFromFile(device, deviceContext, filename1, &tex1, &_textureView1);
+	//@CAUTION @CAUTION @CAUTION For creation functions, use &texDDS1, for set functions use .GetAddressOf
+	// IASetVertexBuffers, SetRenderTargets, ID3D11Resource** tex1 = texDDS1.GetAddressOf();
+
+	bool result = CreateDDSTextureFromFile(device, deviceContext, filename1, &_texDDS1, &_textureView1);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	//result = D3DX11CreateShaderResourceViewFromFile(device, filename2, NULL, NULL, &m_textures[1], NULL);
-	//if (FAILED(result))
-	//{
-	//	return false;
-	//}
+	result = CreateDDSTextureFromFile(device, deviceContext, filename2, &_texDDS2, &_textureView2);
+	if (FAILED(result))
+	{
+		return false;
+	}
 
-	//result = D3DX11CreateShaderResourceViewFromFile(device, filename2, NULL, NULL, &m_textures[1], NULL);
-	//if (FAILED(result))
-	//{
-	//	return false;
-	//}
-	//result = D3DX11CreateShaderResourceViewFromFile(device, filename2, NULL, NULL, &m_textures[1], NULL);
-	//if (FAILED(result))
-	//{
-	//	return false;
-	//}
-	//result = D3DX11CreateShaderResourceViewFromFile(device, filename2, NULL, NULL, &m_textures[1], NULL);
-	//if (FAILED(result))
-	//{
-	//	return false;
-	//}
-	//result = D3DX11CreateShaderResourceViewFromFile(device, filename2, NULL, NULL, &m_textures[1], NULL);
-	//if (FAILED(result))
-	//{
-	//	return false;
-	//}
+	result = CreateDDSTextureFromFile(device, deviceContext, filename3, &_texDDS3, &_textureView3);
+	if (FAILED(result))
+	{
+		return false;
+	}
 
+	result = CreateDDSTextureFromFile(device, deviceContext, filename4, &_texDDS4, &_textureView4);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	result = CreateDDSTextureFromFile(device, deviceContext, filename5, &_texDDS5, &_textureView5);
+	if (FAILED(result))
+	{
+		return false;
+	}
+
+	result = CreateDDSTextureFromFile(device, deviceContext, filename6, &_texDDS6, &_textureView6);
+	if (FAILED(result))
+	{
+		return false;
+	}
 
 	//@REFERENCE
 	//HRESULT __cdecl CreateDDSTextureFromFile(
@@ -308,7 +312,6 @@ bool TextureClass::InitializeArrayDDS(ID3D11Device * device, ID3D11DeviceContext
 	//	_Outptr_opt_ ID3D11ShaderResourceView** textureView,
 	//	_In_ size_t maxsize = 0,
 	//	_Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr);
-
 
 	return true;
 }
