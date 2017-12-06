@@ -268,11 +268,11 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	}
 
 	// Create the render to texture object.
-	_ReflectionTexture = new RenderTextureClass;
-	if (!_ReflectionTexture)
-	{
-		return false;
-	}
+	//_ReflectionTexture = new RenderTextureClass;
+	//if (!_ReflectionTexture)
+	//{
+	//	return false;
+	//}
 
 	_ModelSingle = new Model;
 	if (!_ModelSingle)
@@ -908,9 +908,9 @@ bool Graphics::RenderReflectionToTexture()
 	//	projectionMatrix, _WallModel->GetTextureArrayDDS(), _Light->GetDirection(),
 	//	_Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), 0, 0, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
 
-	result = _ShaderManager->RenderTextureShader(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, reflectionViewMatrix,
-		projectionMatrix, _WallModel->GetTextureArray()[0]/*, _Light->GetDirection(),
-		_Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), 0, 0, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f*/);
+	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, reflectionViewMatrix,
+		projectionMatrix, _WallModel->GetTextureArray(), _Light->GetDirection(),
+		_Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), 0, 0, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
 	if (!result)
 	{
 		return false;
@@ -1004,16 +1004,17 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	_WaterModel->Render(_D3D->GetDeviceContext());
 
 	// Render the water model using the water shader.
-	result = _ShaderManager->RenderWaterShader(_D3D->GetDeviceContext(), _WaterModel->GetIndexCount(), worldMatrix, viewMatrix,
-		projectionMatrix, reflectionMatrix, _ReflectionTexture->GetShaderResourceView(), _RefractionTexture->GetShaderResourceView(), _WaterModel->GetTextureArray()[0],
-		_waterTranslation, 0.01f);
+	result =
+		_ShaderManager->RenderWaterShader(_D3D->GetDeviceContext(), _WaterModel->GetIndexCount(), worldMatrix, viewMatrix,
+		projectionMatrix, reflectionMatrix, _ReflectionTexture->GetShaderResourceView(), _RefractionTexture->GetShaderResourceView(), 
+			_WaterModel->GetTextureArray()[0], _waterTranslation, 0.01f);
 	if (!result)
 	{
 		return false;
 	}
 
 	// Present the rendered scene to the screen.
-	_D3D->EndScene();
+	//_D3D->EndScene();
 
 #pragma endregion
 
