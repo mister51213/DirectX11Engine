@@ -281,8 +281,7 @@ bool Model::LoadTexturesTga(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 
 	vector<char*> fileNames{ fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6 };
 
-	result = _TextureArray->InitializeArrayTga(device, deviceContext, 
-		fileNames, fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6);
+	result = _TextureArray->InitializeArrayTga(device, deviceContext, fileNames);
 	if (!result)
 	{
 		return false;
@@ -305,8 +304,7 @@ bool Model::LoadTexturesDDS(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	vector<char*> fileNames{ fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6 };
 
 	// Initialize the texture object.
-	result = _TextureArray->InitializeArrayDDS(device, deviceContext, fileNames, fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6);
-
+	result = _TextureArray->InitializeArrayDDS(device, deviceContext, fileNames);
 	if (!result)
 	{
 		return false;

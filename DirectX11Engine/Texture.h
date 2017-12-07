@@ -32,11 +32,11 @@ public:
 	TextureClass(const TextureClass&);
 	~TextureClass();
 
-	bool InitializeArrayTga(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> filenames, char* filename1, char* filename2, char* filename3, char* filename4, char* filename5, char* filename6);
-	bool InitializeArrayDDS(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> fileNames, char* filename1, char* filename2, char* filename3, char* filename4, char* filename5, char* filename6);
+	bool InitializeTexture(ID3D11Device * device, ID3D11DeviceContext * deviceContext, char * filename, int i);
+	bool InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> filenames);
+	bool InitializeArrayTga(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> filenames);
+	bool InitializeArrayDDS(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> fileNames);
 	bool InitializeTexTga(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename, unsigned char** targaData, ID3D11Texture2D** pTexture, ID3D11ShaderResourceView** pTexView);
-	
-	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* d3dContext, WCHAR* filename, ID3D11ShaderResourceView** textureView);
 	
 	ID3D11ShaderResourceView** GetTextureArray();
 	ID3D11ShaderResourceView** GetTextureArrayDDS();

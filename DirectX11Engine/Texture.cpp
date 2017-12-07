@@ -7,18 +7,55 @@
 #include <stdexcept>
 #include <string>
 #include "GfxUtil.h"
+#include "Shlwapi.h"
+
+#pragma comment(lib, "Shlwapi.lib")
 
 using namespace std;
 using namespace DirectX;
 using namespace GfxUtil;
 
 TextureClass::TextureClass(){}
-
 TextureClass::TextureClass(const TextureClass& other){}
-
 TextureClass::~TextureClass(){}
 
-bool TextureClass::InitializeArrayTga(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> filenames, char* filename1, char* filename2, char* filename3, char* filename4, char* filename5, char* filename6)
+//@TODO - DONT USE YET! something not working - not initializing all the files in the array for some reason
+bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> filenames)
+{
+	for (int i = 0; i < filenames.size(); ++i)
+	{
+		InitializeTexture(device, deviceContext, filenames[i], i);
+	}
+	return true;
+}
+
+bool TextureClass::InitializeTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename, int i)
+{
+	string extension = PathFindExtension(filename);
+	
+	if (extension == ".tga")
+	{
+		InitializeTexTga(device, deviceContext, filename, &_targaData[i], &_textures[i], &_textureViews[i]);
+		return false;
+	}
+	else if (extension == ".dds")
+	{
+		bool result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(filename), &_texDDS[i], &_textureViewsDDS[i]);
+		if (FAILED(result))
+		{
+			throw std::runtime_error("Failed to create dds texture: " + std::to_string(__LINE__));
+			return false;
+		}
+	}
+	else
+	{
+		//@TODO: add WIC loader
+	}
+
+	return true;
+}
+
+bool TextureClass::InitializeArrayTga(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> filenames)
 {
 	for (int i = 0; i < filenames.size(); ++i)
 	{
@@ -95,7 +132,7 @@ bool TextureClass::InitializeTexTga(ID3D11Device* device, ID3D11DeviceContext* d
 	return true;
 }
 
-bool TextureClass::InitializeArrayDDS(ID3D11Device * device, ID3D11DeviceContext * deviceContext, vector<char*> fileNames, char * filename1, char * filename2, char * filename3, char * filename4, char * filename5, char * filename6)
+bool TextureClass::InitializeArrayDDS(ID3D11Device * device, ID3D11DeviceContext * deviceContext, vector<char*> fileNames)
 {
 	//@CAUTION @CAUTION @CAUTION For creation functions, use &texDDS1, for set functions use .GetAddressOf
 	// IASetVertexBuffers, SetRenderTargets, ID3D11Resource** tex1 = texDDS1.GetAddressOf();
@@ -119,14 +156,6 @@ bool TextureClass::InitializeArrayDDS(ID3D11Device * device, ID3D11DeviceContext
 	//	_Outptr_opt_ ID3D11ShaderResourceView** textureView,
 	//	_In_ size_t maxsize = 0,
 	//	_Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr);
-
-	return true;
-}
-
-
-bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* d3dContext, WCHAR* filename, ID3D11ShaderResourceView** textureView)
-{
-	HRESULT result;
 
 	return true;
 }

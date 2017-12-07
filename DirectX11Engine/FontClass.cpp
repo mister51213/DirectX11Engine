@@ -134,7 +134,7 @@ bool FontClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 
 
 	vector<char*> filenames{ filename };
-	result = _Texture->InitializeArrayTga(device, deviceContext, filenames, filename, filename, filename, filename, filename, filename);
+	result = _Texture->InitializeArrayTga(device, deviceContext, filenames);
 
 
 
