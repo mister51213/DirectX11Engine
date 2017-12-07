@@ -10,6 +10,7 @@
 #include <directxmath.h>
 #include <fstream>
 #include <string>
+#include <vector>
 
 using namespace std;
 using namespace DirectX;
@@ -84,7 +85,7 @@ private:
 	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
 	void RenderBuffers(ID3D11DeviceContext* deviceContext);
 
-	bool LoadTextures(ID3D11Device*, ID3D11DeviceContext*, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* textureFileName5, char* texFileName6);
+	bool LoadTexturesTga(ID3D11Device*, ID3D11DeviceContext*, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* textureFileName5, char* texFileName6);
 	bool LoadTexturesDDS(ID3D11Device * device, ID3D11DeviceContext * deviceContext, char * fileName1, char * fileName2, char * fileName3, char * fileName4, char * normalMapFileName, char * specMapFilename6);
 	void ReleaseTextures();
 

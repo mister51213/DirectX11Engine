@@ -42,7 +42,7 @@ bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 	}
 
 	// Load the texture for this model.
-	result = LoadTextures(device, deviceContext, textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6);
+	result = LoadTexturesTga(device, deviceContext, textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6);
 	if (!result)
 	{
 		return false;
@@ -261,7 +261,7 @@ void Model::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	return;
 }
 
-bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* normalMapFileName, char* specMapFilename6)
+bool Model::LoadTexturesTga(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* normalMapFileName, char* specMapFilename6)
 {
 	bool result;
 
@@ -279,8 +279,10 @@ bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContex
 	const WCHAR *pwcsName3 = charToWChar_S(fileName1); // BAD
 	// TESTING AREA
 
+	vector<char*> fileNames{ fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6 };
+
 	result = _TextureArray->InitializeArrayTga(device, deviceContext, 
-		fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6);
+		fileNames, fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6);
 	if (!result)
 	{
 		return false;

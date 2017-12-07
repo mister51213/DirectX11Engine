@@ -9,9 +9,9 @@
 //////////////
 #include <directxmath.h>
 #include <fstream>
+#include <vector>
 using namespace DirectX;
 using namespace std;
-
 
 ///////////////////////
 // MY CLASS INCLUDES //
