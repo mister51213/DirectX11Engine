@@ -12,18 +12,11 @@ using namespace std;
 using namespace DirectX;
 using namespace GfxUtil;
 
-TextureClass::TextureClass()
-	:
-	_textureView(0)
-{
-	int numElements = sizeof(_textureViews) / sizeof(ID3D11ShaderResourceView*);
-}
+TextureClass::TextureClass(){}
 
-TextureClass::TextureClass(const TextureClass& other)
-{}
+TextureClass::TextureClass(const TextureClass& other){}
 
-TextureClass::~TextureClass()
-{}
+TextureClass::~TextureClass(){}
 
 bool TextureClass::InitializeArrayTga(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> filenames, char* filename1, char* filename2, char* filename3, char* filename4, char* filename5, char* filename6)
 {
@@ -135,27 +128,7 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* d3dCont
 {
 	HRESULT result;
 
-	// Load the texture in.
-	result = CreateDDSTextureFromFile(device, d3dContext, filename, &_texture, &_textureView);
-
-	if (FAILED(result))
-	{
-		return false;
-	}
-
 	return true;
-}
-
-void TextureClass::Shutdown()
-{
-	// release the texture view resource.
-	if (_textureView)
-	{
-		_textureView->Release();
-		_textureView = 0;
-	}
-
-	return;
 }
 
 ID3D11ShaderResourceView** TextureClass::GetTextureArray()
@@ -166,11 +139,6 @@ ID3D11ShaderResourceView** TextureClass::GetTextureArray()
 ID3D11ShaderResourceView** TextureClass::GetTextureArrayDDS()
 {
 	return _textureViewsDDS->GetAddressOf();
-}
-
-ID3D11ShaderResourceView* TextureClass::GetTexture()
-{
-	return _textureView;
 }
 
 unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, unsigned char* pTargaData)

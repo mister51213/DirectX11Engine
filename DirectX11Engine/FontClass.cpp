@@ -152,7 +152,6 @@ void FontClass::ReleaseTexture()
 	// Release the texture object.
 	if (_Texture)
 	{
-		_Texture->Shutdown();
 		delete _Texture;
 		_Texture = 0;
 	}

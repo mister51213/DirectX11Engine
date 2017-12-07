@@ -38,9 +38,6 @@ public:
 	
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* d3dContext, WCHAR* filename, ID3D11ShaderResourceView** textureView);
 	
-	void Shutdown();
-
-	ID3D11ShaderResourceView* GetTexture();
 	ID3D11ShaderResourceView** GetTextureArray();
 	ID3D11ShaderResourceView** GetTextureArrayDDS();
 
@@ -52,10 +49,6 @@ private:
 
 	Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> _textureViews[6];
 	Microsoft::WRL::ComPtr <ID3D11ShaderResourceView> _textureViewsDDS[6];
-
-	///////// SINGLE TEXTURE /////////////
-	ID3D11Resource* _texture;
-	ID3D11ShaderResourceView* _textureView;
 
 	////////// DDS VERSION ////////////////
 	Microsoft::WRL::ComPtr <ID3D11Resource> _texDDS[6];
