@@ -279,7 +279,7 @@ bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContex
 	const WCHAR *pwcsName3 = charToWChar_S(fileName1); // BAD
 	// TESTING AREA
 
-	result = _TextureArray->InitializeArray(device, deviceContext, 
+	result = _TextureArray->InitializeArrayTga(device, deviceContext, 
 		fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6);
 	if (!result)
 	{

@@ -131,7 +131,7 @@ bool FontClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	}
 
 	// Initialize the texture object.
-	result = _Texture->InitializeArray(device, deviceContext, filename, filename, filename, filename, filename, filename);
+	result = _Texture->InitializeArrayTga(device, deviceContext, filename, filename, filename, filename, filename, filename);
 	if (!result)
 	{
 		return false;
