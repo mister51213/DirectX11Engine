@@ -273,10 +273,10 @@ bool Model::LoadTexturesTga(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	}
 
 	// TESTING AREA for different strong functions
-	WCHAR* wstr = (WCHAR*)fileName1; // not working
-	WCHAR* wstr2 = reinterpret_cast<WCHAR*>(fileName1); // not working
-	const WCHAR *pwcsName2 = charToWChar(fileName1); // works even though Microsoft doesnt like it
-	const WCHAR *pwcsName3 = charToWChar_S(fileName1); // BAD
+	//WCHAR* wstr = (WCHAR*)fileName1; // not working
+	//WCHAR* wstr2 = reinterpret_cast<WCHAR*>(fileName1); // not working
+	//const WCHAR *pwcsName2 = charToWChar(fileName1); // works even though Microsoft doesnt like it
+	//const WCHAR *pwcsName3 = charToWChar_S(fileName1); // BAD
 	// TESTING AREA
 
 	vector<char*> fileNames{ fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6 };
@@ -302,8 +302,10 @@ bool Model::LoadTexturesDDS(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 		return false;
 	}
 
+	vector<char*> fileNames{ fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6 };
+
 	// Initialize the texture object.
-	result = _TextureArray->InitializeArrayDDS(device, deviceContext, fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6);
+	result = _TextureArray->InitializeArrayDDS(device, deviceContext, fileNames, fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6);
 
 	if (!result)
 	{

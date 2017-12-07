@@ -14,26 +14,9 @@ using namespace GfxUtil;
 
 TextureClass::TextureClass()
 	:
-	//_targaData1(0),
-	//_targaData2(0),
-	//_texture1(0),
-	//_texture2(0),
 	_textureView(0)
-
-	//_texture(0),
-	//_textureView(0),
 {
 	int numElements = sizeof(_textureViews) / sizeof(ID3D11ShaderResourceView*);
-
-	for (int i = 0; i < numElements; i++)
-	{
-		_textureViews[0] = 0;
-		_textureViews[1] = 0;
-		_textureViews[2] = 0;
-		_textureViews[3] = 0;
-		_textureViews[4] = 0;
-		_textureViews[5] = 0;
-	}
 }
 
 TextureClass::TextureClass(const TextureClass& other)
@@ -119,51 +102,19 @@ bool TextureClass::InitializeTexTga(ID3D11Device* device, ID3D11DeviceContext* d
 	return true;
 }
 
-bool TextureClass::InitializeArrayDDS(ID3D11Device * device, ID3D11DeviceContext * deviceContext, char * filename1, char * filename2, char * filename3, char * filename4, char * filename5, char * filename6)
+bool TextureClass::InitializeArrayDDS(ID3D11Device * device, ID3D11DeviceContext * deviceContext, vector<char*> fileNames, char * filename1, char * filename2, char * filename3, char * filename4, char * filename5, char * filename6)
 {
 	//@CAUTION @CAUTION @CAUTION For creation functions, use &texDDS1, for set functions use .GetAddressOf
 	// IASetVertexBuffers, SetRenderTargets, ID3D11Resource** tex1 = texDDS1.GetAddressOf();
 
-	bool result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(filename1), &_texDDS1, &_textureViewsDDS[0]);
-	if (FAILED(result))
+	for (int i = 0; i < fileNames.size(); ++i)
 	{
-		throw std::runtime_error("Failed to create dds texture: " + std::to_string(__LINE__));
-		return false;
-	}
-
-	result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(filename2), &_texDDS2, &_textureViewsDDS[1]);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Failed to create dds texture: "  + std::to_string(__LINE__));
-		return false;
-	}
-
-	result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(filename3), &_texDDS3, &_textureViewsDDS[2]);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Failed to create dds texture: "  + std::to_string(__LINE__));
-		return false;
-	}
-
-	result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(filename4), &_texDDS4, &_textureViewsDDS[3]);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Failed to create dds texture: "  + std::to_string(__LINE__));
-		return false;
-	}
-
-	result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(filename5), &_texDDS5, &_textureViewsDDS[4]);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Failed to create dds texture: "  + std::to_string(__LINE__));
-		return false;
-	}
-
-	result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(filename6), &_texDDS6, &_textureViewsDDS[5]);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Failed to create dds texture: " + std::to_string(__LINE__));
-		return false;
+		bool result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(fileNames[i]), &_texDDS[i], &_textureViewsDDS[i]);
+		if (FAILED(result))
+		{
+			throw std::runtime_error("Failed to create dds texture: " + std::to_string(__LINE__));
+			return false;
+		}
 	}
 
 	//@REFERENCE
@@ -203,114 +154,18 @@ void TextureClass::Shutdown()
 		_textureView->Release();
 		_textureView = 0;
 	}
-	//// Release the texture.
-	//if (_texture)
-	//{
-	//	_texture->Release();
-	//	_texture = 0;
-	//}
 
-	// Release the texture resources.
-	int numElements = sizeof(_textureViews) / sizeof(ID3D11ShaderResourceView*);
-	for (int i = numElements-1; i >= 0; i--)
-	{
-		if (_textureViews[i])
-		{
-			_textureViews[i]->Release();
-			_textureViews[i] = 0;
-		}
-	}
-
-	//if (_textureViews[0])
-	//{
-	//	_textureViews[0]->Release();
-	//	_textureViews[0] = 0;
-	//}
-	//if (_textureViews[1])
-	//{
-	//	_textureViews[1]->Release();
-	//	_textureViews[1] = 0;
-	//}
-	//if (_textureViews[2])
-	//{
-	//	_textureViews[2]->Release();
-	//	_textureViews[2] = 0;
-	//}
-	//if (_textureViews[3])
-	//{
-	//	_textureViews[3]->Release();
-	//	_textureViews[3] = 0;
-	//}
-	//if (_textureViews[4])
-	//{
-	//	_textureViews[4]->Release();
-	//	_textureViews[4] = 0;
-	//}
-	//if (_textureViews[5])
-	//{
-	//	_textureViews[5]->Release();
-	//	_textureViews[5] = 0;
-	//}
-
-	// Release the targa data. //@CLEANUP: Why done twice?
-	//numElements = sizeof(_textureViews) / sizeof(ID3D11ShaderResourceView*);
-
-	
-	//if (_targaData6)
-	//{
-	//	delete[] _targaData6;
-	//	_targaData6 = 0;
-	//}
-
-	//if (_targaData5)
-	//{
-	//	delete[] _targaData5;
-	//	_targaData5 = 0;
-	//}
-
-	//if (_targaData4)
-	//{
-	//	delete[] _targaData4;
-	//	_targaData4 = 0;
-	//}
-
-	//if (_targaData3)
-	//{
-	//	delete[] _targaData3;
-	//	_targaData3 = 0;
-	//}
-
-	//if (_targaData2)
-	//{
-	//	delete[] _targaData2;
-	//	_targaData2 = 0;
-	//}
-
-	//if (_targaData1)
-	//{
-	//	delete[] _targaData1;
-	//	_targaData1 = 0;
-	//}
-	
 	return;
 }
 
-//ID3D11ShaderResourceView* TextureClass::GetTexture()
 ID3D11ShaderResourceView** TextureClass::GetTextureArray()
 {
-	//return _textureView;
-	return _textureViews;
+	return _textureViews->GetAddressOf();
 }
 
 ID3D11ShaderResourceView** TextureClass::GetTextureArrayDDS()
 {
-	//return _textureView;
-
-	//ID3D11ShaderResourceView* _textureViews[6];
-
-	//return _textureViewsDDS;
-	return _textureViewsDDS;
-
+	return _textureViewsDDS->GetAddressOf();
 }
 
 ID3D11ShaderResourceView* TextureClass::GetTexture()
