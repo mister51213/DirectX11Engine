@@ -1,6 +1,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: texture.cpp
 ////////////////////////////////////////////////////////////////////////////////
+#pragma comment(lib, "Shlwapi.lib")
+
 #include "texture.h"
 #include "DDSTextureLoader.h"
 #include <stdlib.h>
@@ -8,8 +10,6 @@
 #include <string>
 #include "GfxUtil.h"
 #include "Shlwapi.h"
-
-#pragma comment(lib, "Shlwapi.lib")
 
 using namespace std;
 using namespace DirectX;
@@ -40,7 +40,7 @@ bool TextureClass::InitializeTexture(ID3D11Device* device, ID3D11DeviceContext* 
 	}
 	else if (extension == ".dds")
 	{
-		bool result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(filename), &_texDDS[i], &_textureViewsDDS[i]);
+		bool result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(filename), &_texDDS[i], &_textureViews[i]);
 		if (FAILED(result))
 		{
 			throw std::runtime_error("Failed to create dds texture: " + std::to_string(__LINE__));
@@ -59,7 +59,15 @@ bool TextureClass::InitializeArrayTga(ID3D11Device* device, ID3D11DeviceContext*
 {
 	for (int i = 0; i < filenames.size(); ++i)
 	{
+		_textureViews.push_back(Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>());
+		unsigned char* ptr1;
+		_targaData.push_back(ptr1);
+		ID3D11Texture2D* ptr2;
+		_textures.push_back(ptr2);
+
 		InitializeTexTga(device, deviceContext, filenames[i], &_targaData[i], &_textures[i], &_textureViews[i]);
+
+		_targaData.clear();
 	}
 
 	return true;
@@ -139,7 +147,10 @@ bool TextureClass::InitializeArrayDDS(ID3D11Device * device, ID3D11DeviceContext
 
 	for (int i = 0; i < fileNames.size(); ++i)
 	{
-		bool result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(fileNames[i]), &_texDDS[i], &_textureViewsDDS[i]);
+		_texDDS.push_back(Microsoft::WRL::ComPtr <ID3D11Resource>());
+		_textureViews.push_back(Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>());
+
+		bool result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(fileNames[i]), &_texDDS[i], &_textureViews[i]);
 		if (FAILED(result))
 		{
 			throw std::runtime_error("Failed to create dds texture: " + std::to_string(__LINE__));
@@ -162,12 +173,8 @@ bool TextureClass::InitializeArrayDDS(ID3D11Device * device, ID3D11DeviceContext
 
 ID3D11ShaderResourceView** TextureClass::GetTextureArray()
 {
-	return _textureViews->GetAddressOf();
-}
-
-ID3D11ShaderResourceView** TextureClass::GetTextureArrayDDS()
-{
-	return _textureViewsDDS->GetAddressOf();
+	//return _textureViews->GetAddressOf();
+	return _textureViews[0].GetAddressOf();
 }
 
 unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, unsigned char* pTargaData)
@@ -256,7 +263,7 @@ unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, 
 			pTargaData[index + 2] = targaImage[k + 0];  // Blue
 			pTargaData[index + 3] = targaImage[k + 3];  // Alpha
 
-														 // Increment the indexes into the targa data.
+			// Increment the indexes into the targa data.
 			k += 4;
 			index += 4;
 		}

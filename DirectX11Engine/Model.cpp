@@ -113,7 +113,7 @@ int Model::GetIndexCount()
 ID3D11ShaderResourceView** Model::GetTextureArray()
 {
 	//return _Texture->GetTexture();
-	return _TextureArray->GetTextureArrayDDS();
+	return _TextureArray->GetTextureArray();
 }
 
 bool Model::InitializeBuffers(ID3D11Device* device)
