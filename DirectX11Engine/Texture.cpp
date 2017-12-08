@@ -24,6 +24,7 @@ bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* de
 {
 	for (int i = 0; i < filenames.size(); ++i)
 	{
+		_textureViews.push_back(Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>());
 		InitializeTexture(device, deviceContext, filenames[i], i);
 	}
 	return true;
@@ -35,39 +36,34 @@ bool TextureClass::InitializeTexture(ID3D11Device* device, ID3D11DeviceContext* 
 	
 	if (extension == ".tga")
 	{
+		unsigned char* ptr1;	_targaData.push_back(ptr1);
+		ID3D11Texture2D* ptr2;	_textures.push_back(ptr2);
 		InitializeTexTga(device, deviceContext, filename, &_targaData[i], &_textures[i], &_textureViews[i]);
 		return false;
 	}
 	else if (extension == ".dds")
 	{
+		_texDDS.push_back(Microsoft::WRL::ComPtr <ID3D11Resource>());
 		bool result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(filename), &_texDDS[i], &_textureViews[i]);
 		if (FAILED(result))
 		{
 			throw std::runtime_error("Failed to create dds texture: " + std::to_string(__LINE__));
 			return false;
 		}
+
+		//@REFERENCE
+		//	HRESULT __cdecl CreateDDSTextureFromFile(
+		//		_In_ ID3D11Device* d3dDevice,
+		//		_In_opt_ ID3D11DeviceContext* d3dContext,
+		//		_In_z_ const wchar_t* szFileName,
+		//		_Outptr_opt_ ID3D11Resource** texture,
+		//		_Outptr_opt_ ID3D11ShaderResourceView** textureView,
+		//		_In_ size_t maxsize = 0,
+		//		_Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr);
 	}
 	else
 	{
 		//@TODO: add WIC loader
-	}
-
-	return true;
-}
-
-bool TextureClass::InitializeArrayTga(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> filenames)
-{
-	for (int i = 0; i < filenames.size(); ++i)
-	{
-		_textureViews.push_back(Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>());
-		unsigned char* ptr1;
-		_targaData.push_back(ptr1);
-		ID3D11Texture2D* ptr2;
-		_textures.push_back(ptr2);
-
-		InitializeTexTga(device, deviceContext, filenames[i], &_targaData[i], &_textures[i], &_textureViews[i]);
-
-		_targaData.clear();
 	}
 
 	return true;
@@ -140,40 +136,8 @@ bool TextureClass::InitializeTexTga(ID3D11Device* device, ID3D11DeviceContext* d
 	return true;
 }
 
-bool TextureClass::InitializeArrayDDS(ID3D11Device * device, ID3D11DeviceContext * deviceContext, vector<char*> fileNames)
-{
-	//@CAUTION @CAUTION @CAUTION For creation functions, use &texDDS1, for set functions use .GetAddressOf
-	// IASetVertexBuffers, SetRenderTargets, ID3D11Resource** tex1 = texDDS1.GetAddressOf();
-
-	for (int i = 0; i < fileNames.size(); ++i)
-	{
-		_texDDS.push_back(Microsoft::WRL::ComPtr <ID3D11Resource>());
-		_textureViews.push_back(Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>());
-
-		bool result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(fileNames[i]), &_texDDS[i], &_textureViews[i]);
-		if (FAILED(result))
-		{
-			throw std::runtime_error("Failed to create dds texture: " + std::to_string(__LINE__));
-			return false;
-		}
-	}
-
-	//@REFERENCE
-	//HRESULT __cdecl CreateDDSTextureFromFile(
-	//	_In_ ID3D11Device* d3dDevice,
-	//	_In_opt_ ID3D11DeviceContext* d3dContext,
-	//	_In_z_ const wchar_t* szFileName,
-	//	_Outptr_opt_ ID3D11Resource** texture,
-	//	_Outptr_opt_ ID3D11ShaderResourceView** textureView,
-	//	_In_ size_t maxsize = 0,
-	//	_Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr);
-
-	return true;
-}
-
 ID3D11ShaderResourceView** TextureClass::GetTextureArray()
 {
-	//return _textureViews->GetAddressOf();
 	return _textureViews[0].GetAddressOf();
 }
 
@@ -240,7 +204,6 @@ unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, 
 	}
 
 	// Allocate memory for the targa destination data.
-	//_targaData = new unsigned char[imageSize];
 	pTargaData = new unsigned char[imageSize];
 	if (!*pTargaData)
 	{
