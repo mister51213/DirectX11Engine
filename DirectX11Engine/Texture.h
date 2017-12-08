@@ -34,21 +34,18 @@ public:
 
 	bool InitializeTexture(ID3D11Device * device, ID3D11DeviceContext * deviceContext, char * filename, int i);
 	bool InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> filenames);
-	//bool InitializeArrayTga(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> filenames);
-	//bool InitializeArrayDDS(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> fileNames);
 	bool InitializeTexTga(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename, unsigned char** targaData, ID3D11Texture2D** pTexture, ID3D11ShaderResourceView** pTexView);
 	
 	ID3D11ShaderResourceView** GetTextureArray();
 
 private:
 	unsigned char* LoadTarga(char*, int&, int&, unsigned char* pTargaData);
-
 	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>> _textureViews;
 	
-	// targa
-	vector<unsigned char*> _targaData;
-	vector<ID3D11Texture2D*> _textures;
+	// for dds and everything else
+	vector<Microsoft::WRL::ComPtr <ID3D11Resource>> _resourceArray;
 
-	// for dds
-	vector<Microsoft::WRL::ComPtr <ID3D11Resource>> _texDDS;
+	// targa
+	vector<ID3D11Texture2D*> _textures;
+	vector<unsigned char*> _targaData;
 };

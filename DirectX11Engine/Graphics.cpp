@@ -139,7 +139,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	// Initialize the bath model object.
 	result = _BathModel->InitializeDDS(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/bath.txt",
-		"../DirectX11Engine/data/marble.dds",
+		"../DirectX11Engine/data/marble.png",
 		"../DirectX11Engine/data/dirt.dds", // tex2
 		"../DirectX11Engine/data/light.dds", // lightmap
 		"../DirectX11Engine/data/alpha.dds", // alpha

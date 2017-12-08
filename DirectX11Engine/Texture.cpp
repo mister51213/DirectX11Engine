@@ -5,6 +5,7 @@
 
 #include "texture.h"
 #include "DDSTextureLoader.h"
+#include "WICTextureLoader.h"
 #include <stdlib.h>
 #include <stdexcept>
 #include <string>
@@ -43,8 +44,8 @@ bool TextureClass::InitializeTexture(ID3D11Device* device, ID3D11DeviceContext* 
 	}
 	else if (extension == ".dds")
 	{
-		_texDDS.push_back(Microsoft::WRL::ComPtr <ID3D11Resource>());
-		bool result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(filename), &_texDDS[i], &_textureViews[i]);
+		_resourceArray.push_back(Microsoft::WRL::ComPtr <ID3D11Resource>());
+		bool result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(filename), &_resourceArray[i], &_textureViews[i]);
 		if (FAILED(result))
 		{
 			throw std::runtime_error("Failed to create dds texture: " + std::to_string(__LINE__));
@@ -63,7 +64,13 @@ bool TextureClass::InitializeTexture(ID3D11Device* device, ID3D11DeviceContext* 
 	}
 	else
 	{
-		//@TODO: add WIC loader
+		_resourceArray.push_back(Microsoft::WRL::ComPtr <ID3D11Resource>());
+		bool result = CreateWICTextureFromFile(device, deviceContext, charToWChar(filename), &_resourceArray[i], &_textureViews[i]);
+		if (FAILED(result))
+		{
+			throw std::runtime_error("Failed to create WIC texture: " + std::to_string(__LINE__));
+			return false;
+		}
 	}
 
 	return true;
@@ -241,4 +248,3 @@ unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, 
 
 	return pTargaData;
 }
-
