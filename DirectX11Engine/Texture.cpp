@@ -145,7 +145,7 @@ bool TextureClass::InitializeTexTga(ID3D11Device* device, ID3D11DeviceContext* d
 
 ID3D11ShaderResourceView** TextureClass::GetTextureArray()
 {
-	return _textureViews[0].GetAddressOf();
+	return _textureViews.data()->GetAddressOf();
 }
 
 unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, unsigned char* pTargaData)

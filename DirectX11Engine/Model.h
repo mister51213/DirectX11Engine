@@ -97,8 +97,8 @@ private:
 	int _vertexCount, _indexCount;
 	unique_ptr<ModelType> _model; // used to read in and hold the model data before it is placed in the vertex buffer.
 	
-	bool LoadTextures(ID3D11Device * device, ID3D11DeviceContext * deviceContext, char * fileName1, char * fileName2, char * fileName3, char * fileName4, char * normalMapFileName, char * specMapFilename6);
-	TextureClass* _TextureArray;
-	Material _material;
+	//bool LoadTextures(ID3D11Device * device, ID3D11DeviceContext * deviceContext, char * fileName1, char * fileName2, char * fileName3, char * fileName4, char * normalMapFileName, char * specMapFilename6);
+	//TextureClass* _TextureArray;
+	unique_ptr<Material> _material;
 };
 

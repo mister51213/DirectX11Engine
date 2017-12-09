@@ -41,19 +41,28 @@ bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 	}
 
 	//TODO: ENCAPSULATE INTO INIT MATERIAL
-	result = LoadTextures(device, deviceContext, textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6);
-	if (!result){return false;}
+	//result = LoadTextures(device, deviceContext, textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6);
+	//if (!result){return false;}
 
 	// Loads the textures in the material. Material now holds pointer to texture class
-	//vector<char*> fileNames{ textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6 };
-	//_material.Initialize(device, deviceContext, EShaderType::ELIGHT_SPECULAR, fileNames);
+	_material.reset(new Material);
+
+	vector<char*> fileNames{ textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6 };
+	_material->Initialize(device, deviceContext, EShaderType::ELIGHT_SPECULAR, fileNames);
+
+	// TESTING AREA for different string functions
+	//WCHAR* wstr = (WCHAR*)fileName1; // not working
+	//WCHAR* wstr2 = reinterpret_cast<WCHAR*>(fileName1); // not working
+	//const WCHAR *pwcsName2 = charToWChar(fileName1); // works even though Microsoft doesnt like it
+	//const WCHAR *pwcsName3 = charToWChar_S(fileName1); // BAD
+	// TESTING AREA
 
 	return true;
 }
 
 Material* Model::GetMaterial()
 {
-	return &_material;
+	return _material.get();
 }
 
 void Model::Shutdown()
@@ -77,9 +86,9 @@ int Model::GetIndexCount()
 
 ID3D11ShaderResourceView** Model::GetTextureArray()
 {
-	return _TextureArray->GetTextureArray();
+	//return _TextureArray->GetTextureArray();
 
-	//return _material.GetResourceArray();
+	return _material->GetResourceArray();
 }
 
 bool Model::InitializeBuffers(ID3D11Device* device)
@@ -206,34 +215,34 @@ void Model::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	return;
 }
 
-bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* normalMapFileName, char* specMapFilename6)
-{
-	bool result;
-
-	// Create the texture object.
-	_TextureArray = new TextureClass;
-	if (!_TextureArray)
-	{
-		return false;
-	}
-
-	// TESTING AREA for different string functions
-	//WCHAR* wstr = (WCHAR*)fileName1; // not working
-	//WCHAR* wstr2 = reinterpret_cast<WCHAR*>(fileName1); // not working
-	//const WCHAR *pwcsName2 = charToWChar(fileName1); // works even though Microsoft doesnt like it
-	//const WCHAR *pwcsName3 = charToWChar_S(fileName1); // BAD
-	// TESTING AREA
-
-	vector<char*> fileNames{ fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6 };
-
-	result = _TextureArray->InitializeArray(device, deviceContext, fileNames);
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
+//bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* normalMapFileName, char* specMapFilename6)
+//{
+//	bool result;
+//
+//	// Create the texture object.
+//	//_TextureArray = new TextureClass;
+//	//if (!_TextureArray)
+//	//{
+//	//	return false;
+//	//}
+//
+//	
+//	
+//	
+//	
+//	
+//	
+//
+//	//vector<char*> fileNames{ fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6 };
+//
+//	//result = _TextureArray->InitializeArray(device, deviceContext, fileNames);
+//	//if (!result)
+//	//{
+//	//	return false;
+//	//}
+//
+//	return true;
+//}
 
 void Model::CalculateModelVectors()
 {

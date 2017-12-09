@@ -11,8 +11,10 @@
 #include <d3d11.h>
 #include <vector>
 #include "Texture.h"
+#include <memory>
 
 using namespace DirectX;
+using namespace std;
 
 namespace GfxUtil
 {
@@ -47,9 +49,10 @@ namespace GfxUtil
 		ESIZE = 6
 	};
 
-	struct Material
+	class Material
 	{
-		TextureClass* _TextureArray;
+	public:
+		unique_ptr<TextureClass> _TextureArray;
 		EShaderType shaderType;
 		int texArraySize;
 
@@ -63,10 +66,9 @@ namespace GfxUtil
 		{
 			texArraySize = fileNames.size();
 
-			TextureClass* _TextureArray = nullptr;
 			shaderType = inShaderType;
 
-			_TextureArray = new TextureClass;
+			_TextureArray.reset(new TextureClass);
 			if (!_TextureArray)
 			{
 				return false;
