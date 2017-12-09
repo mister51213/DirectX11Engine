@@ -226,13 +226,6 @@ void Model::RenderBuffers(ID3D11DeviceContext* deviceContext)
 //	//	return false;
 //	//}
 //
-//	
-//	
-//	
-//	
-//	
-//	
-//
 //	//vector<char*> fileNames{ fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6 };
 //
 //	//result = _TextureArray->InitializeArray(device, deviceContext, fileNames);

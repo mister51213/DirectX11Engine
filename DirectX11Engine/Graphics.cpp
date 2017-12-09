@@ -723,11 +723,6 @@ bool Graphics::DrawFrame(float frameTime)
 {
 	XMFLOAT3 fogColor(.6f, .6f, .6f);	float fogStart = 0.0f;	float fogEnd = 3.f;
 
-//	bool result = RenderToReflection(frameTime);
-//	if (!result) { return false; }
-
-//	_D3D->BeginScene(fogColor.x, fogColor.y, fogColor.z, 1.0f);
-
 	// Render the refraction of the scene to a texture.
 	bool result = RenderRefractionToTexture();
 	if (!result){return false;}
@@ -806,8 +801,8 @@ bool Graphics::RenderToReflection(float time) // same as rendertotexture in rast
 		worldMatrix,
 		reflectionViewMatrix,
 		projectionMatrix,
-		_ModelSingle->GetTextureArray(),
-		//_ModelSingle->GetMaterial()->GetResourceArray(),
+		//_ModelSingle->GetTextureArray(),
+		_ModelSingle->GetMaterial()->GetResourceArray(),
 		_Light->GetDirection(),
 		_Light->GetAmbientColor(),
 		_Light->GetDiffuseColor(),
@@ -862,8 +857,8 @@ bool Graphics::RenderRefractionToTexture()
 	// Render the bath model using the light shader.
 	result = _ShaderManager->RenderRefractionShader(_D3D->GetDeviceContext(), _BathModel->GetIndexCount(), worldMatrix, viewMatrix,
 		projectionMatrix, 
-		_BathModel->GetTextureArray()[0], 
-		//_BathModel->GetMaterial()->GetResourceArray()[0],
+		//_BathModel->GetTextureArray()[0], 
+		_BathModel->GetMaterial()->GetResourceArray()[0],
 		_Light->GetDirection(),
 		_Light->GetAmbientColor(), _Light->GetDiffuseColor(), clipPlane);
 	if (!result)
@@ -911,8 +906,8 @@ bool Graphics::RenderReflectionToTexture()
 
 	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, reflectionViewMatrix,
 		projectionMatrix, 
-		//_WallModel->GetMaterial()->GetResourceArray(),
-		_WallModel->GetTextureArray(),
+		_WallModel->GetMaterial()->GetResourceArray(),
+		//_WallModel->GetTextureArray(),
 		_Light->GetDirection(),	_Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), 0, 0, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
 	if (!result)
 	{
@@ -952,8 +947,8 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	// Render the ground model using the light shader.
 	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix,
 		projectionMatrix, 
-		_GroundModel->GetTextureArray(),
-		//_GroundModel->GetMaterial()->GetResourceArray(),
+		//_GroundModel->GetTextureArray(),
+		_GroundModel->GetMaterial()->GetResourceArray(),
 		_Light->GetDirection(),_Light->GetAmbientColor(), _Light->GetDiffuseColor(),_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), fogStart, fogEnd, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
 	if (!result)
 	{
@@ -972,8 +967,8 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	// Render the wall model using the light shader.
 	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, viewMatrix,
 		projectionMatrix, 
-		_WallModel->GetTextureArray(),
-		//_WallModel->GetMaterial()->GetResourceArray(),
+		//_WallModel->GetTextureArray(),
+		_WallModel->GetMaterial()->GetResourceArray(),
 		_Light->GetDirection(),
 		_Light->GetAmbientColor(), _Light->GetDiffuseColor(),_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), fogStart, fogEnd, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
 	if (!result)
@@ -993,8 +988,8 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	// Render the bath model using the light shader.
 	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _BathModel->GetIndexCount(), worldMatrix, viewMatrix,
 		projectionMatrix, 
-		_BathModel->GetTextureArray(), 
-		//_BathModel->GetMaterial()->GetResourceArray(),
+		//_BathModel->GetTextureArray(), 
+		_BathModel->GetMaterial()->GetResourceArray(),
 		_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(),
 		_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), fogStart, fogEnd, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
 
@@ -1019,8 +1014,8 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	result =
 		_ShaderManager->RenderWaterShader(_D3D->GetDeviceContext(), _WaterModel->GetIndexCount(), worldMatrix, viewMatrix,
 		projectionMatrix, reflectionMatrix, _ReflectionTexture->GetShaderResourceView(), _RefractionTexture->GetShaderResourceView(), 
-			_WaterModel->GetTextureArray()[0], 
-			//_WaterModel->GetMaterial()->GetResourceArray()[0],
+			//_WaterModel->GetTextureArray()[0], 
+			_WaterModel->GetMaterial()->GetResourceArray()[0],
 			_waterTranslation, 0.01f);
 	if (!result)
 	{
