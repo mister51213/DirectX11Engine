@@ -12,7 +12,9 @@ Model::Model()
 	_indexBuffer(0),
 	_TextureArray(0),
 	_model(0)
-{}
+{
+	_material = Material();
+}
 
 Model::Model(const Model& other)
 {}
@@ -42,38 +44,7 @@ bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 	}
 
 	// Load the texture for this model.
-	result = LoadTexturesTga(device, deviceContext, textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6);
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-bool Model::InitializeDDS(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename1, char* textureFilename2, char* lightMapFileName3, char* alphaFileName4, char* normalMapFilename5, char* specMapFilename6)
-{
-	bool result;
-
-	// Load in the model data
-	result = LoadModel(modelFilename);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Calculate the normal, tangent, and binormal vectors for the model.
-	CalculateModelVectors();
-
-	// Initialize the vertex and index buffers.
-	result = InitializeBuffers(device);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Load the texture for this model.
-	result = LoadTexturesDDS(device, deviceContext, textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6);
+	result = LoadTextures(device, deviceContext, textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6);
 	if (!result)
 	{
 		return false;
@@ -84,9 +55,6 @@ bool Model::InitializeDDS(ID3D11Device* device, ID3D11DeviceContext* deviceConte
 
 void Model::Shutdown()
 {
-	// Release the model texture.
-	ReleaseTextures();
-
 	// Shutdown the vertex and index buffers.
 	ShutdownBuffers();
 
@@ -109,10 +77,13 @@ int Model::GetIndexCount()
 	return _indexCount;
 }
 
-//ID3D11ShaderResourceView* Model::GetTexture()
+Material* Model::GetMaterial()
+{
+	return &_material;
+}
+
 ID3D11ShaderResourceView** Model::GetTextureArray()
 {
-	//return _Texture->GetTexture();
 	return _TextureArray->GetTextureArray();
 }
 
@@ -261,7 +232,7 @@ void Model::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	return;
 }
 
-bool Model::LoadTexturesTga(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* normalMapFileName, char* specMapFilename6)
+bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* normalMapFileName, char* specMapFilename6)
 {
 	bool result;
 
@@ -281,31 +252,6 @@ bool Model::LoadTexturesTga(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 
 	vector<char*> fileNames{ fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6 };
 
-	//result = _TextureArray->InitializeArrayTga(device, deviceContext, fileNames);
-	result = _TextureArray->InitializeArray(device, deviceContext, fileNames);
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-bool Model::LoadTexturesDDS(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* normalMapFileName, char* specMapFilename6)
-{
-	bool result;
-
-	// Create the texture object.
-	_TextureArray = new TextureClass;
-	if (!_TextureArray)
-	{
-		return false;
-	}
-
-	vector<char*> fileNames{ fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6 };
-
-	// Initialize the texture object.
-	//result = _TextureArray->InitializeArrayDDS(device, deviceContext, fileNames);
 	result = _TextureArray->InitializeArray(device, deviceContext, fileNames);
 	if (!result)
 	{
@@ -475,19 +421,6 @@ void Model::CalculateNormal(VectorType tangent, VectorType binormal, VectorType&
 	normal.x = normal.x / length;
 	normal.y = normal.y / length;
 	normal.z = normal.z / length;
-
-	return;
-}
-
-void Model::ReleaseTextures()
-{
-	// Release the texture object.
-	if (_TextureArray)
-	{
-		//_TextureArray->Shutdown();
-		//delete _TextureArray;
-		//_TextureArray = 0;
-	}
 
 	return;
 }

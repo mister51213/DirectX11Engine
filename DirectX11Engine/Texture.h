@@ -46,6 +46,6 @@ private:
 	vector<Microsoft::WRL::ComPtr <ID3D11Resource>> _resourceArray;
 
 	// targa
-	vector<ID3D11Texture2D*> _textures;
+	vector<ID3D11Texture2D*> _targaTextures;
 	vector<unsigned char*> _targaData;
 };

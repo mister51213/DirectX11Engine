@@ -99,7 +99,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	}
 
 	// Initialize the ground model object.
-	result = _GroundModel->InitializeDDS(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+	result = _GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/ground.txt",
 		"../DirectX11Engine/data/ground.dds",
 		"../DirectX11Engine/data/dirt.dds", // tex2
@@ -115,7 +115,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	if (!_WallModel){return false;}
 
 	// Initialize the wall model object.
-	result = _WallModel->InitializeDDS(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+	result = _WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/wall.txt",
 		"../DirectX11Engine/data/wall.dds",
 		"../DirectX11Engine/data/dirt.dds", // tex2
@@ -137,7 +137,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	}
 
 	// Initialize the bath model object.
-	result = _BathModel->InitializeDDS(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+	result = _BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/bath.txt",
 		"../DirectX11Engine/data/marble.png",
 		"../DirectX11Engine/data/dirt.dds", // tex2
@@ -159,7 +159,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	}
 
 	// Initialize the water model object.
-	result = _WaterModel->InitializeDDS(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+	result = _WaterModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/water.txt",
 		////"../DirectX11Engine/data/water.dds",
 		////"../DirectX11Engine/data/dirt.dds", // tex2
@@ -226,7 +226,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	}
 
 	// Initialize the model object.
-	result = _Model->InitializeDDS(
+	result = _Model->Initialize(
 		_D3D->GetDevice(),
 		_D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/sphere.txt",
@@ -277,7 +277,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		return false;
 	}
 
-	result = _ModelSingle->InitializeDDS(
+	result = _ModelSingle->Initialize(
 		_D3D->GetDevice(),
 		_D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/sphere.txt",
@@ -1010,9 +1010,6 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 		return false;
 	}
 
-	// Present the rendered scene to the screen.
-	//_D3D->EndScene();
-
 #pragma endregion
 
 #pragma region SINGLE_REFLECTION
@@ -1185,7 +1182,7 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 //	return result;
 //}
 
-void Graphics::RenderText(/*const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATRIX &baseViewMatrix, const DirectX::XMMATRIX &orthoMatrix*/)
+void Graphics::RenderText()
 {
 	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
 

@@ -48,15 +48,25 @@ namespace GfxUtil
 
 	struct Material
 	{
-		Material::Material(EShaderType inShaderType, ID3D11Resource** inTextures, ID3D11ShaderResourceView** inTextureViews)
+		Material()
+		{
+			shaderType = ETEXTURE;
+			textures = nullptr;
+			textureViews = nullptr;
+			texArraySize = 1;
+		}
+
+		Material::Material(EShaderType inShaderType, ID3D11Resource** inTextures, ID3D11ShaderResourceView** inTextureViews, int numTextures)
 		{
 			shaderType = inShaderType;
 			textures = inTextures;
 			textureViews = inTextureViews;
+			texArraySize = numTextures;
 		}
 
 		EShaderType shaderType;
 		ID3D11Resource** textures;
 		ID3D11ShaderResourceView** textureViews;
+		int texArraySize;
 	};
 }

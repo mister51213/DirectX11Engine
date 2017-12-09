@@ -38,8 +38,8 @@ bool TextureClass::InitializeTexture(ID3D11Device* device, ID3D11DeviceContext* 
 	if (extension == ".tga")
 	{
 		unsigned char* ptr1;	_targaData.push_back(ptr1);
-		ID3D11Texture2D* ptr2;	_textures.push_back(ptr2);
-		InitializeTexTga(device, deviceContext, filename, &_targaData[i], &_textures[i], &_textureViews[i]);
+		ID3D11Texture2D* ptr2;	_targaTextures.push_back(ptr2);
+		InitializeTexTga(device, deviceContext, filename, &_targaData[i], &_targaTextures[i], &_textureViews[i]);
 		return false;
 	}
 	else if (extension == ".dds")

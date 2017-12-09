@@ -21,6 +21,8 @@ using namespace DirectX;
 #include "texture.h"
 #include "GfxUtil.h"
 
+using namespace GfxUtil;
+
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: ModelClass
 ////////////////////////////////////////////////////////////////////////////////
@@ -66,14 +68,13 @@ public:
 	~Model();
 
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename1, char* textureFilename2, char* textureFilename3, char* textureFilename4, char* textureFilename5, char* textureFilename6);
-	bool InitializeDDS(ID3D11Device * device, ID3D11DeviceContext * deviceContext, char * modelFilename, char * textureFilename1, char * textureFilename2, char * lightMapFileName3, char * alphaFileName4, char * normalMapFilename5, char * specMapFilename6);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
 	/** Needed by the shader to draw this model */
 	int GetIndexCount();
-	//ID3D11ShaderResourceView* GetTexture();
-	ID3D11ShaderResourceView** GetTextureArray();
+	Material* GetMaterial();
+	ID3D11ShaderResourceView** GetTextureArray(); // TODO: replace w material
 
 	bool LoadModel(char*);
 	void ReleaseModel();
@@ -85,9 +86,7 @@ private:
 	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
 	void RenderBuffers(ID3D11DeviceContext* deviceContext);
 
-	bool LoadTexturesTga(ID3D11Device*, ID3D11DeviceContext*, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* textureFileName5, char* texFileName6);
-	bool LoadTexturesDDS(ID3D11Device * device, ID3D11DeviceContext * deviceContext, char * fileName1, char * fileName2, char * fileName3, char * fileName4, char * normalMapFileName, char * specMapFilename6);
-	void ReleaseTextures();
+	bool LoadTextures(ID3D11Device * device, ID3D11DeviceContext * deviceContext, char * fileName1, char * fileName2, char * fileName3, char * fileName4, char * normalMapFileName, char * specMapFilename6);
 
 	//functions for calculating the tangent and binormal vectors for the model.
 	void CalculateModelVectors();
@@ -98,7 +97,8 @@ private:
 	ID3D11Buffer *_vertexBuffer, *_indexBuffer;
 	int _vertexCount, _indexCount;
 	ModelType* _model; // used to read in and hold the model data before it is placed in the vertex buffer.
-	//TextureClass* _Texture;
 	TextureClass* _TextureArray;
+
+	Material _material;
 };
 
