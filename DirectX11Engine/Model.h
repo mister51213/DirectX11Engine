@@ -74,10 +74,9 @@ public:
 	/** Needed by the shader to draw this model */
 	int GetIndexCount();
 	Material* GetMaterial();
-	ID3D11ShaderResourceView** GetTextureArray(); // TODO: replace w material
+	//ID3D11ShaderResourceView** GetTextureArray(); // TODO: replace w material
 
 	bool LoadModel(char*);
-	void ReleaseModel();
 
 private:
 	bool InitializeBuffers(ID3D11Device* device);
@@ -86,7 +85,7 @@ private:
 	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
 	void RenderBuffers(ID3D11DeviceContext* deviceContext);
 
-	bool LoadTextures(ID3D11Device * device, ID3D11DeviceContext * deviceContext, char * fileName1, char * fileName2, char * fileName3, char * fileName4, char * normalMapFileName, char * specMapFilename6);
+	//bool LoadTextures(ID3D11Device * device, ID3D11DeviceContext * deviceContext, char * fileName1, char * fileName2, char * fileName3, char * fileName4, char * normalMapFileName, char * specMapFilename6);
 
 	//functions for calculating the tangent and binormal vectors for the model.
 	void CalculateModelVectors();
@@ -96,9 +95,9 @@ private:
 private:
 	ID3D11Buffer *_vertexBuffer, *_indexBuffer;
 	int _vertexCount, _indexCount;
-	ModelType* _model; // used to read in and hold the model data before it is placed in the vertex buffer.
-	TextureClass* _TextureArray;
-
+	unique_ptr<ModelType> _model; // used to read in and hold the model data before it is placed in the vertex buffer.
+	
+	//TextureClass* _TextureArray;
 	Material _material;
 };
 

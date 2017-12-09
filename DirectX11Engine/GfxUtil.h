@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <d3d11.h>
 #include <vector>
+#include "Texture.h"
 
 using namespace DirectX;
 
@@ -48,25 +49,43 @@ namespace GfxUtil
 
 	struct Material
 	{
+		TextureClass* _TextureArray;
+		EShaderType shaderType;
+		int texArraySize;
+
 		Material()
 		{
 			shaderType = ETEXTURE;
-			textures = nullptr;
-			textureViews = nullptr;
 			texArraySize = 1;
 		}
 
-		Material::Material(EShaderType inShaderType, ID3D11Resource** inTextures, ID3D11ShaderResourceView** inTextureViews, int numTextures)
+		bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, EShaderType inShaderType, vector<char*> fileNames)
 		{
+			texArraySize = fileNames.size();
+
+			bool result;
+
+			TextureClass* _TextureArray = nullptr;
 			shaderType = inShaderType;
-			textures = inTextures;
-			textureViews = inTextureViews;
-			texArraySize = numTextures;
+
+			_TextureArray = new TextureClass;
+			if (!_TextureArray)
+			{
+				return false;
+			}
+
+			result = _TextureArray->InitializeArray(device, deviceContext, fileNames);
+			if (!result)
+			{
+				return false;
+			}
+
+			return true;
 		}
 
-		EShaderType shaderType;
-		ID3D11Resource** textures;
-		ID3D11ShaderResourceView** textureViews;
-		int texArraySize;
+		ID3D11ShaderResourceView** GetResourceArray()
+		{
+			return _TextureArray->GetTextureArray();
+		}
 	};
 }

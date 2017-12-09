@@ -25,6 +25,7 @@ const float SCREEN_NEAR = 0.1f;
 #include "modellistclass.h"
 #include "frustumclass.h"
 #include "shadermanagerclass.h"
+#include "GfxUtil.h"
 
 
 ////////////////////////////////////////////////////////////////////////////////
