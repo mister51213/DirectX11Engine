@@ -63,8 +63,6 @@ namespace GfxUtil
 		{
 			texArraySize = fileNames.size();
 
-			bool result;
-
 			TextureClass* _TextureArray = nullptr;
 			shaderType = inShaderType;
 
@@ -74,7 +72,7 @@ namespace GfxUtil
 				return false;
 			}
 
-			result = _TextureArray->InitializeArray(device, deviceContext, fileNames);
+			bool result = _TextureArray->InitializeArray(device, deviceContext, fileNames);
 			if (!result)
 			{
 				return false;
@@ -85,7 +83,10 @@ namespace GfxUtil
 
 		ID3D11ShaderResourceView** GetResourceArray()
 		{
-			return _TextureArray->GetTextureArray();
+			if (_TextureArray)
+			{
+				return _TextureArray->GetTextureArray();
+			}
 		}
 	};
 }
