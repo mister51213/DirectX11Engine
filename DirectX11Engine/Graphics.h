@@ -49,8 +49,6 @@ public:
 
 	bool DrawFrame(float frameTime);
 
-	bool RenderToReflection(float time);
-
 	bool RenderRefractionToTexture();
 
 	void RenderText();
@@ -60,7 +58,6 @@ public:
 
 private:
 	bool RenderReflectionToTexture();
-	//bool RenderToTexture(float frameTime);
 	bool RenderScene(float fogStart, float fogEnd, float frameTime);
 
 	bool UpdateFpsString(ID3D11DeviceContext*, int);
@@ -78,18 +75,15 @@ private:
 	TextClass* _RenderCountStrings;
 	float textureTranslation = 0.f;
 
-	Model* _Model;
-	Model* _ModelSingle;
-	LightClass* _Light;
-	ModelListClass* _ModelList;
-	FrustumClass* _Frustum;
-	RenderTextureClass* _RenderTexture;
-	DebugWindowClass* _DebugWindow;
+	unique_ptr<LightClass> _Light;
+	unique_ptr<ModelListClass>_ModelList;
+	unique_ptr<FrustumClass> _Frustum;
+	unique_ptr<RenderTextureClass> _RenderTexture;
+	unique_ptr<DebugWindowClass> _DebugWindow;
 	
 	ShaderManagerClass* _ShaderManager;
 
 	/////////// REFLECTION //////////////////
-//	RenderTextureClass* _ReflectionTexture;
 	Model* _FloorModel;
 
 	float _modelRotation = 0.0f;

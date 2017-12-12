@@ -11,7 +11,6 @@ Graphics::Graphics()
 	:
 	_D3D(nullptr),
 	_Camera(nullptr),
-	_Model(nullptr),
 	_Light(nullptr),
 	_ModelList(nullptr),
 	_GroundModel(nullptr),
@@ -73,7 +72,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 bool Graphics::InitializeLights()
 {
 	// Create the light object.
-	_Light = new LightClass; if (!_Light) { return false; }
+	_Light.reset(new LightClass);
 
 	// Initialize the light object.
 	_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
@@ -105,9 +104,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		"../DirectX11Engine/data/specMap.dds" };
 
 	result = _GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/ground.txt",
-		groundTex,
-		EShaderType::ELIGHT_SPECULAR);
+		"../DirectX11Engine/data/ground.txt",groundTex,	EShaderType::ELIGHT_SPECULAR);
 	if (!result){MessageBox(hwnd, "Could not initialize the ground model object.", "Error", MB_OK);
 		return false;}
 
@@ -124,15 +121,9 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		"../DirectX11Engine/data/bumpMap.dds", // normal map
 		"../DirectX11Engine/data/specMap.dds" };
 
-	result = _WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/wall.txt",
-		wallTex,
-		EShaderType::ELIGHT_SPECULAR);
+	result = _WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),"../DirectX11Engine/data/wall.txt",	wallTex,EShaderType::ELIGHT_SPECULAR);
 	if (!result)
-	{
-		MessageBox(hwnd, "Could not initialize the wall model object.", "Error", MB_OK);
-		return false;
-	}
+	{MessageBox(hwnd, "Could not initialize the wall model object.", "Error", MB_OK);return false;}
 
 	// Create the bath model object.
 	_BathModel = new Model;
@@ -151,9 +142,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 
 	// Initialize the bath model object.
 	result = _BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/bath.txt",
-		bathTex,
-		EShaderType::ELIGHT_SPECULAR);
+		"../DirectX11Engine/data/bath.txt",	bathTex,EShaderType::ELIGHT_SPECULAR);
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the bath model object.", "Error", MB_OK);
@@ -218,43 +207,11 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
 	///////////////////////// WATER ////////////////////////
 
-	// Create the model object.
-	_Model = new Model;
-	if (!_Model)
-	{
-		return false;
-	}
-
-	// Initialize the model object.
-	vector<char*> modelTextures{ 
-		"../DirectX11Engine/data/stone.dds",
-		"../DirectX11Engine/data/dirt.dds",
-		"../DirectX11Engine/data/light.dds",
-		"../DirectX11Engine/data/alpha.dds",
-		"../DirectX11Engine/data/bumpMap.dds",
-		"../DirectX11Engine/data/specMap.dds"};
-
-	result = _Model->Initialize(
-		_D3D->GetDevice(),
-		_D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/sphere.txt",
-		modelTextures,
-		EShaderType::ELIGHT_SPECULAR);
-	if (!result)
-	{
-		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
-		return false;
-	}
-
 	// Create the frustum object.
-	_Frustum = new FrustumClass;
-	if (!_Frustum)
-	{
-		return false;
-	}
+	_Frustum.reset(new FrustumClass);
 
 	// Create the model list object.
-	_ModelList = new ModelListClass;
+	_ModelList.reset(new ModelListClass);
 	if (!_ModelList)
 	{
 		return false;
@@ -268,31 +225,6 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		return false;
 	}
 
-	_ModelSingle = new Model;
-	if (!_ModelSingle)
-	{
-		return false;
-	}
-
-	vector<char*> modelSingleTex {
-		"../DirectX11Engine/data/stone.dds",
-		"../DirectX11Engine/data/dirt.dds",
-		"../DirectX11Engine/data/light.dds",
-		"../DirectX11Engine/data/alpha.dds",
-		"../DirectX11Engine/data/bumpMap.dds",
-		"../DirectX11Engine/data/specMap.dds" };
-
-	result = _ModelSingle->Initialize(
-		_D3D->GetDevice(),
-		_D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/sphere.txt",
-		modelTextures,
-		EShaderType::ELIGHT_SPECULAR);
-	if (!result)
-	{
-		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
-		return false;
-	}
 
 	//// Initialize the render to texture object.
 	//result = _ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
@@ -556,14 +488,6 @@ void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of inti
 	}
 
 	// Release the floor model object.
-	if (_ModelSingle)
-	{
-		_ModelSingle->Shutdown();
-		delete _ModelSingle;
-		_ModelSingle = 0;
-	}
-
-	// Release the floor model object.
 	if (_FloorModel)
 	{
 		_FloorModel->Shutdown();
@@ -577,52 +501,6 @@ void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of inti
 		_ReflectionTexture->Shutdown();
 		delete _ReflectionTexture;
 		_ReflectionTexture = 0;
-	}
-
-	// Release the debug window object.
-	if (_DebugWindow)
-	{
-		_DebugWindow->Shutdown();
-		delete _DebugWindow;
-		_DebugWindow = 0;
-	}
-
-	// Release the render to texture object.
-	if (_RenderTexture)
-	{
-		_RenderTexture->Shutdown();
-		delete _RenderTexture;
-		_RenderTexture = 0;
-	}
-
-	// Release the frustum object.
-	if (_Frustum)
-	{
-		delete _Frustum;
-		_Frustum = 0;
-	}
-
-	// Release the model list object.
-	if (_ModelList)
-	{
-		_ModelList->Shutdown();
-		delete _ModelList;
-		_ModelList = 0;
-	}
-	
-	// Release the light object.
-	if (_Light)
-	{
-		delete _Light;
-		_Light = 0;
-	}
-
-	// Release the model object.
-	if (_Model)
-	{
-		_Model->Shutdown();
-		delete _Model;
-		_Model = 0;
 	}
 
 	// Release the camera object.
@@ -762,70 +640,6 @@ bool Graphics::DrawFrame(float frameTime)
 	return true;
 }
 
-bool Graphics::RenderToReflection(float time) // same as rendertotexture in rastertek
-{
-	XMMATRIX worldMatrix, reflectionViewMatrix, projectionMatrix;
-	static float rotation = 0.0f;
-	bool result;
-
-	// Set the render target to be the render to texture.
-	_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
-
-	// Clear the render to texture.
-	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
-
-	// Use the camera to calculate the reflection matrix.
-	_Camera->RenderReflection(-1.f); //@TODO - must be same as rendering height
-	
-	// Get the camera reflection view matrix instead of the normal view matrix.
-	reflectionViewMatrix = _Camera->GetReflectionViewMatrix();
-
-	// Get the world and projection matrices.
-	_D3D->GetWorldMatrix(worldMatrix);
-	_D3D->GetProjectionMatrix(projectionMatrix);
-
-	// Update the rotation variable each frame.
-	rotation += (float)XM_PI * 0.001f;
-	if (rotation > 360.0f){rotation -= 360.0f;}
-	XMMATRIX rotMat = XMMatrixRotationY(rotation);
-	worldMatrix = XMMatrixMultiply(worldMatrix, rotMat);
-
-	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	_ModelSingle->Render(_D3D->GetDeviceContext());
-
-	// Render the model IMAGE upside down in the reflective surface.
-	XMFLOAT3 fogColor(.6f, .6f, .6f);	float fogStart = 0.0f;	float fogEnd = 3.f;
-	XMFLOAT4 clipPlane = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-	result = _ShaderManager->RenderLightShader(
-		_D3D->GetDeviceContext(),
-		_Model->GetIndexCount(),
-		worldMatrix,
-		reflectionViewMatrix,
-		projectionMatrix,
-		//_ModelSingle->GetTextureArray(),
-		_ModelSingle->GetMaterial()->GetResourceArray(),
-		_Light->GetDirection(),
-		_Light->GetAmbientColor(),
-		_Light->GetDiffuseColor(),
-		_Camera->GetPosition(),
-		_Light->GetSpecularColor(),
-		_Light->GetSpecularPower(),
-		fogStart,
-		fogEnd,
-		clipPlane,
-		0.f,
-		.5f);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Reset the render target back to the original back buffer and not the render to texture anymore.
-	_D3D->SetBackBufferRenderTarget();
-
-	return true;
-}
-
 bool Graphics::RenderRefractionToTexture()
 {
 	XMFLOAT4 clipPlane;
@@ -858,7 +672,6 @@ bool Graphics::RenderRefractionToTexture()
 	// Render the bath model using the light shader.
 	result = _ShaderManager->RenderRefractionShader(_D3D->GetDeviceContext(), _BathModel->GetIndexCount(), worldMatrix, viewMatrix,
 		projectionMatrix, 
-		//_BathModel->GetTextureArray()[0], 
 		_BathModel->GetMaterial()->GetResourceArray()[0],
 		_Light->GetDirection(),
 		_Light->GetAmbientColor(), _Light->GetDiffuseColor(), clipPlane);
