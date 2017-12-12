@@ -19,7 +19,7 @@ Model::Model(const Model& other)
 Model::~Model()
 {}
 
-bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename1, char* textureFilename2, char* lightMapFileName3, char* alphaFileName4, char* normalMapFilename5, char* specMapFilename6)
+bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, vector<char*> fileNames, EShaderType shaderType)
 {
 	bool result;
 
@@ -40,14 +40,10 @@ bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 		return false;
 	}
 
-	//TODO: ENCAPSULATE INTO INIT MATERIAL
-	//result = LoadTextures(device, deviceContext, textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6);
-	//if (!result){return false;}
-
 	// Loads the textures in the material. Material now holds pointer to texture class
 	_material.reset(new Material);
 
-	vector<char*> fileNames{ textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6 };
+	//vector<char*> fileNames{ textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6 };
 	_material->Initialize(device, deviceContext, EShaderType::ELIGHT_SPECULAR, fileNames);
 
 	// TESTING AREA for different string functions
@@ -214,28 +210,6 @@ void Model::RenderBuffers(ID3D11DeviceContext* deviceContext)
 
 	return;
 }
-
-//bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* normalMapFileName, char* specMapFilename6)
-//{
-//	bool result;
-//
-//	// Create the texture object.
-//	//_TextureArray = new TextureClass;
-//	//if (!_TextureArray)
-//	//{
-//	//	return false;
-//	//}
-//
-//	//vector<char*> fileNames{ fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6 };
-//
-//	//result = _TextureArray->InitializeArray(device, deviceContext, fileNames);
-//	//if (!result)
-//	//{
-//	//	return false;
-//	//}
-//
-//	return true;
-//}
 
 void Model::CalculateModelVectors()
 {

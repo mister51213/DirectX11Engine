@@ -253,6 +253,15 @@ bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 		return false;
 	}
 
+	// Set the reflection texture resource in the pixel shader.
+	deviceContext->PSSetShaderResources(0, 1, &reflectionTexture);
+
+	// Set the refraction texture resource in the pixel shader.
+	deviceContext->PSSetShaderResources(1, 1, &refractionTexture);
+
+	// Set the normal map texture resource in the pixel shader.
+	deviceContext->PSSetShaderResources(2, 1, &normalTexture);
+
 	// Transpose all the input matrices to prepare them for the shader.
 	reflectionMatrix = XMMatrixTranspose(reflectionMatrix);
 
@@ -277,15 +286,6 @@ bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	// Finally set the reflection constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_reflectionBuffer);
-
-	// Set the reflection texture resource in the pixel shader.
-	deviceContext->PSSetShaderResources(0, 1, &reflectionTexture);
-
-	// Set the refraction texture resource in the pixel shader.
-	deviceContext->PSSetShaderResources(1, 1, &refractionTexture);
-
-	// Set the normal map texture resource in the pixel shader.
-	deviceContext->PSSetShaderResources(2, 1, &normalTexture);
 
 	// Lock the water constant buffer so it can be written to.
 	result = deviceContext->Map(_waterBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

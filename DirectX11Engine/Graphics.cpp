@@ -12,8 +12,6 @@ Graphics::Graphics()
 	_D3D(nullptr),
 	_Camera(nullptr),
 	_Model(nullptr),
-	//_LightShader(nullptr),
-	//_TextureShader(nullptr),
 	_Light(nullptr),
 	_ModelList(nullptr),
 	_GroundModel(nullptr),
@@ -21,7 +19,6 @@ Graphics::Graphics()
 	_BathModel(nullptr),
 	_WaterModel(nullptr),
 	_RefractionTexture(nullptr),
-	//_ReflectionTexture(nullptr),
 	_Frustum(nullptr),
 	_Font1(nullptr),
 	_FpsString(nullptr),
@@ -99,14 +96,18 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	}
 
 	// Initialize the ground model object.
+	vector<char*>groundTex{
+		"../DirectX11Engine/data/ground.dds",
+		"../DirectX11Engine/data/dirt.dds",
+		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/alpha.dds",
+		"../DirectX11Engine/data/blue.dds", // normal map
+		"../DirectX11Engine/data/specMap.dds" };
+
 	result = _GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/ground.txt",
-		"../DirectX11Engine/data/ground.dds",
-		"../DirectX11Engine/data/dirt.dds", // tex2
-		"../DirectX11Engine/data/light.dds", // lightmap
-		"../DirectX11Engine/data/alpha.dds", // alpha
-		"../DirectX11Engine/data/blue.dds", // normal map
-		"../DirectX11Engine/data/specMap.dds"); // specMap
+		groundTex,
+		EShaderType::ELIGHT_SPECULAR);
 	if (!result){MessageBox(hwnd, "Could not initialize the ground model object.", "Error", MB_OK);
 		return false;}
 
@@ -115,14 +116,18 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	if (!_WallModel){return false;}
 
 	// Initialize the wall model object.
+	vector<char*>wallTex{
+		"../DirectX11Engine/data/wall.dds",
+		"../DirectX11Engine/data/dirt.dds",
+		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/alpha.dds",
+		"../DirectX11Engine/data/bumpMap.dds", // normal map
+		"../DirectX11Engine/data/specMap.dds" };
+
 	result = _WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/wall.txt",
-		"../DirectX11Engine/data/wall.dds",
-		"../DirectX11Engine/data/dirt.dds", // tex2
-		"../DirectX11Engine/data/light.dds", // lightmap
-		"../DirectX11Engine/data/alpha.dds", // alpha
-		"../DirectX11Engine/data/bumpMap.dds", // normal map
-		"../DirectX11Engine/data/specMap.dds"); // specMap
+		wallTex,
+		EShaderType::ELIGHT_SPECULAR);
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the wall model object.", "Error", MB_OK);
@@ -136,15 +141,19 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		return false;
 	}
 
+	vector<char*>bathTex{
+		"../DirectX11Engine/data/marble.png", 
+		"../DirectX11Engine/data/dirt.dds",
+		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/alpha.dds",
+		"../DirectX11Engine/data/blue.dds", // normal map
+		"../DirectX11Engine/data/specMap.dds" };
+
 	// Initialize the bath model object.
 	result = _BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/bath.txt",
-		"../DirectX11Engine/data/marble.png",
-		"../DirectX11Engine/data/dirt.dds", // tex2
-		"../DirectX11Engine/data/light.dds", // lightmap
-		"../DirectX11Engine/data/alpha.dds", // alpha
-		"../DirectX11Engine/data/blue.dds", // normal map
-		"../DirectX11Engine/data/specMap.dds"); // specMap
+		bathTex,
+		EShaderType::ELIGHT_SPECULAR);
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the bath model object.", "Error", MB_OK);
@@ -159,20 +168,11 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	}
 
 	// Initialize the water model object.
+	vector<char*> waterTextures{ "../DirectX11Engine/data/water.dds"};
 	result = _WaterModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/water.txt",
-		////"../DirectX11Engine/data/water.dds",
-		////"../DirectX11Engine/data/dirt.dds", // tex2
-		////"../DirectX11Engine/data/light.dds", // lightmap
-		////"../DirectX11Engine/data/alpha.dds", // alpha
-		////"../DirectX11Engine/data/bumpMap.dds", // normal map
-		////"../DirectX11Engine/data/specMap.dds"); // specMap
-		"../DirectX11Engine/data/water.dds", 
-		"../DirectX11Engine/data/water.dds", 
-		"../DirectX11Engine/data/water.dds", 
-		"../DirectX11Engine/data/water.dds", 
-		"../DirectX11Engine/data/water.dds", 
-		"../DirectX11Engine/data/water.dds");
+		waterTextures,
+		EShaderType::EWATER);
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the water model object.", "Error", MB_OK);
@@ -226,16 +226,20 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	}
 
 	// Initialize the model object.
+	vector<char*> modelTextures{ 
+		"../DirectX11Engine/data/stone.dds",
+		"../DirectX11Engine/data/dirt.dds",
+		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/alpha.dds",
+		"../DirectX11Engine/data/bumpMap.dds",
+		"../DirectX11Engine/data/specMap.dds"};
+
 	result = _Model->Initialize(
 		_D3D->GetDevice(),
 		_D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/sphere.txt",
-		"../DirectX11Engine/data/stone.dds", // tex1
-		"../DirectX11Engine/data/dirt.dds", // tex2
-		"../DirectX11Engine/data/light.dds", // lightmap
-		"../DirectX11Engine/data/alpha.dds", // alpha
-		"../DirectX11Engine/data/bumpMap.dds", // normal map
-		"../DirectX11Engine/data/specMap.dds"); // specMap
+		modelTextures,
+		EShaderType::ELIGHT_SPECULAR);
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
@@ -264,29 +268,26 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		return false;
 	}
 
-	// Create the render to texture object.
-	//_ReflectionTexture = new RenderTextureClass;
-	//if (!_ReflectionTexture)
-	//{
-	//	return false;
-	//}
-
 	_ModelSingle = new Model;
 	if (!_ModelSingle)
 	{
 		return false;
 	}
 
+	vector<char*> modelSingleTex {
+		"../DirectX11Engine/data/stone.dds",
+		"../DirectX11Engine/data/dirt.dds",
+		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/alpha.dds",
+		"../DirectX11Engine/data/bumpMap.dds",
+		"../DirectX11Engine/data/specMap.dds" };
+
 	result = _ModelSingle->Initialize(
 		_D3D->GetDevice(),
 		_D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/sphere.txt",
-		"../DirectX11Engine/data/stone.dds", // tex1
-		"../DirectX11Engine/data/dirt.dds", // tex2
-		"../DirectX11Engine/data/light.dds", // lightmap
-		"../DirectX11Engine/data/alpha.dds", // alpha
-		"../DirectX11Engine/data/bumpMap.dds", // normal map
-		"../DirectX11Engine/data/specMap.dds"); // specMap
+		modelTextures,
+		EShaderType::ELIGHT_SPECULAR);
 	if (!result)
 	{
 		MessageBox(hwnd, "Could not initialize the model object.", "Error", MB_OK);
