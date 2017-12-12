@@ -27,7 +27,6 @@ const float SCREEN_NEAR = 0.1f;
 #include "shadermanagerclass.h"
 #include "GfxUtil.h"
 
-
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +52,7 @@ public:
 
 	void RenderText();
 
-	inline Camera* GetCamera() { return _Camera; }
+	inline Camera* GetCamera() { return _Camera.get(); }
 	bool UpdateRenderCounts(ID3D11DeviceContext*, int, int, int);
 
 private:
@@ -64,15 +63,14 @@ private:
 	bool UpdatePositionStrings(ID3D11DeviceContext*, float, float, float, float, float, float);
 
 private:
-	D3DClass* _D3D;
-	Camera* _Camera;
-	TextClass* _Text; //@CUSTOM - now have multiple text classes holding different info
-	FontClass* _Font1;
+	unique_ptr<D3DClass> _D3D;
+	unique_ptr<Camera> _Camera;
+	unique_ptr<TextClass> _Text; //@CUSTOM - now have multiple text classes holding different info
+	unique_ptr<FontClass> _Font1;
 
-	TextClass *_FpsString, *_VideoStrings, *_PositionStrings;
+	TextClass *_FpsString, *_VideoStrings, *_PositionStrings, *_RenderCountStrings;
 	int _previousFps;
 	int _previousPosition[6];
-	TextClass* _RenderCountStrings;
 	float textureTranslation = 0.f;
 
 	unique_ptr<LightClass> _Light;
@@ -83,15 +81,8 @@ private:
 	
 	ShaderManagerClass* _ShaderManager;
 
-	/////////// REFLECTION //////////////////
-	Model* _FloorModel;
-
-	float _modelRotation = 0.0f;
-
 	/////////// WATER ////////////////
-	Model*_GroundModel, *_WallModel, *_BathModel, *_WaterModel;
-
-	RenderTextureClass *_RefractionTexture, *_ReflectionTexture;
-
+	unique_ptr<Model> _GroundModel, _WallModel, _BathModel, _WaterModel;
+	unique_ptr<RenderTextureClass> _RefractionTexture, _ReflectionTexture;
 	float _waterHeight, _waterTranslation;
 };

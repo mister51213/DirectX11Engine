@@ -64,6 +64,4 @@ protected:
 	ID3D11InputLayout* _layout;
 	ID3D11Buffer* _matrixBuffer;
 	ID3D11SamplerState* _sampleState;
-
-
 };

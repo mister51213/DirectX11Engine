@@ -9,25 +9,10 @@
 
 Graphics::Graphics()
 	:
-	_D3D(nullptr),
-	_Camera(nullptr),
-	_Light(nullptr),
-	_ModelList(nullptr),
-	_GroundModel(nullptr),
-	_WallModel(nullptr),
-	_BathModel(nullptr),
-	_WaterModel(nullptr),
-	_RefractionTexture(nullptr),
-	_Frustum(nullptr),
-	_Font1(nullptr),
 	_FpsString(nullptr),
 	_VideoStrings(nullptr),
 	_PositionStrings(nullptr),
-	_RenderCountStrings(nullptr),
-	_RenderTexture(nullptr),
-	_DebugWindow(nullptr),
-	_ReflectionTexture(nullptr),
-	_FloorModel(nullptr)
+	_RenderCountStrings(nullptr)
 {}
 
 Graphics::Graphics(const Graphics& other)
@@ -42,7 +27,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	bool result;
 
 	// Create the Direct3D object.
-	_D3D = new D3DClass;
+	_D3D.reset(new D3DClass);
 	if (!_D3D){return false;}
 
 	// Initialize the Direct3D object.
@@ -55,7 +40,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	if (!result){MessageBox(hwnd, "Could not initialize the shader manager object.", "Error", MB_OK);	return false;}
 
 	// Create the camera object.
-	_Camera = new Camera;if (!_Camera){	return false;}	_Camera->SetPosition(0.0f, 0.0f, -4.f);	_Camera->UpdateViewFromPosition();
+	_Camera.reset(new Camera);if (!_Camera){ return false;}	_Camera->SetPosition(0.0f, 0.0f, -4.f);	_Camera->UpdateViewFromPosition();
 
 	// InitializeModels
 	result = InitializeModels(hwnd, screenWidth, screenHeight);
@@ -88,7 +73,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 {
 	///////////////// WATER /////////////////////
 	// Create the ground model object.
-	bool result = _GroundModel = new Model;
+	_GroundModel.reset(new Model);
 	if (!_GroundModel)
 	{
 		return false;
@@ -103,13 +88,13 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		"../DirectX11Engine/data/blue.dds", // normal map
 		"../DirectX11Engine/data/specMap.dds" };
 
-	result = _GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+	bool result = _GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/ground.txt",groundTex,	EShaderType::ELIGHT_SPECULAR);
 	if (!result){MessageBox(hwnd, "Could not initialize the ground model object.", "Error", MB_OK);
 		return false;}
 
 	// Create the wall model object.
-	_WallModel = new Model;
+	_WallModel.reset(new Model);
 	if (!_WallModel){return false;}
 
 	// Initialize the wall model object.
@@ -126,7 +111,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	{MessageBox(hwnd, "Could not initialize the wall model object.", "Error", MB_OK);return false;}
 
 	// Create the bath model object.
-	_BathModel = new Model;
+	_BathModel.reset(new Model);
 	if (!_BathModel)
 	{
 		return false;
@@ -150,7 +135,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	}
 
 	// Create the water model object.
-	_WaterModel = new Model;
+	_WaterModel.reset(new Model);
 	if (!_WaterModel)
 	{
 		return false;
@@ -169,7 +154,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	}
 
 	// Create the refraction render to texture object.
-	_RefractionTexture = new RenderTextureClass;
+	_RefractionTexture.reset(new RenderTextureClass);
 	if (!_RefractionTexture)
 	{
 		return false;
@@ -184,7 +169,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	}
 
 	// Create the reflection render to texture object.
-	_ReflectionTexture = new RenderTextureClass;
+	_ReflectionTexture.reset(new RenderTextureClass);
 	if (!_ReflectionTexture)
 	{
 		return false;
@@ -224,37 +209,6 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		MessageBox(hwnd, "Could not initialize the model list object.", "Error", MB_OK);
 		return false;
 	}
-
-
-	//// Initialize the render to texture object.
-	//result = _ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	////Create and initialize the blue floor model object.
-	//_FloorModel = new Model;
-	//if (!_FloorModel)
-	//{
-	//	return false;
-	//}
-
-	//// Initialize the floor model object. //TODO: make tga
-	//result = _FloorModel->Initialize(_D3D->GetDevice(),
-	//	_D3D->GetDeviceContext(),
-	//	"../DirectX11Engine/data/floor.txt",
-	//	"../DirectX11Engine/data/blue.dds", 
-	//	"../DirectX11Engine/data/blue.dds",
-	//	"../DirectX11Engine/data/blue.dds",
-	//	"../DirectX11Engine/data/blue.dds",
-	//	"../DirectX11Engine/data/blue.dds",
-	//	"../DirectX11Engine/data/blue.dds");
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, "Could not initialize the floor model object.", "Error", MB_OK);
-	//	return false;
-	//}
 
 	return true;
 }
@@ -313,7 +267,7 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	//}
 
 	// Create the first font object.
-	_Font1 = new FontClass;
+	_Font1.reset(new FontClass);
 	if (!_Font1)
 	{
 		return false;
@@ -350,7 +304,7 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	}
 
 	// Initialize the fps text string.
-	result = _FpsString->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1,
+	result = _FpsString->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
 		"Fps: 0", 10, 50, 0.0f, 1.0f, 0.0f);
 	if (!result)
 	{
@@ -368,42 +322,42 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	}
 
 	// Initialize the position text strings.
-	result = _PositionStrings[0].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1,
+	result = _PositionStrings[0].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
 		"X: 0", 10, 310, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
 	}
 
-	result = _PositionStrings[1].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1,
+	result = _PositionStrings[1].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
 		"Y: 0", 10, 330, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
 	}
 
-	result = _PositionStrings[2].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1,
+	result = _PositionStrings[2].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
 		"Z: 0", 10, 350, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
 	}
 
-	result = _PositionStrings[3].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1,
+	result = _PositionStrings[3].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
 		"rX: 0", 10, 370, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
 	}
 
-	result = _PositionStrings[4].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1,
+	result = _PositionStrings[4].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
 		"rY: 0", 10, 390, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
 	}
 
-	result = _PositionStrings[5].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1,
+	result = _PositionStrings[5].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
 		"rZ: 0", 10, 410, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
@@ -424,19 +378,19 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	}
 
 	// Initialize the render count strings.
-	result = _RenderCountStrings[0].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1, "Polys Drawn: 0", 10, 260, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[0].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), "Polys Drawn: 0", 10, 260, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
 	}
 
-	result = _RenderCountStrings[1].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1, "Cells Drawn: 0", 10, 280, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[1].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), "Cells Drawn: 0", 10, 280, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
 	}
 
-	result = _RenderCountStrings[2].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1, "Cells Culled: 0", 10, 300, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[2].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), "Cells Culled: 0", 10, 300, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
@@ -447,76 +401,6 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 
 void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of intialization
 {
-	// Release the refraction render to texture object.
-	if (_RefractionTexture)
-	{
-		_RefractionTexture->Shutdown();
-		delete _RefractionTexture;
-		_RefractionTexture = 0;
-	}
-
-	// Release the water model object.
-	if (_WaterModel)
-	{
-		_WaterModel->Shutdown();
-		delete _WaterModel;
-		_WaterModel = 0;
-	}
-
-	// Release the bath model object.
-	if (_BathModel)
-	{
-		_BathModel->Shutdown();
-		delete _BathModel;
-		_BathModel = 0;
-	}
-
-	// Release the wall model object.
-	if (_WallModel)
-	{
-		_WallModel->Shutdown();
-		delete _WallModel;
-		_WallModel = 0;
-	}
-
-	// Release the ground model object.
-	if (_GroundModel)
-	{
-		_GroundModel->Shutdown();
-		delete _GroundModel;
-		_GroundModel = 0;
-	}
-
-	// Release the floor model object.
-	if (_FloorModel)
-	{
-		_FloorModel->Shutdown();
-		delete _FloorModel;
-		_FloorModel = 0;
-	}
-
-	// Release the render to texture object.
-	if (_ReflectionTexture)
-	{
-		_ReflectionTexture->Shutdown();
-		delete _ReflectionTexture;
-		_ReflectionTexture = 0;
-	}
-
-	// Release the camera object.
-	if (_Camera)
-	{
-		delete _Camera;
-		_Camera = 0;
-	}
-
-	if (_D3D)
-	{
-		_D3D->Shutdown();
-		delete _D3D;
-		_D3D = 0;
-	}
-
 	// Release the render count strings.
 	if (_RenderCountStrings)
 	{
@@ -558,14 +442,6 @@ void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of inti
 		_FpsString->Shutdown();
 		delete _FpsString;
 		_FpsString = 0;
-	}
-
-	// Release the font object.
-	if (_Font1)
-	{
-		_Font1->Shutdown();
-		delete _Font1;
-		_Font1 = 0;
 	}
 
 	return;
@@ -713,15 +589,9 @@ bool Graphics::RenderReflectionToTexture()
 	// Put the wall model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	_WallModel->Render(_D3D->GetDeviceContext());
 
-	// Render the wall model using the light shader and the reflection view matrix.
-	//result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, reflectionViewMatrix,
-	//	projectionMatrix, _WallModel->GetTextureArrayDDS(), _Light->GetDirection(),
-	//	_Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), 0, 0, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
-
 	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, reflectionViewMatrix,
 		projectionMatrix, 
 		_WallModel->GetMaterial()->GetResourceArray(),
-		//_WallModel->GetTextureArray(),
 		_Light->GetDirection(),	_Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), 0, 0, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
 	if (!result)
 	{
@@ -781,7 +651,6 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	// Render the wall model using the light shader.
 	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, viewMatrix,
 		projectionMatrix, 
-		//_WallModel->GetTextureArray(),
 		_WallModel->GetMaterial()->GetResourceArray(),
 		_Light->GetDirection(),
 		_Light->GetAmbientColor(), _Light->GetDiffuseColor(),_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), fogStart, fogEnd, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
@@ -835,68 +704,6 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	{
 		return false;
 	}
-
-#pragma endregion
-
-#pragma region SINGLE_REFLECTION
-	//_Camera->Render(); // Generate the view matrix based on the camera's position.
-
- //    ///////////// RENDER SPINNING CUBE ///////////////////
-	//_D3D->GetWorldMatrix(worldPosition);
-	//_Camera->GetViewMatrix(viewMatrix);
-	//_D3D->GetProjectionMatrix(projectionMatrix);
-
-	//// Update the rotation variable each frame.
-	//static float rotation = 0.0f;
-	//rotation += (float)XM_PI * 0.001f;
-	//if (rotation > 360.0f) { rotation -= 360.0f; }
-	//XMMATRIX rotMat = XMMatrixRotationY(rotation);
-	//worldPosition = XMMatrixMultiply(worldPosition, rotMat);
-
-	//// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	//_ModelSingle->Render(_D3D->GetDeviceContext());
-
-	//XMMATRIX reflectionMatrix = _Camera->GetReflectionViewMatrix();
-	//XMFLOAT4 clipPlane = XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f);
-	//result = _ShaderManager->RenderLightShader(
-	//	_D3D->GetDeviceContext(),
-	//	_Model->GetIndexCount(),
-	//	worldPosition,
-	//	viewMatrix,
-	//	projectionMatrix,
-	//	_ModelSingle->GetTextureArrayDDS(),
-	//	_Light->GetDirection(),
-	//	_Light->GetAmbientColor(),
-	//	_Light->GetDiffuseColor(), 
-	//	_Camera->GetPosition(),
-	//	 _Light->GetSpecularColor(),
-	//	_Light->GetSpecularPower(),
-	//	fogStart,
-	//	fogEnd,
-	//	clipPlane,
-	//	0.f,
-	//	.5f);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-	//
-	/////////////// RENDER REFLECTIVE FLOOR ///////////////////
-	//// Get the world matrix again and translate down for the floor model to render underneath the cube.
-	//_D3D->GetWorldMatrix(worldPosition);
-	//XMMATRIX translation = XMMatrixTranslation(0.0f, -1.f, 0.0f);
-	//worldPosition = XMMatrixMultiply(worldPosition, translation);
-
-	//// Get the camera reflection view matrix.
-	////XMMATRIX reflectionMatrix = _Camera->GetReflectionViewMatrix();
-
-	//// Put the floor model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	//_FloorModel->Render(_D3D->GetDeviceContext());
-
-	//// Render the floor model using the reflection shader, reflection texture, and reflection view matrix.
-	//result = _ShaderManager->RenderReflectionShader(_D3D->GetDeviceContext(), _FloorModel->GetIndexCount(), worldPosition, viewMatrix,
-	//	projectionMatrix, _FloorModel->GetTextureArrayDDS()[0], _RenderTexture->GetShaderResourceView(),
-	//	reflectionMatrix);
 
 #pragma endregion
 
@@ -985,29 +792,6 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	return true;
 }
 
-//bool Graphics::RenderToTexture(float frameTime)
-//{
-//	// Set the render target to be the render to texture.
-//	_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
-//
-//	// Clear the render to texture.
-//	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 1.0f, 1.0f);
-//
-//	// Render the scene now and it will draw to the render to texture instead of the back buffer.
-//	XMMATRIX viewMatrix;
-//	_Camera->GetViewMatrix(viewMatrix);
-//	bool result = RenderScene(viewMatrix, 0.f,10.f, frameTime); //@REFACTOR later
-//	if (!result)
-//	{
-//		return false;
-//	}
-//
-//	// Reset the render target back to the original back buffer and not the render to texture anymore.
-//	_D3D->SetBackBufferRenderTarget();
-//
-//	return result;
-//}
-
 void Graphics::RenderText()
 {
 	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
@@ -1042,8 +826,7 @@ bool Graphics::UpdateFpsString(ID3D11DeviceContext* deviceContext, int fps)
 	char finalString[16];
 	float red, green, blue;
 	bool result;
-
-
+	
 	// Check if the fps from the previous frame was the same, if so don't need to update the text string.
 	if (_previousFps == fps)
 	{
@@ -1091,7 +874,7 @@ bool Graphics::UpdateFpsString(ID3D11DeviceContext* deviceContext, int fps)
 	}
 
 	// Update the sentence vertex buffer with the new string information.
-	result = _FpsString->UpdateSentence(deviceContext, _Font1, finalString, 10, 50, red, green, blue);
+	result = _FpsString->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 50, red, green, blue);
 	if (!result)
 	{
 		return false;
@@ -1124,7 +907,7 @@ bool Graphics::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float p
 		_itoa_s(positionX, tempString, 10);
 		strcpy_s(finalString, "X: ");
 		strcat_s(finalString, tempString);
-		result = _PositionStrings[0].UpdateSentence(deviceContext, _Font1, finalString, 10, 100, 1.0f, 1.0f, 1.0f);
+		result = _PositionStrings[0].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 100, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 
@@ -1134,7 +917,7 @@ bool Graphics::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float p
 		_itoa_s(positionY, tempString, 10);
 		strcpy_s(finalString, "Y: ");
 		strcat_s(finalString, tempString);
-		result = _PositionStrings[1].UpdateSentence(deviceContext, _Font1, finalString, 10, 120, 1.0f, 1.0f, 1.0f);
+		result = _PositionStrings[1].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 120, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 
@@ -1144,7 +927,7 @@ bool Graphics::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float p
 		_itoa_s(positionZ, tempString, 10);
 		strcpy_s(finalString, "Z: ");
 		strcat_s(finalString, tempString);
-		result = _PositionStrings[2].UpdateSentence(deviceContext, _Font1, finalString, 10, 140, 1.0f, 1.0f, 1.0f);
+		result = _PositionStrings[2].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 140, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 
@@ -1154,7 +937,7 @@ bool Graphics::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float p
 		_itoa_s(rotationX, tempString, 10);
 		strcpy_s(finalString, "rX: ");
 		strcat_s(finalString, tempString);
-		result = _PositionStrings[3].UpdateSentence(deviceContext, _Font1, finalString, 10, 180, 1.0f, 1.0f, 1.0f);
+		result = _PositionStrings[3].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 180, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 
@@ -1164,7 +947,7 @@ bool Graphics::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float p
 		_itoa_s(rotationY, tempString, 10);
 		strcpy_s(finalString, "rY: ");
 		strcat_s(finalString, tempString);
-		result = _PositionStrings[4].UpdateSentence(deviceContext, _Font1, finalString, 10, 200, 1.0f, 1.0f, 1.0f);
+		result = _PositionStrings[4].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 200, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 
@@ -1174,7 +957,7 @@ bool Graphics::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float p
 		_itoa_s(rotationZ, tempString, 10);
 		strcpy_s(finalString, "rZ: ");
 		strcat_s(finalString, tempString);
-		result = _PositionStrings[5].UpdateSentence(deviceContext, _Font1, finalString, 10, 220, 1.0f, 1.0f, 1.0f);
+		result = _PositionStrings[5].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 220, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 
@@ -1197,7 +980,7 @@ bool Graphics::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int render
 	strcat_s(finalString, tempString);
 
 	// Update the sentence vertex buffer with the new string information.
-	result = _RenderCountStrings[0].UpdateSentence(deviceContext, _Font1, finalString, 10, 260, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[0].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 260, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
@@ -1211,7 +994,7 @@ bool Graphics::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int render
 	strcat_s(finalString, tempString);
 
 	// Update the sentence vertex buffer with the new string information.
-	result = _RenderCountStrings[1].UpdateSentence(deviceContext, _Font1, finalString, 10, 280, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[1].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 280, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
@@ -1225,7 +1008,7 @@ bool Graphics::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int render
 	strcat_s(finalString, tempString);
 
 	// Update the sentence vertex buffer with the new string information.
-	result = _RenderCountStrings[2].UpdateSentence(deviceContext, _Font1, finalString, 10, 300, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[2].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 300, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;

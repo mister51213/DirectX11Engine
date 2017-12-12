@@ -12,6 +12,9 @@
 #include <vector>
 #include "Texture.h"
 #include <memory>
+#include <wrl/client.h>
+
+using namespace Microsoft::WRL;
 
 using namespace DirectX;
 using namespace std;
