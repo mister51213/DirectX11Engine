@@ -4,10 +4,6 @@
 #include "Position.h"
 
 System::System()
-	:
-	_Input(nullptr),
-	_Graphics(nullptr),
-	_Timer(nullptr)
 {}
 
 System::System(const System& other)
@@ -29,7 +25,7 @@ bool System::Initialize()
 	InitializeWindows(screenWidth, screenHeight);
 
 	// Create the input object.  This object will be used to handle reading the keyboard input from the user.
-	_Input = new Input;
+	_Input.reset(new Input);
 	if (!_Input){return false;}
 
 	// Initialize the input object.
@@ -44,7 +40,7 @@ bool System::Initialize()
 	if (_World) result = _World->Initialize();
 
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
-	_Graphics = new Graphics;
+	_Graphics.reset(new Graphics);
 	if (!_Graphics)
 	{
 		return false;
@@ -58,7 +54,7 @@ bool System::Initialize()
 	}
 
 	// Create the timer object.
-	_Timer = new TimerClass;
+	_Timer.reset(new TimerClass);
 	if (!_Timer)
 	{
 		return false;
@@ -80,28 +76,6 @@ bool System::Initialize()
 
 void System::Shutdown()
 {
-	// Release the timer object.
-	if (_Timer)
-	{
-		delete _Timer;
-		_Timer = 0;
-	}
-	
-	// Release the graphics object.
-	if (_Graphics)
-	{
-		_Graphics->Shutdown();
-		delete _Graphics;
-		_Graphics = 0;
-	}
-
-	// Release the input object.
-	if (_Input)
-	{
-		_Input->Shutdown();
-		delete _Input;
-		_Input = 0;
-	}
 
 	// Shutdown the window.
 	ShutdownWindows();
@@ -164,13 +138,10 @@ bool System::Tick()
 	bool result = _Input->Tick();	if (!result)return false;
 
 	// 3. World Tick
-	_World->Tick(_Timer->GetTime(), _Input);
+	_World->Tick(_Timer->GetTime(), _Input.get());
 
 	// 4. Graphics Draw
 	result = _Graphics->UpdateFrame(_Timer->GetTime(), _World.get(), _UI->_Fps->GetFps(), _World->_CamPosition->GetPosition().x, _World->_CamPosition->GetPosition().y, _World->_CamPosition->GetPosition().z, _World->_CamPosition->GetOrientation().x, _World->_CamPosition->GetOrientation().y, _World->_CamPosition->GetOrientation().z); if (!result)return false;
-	//result = _Graphics->DrawFrame(_Timer->GetTime()); if (!result)return false;
-
-	// @TODO: change world pointer to shared pointer
 
 	// 5. UI Tick
 	_UI->Tick();

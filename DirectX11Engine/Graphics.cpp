@@ -6,21 +6,13 @@
 #include "Graphics.h"
 #include "World.h"
 
-
-Graphics::Graphics()
-	:
-	_FpsString(nullptr),
-	_VideoStrings(nullptr)
-	//_PositionStrings(nullptr),
-	//_RenderCountStrings(nullptr)
-{}
+Graphics::Graphics(){}
 
 Graphics::Graphics(const Graphics& other)
 {}
 
 Graphics::~Graphics()
-{
-}
+{}
 
 bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
@@ -39,7 +31,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Create / initialize the shader manager object.
-	_ShaderManager = new ShaderManagerClass;	if (!_ShaderManager){return false;}
+	_ShaderManager.reset(new ShaderManagerClass);	if (!_ShaderManager){return false;}
 	result = _ShaderManager->Initialize(_D3D->GetDevice(), hwnd);
 	if (FAILED(result))
 	{
@@ -255,7 +247,7 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	}
 
 	// Create the text object for the fps string.
-	_FpsString = new TextClass;
+	_FpsString.reset(new TextClass);
 	if (!_FpsString)
 	{
 		return false;
@@ -314,30 +306,6 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	return true;
 }
 
-void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of intialization
-{
-
-	// Release the video card string.
-	if (_VideoStrings)
-	{
-		_VideoStrings[0].Shutdown();
-		_VideoStrings[1].Shutdown();
-
-		delete[] _VideoStrings;
-		_VideoStrings = 0;
-	}
-	
-	// Release the fps text string.
-	if (_FpsString)
-	{
-		_FpsString->Shutdown();
-		delete _FpsString;
-		_FpsString = 0;
-	}
-
-	return;
-}
-
 bool Graphics::UpdateFrame(float frameTime, World* world, int fps, float camX, float camY, float camZ, float rotX, float rotY, float rotZ)
 {
 	bool result;
@@ -382,21 +350,6 @@ bool Graphics::DrawFrame(float frameTime)
 	if (!result) { return false; }
 
 	_D3D->TurnZBufferOff();
-
-	// Put the debug window vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	//result = _DebugWindow->Render(_D3D->GetDeviceContext(), 80, 50);
-	//if (!result) {	return false; }
-	//result = _ShaderManager->RenderTextureShader(
-	//	_D3D->GetDeviceContext(),
-	//	_DebugWindow->GetIndexCount(),
-	//	worldMatrix,
-	//	baseViewMatrix, //viewMatrix,
-	//	orthoMatrix,
-	//	_RenderTexture->GetShaderResourceView());
-	//if (!result)
-	//{
-	//	return false;
-	//}
 
 	RenderText();
 
@@ -694,16 +647,16 @@ void Graphics::RenderText()
 	_D3D->EnableAlphaBlending();
 
 	// Render the fps string.
-	_FpsString->Render(_D3D->GetDeviceContext(), _ShaderManager,/*_FontShader),*/ worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+	_FpsString->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture());
 	// Render the position and rotation strings.
 	for (int i = 0; i<6; i++)
 	{
-		_PositionStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager/*_FontShader*/, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+		_PositionStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture());
 	}
 	// Render the render count strings.
 	for (int i = 0; i<3; i++)
 	{
-		_RenderCountStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager/*_FontShader*/, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+		_RenderCountStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture());
 	}
 
 	// Turn off alpha blending after rendering the text.
@@ -810,8 +763,7 @@ bool Graphics::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int render
 	char tempString[32];
 	char finalString[32];
 	bool result;
-
-
+	
 	// Convert the render count integer to string format.
 	_itoa_s(renderCount, tempString, 10);
 

@@ -42,7 +42,6 @@ public:
 	bool InitializeLights();
 	bool InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight);
 	bool InitializeUI(int screenWidth, int screenHeight);
-	void Shutdown();
 	bool UpdateFrame(float frameTime, class World* world, int fps, float posX, float posY, float posZ,
 		float rotX, float rotY, float rotZ);
 
@@ -68,7 +67,7 @@ private:
 	unique_ptr<TextClass> _Text; //@CUSTOM - now have multiple text classes holding different info
 	unique_ptr<FontClass> _Font1;
 
-	TextClass *_FpsString, *_VideoStrings;
+	unique_ptr<TextClass> _FpsString, _VideoStrings;
 	vector<unique_ptr<TextClass>> _RenderCountStrings;
 	vector<unique_ptr<TextClass>> _PositionStrings;
 
@@ -82,7 +81,7 @@ private:
 	unique_ptr<RenderTextureClass> _RenderTexture;
 	unique_ptr<DebugWindowClass> _DebugWindow;
 	
-	ShaderManagerClass* _ShaderManager;
+	unique_ptr<ShaderManagerClass> _ShaderManager;
 
 	/////////// WATER ////////////////
 	unique_ptr<Model> _GroundModel, _WallModel, _BathModel, _WaterModel;

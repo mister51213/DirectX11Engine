@@ -59,15 +59,13 @@ private:
 	HINSTANCE _hinstance;
 	HWND _hwnd;
 
-	Input* _Input;
+	unique_ptr<Input> _Input;
 	unique_ptr<World> _World;
-	Graphics* _Graphics;
+	unique_ptr<Graphics> _Graphics;
 	unique_ptr<UI> _UI;
 
-	//FpsClass* _Fps;
-	//CpuClass* _Cpu;
-	TimerClass* _Timer;
-	PositionClass* _CamPosition;
+	unique_ptr<TimerClass> _Timer;
+	unique_ptr<PositionClass> _CamPosition;
 };
 
 /////////////////////////
