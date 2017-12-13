@@ -68,7 +68,10 @@ private:
 	unique_ptr<TextClass> _Text; //@CUSTOM - now have multiple text classes holding different info
 	unique_ptr<FontClass> _Font1;
 
-	TextClass *_FpsString, *_VideoStrings, *_PositionStrings, *_RenderCountStrings;
+	TextClass *_FpsString, *_VideoStrings;
+	vector<unique_ptr<TextClass>> _RenderCountStrings;
+	vector<unique_ptr<TextClass>> _PositionStrings;
+
 	int _previousFps;
 	int _previousPosition[6];
 	float textureTranslation = 0.f;

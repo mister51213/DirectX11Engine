@@ -10,9 +10,9 @@
 Graphics::Graphics()
 	:
 	_FpsString(nullptr),
-	_VideoStrings(nullptr),
-	_PositionStrings(nullptr),
-	_RenderCountStrings(nullptr)
+	_VideoStrings(nullptr)
+	//_PositionStrings(nullptr),
+	//_RenderCountStrings(nullptr)
 {}
 
 Graphics::Graphics(const Graphics& other)
@@ -32,12 +32,20 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Initialize the Direct3D object.
 	result = _D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
-	if (!result){MessageBox(hwnd, "Could not initialize Direct3D", "Error", MB_OK);return false;}
+	if (FAILED(result))
+	{
+		throw std::runtime_error("Could not initialize Direct3D - line " + std::to_string(__LINE__));
+		return false;
+	}
 
 	// Create / initialize the shader manager object.
 	_ShaderManager = new ShaderManagerClass;	if (!_ShaderManager){return false;}
 	result = _ShaderManager->Initialize(_D3D->GetDevice(), hwnd);
-	if (!result){MessageBox(hwnd, "Could not initialize the shader manager object.", "Error", MB_OK);	return false;}
+	if (FAILED(result))
+	{
+		throw std::runtime_error("Could not initialize the shader manager object. - line " + std::to_string(__LINE__));
+		return false;
+	}
 
 	// Create the camera object.
 	_Camera.reset(new Camera);if (!_Camera){ return false;}	_Camera->SetPosition(0.0f, 0.0f, -4.f);	_Camera->UpdateViewFromPosition();
@@ -90,8 +98,11 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 
 	bool result = _GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/ground.txt",groundTex,	EShaderType::ELIGHT_SPECULAR);
-	if (!result){MessageBox(hwnd, "Could not initialize the ground model object.", "Error", MB_OK);
-		return false;}
+	if (FAILED(result))
+	{
+		throw std::runtime_error("Could not initialize the ground model object. - line " + std::to_string(__LINE__));
+		return false;
+	}
 
 	// Create the wall model object.
 	_WallModel.reset(new Model);
@@ -107,8 +118,11 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		"../DirectX11Engine/data/specMap.dds" };
 
 	result = _WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),"../DirectX11Engine/data/wall.txt",	wallTex,EShaderType::ELIGHT_SPECULAR);
-	if (!result)
-	{MessageBox(hwnd, "Could not initialize the wall model object.", "Error", MB_OK);return false;}
+	if (FAILED(result))
+	{
+		throw std::runtime_error("Could not initialize the wall model object. - line " + std::to_string(__LINE__));
+		return false;
+	}
 
 	// Create the bath model object.
 	_BathModel.reset(new Model);
@@ -128,9 +142,9 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	// Initialize the bath model object.
 	result = _BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/bath.txt",	bathTex,EShaderType::ELIGHT_SPECULAR);
-	if (!result)
+	if (FAILED(result))
 	{
-		MessageBox(hwnd, "Could not initialize the bath model object.", "Error", MB_OK);
+		throw std::runtime_error("Could not initialize the bath model object. - line " + std::to_string(__LINE__));
 		return false;
 	}
 
@@ -147,11 +161,12 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		"../DirectX11Engine/data/water.txt",
 		waterTextures,
 		EShaderType::EWATER);
-	if (!result)
+	if (FAILED(result))
 	{
-		MessageBox(hwnd, "Could not initialize the water model object.", "Error", MB_OK);
+		throw std::runtime_error("Could not initialize the water model object. - line " + std::to_string(__LINE__));
 		return false;
 	}
+
 
 	// Create the refraction render to texture object.
 	_RefractionTexture.reset(new RenderTextureClass);
@@ -162,9 +177,9 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 
 	// Initialize the refraction render to texture object.
 	result = _RefractionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
-	if (!result)
+	if (FAILED(result))
 	{
-		MessageBox(hwnd, "Could not initialize the refraction render to texture object.", "Error", MB_OK);
+		throw std::runtime_error("Could not initialize the refraction render to texture object. - line " + std::to_string(__LINE__));
 		return false;
 	}
 
@@ -177,9 +192,9 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 
 	// Initialize the reflection render to texture object.
 	result = _ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
-	if (!result)
+	if (FAILED(result))
 	{
-		MessageBox(hwnd, "Could not initialize the reflection render to texture object.", "Error", MB_OK);
+		throw std::runtime_error("Could not initialize the reflection render to texture object. - line " + std::to_string(__LINE__));
 		return false;
 	}
 
@@ -204,9 +219,9 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 
 	// Initialize the model list object.
 	result = _ModelList->Initialize(20);
-	if (!result)
+	if (FAILED(result))
 	{
-		MessageBox(hwnd, "Could not initialize the model list object.", "Error", MB_OK);
+		throw std::runtime_error("Could not initialize the model list object - line " + std::to_string(__LINE__));
 		return false;
 	}
 
@@ -251,21 +266,6 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	//	return false;
 	//}
 
-	//// Create the texture shader object.
-	//_TextureShader = new TextureShaderClass;
-	//if (!_TextureShader)
-	//{
-	//	return false;
-	//}
-
-	//// Initialize the texture shader object.
-	//result = _TextureShader->Initialize(_D3D->GetDevice(), hwnd);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, "Could not initialize the texture shader object.", "Error", MB_OK);
-	//	return false;
-	//}
-
 	// Create the first font object.
 	_Font1.reset(new FontClass);
 	if (!_Font1)
@@ -276,25 +276,11 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	// Initialize the first font object.
 	result = _Font1->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/font.txt",
 		"../DirectX11Engine/data/font.tga", 32.0f, 3);
-	if (!result)
+	if (FAILED(result))
 	{
+		throw std::runtime_error("Could not initialize the font object. - line " + std::to_string(__LINE__));
 		return false;
 	}
-
-	//// Create the font shader object.
-	//_FontShader = new FontShaderClass;
-	//if (!_FontShader)
-	//{
-	//	return false;
-	//}
-	//
-	//// Initialize the font shader object.
-	//result = _FontShader->Initialize(_D3D->GetDevice(), hwnd);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, "Could not initialize the font shader object.", "Error", MB_OK);
-	//	return false;
-	//}
 
 	// Create the text object for the fps string.
 	_FpsString = new TextClass;
@@ -306,91 +292,59 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	// Initialize the fps text string.
 	result = _FpsString->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
 		"Fps: 0", 10, 50, 0.0f, 1.0f, 0.0f);
-	if (!result)
+	if (FAILED(result))
 	{
+		throw std::runtime_error("Could not initialize the fps string object. - line " + std::to_string(__LINE__));
 		return false;
 	}
 
 	// Initial the previous frame fps.
 	_previousFps = -1;
 
-	// Create the text objects for the position strings.
-	_PositionStrings = new TextClass[6];
-	if (!_PositionStrings)
-	{
-		return false;
-	}
-
 	// Initialize the position text strings.
-	result = _PositionStrings[0].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
-		"X: 0", 10, 310, 1.0f, 1.0f, 1.0f);
-	if (!result)
+	vector<char*> labels = { "X: 0", "Y: 0", "Z: 0", "rX: 0", "rY: 0", "rZ: 0" };
+	char offset = 0;
+	for (int i = 0; i < 6; ++i)
 	{
-		return false;
-	}
+		_PositionStrings.push_back(unique_ptr<TextClass>(new TextClass()));
+		if (!_PositionStrings[i]) return false;
 
-	result = _PositionStrings[1].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
-		"Y: 0", 10, 330, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
+		result = _PositionStrings[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
+			labels[i], 10, 310 + offset, 1.0f, 1.0f, 1.0f);
 
-	result = _PositionStrings[2].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
-		"Z: 0", 10, 350, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
+		offset += 20;
 
-	result = _PositionStrings[3].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
-		"rX: 0", 10, 370, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
-
-	result = _PositionStrings[4].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
-		"rY: 0", 10, 390, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
-
-	result = _PositionStrings[5].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
-		"rZ: 0", 10, 410, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Initialize the previous frame position.
-	for (int i = 0; i<6; i++)
-	{
+		// Initialize the previous frame position.
 		_previousPosition[i] = -1;
+
+		if (FAILED(result))
+		{
+			throw std::runtime_error("Could not initialize position string number " + to_string(i) + " - line " + std::to_string(__LINE__));
+			return false;
+		}
 	}
 
 	// Create the text objects for the render count strings.
-	_RenderCountStrings = new TextClass[3];
-	if (!_RenderCountStrings)
+	for (int i =0; i< 3; ++i)
 	{
-		return false;
+		_RenderCountStrings.push_back(unique_ptr<TextClass>(new TextClass()));
 	}
+
 
 	// Initialize the render count strings.
-	result = _RenderCountStrings[0].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), "Polys Drawn: 0", 10, 260, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[0]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), "Polys Drawn: 0", 10, 260, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
 	}
 
-	result = _RenderCountStrings[1].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), "Cells Drawn: 0", 10, 280, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[1]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), "Cells Drawn: 0", 10, 280, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
 	}
 
-	result = _RenderCountStrings[2].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), "Cells Culled: 0", 10, 300, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[2]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), "Cells Culled: 0", 10, 300, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
@@ -401,30 +355,6 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 
 void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of intialization
 {
-	// Release the render count strings.
-	if (_RenderCountStrings)
-	{
-		_RenderCountStrings[0].Shutdown();
-		_RenderCountStrings[1].Shutdown();
-		_RenderCountStrings[2].Shutdown();
-
-		delete[] _RenderCountStrings;
-		_RenderCountStrings = 0;
-	}
-
-	// Release the position text strings.
-	if (_PositionStrings)
-	{
-		_PositionStrings[0].Shutdown();
-		_PositionStrings[1].Shutdown();
-		_PositionStrings[2].Shutdown();
-		_PositionStrings[3].Shutdown();
-		_PositionStrings[4].Shutdown();
-		_PositionStrings[5].Shutdown();
-
-		delete[] _PositionStrings;
-		_PositionStrings = 0;
-	}
 
 	// Release the video card string.
 	if (_VideoStrings)
@@ -697,7 +627,6 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	result =
 		_ShaderManager->RenderWaterShader(_D3D->GetDeviceContext(), _WaterModel->GetIndexCount(), worldMatrix, viewMatrix,
 		projectionMatrix, reflectionMatrix, _ReflectionTexture->GetShaderResourceView(), _RefractionTexture->GetShaderResourceView(), 
-			//_WaterModel->GetTextureArray()[0], 
 			_WaterModel->GetMaterial()->GetResourceArray()[0],
 			_waterTranslation, 0.01f);
 	if (!result)
@@ -808,12 +737,12 @@ void Graphics::RenderText()
 	// Render the position and rotation strings.
 	for (int i = 0; i<6; i++)
 	{
-		_PositionStrings[i].Render(_D3D->GetDeviceContext(), _ShaderManager/*_FontShader*/, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+		_PositionStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager/*_FontShader*/, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, _Font1->GetTexture());
 	}
 	// Render the render count strings.
 	for (int i = 0; i<3; i++)
 	{
-		_RenderCountStrings[i].Render(_D3D->GetDeviceContext(), _ShaderManager/*_FontShader*/, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+		_RenderCountStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager/*_FontShader*/, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, _Font1->GetTexture());
 	}
 
 	// Turn off alpha blending after rendering the text.
@@ -907,7 +836,7 @@ bool Graphics::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float p
 		_itoa_s(positionX, tempString, 10);
 		strcpy_s(finalString, "X: ");
 		strcat_s(finalString, tempString);
-		result = _PositionStrings[0].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 100, 1.0f, 1.0f, 1.0f);
+		result = _PositionStrings[0]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 100, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 
@@ -917,7 +846,7 @@ bool Graphics::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float p
 		_itoa_s(positionY, tempString, 10);
 		strcpy_s(finalString, "Y: ");
 		strcat_s(finalString, tempString);
-		result = _PositionStrings[1].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 120, 1.0f, 1.0f, 1.0f);
+		result = _PositionStrings[1]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 120, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 
@@ -927,7 +856,7 @@ bool Graphics::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float p
 		_itoa_s(positionZ, tempString, 10);
 		strcpy_s(finalString, "Z: ");
 		strcat_s(finalString, tempString);
-		result = _PositionStrings[2].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 140, 1.0f, 1.0f, 1.0f);
+		result = _PositionStrings[2]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 140, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 
@@ -937,7 +866,7 @@ bool Graphics::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float p
 		_itoa_s(rotationX, tempString, 10);
 		strcpy_s(finalString, "rX: ");
 		strcat_s(finalString, tempString);
-		result = _PositionStrings[3].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 180, 1.0f, 1.0f, 1.0f);
+		result = _PositionStrings[3]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 180, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 
@@ -947,7 +876,7 @@ bool Graphics::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float p
 		_itoa_s(rotationY, tempString, 10);
 		strcpy_s(finalString, "rY: ");
 		strcat_s(finalString, tempString);
-		result = _PositionStrings[4].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 200, 1.0f, 1.0f, 1.0f);
+		result = _PositionStrings[4]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 200, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 
@@ -957,7 +886,7 @@ bool Graphics::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float p
 		_itoa_s(rotationZ, tempString, 10);
 		strcpy_s(finalString, "rZ: ");
 		strcat_s(finalString, tempString);
-		result = _PositionStrings[5].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 220, 1.0f, 1.0f, 1.0f);
+		result = _PositionStrings[5]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 220, 1.0f, 1.0f, 1.0f);
 		if (!result) { return false; }
 	}
 
@@ -980,7 +909,7 @@ bool Graphics::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int render
 	strcat_s(finalString, tempString);
 
 	// Update the sentence vertex buffer with the new string information.
-	result = _RenderCountStrings[0].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 260, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[0]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 260, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
@@ -994,7 +923,7 @@ bool Graphics::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int render
 	strcat_s(finalString, tempString);
 
 	// Update the sentence vertex buffer with the new string information.
-	result = _RenderCountStrings[1].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 280, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[1]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 280, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
@@ -1008,7 +937,7 @@ bool Graphics::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int render
 	strcat_s(finalString, tempString);
 
 	// Update the sentence vertex buffer with the new string information.
-	result = _RenderCountStrings[2].UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 300, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[2]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 300, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
