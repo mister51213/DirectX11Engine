@@ -781,74 +781,24 @@ bool Graphics::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float p
 	char finalString[16];
 	bool result;
 
-
-	// Convert the float values to integers.
-	positionX = (int)posX;
-	positionY = (int)posY;
-	positionZ = (int)posZ;
-	rotationX = (int)rotX;
-	rotationY = (int)rotY;
-	rotationZ = (int)rotZ;
-
-	// Update the position strings if the value has changed since the last frame.
-	if (positionX != _previousPosition[0])
+	// Initialize the position text strings.
+	vector<char*> labels = { "X: ", "Y: ", "Z: ", "rX: ", "rY: ", "rZ: " };
+	vector<float> posRot = { posX, posY, posZ, rotX, rotY, rotZ };
+	char offset = 0;
+	for (int i = 0; i < 6; ++i)
 	{
-		_previousPosition[0] = positionX;
-		_itoa_s(positionX, tempString, 10);
-		strcpy_s(finalString, "X: ");
+		_previousPosition[i] = (int)posRot[i];
+		_itoa_s(posRot[i], tempString, 10);
+		strcpy_s(finalString, labels[i]);
 		strcat_s(finalString, tempString);
-		result = _PositionStrings[0]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 100, 1.0f, 1.0f, 1.0f);
-		if (!result) { return false; }
-	}
+		result = _PositionStrings[i]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 100 + offset, 1.0f, 1.0f, 1.0f);
+		if (FAILED(result))
+		{
+			throw std::runtime_error("Could not update sentence number " + to_string(i) + " - line " + std::to_string(__LINE__));
+			return false;
+		}
 
-	if (positionY != _previousPosition[1])
-	{
-		_previousPosition[1] = positionY;
-		_itoa_s(positionY, tempString, 10);
-		strcpy_s(finalString, "Y: ");
-		strcat_s(finalString, tempString);
-		result = _PositionStrings[1]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 120, 1.0f, 1.0f, 1.0f);
-		if (!result) { return false; }
-	}
-
-	if (positionZ != _previousPosition[2])
-	{
-		_previousPosition[2] = positionZ;
-		_itoa_s(positionZ, tempString, 10);
-		strcpy_s(finalString, "Z: ");
-		strcat_s(finalString, tempString);
-		result = _PositionStrings[2]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 140, 1.0f, 1.0f, 1.0f);
-		if (!result) { return false; }
-	}
-
-	if (rotationX != _previousPosition[3])
-	{
-		_previousPosition[3] = rotationX;
-		_itoa_s(rotationX, tempString, 10);
-		strcpy_s(finalString, "rX: ");
-		strcat_s(finalString, tempString);
-		result = _PositionStrings[3]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 180, 1.0f, 1.0f, 1.0f);
-		if (!result) { return false; }
-	}
-
-	if (rotationY != _previousPosition[4])
-	{
-		_previousPosition[4] = rotationY;
-		_itoa_s(rotationY, tempString, 10);
-		strcpy_s(finalString, "rY: ");
-		strcat_s(finalString, tempString);
-		result = _PositionStrings[4]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 200, 1.0f, 1.0f, 1.0f);
-		if (!result) { return false; }
-	}
-
-	if (rotationZ != _previousPosition[5])
-	{
-		_previousPosition[5] = rotationZ;
-		_itoa_s(rotationZ, tempString, 10);
-		strcpy_s(finalString, "rZ: ");
-		strcat_s(finalString, tempString);
-		result = _PositionStrings[5]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 220, 1.0f, 1.0f, 1.0f);
-		if (!result) { return false; }
+		offset += 20;
 	}
 
 	return true;
