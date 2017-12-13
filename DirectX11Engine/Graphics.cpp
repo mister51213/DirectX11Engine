@@ -237,34 +237,6 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	char videoString[144];
 	char memoryString[32];
 	char tempString[16];
-	////////////////
-	// UI RELATED //
-	////////////////
-	// Create the render to texture object.
-	//_RenderTexture = new RenderTextureClass;
-	//if (!_RenderTexture)
-	//{
-	//	return false;
-	//}
-	//// Initialize the render to texture object.
-	//result = _RenderTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-	// Create the debug window object.
-	//_DebugWindow = new DebugWindowClass;
-	//if (!_DebugWindow)
-	//{
-	//	return false;
-	//}
-	//// Initialize the debug window object.
-	//result = _DebugWindow->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, 100, 100);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, "Could not initialize the debug window object.", "Error", MB_OK);
-	//	return false;
-	//}
 
 	// Create the first font object.
 	_Font1.reset(new FontClass);
@@ -311,43 +283,32 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 
 		result = _PositionStrings[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
 			labels[i], 10, 310 + offset, 1.0f, 1.0f, 1.0f);
-
-		offset += 20;
-
-		// Initialize the previous frame position.
-		_previousPosition[i] = -1;
-
 		if (FAILED(result))
 		{
 			throw std::runtime_error("Could not initialize position string number " + to_string(i) + " - line " + std::to_string(__LINE__));
 			return false;
 		}
+
+		offset += 20;
+		_previousPosition[i] = -1;
 	}
 
 	// Create the text objects for the render count strings.
+	vector<char*> renderLabels = { "Polys Drawn: 0", "Cells Drawn: 0", "Cells Culled: 0" };
+	offset = 0;
 	for (int i =0; i< 3; ++i)
 	{
 		_RenderCountStrings.push_back(unique_ptr<TextClass>(new TextClass()));
-	}
+		if (!_RenderCountStrings[i]) return false;
 
+		result = _RenderCountStrings[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), renderLabels[i], 10, 260 + offset, 1.0f, 1.0f, 1.0f);
+		if (FAILED(result))
+		{
+			throw std::runtime_error("Could not initialize render count string number " + to_string(i) + " - line " + std::to_string(__LINE__));
+			return false;
+		}
 
-	// Initialize the render count strings.
-	result = _RenderCountStrings[0]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), "Polys Drawn: 0", 10, 260, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
-
-	result = _RenderCountStrings[1]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), "Cells Drawn: 0", 10, 280, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
-
-	result = _RenderCountStrings[2]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), "Cells Culled: 0", 10, 300, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
+		offset += 20;
 	}
 	
 	return true;
