@@ -87,7 +87,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 		// If there was nothing in the error message then it simply could not find the shader file itself.
 		else
 		{
-			MessageBox(hwnd, vsFilename, "Missing Shader File", MB_OK);
+			throw std::runtime_error("Missing Shader File - " + string(vsFilename));
 		}
 
 		return false;
@@ -114,7 +114,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 		// If there was nothing in the error message then it simply could not find the file itself.
 		else
 		{
-			MessageBox(hwnd, psFilename, "Missing Shader File", MB_OK);
+			throw std::runtime_error("Missing Shader File - " + string(psFilename));
 		}
 
 		return false;

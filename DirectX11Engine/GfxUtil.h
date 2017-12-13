@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <d3d11.h>
 #include <vector>
+#include <string>
 #include "Texture.h"
 #include <memory>
 #include <wrl/client.h>

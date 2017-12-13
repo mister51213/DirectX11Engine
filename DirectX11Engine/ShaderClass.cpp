@@ -70,7 +70,7 @@ bool ShaderClass::CompileShaders(ID3D11Device * device, /*ID3D10Blob* vertexShad
 		// If there was  nothing in the error message then it simply could not find the shader file itself.
 		else
 		{
-			MessageBox(hwnd, vsFilename, "Missing Shader File", MB_OK);
+			throw std::runtime_error("Missing Shader File - line " + to_string(__LINE__));
 		}
 
 		return false;
@@ -89,7 +89,7 @@ bool ShaderClass::CompileShaders(ID3D11Device * device, /*ID3D10Blob* vertexShad
 		// If there was  nothing in the error message then it simply could not find the file itself.
 		else
 		{
-			MessageBox(hwnd, psFilename, "Missing Shader File", MB_OK);
+			throw std::runtime_error("Missing Shader File - line " + to_string(__LINE__));
 		}
 
 		return false;
@@ -181,7 +181,7 @@ void ShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, 
 	errorMessage = 0;
 
 	// Pop a message up on the screen to notify the user to check the text file for compile errors.
-	MessageBox(hwnd, "Error compiling shader.  Check shader-error.txt for message.", shaderFilename, MB_OK);
+	throw std::runtime_error("Error compiling shader.  Check shader-error.txt for message.");
 
 	return;
 }

@@ -30,9 +30,9 @@ bool System::Initialize()
 
 	// Initialize the input object.
 	result = _Input->Initialize(_hinstance, _hwnd, screenWidth, screenHeight);
-	if (!result)
+	if (FAILED(result))
 	{
-		MessageBox(_hwnd, "Could not initialize the input object.", "Error", MB_OK);
+		throw std::runtime_error("Could not initialize the input object. - line " + std::to_string(__LINE__));
 		return false;
 	}
 
@@ -50,6 +50,7 @@ bool System::Initialize()
 	result = _Graphics->Initialize(screenWidth, screenHeight, _hwnd);
 	if (!result)
 	{
+		throw std::runtime_error("Could not initialize the graphics object. - line " + std::to_string(__LINE__));
 		return false;
 	}
 
@@ -64,7 +65,7 @@ bool System::Initialize()
 	result = _Timer->Initialize();
 	if (!result)
 	{
-		MessageBox(_hwnd, "Could not initialize the Timer object.", "Error", MB_OK);
+		throw std::runtime_error("Could not initialize the timer object. - line " + std::to_string(__LINE__));
 		return false;
 	}
 
@@ -113,7 +114,7 @@ void System::Run()
 			result = Tick();
 			if (!result)
 			{
-				MessageBox(_hwnd, "Frame Processing Failed", "Error", MB_OK);
+				throw std::runtime_error("Frame Processing Failed. - line " + std::to_string(__LINE__));
 				done = true;
 			}
 		}
@@ -131,19 +132,14 @@ void System::Run()
 
 bool System::Tick()
 {
-	// 1. Timer tick
 	_Timer->Tick();
 
-	// 2. Input Tick
-	bool result = _Input->Tick();	if (!result)return false;
+	_Input->Tick();
 
-	// 3. World Tick
 	_World->Tick(_Timer->GetTime(), _Input.get());
 
-	// 4. Graphics Draw
-	result = _Graphics->UpdateFrame(_Timer->GetTime(), _World.get(), _UI->_Fps->GetFps(), _World->_CamPosition->GetPosition().x, _World->_CamPosition->GetPosition().y, _World->_CamPosition->GetPosition().z, _World->_CamPosition->GetOrientation().x, _World->_CamPosition->GetOrientation().y, _World->_CamPosition->GetOrientation().z); if (!result)return false;
+	_Graphics->UpdateFrame(_Timer->GetTime(), _World.get(), _UI->_Fps->GetFps(), _World->_CamPosition->GetPosition().x, _World->_CamPosition->GetPosition().y, _World->_CamPosition->GetPosition().z, _World->_CamPosition->GetOrientation().x, _World->_CamPosition->GetOrientation().y, _World->_CamPosition->GetOrientation().z);
 
-	// 5. UI Tick
 	_UI->Tick();
 
 	return true;

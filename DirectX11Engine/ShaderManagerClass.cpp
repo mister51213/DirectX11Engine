@@ -32,7 +32,8 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	result = _TextureShader->Initialize(device, hwnd, "../DirectX11Engine/texture_vs.hlsl", "../DirectX11Engine/texture_ps.hlsl");
 	if (!result)
 	{
-		MessageBox(hwnd, "Could not initialize the texture shader object.", "Error", MB_OK);
+		throw std::runtime_error("Could not initialize the texture shader object. - " + to_string(__LINE__));
+
 		return false;
 	}
 
@@ -47,7 +48,8 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	result = _LightShader->Initialize(device, hwnd, "../DirectX11Engine/Light_vs.hlsl", "../DirectX11Engine/Light_ps.hlsl");
 	if (!result)
 	{
-		MessageBox(hwnd, "Could not initialize the light shader object.", "Error", MB_OK);
+		throw std::runtime_error("Could not initialize the light shader object. - " + to_string(__LINE__));
+
 		return false;
 	}
 
@@ -62,7 +64,8 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	result = _FontShader->Initialize(device, hwnd, "../DirectX11Engine/font.vs", "../DirectX11Engine/font.ps");
 	if (!result)
 	{
-		MessageBox(hwnd, "Could not initialize the bump map shader object.", "Error", MB_OK);
+		throw std::runtime_error("Could not initialize the bump map shader object. - " + to_string(__LINE__));
+
 		return false;
 	}
 
@@ -77,7 +80,8 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	result = _ReflectionShader->Initialize(device, hwnd, "../DirectX11Engine/Reflection_vs.hlsl", "../DirectX11Engine/Reflection_ps.hlsl");
 	if (!result)
 	{
-		MessageBox(hwnd, "Could not initialize the bump map shader object.", "Error", MB_OK);
+		throw std::runtime_error("Could not initialize the reflection shader object. - " + to_string(__LINE__));
+
 		return false;
 	}
 
@@ -86,7 +90,8 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	result = _WaterShader->Initialize(device, hwnd, "../DirectX11Engine/WaterShader_vs.hlsl", "../DirectX11Engine/WaterShader_ps.hlsl");
 	if (!result)
 	{
-		MessageBox(hwnd, "Could not initialize the bump map shader object.", "Error", MB_OK);
+		throw std::runtime_error("Could not initialize the water shader object. - " + to_string(__LINE__));
+
 		return false;
 	}
 
@@ -95,7 +100,8 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	result = _RefractionShader->Initialize(device, hwnd, "../DirectX11Engine/Refraction_vs.hlsl", "../DirectX11Engine/Refraction_ps.hlsl");
 	if (!result)
 	{
-		MessageBox(hwnd, "Could not initialize the bump map shader object.", "Error", MB_OK);
+		throw std::runtime_error("Could not initialize the refraction shader object. - " + to_string(__LINE__));
+
 		return false;
 	}
 
