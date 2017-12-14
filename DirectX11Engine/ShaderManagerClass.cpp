@@ -4,10 +4,6 @@
 #include "shadermanagerclass.h"
 
 ShaderManagerClass::ShaderManagerClass()
-	:
-	_TextureShader(0),
-	_LightShader(0),
-	_FontShader(0)
 {}
 
 ShaderManagerClass::ShaderManagerClass(const ShaderManagerClass& other)
@@ -22,7 +18,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	bool result;
 
 		// Create the texture shader object.
-	_TextureShader = new TextureShaderClass;
+	_TextureShader.reset(new TextureShaderClass);
 	if (!_TextureShader)
 	{
 		return false;
@@ -38,7 +34,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	// Create the light shader object.
-	_LightShader = new LightShaderClass;
+	_LightShader.reset(new LightShaderClass);
 	if (!_LightShader)
 	{
 		return false;
@@ -54,7 +50,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	// Create the bump map shader object.
-	_FontShader = new FontShaderClass;
+	_FontShader.reset(new FontShaderClass);
 	if (!_FontShader)
 	{
 		return false;
@@ -70,7 +66,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	// Create the bump map shader object.
-	_ReflectionShader = new ReflectionShaderClass;
+	_ReflectionShader.reset(new ReflectionShaderClass);
 	if (!_FontShader)
 	{
 		return false;
@@ -85,7 +81,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 		return false;
 	}
 
-	_WaterShader = new WaterShaderClass;
+	_WaterShader.reset(new WaterShaderClass);
 
 	result = _WaterShader->Initialize(device, hwnd, "../DirectX11Engine/WaterShader_vs.hlsl", "../DirectX11Engine/WaterShader_ps.hlsl");
 	if (!result)
@@ -95,7 +91,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 		return false;
 	}
 
-	_RefractionShader = new RefractionShaderClass;
+	_RefractionShader.reset(new RefractionShaderClass);
 
 	result = _RefractionShader->Initialize(device, hwnd, "../DirectX11Engine/Refraction_vs.hlsl", "../DirectX11Engine/Refraction_ps.hlsl");
 	if (!result)
@@ -108,57 +104,6 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	return true;
 }
 
-void ShaderManagerClass::Shutdown()
-{
-	if (_RefractionShader)
-	{
-		_RefractionShader->Shutdown();
-		delete _RefractionShader;
-		_RefractionShader = 0;
-	}
-
-	// Release water shader
-	if (_WaterShader)
-	{
-		_WaterShader->Shutdown();
-		delete _WaterShader;
-		_WaterShader = 0;
-	}
-
-	// Release reflection shader
-	if (_ReflectionShader)
-	{
-		_ReflectionShader->Shutdown();
-		delete _ReflectionShader;
-		_ReflectionShader = 0;
-	}
-
-	// Release the bump map shader object.
-	if (_FontShader)
-	{
-		_FontShader->Shutdown();
-		delete _FontShader;
-		_FontShader = 0;
-	}
-
-	// Release the light shader object.
-	if (_LightShader)
-	{
-		_LightShader->Shutdown();
-		delete _LightShader;
-		_LightShader = 0;
-	}
-
-	// Release the texture shader object.
-	if (_TextureShader)
-	{
-		_TextureShader->Shutdown();
-		delete _TextureShader;
-		_TextureShader = 0;
-	}
-
-	return;
-}
 
 bool ShaderManagerClass::RenderTextureShader(ID3D11DeviceContext* device, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
 	ID3D11ShaderResourceView* texture)
@@ -254,7 +199,7 @@ bool ShaderManagerClass::RenderRefractionShader(ID3D11DeviceContext * deviceCont
 FontShaderClass * ShaderManagerClass::GetFontShader()
 {
 	if (_FontShader)
-	return _FontShader;
+	return _FontShader.get();
 
 	return nullptr;
 }

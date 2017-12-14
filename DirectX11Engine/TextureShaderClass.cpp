@@ -49,8 +49,6 @@ bool TextureShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char*
 	
 	// Initialize the pointers this function will use to null.
 	errorMessage = 0;
-	//vertexShaderBuffer = 0;
-	//pixelShaderBuffer = 0;
 
 	//result = CompileShaders(device, hwnd, vsFilename, psFilename, "TextureVertexShader", "TexturePixelShader", errorMessage);
 

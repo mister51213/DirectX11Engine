@@ -26,14 +26,12 @@ public:
 	~ShaderManagerClass();
 
 	bool Initialize(ID3D11Device*, HWND);
-	void Shutdown();
 
 	bool RenderTextureShader(ID3D11DeviceContext*, int, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*);
 
 	bool RenderLightShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 		XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
-		XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency/*,
-		ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix*/);
+		XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency);
 
 	bool RenderReflectionShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, 
 		XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix);
@@ -52,10 +50,10 @@ public:
 
 private:
 	// Make a private class object for each shader type the application will be using.
-	TextureShaderClass* _TextureShader;
-	LightShaderClass* _LightShader;
-	FontShaderClass* _FontShader;
-	ReflectionShaderClass* _ReflectionShader;
-	WaterShaderClass* _WaterShader;
-	RefractionShaderClass* _RefractionShader;
+	unique_ptr<TextureShaderClass> _TextureShader;
+	unique_ptr<LightShaderClass> _LightShader;
+	unique_ptr<FontShaderClass> _FontShader;
+	unique_ptr<ReflectionShaderClass> _ReflectionShader;
+	unique_ptr<WaterShaderClass> _WaterShader;
+	unique_ptr<RefractionShaderClass> _RefractionShader;
 };
