@@ -649,12 +649,12 @@ void Graphics::RenderText()
 	// Render the fps string.
 	_FpsString->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture());
 	// Render the position and rotation strings.
-	for (int i = 0; i<6; i++)
+	for (int i = 0; i < 6; i++)
 	{
 		_PositionStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture());
 	}
 	// Render the render count strings.
-	for (int i = 0; i<3; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		_RenderCountStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture());
 	}
