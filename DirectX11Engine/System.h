@@ -21,6 +21,15 @@
 #include "World.h"
 #include "UI.h"
 
+///////////////////////
+// Physics //
+//////////////////////
+#include "btBulletDynamicsCommon.h"
+
+/////////////////////////
+// Microsoft //
+////////////////////
+
 #include <wrl/client.h>
 
 
