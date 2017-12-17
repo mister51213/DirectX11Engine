@@ -549,6 +549,9 @@
     <ClCompile Include="BULLET\LinearMath\btVector3.cpp">
       <Filter>BULLET</Filter>
     </ClCompile>
+    <ClCompile Include="Physics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VectorMath.h">
@@ -1279,6 +1282,9 @@
     </ClInclude>
     <ClInclude Include="BULLET\Bullet-C-Api.h">
       <Filter>BULLET</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

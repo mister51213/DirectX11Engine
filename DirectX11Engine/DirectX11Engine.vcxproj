@@ -301,6 +301,7 @@
     <ClCompile Include="LightClass.cpp" />
     <ClCompile Include="LightShaderClass.cpp" />
     <ClCompile Include="ModelListClass.cpp" />
+    <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="ReflectionShaderClass.cpp" />
     <ClCompile Include="RefractionShaderClass.cpp" />
@@ -546,6 +547,7 @@
     <ClInclude Include="LightClass.h" />
     <ClInclude Include="LightShaderClass.h" />
     <ClInclude Include="ModelListClass.h" />
+    <ClInclude Include="Physics.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="ReflectionShaderClass.h" />
     <ClInclude Include="RefractionShaderClass.h" />
