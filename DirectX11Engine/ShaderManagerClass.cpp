@@ -104,6 +104,59 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	return true;
 }
 
+// @TODO the params at teh end need to be encapsulated
+bool ShaderManagerClass::RenderAll(ID3D11DeviceContext * device, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, Material * material, LightClass * light, SceneEffects effects, XMFLOAT3 cameraPos, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView * reflectionTexture, ID3D11ShaderResourceView * refractionTexture, ID3D11ShaderResourceView * normalTexture)
+{
+	//@TODO: GO THROUGH EVERY SINGLE FUCKING CALL IN GRAPHICS.CPP AND MAKE SURE THEY MATCH WITH THE CALLS BELOW
+	// (may have passed in wrong textures in water or reflection shader)
+	bool result;
+
+	switch (material->shaderType)
+	{
+	case EShaderType::ETEXTURE:
+		result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray()[0]);
+		if (!result) return false;
+		break;
+
+	case EShaderType::ELIGHT_SPECULAR:
+		result = _LightShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
+			material->GetResourceArray(), light->GetDirection(), light->GetAmbientColor(), light->GetDiffuseColor(),
+			cameraPos, light->GetSpecularColor(), light->GetSpecularPower(), effects.fogStart, effects.fogEnd, effects.clipPlane, material->translation, material->transparency);
+		if (!result) return false;
+		break;
+
+	case EShaderType::EREFLECTION:
+		result = _ReflectionShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
+			material->GetResourceArray()[0], reflectionTexture, reflectionMatrix);
+		if (!result) return false;
+		break;
+
+	case EShaderType::EREFRACTION:
+		result = _RefractionShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
+			material->GetResourceArray()[0], light->GetDirection(), light->GetAmbientColor(), light->GetDiffuseColor(), effects.clipPlane);
+		if (!result) return false;
+		break;
+
+	case EShaderType::EWATER:
+		result = _WaterShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix,
+			reflectionTexture, refractionTexture, normalTexture, material->translation, material->reflectRefractScale);
+		if (!result) return false;
+		break;
+
+	case EShaderType::EFONT:
+		result = _FontShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
+			material->GetResourceArray()[0], material->pixelColor);
+		if (!result) return false;
+		break;
+
+	default:
+		result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray()[0]);
+		if (!result) return false;
+		break;
+	}
+
+	return result;
+}
 
 bool ShaderManagerClass::RenderTextureShader(ID3D11DeviceContext* device, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
 	ID3D11ShaderResourceView* texture)
@@ -121,7 +174,7 @@ bool ShaderManagerClass::RenderTextureShader(ID3D11DeviceContext* device, int in
 }
 
 bool ShaderManagerClass::RenderLightShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
+	XMMATRIX projectionMatrix, Material* material, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
 	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency/*,
 	ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix*/)
 {

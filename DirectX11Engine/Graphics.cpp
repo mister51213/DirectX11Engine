@@ -435,6 +435,7 @@ bool Graphics::RenderReflectionToTexture()
 
 	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, reflectionViewMatrix,
 		projectionMatrix, 
+		_WallModel->GetMaterial(),
 		_WallModel->GetMaterial()->GetResourceArray(),
 		_Light->GetDirection(),	_Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), 0, 0, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
 	if (!result)
@@ -476,6 +477,7 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix,
 		projectionMatrix, 
 		//_GroundModel->GetTextureArray(),
+		_GroundModel->GetMaterial(),
 		_GroundModel->GetMaterial()->GetResourceArray(),
 		_Light->GetDirection(),_Light->GetAmbientColor(), _Light->GetDiffuseColor(),_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), fogStart, fogEnd, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
 	if (!result)
@@ -495,6 +497,7 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	// Render the wall model using the light shader.
 	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, viewMatrix,
 		projectionMatrix, 
+		_WallModel->GetMaterial(),
 		_WallModel->GetMaterial()->GetResourceArray(),
 		_Light->GetDirection(),
 		_Light->GetAmbientColor(), _Light->GetDiffuseColor(),_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), fogStart, fogEnd, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
@@ -513,13 +516,20 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	_BathModel->Render(_D3D->GetDeviceContext());
 
 	// Render the bath model using the light shader.
-	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _BathModel->GetIndexCount(), worldMatrix, viewMatrix,
+	result = _ShaderManager->RenderLightShader(
+		_D3D->GetDeviceContext(), 
+		_BathModel->GetIndexCount(), 
+		worldMatrix, 
+		viewMatrix,
 		projectionMatrix, 
 		//_BathModel->GetTextureArray(), 
+		_BathModel->GetMaterial(),
 		_BathModel->GetMaterial()->GetResourceArray(),
 		_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(),
 		_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), fogStart, fogEnd, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
 
+	// NEW STRUCTURE
+	//_ShaderManager->Render(_D3D->GetDeviceContext(), _BathModel->GetIndexCount(),	worldMatrix, viewMatrix, projectionMatrix, Material, Light, Effects)
 	if (!result)
 	{
 		return false;
@@ -715,6 +725,8 @@ bool Graphics::UpdateFpsString(ID3D11DeviceContext* deviceContext, int fps)
 		green = 0.0f;
 		blue = 0.0f;
 	}
+
+	// @TODO: Set material values here
 
 	// Update the sentence vertex buffer with the new string information.
 	result = _FpsString->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 50, red, green, blue);

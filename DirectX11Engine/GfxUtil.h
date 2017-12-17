@@ -53,6 +53,13 @@ namespace GfxUtil
 		ESIZE = 6
 	};
 
+	struct SceneEffects
+	{
+		float fogStart = 0.f;
+		float fogEnd = 0.f;
+		XMFLOAT4 clipPlane = XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f);
+	};
+
 	class Material
 	{
 	public:
@@ -94,5 +101,11 @@ namespace GfxUtil
 		unique_ptr<TextureClass> _TextureArray;
 		EShaderType shaderType;
 		int texArraySize;
+		XMFLOAT4 pixelColor = XMFLOAT4(1,1,1,1);
+
+		// Effects @TODO: encapsulate into different struct
+		float transparency = 0.f;
+		float translation = 0.f;
+		float reflectRefractScale = 0.f;
 	};
 }
