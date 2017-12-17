@@ -17,8 +17,9 @@
 // MY CLASS INCLUDES //
 ///////////////////////
 #include "Input.h"
+#include "Physics.h"
 #include "Graphics.h"
-#include "World.h"
+#include "Scene.h"
 #include "UI.h"
 
 ///////////////////////
@@ -31,7 +32,6 @@
 ////////////////////
 
 #include <wrl/client.h>
-
 
 //#include "FpsClass.h" // put in UI
 //#include "CpuClass.h" // put in UI
@@ -68,13 +68,14 @@ private:
 	HINSTANCE _hinstance;
 	HWND _hwnd;
 
+	unique_ptr<TimerClass> _Timer;
 	unique_ptr<Input> _Input;
-	unique_ptr<World> _World;
+	unique_ptr<Physics> _Physics;
+	unique_ptr<Scene> _Scene;
 	unique_ptr<Graphics> _Graphics;
 	unique_ptr<UI> _UI;
 
-	unique_ptr<TimerClass> _Timer;
-	unique_ptr<PositionClass> _CamPosition;
+	//unique_ptr<MovementComponent> _Camera;
 };
 
 /////////////////////////

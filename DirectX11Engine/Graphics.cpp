@@ -4,7 +4,7 @@
 #include "lightshaderclass.h"
 #include "lightclass.h"
 #include "Graphics.h"
-#include "World.h"
+#include "Scene.h"
 
 Graphics::Graphics(){}
 
@@ -306,7 +306,7 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	return true;
 }
 
-bool Graphics::UpdateFrame(float frameTime, World* world, int fps, float camX, float camY, float camZ, float rotX, float rotY, float rotZ)
+bool Graphics::UpdateFrame(float frameTime, Scene* world, int fps, float camX, float camY, float camZ, float rotX, float rotY, float rotZ)
 {
 	bool result;
 

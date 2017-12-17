@@ -123,9 +123,6 @@
     <ClCompile Include="UI.cpp">
       <Filter>Source Files\Tier1</Filter>
     </ClCompile>
-    <ClCompile Include="World.cpp">
-      <Filter>Source Files\Tier1</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files\Tier1</Filter>
     </ClCompile>
@@ -550,6 +547,15 @@
       <Filter>BULLET</Filter>
     </ClCompile>
     <ClCompile Include="Physics.cpp">
+      <Filter>Source Files\Tier1</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files\Tier1</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GfxUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -636,9 +642,6 @@
       <Filter>Header Files\Tier1</Filter>
     </ClInclude>
     <ClInclude Include="UI.h">
-      <Filter>Header Files\Tier1</Filter>
-    </ClInclude>
-    <ClInclude Include="World.h">
       <Filter>Header Files\Tier1</Filter>
     </ClInclude>
     <ClInclude Include="System.h">
@@ -1284,6 +1287,12 @@
       <Filter>BULLET</Filter>
     </ClInclude>
     <ClInclude Include="Physics.h">
+      <Filter>Header Files\Tier1</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>Header Files\Tier1</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

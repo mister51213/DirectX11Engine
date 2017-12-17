@@ -11,7 +11,7 @@ Physics::~Physics()
 {
 }
 
-void Physics::Initialize()
+bool Physics::Initialize()
 {
 	btBroadphaseInterface* broadphase = new btDbvtBroadphase();
 
@@ -45,4 +45,11 @@ void Physics::Initialize()
 	btRigidBody::btRigidBodyConstructionInfo fallRigidBodyCI(mass, fallMotionState, fallShape, fallInertia);
 	btRigidBody* fallRigidBody = new btRigidBody(fallRigidBodyCI);
 	dynamicsWorld->addRigidBody(fallRigidBody);
+
+	return true;
+}
+
+void Physics::Tick(float deltaTime)
+{
+
 }

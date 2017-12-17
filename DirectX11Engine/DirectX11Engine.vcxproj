@@ -151,6 +151,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Actor.cpp" />
     <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btAxisSweep3.cpp" />
     <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btBroadphaseProxy.cpp" />
     <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btCollisionAlgorithm.cpp" />
@@ -298,6 +299,7 @@
     <ClCompile Include="FontShaderClass.cpp" />
     <ClCompile Include="FpsClass.cpp" />
     <ClCompile Include="FrustumClass.cpp" />
+    <ClCompile Include="GfxUtil.cpp" />
     <ClCompile Include="LightClass.cpp" />
     <ClCompile Include="LightShaderClass.cpp" />
     <ClCompile Include="ModelListClass.cpp" />
@@ -320,9 +322,10 @@
     <ClCompile Include="TimerClass.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="WaterShaderClass.cpp" />
-    <ClCompile Include="World.cpp" />
+    <ClCompile Include="Scene.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Actor.h" />
     <ClInclude Include="BULLET\btBulletCollisionCommon.h" />
     <ClInclude Include="BULLET\btBulletDynamicsCommon.h" />
     <ClInclude Include="BULLET\Bullet-C-Api.h" />
@@ -566,7 +569,7 @@
     <ClInclude Include="UI.h" />
     <ClInclude Include="VectorMath.h" />
     <ClInclude Include="WaterShaderClass.h" />
-    <ClInclude Include="World.h" />
+    <ClInclude Include="Scene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="font.ps" />

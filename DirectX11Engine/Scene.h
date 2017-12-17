@@ -3,22 +3,25 @@
 #include <memory>
 #include <vector>
 
+#include "Actor.h"
 #include "Position.h" 
 #include "LightClass.h"
 
 using namespace std;
 
-class World
+class Scene
 {
 public:
-	World();
-	~World();
+	Scene();
+	~Scene();
 	bool Initialize();
 	void Tick(float deltaTime, class Input* pInput);
 	void ProcessInput(float deltaTime, Input * pInput);
+	void UpdateActors(float deltaTime);
 	
-	unique_ptr<PositionClass> _CamPosition;
-	vector<unique_ptr<PositionClass>> _ActorPositions;
+	//unique_ptr<MovementComponent> _Camera;
+	unique_ptr<Actor> _Camera;
+	vector<unique_ptr<Actor>> _Actors;
 	vector<unique_ptr<LightClass>> _Lights;
 };
 

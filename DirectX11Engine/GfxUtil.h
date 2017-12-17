@@ -56,43 +56,43 @@ namespace GfxUtil
 	class Material
 	{
 	public:
+		Material();
+		//{
+		//	shaderType = ETEXTURE;
+		//	texArraySize = 1;
+		//}
+
+		bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, EShaderType inShaderType, vector<char*> fileNames);
+		//{
+		//	texArraySize = fileNames.size();
+
+		//	shaderType = inShaderType;
+
+		//	_TextureArray.reset(new TextureClass);
+		//	if (!_TextureArray)
+		//	{
+		//		return false;
+		//	}
+
+		//	bool result = _TextureArray->InitializeArray(device, deviceContext, fileNames);
+		//	if (!result)
+		//	{
+		//		return false;
+		//	}
+
+		//	return true;
+		//}
+
+		ID3D11ShaderResourceView** GetResourceArray();
+		//{
+		//	if (_TextureArray)
+		//	{
+		//		return _TextureArray->GetTextureArray();
+		//	}
+		//}
+
 		unique_ptr<TextureClass> _TextureArray;
 		EShaderType shaderType;
 		int texArraySize;
-
-		Material()
-		{
-			shaderType = ETEXTURE;
-			texArraySize = 1;
-		}
-
-		bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, EShaderType inShaderType, vector<char*> fileNames)
-		{
-			texArraySize = fileNames.size();
-
-			shaderType = inShaderType;
-
-			_TextureArray.reset(new TextureClass);
-			if (!_TextureArray)
-			{
-				return false;
-			}
-
-			bool result = _TextureArray->InitializeArray(device, deviceContext, fileNames);
-			if (!result)
-			{
-				return false;
-			}
-
-			return true;
-		}
-
-		ID3D11ShaderResourceView** GetResourceArray()
-		{
-			if (_TextureArray)
-			{
-				return _TextureArray->GetTextureArray();
-			}
-		}
 	};
 }

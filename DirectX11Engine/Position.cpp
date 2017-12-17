@@ -6,7 +6,7 @@
 
 using namespace VectorMath;
 
-PositionClass::PositionClass()
+MovementComponent::MovementComponent()
 	:
 	_frameTime(0.f),
 	_rotationY(0.f),
@@ -21,42 +21,47 @@ PositionClass::PositionClass()
 	_position = XMFLOAT3(0.f, 0.f, 0.f);
 }
 
-PositionClass::PositionClass(const PositionClass& other)
+MovementComponent::MovementComponent(const MovementComponent& other)
 {
 }
 
-PositionClass::~PositionClass()
+MovementComponent::~MovementComponent()
 {
 }
 
-void PositionClass::SetFrameTime(float time)
+bool MovementComponent::Initialize()
+{
+	return true;
+}
+
+void MovementComponent::SetFrameTime(float time)
 {
 	_frameTime = time;
 	return;
 }
 
-float PositionClass::GetFrameTime(float)
+float MovementComponent::GetFrameTime(float)
 {
 	return _frameTime;
 }
 
-XMFLOAT3 PositionClass::GetOrientation() const
+XMFLOAT3 MovementComponent::GetOrientation() const
 {
 	return _orientation;
 }
 
-XMFLOAT3 PositionClass::GetPosition() const
+XMFLOAT3 MovementComponent::GetPosition() const
 {
 	return _position;
 }
 
-void PositionClass::SetOrientation(XMFLOAT3& newOrientation)
+void MovementComponent::SetOrientation(XMFLOAT3& newOrientation)
 {
 	_orientation = newOrientation;
 	return;
 }
 
-void PositionClass::TurnLeft(bool keydown)
+void MovementComponent::TurnLeft(bool keydown)
 {
 	// If the key is pressed increase the speed at which the camera turns left.  If not slow down the turn speed.
 	if (keydown)
@@ -88,7 +93,7 @@ void PositionClass::TurnLeft(bool keydown)
 	return;
 }
 
-void PositionClass::TurnRight(bool keydown)
+void MovementComponent::TurnRight(bool keydown)
 {
 	// If the key is pressed increase the speed at which the camera turns right.  If not slow down the turn speed.
 	if (keydown)
@@ -120,33 +125,37 @@ void PositionClass::TurnRight(bool keydown)
 	return;
 }
 
-void PositionClass::SetMouseLocation(int X, int Y)
+void MovementComponent::SetMouseLocation(int X, int Y)
 {
 	mouseX = X;
 	mouseY = Y;
 }
 
-void PositionClass::MoveForward(bool keydown)
+void MovementComponent::MoveForward(bool keydown)
 {
 	MoveInDirection(keydown, _fwdIncrement, 0.f, 0.f, 1.f);
 }
 
-void PositionClass::MoveBack(bool keydown)
+void MovementComponent::MoveBack(bool keydown)
 {
 	MoveInDirection(keydown, _backIncrement, 0.f, 0.f, -1.f);
 }
 
-void PositionClass::MoveLeft(bool keydown)
+void MovementComponent::MoveLeft(bool keydown)
 {
 	MoveInDirection(keydown, _leftIncrement, -1.f, 0.f, 0.f);
 }
 
-void PositionClass::MoveRight(bool keydown)
+void MovementComponent::MoveRight(bool keydown)
 {
 	MoveInDirection(keydown, _rightIncrement, 1.f, 0.f, 0.f);
 }
 
-void PositionClass::MoveInDirection(bool keydown, float& increment, float x, float y, float z)
+void MovementComponent::ApplyForce(float deltaTime)
+{
+}
+
+void MovementComponent::MoveInDirection(bool keydown, float& increment, float x, float y, float z)
 {
 	if (keydown)
 	{
@@ -171,7 +180,7 @@ void PositionClass::MoveInDirection(bool keydown, float& increment, float x, flo
 	MoveInDirectionRelative(XMFLOAT3(x,y,z)*increment);
 }
 
-void PositionClass::MoveInDirectionRelative(const XMFLOAT3& displacement)
+void MovementComponent::MoveInDirectionRelative(const XMFLOAT3& displacement)
 {
 	XMVECTOR displacementLocal = XMLoadFloat3(&displacement);
 

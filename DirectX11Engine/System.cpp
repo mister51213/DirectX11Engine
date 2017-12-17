@@ -36,8 +36,18 @@ bool System::Initialize()
 		return false;
 	}
 
-	_World.reset(new World);
-	if (_World) result = _World->Initialize();
+	_Physics.reset(new Physics);
+	if (!_Physics) return false;
+
+	// Initialize the physics oject.
+	result = _Physics->Initialize();
+	if (!result)
+	{
+		throw std::runtime_error("Could not initialize the physics object. - line " + std::to_string(__LINE__));
+	}
+
+	_Scene.reset(new Scene);
+	if (_Scene) result = _Scene->Initialize();
 
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
 	_Graphics.reset(new Graphics);
@@ -136,9 +146,9 @@ bool System::Tick()
 
 	_Input->Tick();
 
-	_World->Tick(_Timer->GetTime(), _Input.get());
+	_Scene->Tick(_Timer->GetTime(), _Input.get());
 
-	_Graphics->UpdateFrame(_Timer->GetTime(), _World.get(), _UI->_Fps->GetFps(), _World->_CamPosition->GetPosition().x, _World->_CamPosition->GetPosition().y, _World->_CamPosition->GetPosition().z, _World->_CamPosition->GetOrientation().x, _World->_CamPosition->GetOrientation().y, _World->_CamPosition->GetOrientation().z);
+	_Graphics->UpdateFrame(_Timer->GetTime(), _Scene.get(), _UI->_Fps->GetFps(), _Scene->_Camera->GetMovementComponent()->GetPosition().x, _Scene->_Camera->GetMovementComponent()->GetPosition().y, _Scene->_Camera->GetMovementComponent()->GetPosition().z, _Scene->_Camera->GetMovementComponent()->GetOrientation().x, _Scene->_Camera->GetMovementComponent()->GetOrientation().y, _Scene->_Camera->GetMovementComponent()->GetOrientation().z);
 
 	_UI->Tick();
 

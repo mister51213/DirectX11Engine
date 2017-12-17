@@ -42,7 +42,7 @@ public:
 	bool InitializeLights();
 	bool InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight);
 	bool InitializeUI(int screenWidth, int screenHeight);
-	bool UpdateFrame(float frameTime, class World* world, int fps, float posX, float posY, float posZ,
+	bool UpdateFrame(float frameTime, class Scene* world, int fps, float posX, float posY, float posZ,
 		float rotX, float rotY, float rotZ);
 
 	bool DrawFrame(float frameTime);

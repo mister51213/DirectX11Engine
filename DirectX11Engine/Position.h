@@ -8,18 +8,21 @@
 //////////////
 #include <math.h>
 #include <DirectXMath.h>
+#include "Physics.h"
 
 using namespace DirectX;
 
 ////////////////////////////////////////////////////////////////////////////////
-// Class name: PositionClass
+// Class name: MovementComponent
 ////////////////////////////////////////////////////////////////////////////////
-class PositionClass
+class MovementComponent
 {
 public:
-	PositionClass();
-	PositionClass(const PositionClass&);
-	~PositionClass();
+	MovementComponent();
+	MovementComponent(const MovementComponent&);
+	~MovementComponent();
+
+	bool Initialize();
 
 	void SetFrameTime(float);
 	float GetFrameTime(float);
@@ -32,11 +35,14 @@ public:
 	void SetMouseLocation(int X, int Y);
 
 	void MoveForward(bool keydown);
-	void PositionClass::MoveInDirection(bool keydown, float& increment, float x, float y, float z);
+	void MovementComponent::MoveInDirection(bool keydown, float& increment, float x, float y, float z);
 	void MoveInDirectionRelative(const XMFLOAT3 & displacement);
 	void MoveBack(bool keydown);
 	void MoveLeft(bool keydown);
 	void MoveRight(bool keydown);
+
+	///////////// PHYSICS BASED ///////////////////
+	void ApplyForce(float deltaTime);
 
 private:
 	float _frameTime;

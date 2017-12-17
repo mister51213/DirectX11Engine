@@ -8,7 +8,9 @@ public:
 	Physics();
 	~Physics();
 
-	void Initialize();
+	bool Initialize();
+
+	void Tick(float deltaTime);
 
 };
 
