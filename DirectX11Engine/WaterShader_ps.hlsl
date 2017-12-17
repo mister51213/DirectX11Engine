@@ -11,10 +11,10 @@ SamplerState SampleType;
 // 2) refraction texture for the refraction of the scene. 
 // 3) normal map texture for simulating water ripples.
 
-Texture2D shaderTextures[6];
-Texture2D reflectionTexture;
-Texture2D refractionTexture;
-Texture2D normalTexture;
+Texture2D shaderTextures[3];
+//Texture2D reflectionTexture;
+//Texture2D refractionTexture;
+//Texture2D normalTexture;
 
 cbuffer WaterBuffer
 {
@@ -59,7 +59,8 @@ float4 WaterPixelShader(PixelInputType input) : SV_TARGET
     refractTexCoord.y = -input.refractionPosition.y / input.refractionPosition.w / 2.0f + 0.5f;
 
     // Sample the normal from the normal map texture.
-    normalMap = normalTexture.Sample(SampleType, input.tex);
+    //normalMap = normalTexture.Sample(SampleType, input.tex);
+    normalMap = shaderTextures[2].Sample(SampleType, input.tex);
 
     // Expand the range of the normal from (0,1) to (-1,+1).
     normal = (normalMap.xyz * 2.0f) - 1.0f;
@@ -69,8 +70,10 @@ float4 WaterPixelShader(PixelInputType input) : SV_TARGET
     refractTexCoord = refractTexCoord + (normal.xy * reflectRefractScale);
 
     // Sample the texture pixels from the textures using the updated texture coordinates.
-    reflectionColor = reflectionTexture.Sample(SampleType, reflectTexCoord);
-    refractionColor = refractionTexture.Sample(SampleType, refractTexCoord);
+    //reflectionColor = reflectionTexture.Sample(SampleType, reflectTexCoord);
+    //refractionColor = refractionTexture.Sample(SampleType, refractTexCoord);
+	reflectionColor = shaderTextures[0].Sample(SampleType, reflectTexCoord);
+    refractionColor = shaderTextures[1].Sample(SampleType, refractTexCoord);
 
     // Combine the reflection and refraction results for the final color.
     color = lerp(reflectionColor, refractionColor, 0.6f);
