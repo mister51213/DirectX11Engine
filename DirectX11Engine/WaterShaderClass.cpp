@@ -14,12 +14,13 @@ WaterShaderClass::WaterShaderClass(const WaterShaderClass &)
 WaterShaderClass::~WaterShaderClass()
 {}
 
-bool WaterShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView * reflectionTexture, ID3D11ShaderResourceView * refractionTexture, ID3D11ShaderResourceView * normalTexture, float waterTranslation, float reflectRefractScale)
+bool WaterShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, 
+	XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, ID3D11ShaderResourceView * reflectionTexture, ID3D11ShaderResourceView * refractionTexture, ID3D11ShaderResourceView * normalTexture, float waterTranslation, float reflectRefractScale)
 {
 	bool result;
 
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, reflectionTexture, refractionTexture, normalTexture, waterTranslation, reflectRefractScale);
+	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, textureArray, reflectionTexture, refractionTexture, normalTexture, waterTranslation, reflectRefractScale);
 	if (!result)
 	{
 		return false;
@@ -234,6 +235,7 @@ void WaterShaderClass::ShutdownShader()
 
 bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, XMMATRIX reflectionMatrix,
+	ID3D11ShaderResourceView** textureArray,
 	ID3D11ShaderResourceView* reflectionTexture,
 	ID3D11ShaderResourceView* refractionTexture, ID3D11ShaderResourceView* normalTexture,
 	float waterTranslation, float reflectRefractScale)
@@ -243,15 +245,13 @@ bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	unsigned int bufferNumber;
 
-	//MatrixBufferType* dataPtr;
-	ReflectionBufferType* dataPtr2;
-	WaterBufferType* dataPtr3;
 
 	result = SetBaseParameters(&mappedResource, deviceContext, worldMatrix, viewMatrix, projectionMatrix, bufferNumber);
 	if (FAILED(result))
 	{
 		return false;
 	}
+
 
 	// Set the reflection texture resource in the pixel shader.
 	deviceContext->PSSetShaderResources(0, 1, &reflectionTexture);
@@ -261,6 +261,11 @@ bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	// Set the normal map texture resource in the pixel shader.
 	deviceContext->PSSetShaderResources(2, 1, &normalTexture);
+
+	//deviceContext->PSSetShaderResources(3, 3, textureArray);
+	
+	ReflectionBufferType* dataPtr2;
+	WaterBufferType* dataPtr3;
 
 	// Transpose all the input matrices to prepare them for the shader.
 	reflectionMatrix = XMMatrixTranspose(reflectionMatrix);

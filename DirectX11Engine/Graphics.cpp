@@ -548,9 +548,10 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	_WaterModel->Render(_D3D->GetDeviceContext());
 
 	// Render the water model using the water shader.
+	ID3D11ShaderResourceView** texArrayPlaceHolder = nullptr;
 	result =
 		_ShaderManager->RenderWaterShader(_D3D->GetDeviceContext(), _WaterModel->GetIndexCount(), worldMatrix, viewMatrix,
-		projectionMatrix, reflectionMatrix, _ReflectionTexture->GetShaderResourceView(), _RefractionTexture->GetShaderResourceView(), 
+		projectionMatrix, reflectionMatrix, texArrayPlaceHolder, _ReflectionTexture->GetShaderResourceView(), _RefractionTexture->GetShaderResourceView(),
 			_WaterModel->GetMaterial()->GetResourceArray()[0],
 			_waterTranslation, 0.01f);
 	if (!result)

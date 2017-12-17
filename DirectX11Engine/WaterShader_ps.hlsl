@@ -11,6 +11,7 @@ SamplerState SampleType;
 // 2) refraction texture for the refraction of the scene. 
 // 3) normal map texture for simulating water ripples.
 
+Texture2D shaderTextures[6];
 Texture2D reflectionTexture;
 Texture2D refractionTexture;
 Texture2D normalTexture;
