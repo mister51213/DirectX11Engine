@@ -254,15 +254,15 @@ bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 
 	// Set the reflection texture resource in the pixel shader.
-	deviceContext->PSSetShaderResources(0, 1, &reflectionTexture);
+	//deviceContext->PSSetShaderResources(0, 1, &reflectionTexture);
 
 	// Set the refraction texture resource in the pixel shader.
-	deviceContext->PSSetShaderResources(1, 1, &refractionTexture);
+	//deviceContext->PSSetShaderResources(1, 1, &refractionTexture);
 
 	// Set the normal map texture resource in the pixel shader.
-	deviceContext->PSSetShaderResources(2, 1, &normalTexture);
+	//deviceContext->PSSetShaderResources(2, 1, &normalTexture);
 
-	//deviceContext->PSSetShaderResources(3, 3, textureArray);
+	deviceContext->PSSetShaderResources(0, 3, textureArray);
 	
 	ReflectionBufferType* dataPtr2;
 	WaterBufferType* dataPtr3;

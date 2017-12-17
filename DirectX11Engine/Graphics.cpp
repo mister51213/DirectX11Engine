@@ -522,7 +522,6 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 		worldMatrix, 
 		viewMatrix,
 		projectionMatrix, 
-		//_BathModel->GetTextureArray(), 
 		_BathModel->GetMaterial(),
 		_BathModel->GetMaterial()->GetResourceArray(),
 		_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(),
@@ -548,10 +547,14 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	_WaterModel->Render(_D3D->GetDeviceContext());
 
 	// Render the water model using the water shader.
-	ID3D11ShaderResourceView** texArrayPlaceHolder = nullptr;
+	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>tempTexViews;
+	tempTexViews.push_back(_ReflectionTexture->GetShaderResourceView());
+	tempTexViews.push_back(_RefractionTexture->GetShaderResourceView());
+	tempTexViews.push_back(_WaterModel->GetMaterial()->GetResourceArray()[0]);
+
 	result =
 		_ShaderManager->RenderWaterShader(_D3D->GetDeviceContext(), _WaterModel->GetIndexCount(), worldMatrix, viewMatrix,
-		projectionMatrix, reflectionMatrix, texArrayPlaceHolder, _ReflectionTexture->GetShaderResourceView(), _RefractionTexture->GetShaderResourceView(),
+		projectionMatrix, reflectionMatrix, tempTexViews.data()->GetAddressOf(), _ReflectionTexture->GetShaderResourceView(), _RefractionTexture->GetShaderResourceView(),
 			_WaterModel->GetMaterial()->GetResourceArray()[0],
 			_waterTranslation, 0.01f);
 	if (!result)
