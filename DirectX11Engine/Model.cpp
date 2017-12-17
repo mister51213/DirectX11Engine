@@ -4,12 +4,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "Model.h"
 
+using namespace GfxUtil;
+
 Model::Model()
 	:
 	_vertexBuffer(0),
-	_indexBuffer(0),
-	_TextureArray(0),
-	_model(0)
+	_indexBuffer(0)//,
+	//_TextureArray(0)
 {}
 
 Model::Model(const Model& other)
@@ -18,7 +19,7 @@ Model::Model(const Model& other)
 Model::~Model()
 {}
 
-bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename1, char* textureFilename2, char* lightMapFileName3, char* alphaFileName4, char* normalMapFilename5, char* specMapFilename6)
+bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, vector<char*> fileNames, EShaderType shaderType)
 {
 	bool result;
 
@@ -39,28 +40,31 @@ bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 		return false;
 	}
 
-	// Load the texture for this model.
-	result = LoadTextures(device, deviceContext, textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6);
-	if (!result)
-	{
-		return false;
-	}
+	// Loads the textures in the material. Material now holds pointer to texture class
+	_material.reset(new Material);
+
+	//vector<char*> fileNames{ textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6 };
+	_material->Initialize(device, deviceContext, EShaderType::ELIGHT_SPECULAR, fileNames);
+
+	// TESTING AREA for different string functions
+	//WCHAR* wstr = (WCHAR*)fileName1; // not working
+	//WCHAR* wstr2 = reinterpret_cast<WCHAR*>(fileName1); // not working
+	//const WCHAR *pwcsName2 = charToWChar(fileName1); // works even though Microsoft doesnt like it
+	//const WCHAR *pwcsName3 = charToWChar_S(fileName1); // BAD
+	// TESTING AREA
 
 	return true;
 }
 
+Material* Model::GetMaterial()
+{
+	return _material.get();
+}
+
 void Model::Shutdown()
 {
-	// Release the model texture.
-	ReleaseTextures();
-
 	// Shutdown the vertex and index buffers.
 	ShutdownBuffers();
-
-	// Release the model data.
-	ReleaseModel();
-
-	return;
 }
 
 void Model::Render(ID3D11DeviceContext* deviceContext)
@@ -76,11 +80,11 @@ int Model::GetIndexCount()
 	return _indexCount;
 }
 
-//ID3D11ShaderResourceView* Model::GetTexture()
 ID3D11ShaderResourceView** Model::GetTextureArray()
 {
-	//return _Texture->GetTexture();
-	return _TextureArray->GetTextureArray();
+	//return _TextureArray->GetTextureArray();
+
+	return _material->GetResourceArray();
 }
 
 bool Model::InitializeBuffers(ID3D11Device* device)
@@ -90,12 +94,6 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
-
-	// Set the number of vertices in the vertex array.
-	//_vertexCount = 3;
-
-	// Set the number of indices in the index array.
-	//_indexCount = 3;
 
 	// Create the vertex array.
 	vertices = new VertexType[_vertexCount];
@@ -114,31 +112,16 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 	// Load the vertex array and index array with data.
 	for (int i = 0; i < _vertexCount; i++)
 	{
-		vertices[i].position = XMFLOAT3(_model[i].x, _model[i].y, _model[i].z);
-		vertices[i].texture = XMFLOAT2(_model[i].tu, _model[i].tv);
-		vertices[i].normal = XMFLOAT3(_model[i].nx, _model[i].ny, _model[i].nz);
-		vertices[i].tangent = XMFLOAT3(_model[i].tx, _model[i].ty, _model[i].tz);
-		vertices[i].binormal = XMFLOAT3(_model[i].bx, _model[i].by, _model[i].bz);
+		vertices[i].position = XMFLOAT3(_model.get()[i].x, _model.get()[i].y, _model.get()[i].z);
+		vertices[i].texture = XMFLOAT2(_model.get()[i].tu, _model.get()[i].tv);
+		vertices[i].normal = XMFLOAT3(_model.get()[i].nx, _model.get()[i].ny, _model.get()[i].nz);
+		vertices[i].tangent = XMFLOAT3(_model.get()[i].tx, _model.get()[i].ty, _model.get()[i].tz);
+		vertices[i].binormal = XMFLOAT3(_model.get()[i].bx, _model.get()[i].by, _model.get()[i].bz);
 
 		indices[i] = i;
 	}
 
-	//// Load the vertex array with data.
-	//vertices[0].position = XMFLOAT3(-1.0f, -1.0f, 0.0f);  // Bottom left.
-	//vertices[0].texture = XMFLOAT2(0.0f, 1.0f);
-	//vertices[0].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
-	//vertices[1].position = XMFLOAT3(0.0f, 1.0f, 0.0f);  // Top middle.
-	//vertices[1].texture = XMFLOAT2(0.5f, 0.0f);
-	//vertices[1].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
-	//vertices[2].position = XMFLOAT3(1.0f, -1.0f, 0.0f);  // Bottom right.
-	//vertices[2].texture = XMFLOAT2(1.0f, 1.0f);
-	//vertices[2].normal = XMFLOAT3(0.0f, 0.0f, -1.0f);
-	//// Load the index array with data.
-	//indices[0] = 0;  // Bottom left.
-	//indices[1] = 1;  // Top middle.
-	//indices[2] = 2;  // Bottom right.
-
-					 // Set up the description of the static vertex buffer.
+	// Set up the description of the static vertex buffer.
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	vertexBufferDesc.ByteWidth = sizeof(VertexType) * _vertexCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -228,27 +211,6 @@ void Model::RenderBuffers(ID3D11DeviceContext* deviceContext)
 	return;
 }
 
-bool Model::LoadTextures(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* normalMapFileName, char* specMapFilename6)
-{
-	bool result;
-
-	// Create the texture object.
-	_TextureArray = new TextureClass;
-	if (!_TextureArray)
-	{
-		return false;
-	}
-
-	// Initialize the texture object.
-	result = _TextureArray->Initialize(device, deviceContext, fileName1, fileName2, fileName3, fileName4, normalMapFileName, specMapFilename6);
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
-
 void Model::CalculateModelVectors()
 {
 	int faceCount, index;
@@ -265,34 +227,34 @@ void Model::CalculateModelVectors()
 	for (int i = 0; i < faceCount; i++)
 	{
 		// Get the three vertices for this face from the model.
-		vertex1.x = _model[index].x;
-		vertex1.y = _model[index].y;
-		vertex1.z = _model[index].z;
-		vertex1.tu = _model[index].tu;
-		vertex1.tv = _model[index].tv;
-		vertex1.nx = _model[index].nx;
-		vertex1.ny = _model[index].ny;
-		vertex1.nz = _model[index].nz;
+		vertex1.x = _model.get()[index].x;
+		vertex1.y = _model.get()[index].y;
+		vertex1.z = _model.get()[index].z;
+		vertex1.tu = _model.get()[index].tu;
+		vertex1.tv = _model.get()[index].tv;
+		vertex1.nx = _model.get()[index].nx;
+		vertex1.ny = _model.get()[index].ny;
+		vertex1.nz = _model.get()[index].nz;
 		index++;
 
-		vertex2.x = _model[index].x;
-		vertex2.y = _model[index].y;
-		vertex2.z = _model[index].z;
-		vertex2.tu = _model[index].tu;
-		vertex2.tv = _model[index].tv;
-		vertex2.nx = _model[index].nx;
-		vertex2.ny = _model[index].ny;
-		vertex2.nz = _model[index].nz;
+		vertex2.x = _model.get()[index].x;
+		vertex2.y = _model.get()[index].y;
+		vertex2.z = _model.get()[index].z;
+		vertex2.tu = _model.get()[index].tu;
+		vertex2.tv = _model.get()[index].tv;
+		vertex2.nx = _model.get()[index].nx;
+		vertex2.ny = _model.get()[index].ny;
+		vertex2.nz = _model.get()[index].nz;
 		index++;
 
-		vertex3.x = _model[index].x;
-		vertex3.y = _model[index].y;
-		vertex3.z = _model[index].z;
-		vertex3.tu = _model[index].tu;
-		vertex3.tv = _model[index].tv;
-		vertex3.nx = _model[index].nx;
-		vertex3.ny = _model[index].ny;
-		vertex3.nz = _model[index].nz;
+		vertex3.x = _model.get()[index].x;
+		vertex3.y = _model.get()[index].y;
+		vertex3.z = _model.get()[index].z;
+		vertex3.tu = _model.get()[index].tu;
+		vertex3.tv = _model.get()[index].tv;
+		vertex3.nx = _model.get()[index].nx;
+		vertex3.ny = _model.get()[index].ny;
+		vertex3.nz = _model.get()[index].nz;
 		index++;
 
 		// Calculate the tangent and binormal of that face.
@@ -302,35 +264,35 @@ void Model::CalculateModelVectors()
 		CalculateNormal(tangent, binormal, normal);
 
 		// Store the normal, tangent, and binormal for this face back in the model structure.
-		_model[index - 1].nx = normal.x;
-		_model[index - 1].ny = normal.y;
-		_model[index - 1].nz = normal.z;
-		_model[index - 1].tx = tangent.x;
-		_model[index - 1].ty = tangent.y;
-		_model[index - 1].tz = tangent.z;
-		_model[index - 1].bx = binormal.x;
-		_model[index - 1].by = binormal.y;
-		_model[index - 1].bz = binormal.z;
+		_model.get()[index - 1].nx = normal.x;
+		_model.get()[index - 1].ny = normal.y;
+		_model.get()[index - 1].nz = normal.z;
+		_model.get()[index - 1].tx = tangent.x;
+		_model.get()[index - 1].ty = tangent.y;
+		_model.get()[index - 1].tz = tangent.z;
+		_model.get()[index - 1].bx = binormal.x;
+		_model.get()[index - 1].by = binormal.y;
+		_model.get()[index - 1].bz = binormal.z;
 
-		_model[index - 2].nx = normal.x;
-		_model[index - 2].ny = normal.y;
-		_model[index - 2].nz = normal.z;
-		_model[index - 2].tx = tangent.x;
-		_model[index - 2].ty = tangent.y;
-		_model[index - 2].tz = tangent.z;
-		_model[index - 2].bx = binormal.x;
-		_model[index - 2].by = binormal.y;
-		_model[index - 2].bz = binormal.z;
+		_model.get()[index - 2].nx = normal.x;
+		_model.get()[index - 2].ny = normal.y;
+		_model.get()[index - 2].nz = normal.z;
+		_model.get()[index - 2].tx = tangent.x;
+		_model.get()[index - 2].ty = tangent.y;
+		_model.get()[index - 2].tz = tangent.z;
+		_model.get()[index - 2].bx = binormal.x;
+		_model.get()[index - 2].by = binormal.y;
+		_model.get()[index - 2].bz = binormal.z;
 
-		_model[index - 3].nx = normal.x;
-		_model[index - 3].ny = normal.y;
-		_model[index - 3].nz = normal.z;
-		_model[index - 3].tx = tangent.x;
-		_model[index - 3].ty = tangent.y;
-		_model[index - 3].tz = tangent.z;
-		_model[index - 3].bx = binormal.x;
-		_model[index - 3].by = binormal.y;
-		_model[index - 3].bz = binormal.z;
+		_model.get()[index - 3].nx = normal.x;
+		_model.get()[index - 3].ny = normal.y;
+		_model.get()[index - 3].nz = normal.z;
+		_model.get()[index - 3].tx = tangent.x;
+		_model.get()[index - 3].ty = tangent.y;
+		_model.get()[index - 3].tz = tangent.z;
+		_model.get()[index - 3].bx = binormal.x;
+		_model.get()[index - 3].by = binormal.y;
+		_model.get()[index - 3].bz = binormal.z;
 	}
 
 	return;
@@ -413,19 +375,6 @@ void Model::CalculateNormal(VectorType tangent, VectorType binormal, VectorType&
 	return;
 }
 
-void Model::ReleaseTextures()
-{
-	// Release the texture object.
-	if (_TextureArray)
-	{
-		_TextureArray->Shutdown();
-		delete _TextureArray;
-		_TextureArray = 0;
-	}
-
-	return;
-}
-
 bool Model::LoadModel(char* filename)
 {
 	ifstream fin;
@@ -455,7 +404,8 @@ bool Model::LoadModel(char* filename)
 	_indexCount = _vertexCount;
 
 	// Create the model using the vertex count that was read in.
-	_model = new ModelType[_vertexCount];
+	//_model = new ModelType[_vertexCount];
+	_model.reset(new ModelType[_vertexCount]);
 	if (!_model)
 	{
 		return false;
@@ -473,24 +423,13 @@ bool Model::LoadModel(char* filename)
 	// Read in the vertex data.
 	for (i = 0; i < _vertexCount; i++)
 	{
-		fin >> _model[i].x >> _model[i].y >> _model[i].z;
-		fin >> _model[i].tu >> _model[i].tv;
-		fin >> _model[i].nx >> _model[i].ny >> _model[i].nz;
+		fin >> _model.get()[i].x >>  _model.get()[i].y >> _model.get()[i].z;
+		fin >> _model.get()[i].tu >> _model.get()[i].tv;
+		fin >> _model.get()[i].nx >> _model.get()[i].ny >> _model.get()[i].nz;
 	}
 
 	// Close the model file.
 	fin.close();
 
 	return true;
-}
-
-void Model::ReleaseModel()
-{
-	if (_model)
-	{
-		delete[] _model;
-		_model = 0;
-	}
-
-	return;
 }

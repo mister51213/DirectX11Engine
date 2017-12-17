@@ -123,7 +123,7 @@ void Input::Shutdown()
 	return;
 }
 
-bool Input::Frame()
+bool Input::Tick()
 {
 	bool result;
 
@@ -258,4 +258,14 @@ void Input::GetMouseLocation(int& mouseX, int& mouseY)
 	mouseX = _mouseX;
 	mouseY = _mouseY;
 	return;
+}
+
+uint64_t Input::GetMouseXY()
+{
+	//return (__int64(_mouseX) << 32) | __int64(_mouseY);
+
+	uint64_t wideX = static_cast<uint64_t>(*reinterpret_cast<uint32_t *>(&_mouseX));
+	uint64_t wideY = static_cast<uint64_t>(*reinterpret_cast<uint32_t *>(&_mouseY));
+
+	return ((wideX & 0xffffffff) << 32) | (wideY & 0xffffffff);
 }

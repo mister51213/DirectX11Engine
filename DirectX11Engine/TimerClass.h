@@ -19,7 +19,7 @@ public:
 	~TimerClass();
 
 	bool Initialize();
-	void Frame();
+	void Tick();
 
 	float GetTime();
 

@@ -8,6 +8,12 @@
 //////////////
 #include <d3d11.h>
 #include <stdio.h>
+#include <wrl/client.h>
+#include <vector>
+
+#include <memory>
+
+using namespace std;
 
 class TextureClass
 {
@@ -26,28 +32,20 @@ public:
 	TextureClass(const TextureClass&);
 	~TextureClass();
 
-	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename1, char* filename2, char* filename3, char* filename4, char* filename5, char* filename6);
-	void Shutdown();
-
-	ID3D11ShaderResourceView* GetTexture();
+	bool InitializeTexture(ID3D11Device * device, ID3D11DeviceContext * deviceContext, char * filename, int i);
+	bool InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> filenames);
+	bool InitializeTexTga(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename, unsigned char** targaData, ID3D11Texture2D** pTexture, ID3D11ShaderResourceView** pTexView);
+	
 	ID3D11ShaderResourceView** GetTextureArray();
 
 private:
 	unsigned char* LoadTarga(char*, int&, int&, unsigned char* pTargaData);
+	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>> _textureViews;
+	
+	// for dds and everything else
+	vector<Microsoft::WRL::ComPtr <ID3D11Resource>> _resourceArray;
 
-	unsigned char* _targaData1;
-	unsigned char* _targaData2;
-	unsigned char* _targaData3;
-	unsigned char* _targaData4;
-	unsigned char* _targaData5;
-	unsigned char* _targaData6;
-	ID3D11Texture2D* _texture1;
-	ID3D11Texture2D* _texture2;
-	ID3D11Texture2D* _texture3;
-	ID3D11Texture2D* _texture4;
-	ID3D11Texture2D* _texture5;
-	ID3D11Texture2D* _texture6;
-	ID3D11ShaderResourceView* _textureViewSingle;
-	ID3D11ShaderResourceView* _textureViews[6];
-
+	// targa
+	vector<ID3D11Texture2D*> _targaTextures;
+	vector<unsigned char*> _targaData;
 };

@@ -1,31 +1,82 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: texture.cpp
 ////////////////////////////////////////////////////////////////////////////////
+#pragma comment(lib, "Shlwapi.lib")
+
 #include "texture.h"
+#include "DDSTextureLoader.h"
+#include "WICTextureLoader.h"
+#include <stdlib.h>
+#include <stdexcept>
+#include <string>
+#include "GfxUtil.h"
+#include "Shlwapi.h"
 
-TextureClass::TextureClass()
-	:
-	_targaData1(0),
-	_targaData2(0),
-	_texture1(0),
-	_texture2(0)
-	//_texture(0),
-	//_textureView(0),
+using namespace std;
+using namespace DirectX;
+using namespace GfxUtil;
+
+TextureClass::TextureClass(){}
+TextureClass::TextureClass(const TextureClass& other){}
+TextureClass::~TextureClass(){}
+
+//@TODO - DONT USE YET! something not working - not initializing all the files in the array for some reason
+bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> filenames)
 {
-	_textureViews[0] = 0;
-	_textureViews[1] = 0;
-	_textureViews[2] = 0;
+	for (int i = 0; i < filenames.size(); ++i)
+	{
+		_textureViews.push_back(Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>());
+		InitializeTexture(device, deviceContext, filenames[i], i);
+	}
+	return true;
 }
 
-TextureClass::TextureClass(const TextureClass& other)
+bool TextureClass::InitializeTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename, int i)
 {
+	string extension = PathFindExtension(filename);
+	
+	if (extension == ".tga")
+	{
+		unsigned char* ptr1;	_targaData.push_back(ptr1);
+		ID3D11Texture2D* ptr2;	_targaTextures.push_back(ptr2);
+		InitializeTexTga(device, deviceContext, filename, &_targaData[i], &_targaTextures[i], &_textureViews[i]);
+		return false;
+	}
+	else if (extension == ".dds")
+	{
+		_resourceArray.push_back(Microsoft::WRL::ComPtr <ID3D11Resource>());
+		bool result = CreateDDSTextureFromFile(device, deviceContext, charToWChar(filename), &_resourceArray[i], &_textureViews[i]);
+		if (FAILED(result))
+		{
+			throw std::runtime_error("Failed to create dds texture: " + std::to_string(__LINE__));
+			return false;
+		}
+
+		//@REFERENCE
+		//	HRESULT __cdecl CreateDDSTextureFromFile(
+		//		_In_ ID3D11Device* d3dDevice,
+		//		_In_opt_ ID3D11DeviceContext* d3dContext,
+		//		_In_z_ const wchar_t* szFileName,
+		//		_Outptr_opt_ ID3D11Resource** texture,
+		//		_Outptr_opt_ ID3D11ShaderResourceView** textureView,
+		//		_In_ size_t maxsize = 0,
+		//		_Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr);
+	}
+	else
+	{
+		_resourceArray.push_back(Microsoft::WRL::ComPtr <ID3D11Resource>());
+		bool result = CreateWICTextureFromFile(device, deviceContext, charToWChar(filename), &_resourceArray[i], &_textureViews[i]);
+		if (FAILED(result))
+		{
+			throw std::runtime_error("Failed to create WIC texture: " + std::to_string(__LINE__));
+			return false;
+		}
+	}
+
+	return true;
 }
 
-TextureClass::~TextureClass()
-{
-}
-
-bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename1, char* filename2, char* filename3, char* filename4, char* filename5, char* filename6SpecMap)
+bool TextureClass::InitializeTexTga(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename, unsigned char** targaData, ID3D11Texture2D** pTexture, ID3D11ShaderResourceView** pTexView)
 {
 	bool result;
 
@@ -34,59 +85,12 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	HRESULT hResult;
 	unsigned int rowPitch;
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
-	
-	/*
-	TODO: Need to use new version of D3DX11CreateShaderResourceViewFromFile here
-	so we can work with any image type
-	
-	result = D3DCreateShaderResourceViewFromFile(device, filename, NULL, NULL, &m_texture, NULL);
-	
-	https://www.gamedev.net/forums/topic/656732-solved-d3dx11createshaderresourceviewfromfile-deprecated/
-	*/
 
-	// Load the targa image data into memory.
-	//result = LoadTarga(filename1, height, width, _targaData1);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	_targaData1 = LoadTarga(filename1, height, width, _targaData1);
-	if (!_targaData1)
+	*targaData = LoadTarga(filename, height, width, *targaData);
+	if (!*targaData)
 	{
 		return false;
 	}
-	
-	_targaData2 = LoadTarga(filename2, height, width, _targaData2);
-	if (!_targaData2)
-	{
-		return false;
-	}
-
-	_targaData3 = LoadTarga(filename3, height, width, _targaData3);
-	if (!_targaData3)
-	{
-		return false;
-	}
-
-	_targaData4 = LoadTarga(filename4, height, width, _targaData4);
-	if (!_targaData4)
-	{
-		return false;
-	}
-
-	_targaData5 = LoadTarga(filename5, height, width, _targaData5);
-	if (!_targaData5)
-	{
-		return false;
-	}
-
-	_targaData6 = LoadTarga(filename6SpecMap, height, width, _targaData6);
-	if (!_targaData6)
-	{
-		return false;
-	}
-	
 
 	// Setup the description of the texture.
 	textureDesc.Height = height;
@@ -102,42 +106,7 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
 	// Create the empty texture.
-	hResult = device->CreateTexture2D(&textureDesc, NULL, &_texture1/*&_texture*/);
-	if (FAILED(hResult))
-	{
-		return false;
-	}
-
-	// Create the empty texture.
-	hResult = device->CreateTexture2D(&textureDesc, NULL, &_texture2);
-	if (FAILED(hResult))
-	{
-		return false;
-	}
-
-	// Create the empty light map.
-	hResult = device->CreateTexture2D(&textureDesc, NULL, &_texture3);
-	if (FAILED(hResult))
-	{
-		return false;
-	}
-
-	// Create the empty alpha map.
-	hResult = device->CreateTexture2D(&textureDesc, NULL, &_texture4);
-	if (FAILED(hResult))
-	{
-		return false;
-	}
-
-	// Create the empty normal map
-	hResult = device->CreateTexture2D(&textureDesc, NULL, &_texture5);
-	if (FAILED(hResult))
-	{
-		return false;
-	}
-
-	// Create the empty spec map
-	hResult = device->CreateTexture2D(&textureDesc, NULL, &_texture6);
+	hResult = device->CreateTexture2D(&textureDesc, NULL, pTexture);
 	if (FAILED(hResult))
 	{
 		return false;
@@ -146,14 +115,7 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	// Set the row pitch of the targa image data.
 	rowPitch = (width * 4) * sizeof(unsigned char);
 
-	// should use UpdateSubresource for something that will be loaded once or that gets loaded rarely during loading sequences. 
-	// Copy the targa image data into the texture.
-	deviceContext->UpdateSubresource(_texture1, 0, NULL, _targaData1, rowPitch, 0);
-	deviceContext->UpdateSubresource(_texture2, 0, NULL, _targaData2, rowPitch, 0);
-	deviceContext->UpdateSubresource(_texture3, 0, NULL, _targaData3, rowPitch, 0);
-	deviceContext->UpdateSubresource(_texture4, 0, NULL, _targaData4, rowPitch, 0);
-	deviceContext->UpdateSubresource(_texture5, 0, NULL, _targaData5, rowPitch, 0);
-	deviceContext->UpdateSubresource(_texture6, 0, NULL, _targaData6, rowPitch, 0);
+	deviceContext->UpdateSubresource(*pTexture, 0, NULL, *targaData, rowPitch, 0);
 
 	// Setup the shader resource view description.
 	srvDesc.Format = textureDesc.Format;
@@ -162,197 +124,28 @@ bool TextureClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceC
 	srvDesc.Texture2D.MipLevels = -1;
 
 	// Create the 1st shader resource view for the texture.
-	hResult = device->CreateShaderResourceView(_texture1, &srvDesc, &_textureViews[0]);
-	if (FAILED(hResult))
-	{
-		return false;
-	}
-
-	// Create the 2nd shader resource view for the texture.
-	hResult = device->CreateShaderResourceView(_texture2, &srvDesc, &_textureViews[1]);
-	if (FAILED(hResult))
-	{
-		return false;
-	}
-
-	// Create the 3rd shader resource view for the texture.
-	hResult = device->CreateShaderResourceView(_texture3, &srvDesc, &_textureViews[2]);
-	if (FAILED(hResult))
-	{
-		return false;
-	}
-
-	// Create the 4th shader resource view for the texture.
-	hResult = device->CreateShaderResourceView(_texture4, &srvDesc, &_textureViews[3]);
-	if (FAILED(hResult))
-	{
-		return false;
-	}
-
-	// Create the 5th shader resource view for the texture.
-	hResult = device->CreateShaderResourceView(_texture5, &srvDesc, &_textureViews[4]);
-	if (FAILED(hResult))
-	{
-		return false;
-	}
-
-	// Create the 5th shader resource view for the texture.
-	hResult = device->CreateShaderResourceView(_texture6, &srvDesc, &_textureViews[5]);
+	hResult = device->CreateShaderResourceView(*pTexture, &srvDesc, pTexView);
 	if (FAILED(hResult))
 	{
 		return false;
 	}
 
 	// Generate mipmaps for this texture.
-	deviceContext->GenerateMips(_textureViews[0]);
-	deviceContext->GenerateMips(_textureViews[1]);
-	deviceContext->GenerateMips(_textureViews[2]);
-	deviceContext->GenerateMips(_textureViews[3]);
-	deviceContext->GenerateMips(_textureViews[4]);
-	deviceContext->GenerateMips(_textureViews[5]);
-	
+	deviceContext->GenerateMips(*pTexView);
+
 	// Release the targa image data now that the image data has been loaded into the texture.
-	if (_targaData6)
+	if (*targaData)
 	{
-		delete[] _targaData6;
-		_targaData6 = 0;
-	}
-
-	if (_targaData5)
-	{
-		delete[] _targaData5;
-		_targaData5 = 0;
-	}
-
-	if (_targaData4)
-	{
-		delete[] _targaData4;
-		_targaData4 = 0;
-	}
-	
-	if (_targaData3)
-	{
-		delete[] _targaData3;
-		_targaData3 = 0;
-	}
-
-	if (_targaData2)
-	{
-		delete[] _targaData2;
-		_targaData2 = 0;
-	}
-
-	if (_targaData1)
-	{
-		delete[] _targaData1;
-		_targaData1 = 0;
+		delete[] *targaData;
+		*targaData = 0;
 	}
 
 	return true;
 }
 
-void TextureClass::Shutdown()
-{
-	//// Release the texture view resource.
-	//if (_textureView)
-	//{
-	//	_textureView->Release();
-	//	_textureView = 0;
-	//}
-	//// Release the texture.
-	//if (_texture)
-	//{
-	//	_texture->Release();
-	//	_texture = 0;
-	//}
-
-	// Release the texture resources.
-	if (_textureViews[0])
-	{
-		_textureViews[0]->Release();
-		_textureViews[0] = 0;
-	}
-
-	if (_textureViews[1])
-	{
-		_textureViews[1]->Release();
-		_textureViews[1] = 0;
-	}
-
-	if (_textureViews[2])
-	{
-		_textureViews[2]->Release();
-		_textureViews[2] = 0;
-	}
-
-	if (_textureViews[3])
-	{
-		_textureViews[3]->Release();
-		_textureViews[3] = 0;
-	}
-
-	if (_textureViews[4])
-	{
-		_textureViews[4]->Release();
-		_textureViews[4] = 0;
-	}
-
-	if (_textureViews[5])
-	{
-		_textureViews[5]->Release();
-		_textureViews[5] = 0;
-	}
-
-	// Release the targa data. //@CLEANUP: Why done twice?
-	if (_targaData6)
-	{
-		delete[] _targaData6;
-		_targaData6 = 0;
-	}
-
-	if (_targaData5)
-	{
-		delete[] _targaData5;
-		_targaData5 = 0;
-	}
-
-	if (_targaData4)
-	{
-		delete[] _targaData4;
-		_targaData4 = 0;
-	}
-
-	if (_targaData3)
-	{
-		delete[] _targaData3;
-		_targaData3 = 0;
-	}
-
-	if (_targaData2)
-	{
-		delete[] _targaData2;
-		_targaData2 = 0;
-	}
-
-	if (_targaData1)
-	{
-		delete[] _targaData1;
-		_targaData1 = 0;
-	}
-	
-	return;
-}
-
-//ID3D11ShaderResourceView* TextureClass::GetTexture()
 ID3D11ShaderResourceView** TextureClass::GetTextureArray()
 {
-	//return _textureView;
-	return _textureViews;
-}
-
-ID3D11ShaderResourceView* TextureClass::GetTexture()
-{
-	return _textureViewSingle;
+	return _textureViews.data()->GetAddressOf();
 }
 
 unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, unsigned char* pTargaData)
@@ -418,7 +211,6 @@ unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, 
 	}
 
 	// Allocate memory for the targa destination data.
-	//_targaData = new unsigned char[imageSize];
 	pTargaData = new unsigned char[imageSize];
 	if (!*pTargaData)
 	{
@@ -441,7 +233,7 @@ unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, 
 			pTargaData[index + 2] = targaImage[k + 0];  // Blue
 			pTargaData[index + 3] = targaImage[k + 3];  // Alpha
 
-														 // Increment the indexes into the targa data.
+			// Increment the indexes into the targa data.
 			k += 4;
 			index += 4;
 		}
@@ -456,4 +248,3 @@ unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, 
 
 	return pTargaData;
 }
-

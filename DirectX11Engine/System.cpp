@@ -1,15 +1,9 @@
 #include "System.h"
 #include <dinput.h>
 #include <DirectXMath.h>
+#include "Position.h"
 
 System::System()
-	:
-	_Input(nullptr),
-	_Graphics(nullptr),
-	_Fps(nullptr),
-	_Cpu(nullptr),
-	_Timer(nullptr),
-	_CamPosition(nullptr)
 {}
 
 System::System(const System& other)
@@ -31,26 +25,22 @@ bool System::Initialize()
 	InitializeWindows(screenWidth, screenHeight);
 
 	// Create the input object.  This object will be used to handle reading the keyboard input from the user.
-	_Input = new Input;
-	if (!_Input)
-	{
-		return false;
-	}
-
-	//@OLD
-	// Initialize the input object.
-	//_Input->Initialize();
+	_Input.reset(new Input);
+	if (!_Input){return false;}
 
 	// Initialize the input object.
 	result = _Input->Initialize(_hinstance, _hwnd, screenWidth, screenHeight);
-	if (!result)
+	if (FAILED(result))
 	{
-		MessageBox(_hwnd, L"Could not initialize the input object.", L"Error", MB_OK);
+		throw std::runtime_error("Could not initialize the input object. - line " + std::to_string(__LINE__));
 		return false;
 	}
 
+	_World.reset(new World);
+	if (_World) result = _World->Initialize();
+
 	// Create the graphics object.  This object will handle rendering all the graphics for this application.
-	_Graphics = new Graphics;
+	_Graphics.reset(new Graphics);
 	if (!_Graphics)
 	{
 		return false;
@@ -60,11 +50,12 @@ bool System::Initialize()
 	result = _Graphics->Initialize(screenWidth, screenHeight, _hwnd);
 	if (!result)
 	{
+		throw std::runtime_error("Could not initialize the graphics object. - line " + std::to_string(__LINE__));
 		return false;
 	}
 
 	// Create the timer object.
-	_Timer = new TimerClass;
+	_Timer.reset(new TimerClass);
 	if (!_Timer)
 	{
 		return false;
@@ -74,86 +65,18 @@ bool System::Initialize()
 	result = _Timer->Initialize();
 	if (!result)
 	{
-		MessageBox(_hwnd, L"Could not initialize the Timer object.", L"Error", MB_OK);
+		throw std::runtime_error("Could not initialize the timer object. - line " + std::to_string(__LINE__));
 		return false;
 	}
 
-	// Create the fps object.
-	_Fps = new FpsClass;
-	if (!_Fps)
-	{
-		return false;
-	}
-
-	// Initialize the fps object.
-	_Fps->Initialize();
-
-	// Create the cpu object.
-	_Cpu = new CpuClass;
-	if (!_Cpu)
-	{
-		return false;
-	}
-
-	// Initialize the cpu object.
-	_Cpu->Initialize();
-
-	// Create the position object.
-	_CamPosition = new PositionClass;
-	if (!_CamPosition)
-	{
-		return false;
-	}
+	_UI.reset(new UI);
+	result = _UI->Initialize();
 
 	return true;
 }
 
 void System::Shutdown()
 {
-	// Release the position object.
-	if (_CamPosition)
-	{
-		delete _CamPosition;
-		_CamPosition = 0;
-	}
-
-	// Release the cpu object.
-	if (_Cpu)
-	{
-		_Cpu->Shutdown();
-		delete _Cpu;
-		_Cpu = 0;
-	}
-
-	// Release the fps object.
-	if (_Fps)
-	{
-		delete _Fps;
-		_Fps = 0;
-	}
-
-	// Release the timer object.
-	if (_Timer)
-	{
-		delete _Timer;
-		_Timer = 0;
-	}
-	
-	// Release the graphics object.
-	if (_Graphics)
-	{
-		_Graphics->Shutdown();
-		delete _Graphics;
-		_Graphics = 0;
-	}
-
-	// Release the input object.
-	if (_Input)
-	{
-		_Input->Shutdown();
-		delete _Input;
-		_Input = 0;
-	}
 
 	// Shutdown the window.
 	ShutdownWindows();
@@ -188,10 +111,10 @@ void System::Run()
 		else
 		{
 			// Otherwise do the frame processing.
-			result = Frame();
+			result = Tick();
 			if (!result)
 			{
-				MessageBox(_hwnd, L"Frame Processing Failed", L"Error", MB_OK);
+				throw std::runtime_error("Frame Processing Failed. - line " + std::to_string(__LINE__));
 				done = true;
 			}
 		}
@@ -207,71 +130,19 @@ void System::Run()
 	return;
 }
 
-bool System::Frame()
+bool System::Tick()
 {
-	bool keyDown, result;
-	int mouseX = 0; 
-	int mouseY = 0;
-	float rotationY = 0;
-	XMFLOAT3 orientation;
-	XMFLOAT3 position;
+	_Timer->Tick();
 
-	// Update the system stats.
-	_Timer->Frame();
-	_Fps->Frame();
-	_Cpu->Frame();
+	_Input->Tick();
 
-	// Do the input frame processing.
-	result = _Input->Frame();
-	if (!result)
-	{
-		return false;
-	}
+	_World->Tick(_Timer->GetTime(), _Input.get());
 
-	// Set the frame time for calculating the updated position.
-	_CamPosition->SetFrameTime(_Timer->GetTime());
+	_Graphics->UpdateFrame(_Timer->GetTime(), _World.get(), _UI->_Fps->GetFps(), _World->_CamPosition->GetPosition().x, _World->_CamPosition->GetPosition().y, _World->_CamPosition->GetPosition().z, _World->_CamPosition->GetOrientation().x, _World->_CamPosition->GetOrientation().y, _World->_CamPosition->GetOrientation().z);
 
-	//// Get the current view point rotation.
-	//_CamPosition->GetRotation(rotationY);
-	_CamPosition->GetOrientation(orientation);
-	_CamPosition->GetPosition(position);
-
-	//// Check if the left or right arrow key has been pressed, if so rotate the camera accordingly. //@custom
-	ProcessInput();
-
-	// Do the frame processing for the graphics object.
-	//result = _Graphics->Frame(rotationY, mouseX, mouseY, _Fps->GetFps(), _Cpu->GetCpuPercentage(), _Timer->GetTime());
-	result = _Graphics->Frame(_Timer->GetTime(), _Fps->GetFps(), position.x, position.y, position.z, orientation.x, orientation.y, orientation.z);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Finally render the graphics to the screen.
-	result = _Graphics->Render(_Timer->GetTime());
-	if (!result)
-	{
-		return false;
-	}
+	_UI->Tick();
 
 	return true;
-}
-
-//@CUSTOM @TODO - rewrite
-void System::ProcessInput()
-{
-	int mouseX = 0.f;
-	int mouseY = 0.f;
-	_Input->GetMouseLocation(mouseX, mouseY);
-	_CamPosition->SetOrientation(XMFLOAT3((float)mouseY, (float)mouseX, 0.f));
-
-	//@STUDY command vs observer pattern
-	//_CamPosition->TurnLeft(_Input->IsLeftArrowPressed());
-	//_CamPosition->TurnRight(_Input->IsRightArrowPressed());
-	_CamPosition->MoveForward(_Input->IsKeyDown(DIK_W));
-	_CamPosition->MoveBack(_Input->IsKeyDown(DIK_S));
-	_CamPosition->MoveLeft(_Input->IsKeyDown(DIK_A));
-	_CamPosition->MoveRight(_Input->IsKeyDown(DIK_D));
 }
 
 LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
@@ -293,7 +164,7 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 	_hinstance = GetModuleHandle(NULL);
 
 	// Give the application a name.
-	_applicationName = L"Engine";
+	_applicationName = "Engine";
 
 	// Setup the windows class with default settings.
 	wc.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;

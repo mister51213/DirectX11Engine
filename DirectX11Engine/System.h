@@ -10,17 +10,37 @@
 // INCLUDES //
 //////////////
 #include <windows.h>
+#include <memory>
+
 
 ///////////////////////
 // MY CLASS INCLUDES //
 ///////////////////////
 #include "Input.h"
 #include "Graphics.h"
-#include "FpsClass.h"
-#include "CpuClass.h"
-#include "TimerClass.h"
-#include "Position.h"
+#include "World.h"
+#include "UI.h"
 
+///////////////////////
+// Physics //
+//////////////////////
+#include "btBulletDynamicsCommon.h"
+
+/////////////////////////
+// Microsoft //
+////////////////////
+
+#include <wrl/client.h>
+
+
+//#include "FpsClass.h" // put in UI
+//#include "CpuClass.h" // put in UI
+
+#include "TimerClass.h"
+
+//#include "Position.h" // put in world
+
+using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: SystemClass
@@ -39,23 +59,22 @@ public:
 	LRESULT CALLBACK MessageHandler(HWND, UINT, WPARAM, LPARAM);
 
 private:
-	bool Frame();
-	void ProcessInput(); //@custom
+	bool Tick();
 	void InitializeWindows(int&, int&);
 	void ShutdownWindows();
 
 private:
-	LPCWSTR _applicationName;
+	LPCSTR _applicationName;
 	HINSTANCE _hinstance;
 	HWND _hwnd;
 
-	Input* _Input;
-	Graphics* _Graphics;
+	unique_ptr<Input> _Input;
+	unique_ptr<World> _World;
+	unique_ptr<Graphics> _Graphics;
+	unique_ptr<UI> _UI;
 
-	FpsClass* _Fps;
-	CpuClass* _Cpu;
-	TimerClass* _Timer;
-	PositionClass* _CamPosition;
+	unique_ptr<TimerClass> _Timer;
+	unique_ptr<PositionClass> _CamPosition;
 };
 
 /////////////////////////

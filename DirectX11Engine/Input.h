@@ -12,6 +12,8 @@
 // INCLUDES //
 //////////////
 #include <dinput.h>
+#include <cstdint>
+
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: Input
@@ -25,13 +27,15 @@ public:
 
 	bool Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int screenHeight);
 	void Shutdown();
-	bool Frame();
+	bool Tick();
 
 	bool IsEscapePressed();
 	bool IsLeftArrowPressed();
 	bool IsKeyDown(int keyMacro);
 	bool IsRightArrowPressed();
 	void GetMouseLocation(int&, int&);
+
+	uint64_t GetMouseXY();
 
 private:
 	bool ReadKeyboard();

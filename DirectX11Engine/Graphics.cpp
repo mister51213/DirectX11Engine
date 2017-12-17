@@ -4,145 +4,234 @@
 #include "lightshaderclass.h"
 #include "lightclass.h"
 #include "Graphics.h"
+#include "World.h"
 
-Graphics::Graphics()
-	:
-	_D3D(nullptr),
-	_Camera(nullptr),
-	_Model(nullptr),
-	//_LightShader(nullptr),
-	//_TextureShader(nullptr),
-	_Light(nullptr),
-	_ModelList(nullptr),
-	_Frustum(nullptr),
-	_Font1(nullptr),
-	_FpsString(nullptr),
-	_VideoStrings(nullptr),
-	_PositionStrings(nullptr),
-	_RenderCountStrings(nullptr),
-	_RenderTexture(nullptr),
-	_DebugWindow(nullptr),
-	_ReflectionTexture(nullptr),
-	_FloorModel(nullptr)
-{}
+Graphics::Graphics(){}
 
 Graphics::Graphics(const Graphics& other)
-{
-}
+{}
 
 Graphics::~Graphics()
-{
-}
+{}
 
 bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 {
-	////////////////
-	// UI RELATED //
-	////////////////
 	bool result;
+
+	// Create the Direct3D object.
+	_D3D.reset(new D3DClass);
+	if (!_D3D){return false;}
+
+	// Initialize the Direct3D object.
+	result = _D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
+	if (FAILED(result))
+	{
+		throw std::runtime_error("Could not initialize Direct3D - line " + std::to_string(__LINE__));
+		return false;
+	}
+
+	// Create / initialize the shader manager object.
+	_ShaderManager.reset(new ShaderManagerClass);	if (!_ShaderManager){return false;}
+	result = _ShaderManager->Initialize(_D3D->GetDevice(), hwnd);
+	if (FAILED(result))
+	{
+		throw std::runtime_error("Could not initialize the shader manager object. - line " + std::to_string(__LINE__));
+		return false;
+	}
+
+	// Create the camera object.
+	_Camera.reset(new Camera);if (!_Camera){ return false;}	_Camera->SetPosition(0.0f, 0.0f, -4.f);	_Camera->UpdateViewFromPosition();
+
+	// InitializeModels
+	result = InitializeModels(hwnd, screenWidth, screenHeight);
+
+	// Initialize Lights
+	result = InitializeLights();
+
+	// Initialize UI
+	result = InitializeUI(screenWidth, screenHeight);
+	
+	return true;
+}
+
+bool Graphics::InitializeLights()
+{
+	// Create the light object.
+	_Light.reset(new LightClass);
+
+	// Initialize the light object.
+	_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
+	_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	_Light->SetDirection(0.0f, -1.0f, 0.5f);
+	_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
+	_Light->SetSpecularPower(16.0f); // the lower the power, the higher the effect intensity
+
+	return true;
+}
+
+bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight)
+{
+	///////////////// WATER /////////////////////
+	// Create the ground model object.
+	_GroundModel.reset(new Model);
+	if (!_GroundModel)
+	{
+		return false;
+	}
+
+	// Initialize the ground model object.
+	vector<char*>groundTex{
+		"../DirectX11Engine/data/ground.dds",
+		"../DirectX11Engine/data/dirt.dds",
+		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/alpha.dds",
+		"../DirectX11Engine/data/blue.dds", // normal map
+		"../DirectX11Engine/data/specMap.dds" };
+
+	bool result = _GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+		"../DirectX11Engine/data/ground.txt",groundTex,	EShaderType::ELIGHT_SPECULAR);
+	if (FAILED(result))
+	{
+		throw std::runtime_error("Could not initialize the ground model object. - line " + std::to_string(__LINE__));
+		return false;
+	}
+
+	// Create the wall model object.
+	_WallModel.reset(new Model);
+	if (!_WallModel){return false;}
+
+	// Initialize the wall model object.
+	vector<char*>wallTex{
+		"../DirectX11Engine/data/wall.dds",
+		"../DirectX11Engine/data/dirt.dds",
+		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/alpha.dds",
+		"../DirectX11Engine/data/bumpMap.dds", // normal map
+		"../DirectX11Engine/data/specMap.dds" };
+
+	result = _WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),"../DirectX11Engine/data/wall.txt",	wallTex,EShaderType::ELIGHT_SPECULAR);
+	if (FAILED(result))
+	{
+		throw std::runtime_error("Could not initialize the wall model object. - line " + std::to_string(__LINE__));
+		return false;
+	}
+
+	// Create the bath model object.
+	_BathModel.reset(new Model);
+	if (!_BathModel)
+	{
+		return false;
+	}
+
+	vector<char*>bathTex{
+		"../DirectX11Engine/data/marble.png", 
+		"../DirectX11Engine/data/dirt.dds",
+		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/alpha.dds",
+		"../DirectX11Engine/data/blue.dds", // normal map
+		"../DirectX11Engine/data/specMap.dds" };
+
+	// Initialize the bath model object.
+	result = _BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+		"../DirectX11Engine/data/bath.txt",	bathTex,EShaderType::ELIGHT_SPECULAR);
+	if (FAILED(result))
+	{
+		throw std::runtime_error("Could not initialize the bath model object. - line " + std::to_string(__LINE__));
+		return false;
+	}
+
+	// Create the water model object.
+	_WaterModel.reset(new Model);
+	if (!_WaterModel)
+	{
+		return false;
+	}
+
+	// Initialize the water model object.
+	vector<char*> waterTextures{ "../DirectX11Engine/data/water.dds"};
+	result = _WaterModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+		"../DirectX11Engine/data/water.txt",
+		waterTextures,
+		EShaderType::EWATER);
+	if (FAILED(result))
+	{
+		throw std::runtime_error("Could not initialize the water model object. - line " + std::to_string(__LINE__));
+		return false;
+	}
+
+
+	// Create the refraction render to texture object.
+	_RefractionTexture.reset(new RenderTextureClass);
+	if (!_RefractionTexture)
+	{
+		return false;
+	}
+
+	// Initialize the refraction render to texture object.
+	result = _RefractionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
+	if (FAILED(result))
+	{
+		throw std::runtime_error("Could not initialize the refraction render to texture object. - line " + std::to_string(__LINE__));
+		return false;
+	}
+
+	// Create the reflection render to texture object.
+	_ReflectionTexture.reset(new RenderTextureClass);
+	if (!_ReflectionTexture)
+	{
+		return false;
+	}
+
+	// Initialize the reflection render to texture object.
+	result = _ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
+	if (FAILED(result))
+	{
+		throw std::runtime_error("Could not initialize the reflection render to texture object. - line " + std::to_string(__LINE__));
+		return false;
+	}
+
+	// Set the height of the water.
+	_waterHeight = 2.75f;
+
+	// Initialize the position of the water.
+	_waterTranslation = 0.0f;
+
+	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
+	///////////////////////// WATER ////////////////////////
+
+	// Create the frustum object.
+	_Frustum.reset(new FrustumClass);
+
+	// Create the model list object.
+	_ModelList.reset(new ModelListClass);
+	if (!_ModelList)
+	{
+		return false;
+	}
+
+	// Initialize the model list object.
+	result = _ModelList->Initialize(20);
+	if (FAILED(result))
+	{
+		throw std::runtime_error("Could not initialize the model list object - line " + std::to_string(__LINE__));
+		return false;
+	}
+
+	return true;
+}
+
+bool Graphics::InitializeUI(int screenWidth, int screenHeight)
+{
+	bool result;
+
 	char videoCard[128];
 	int videoMemory;
 	char videoString[144];
 	char memoryString[32];
 	char tempString[16];
-	////////////////
-	// UI RELATED //
-	////////////////
-
-	XMMATRIX baseViewMatrix;
-
-	// Create the Direct3D object.
-	_D3D = new D3DClass;
-	if (!_D3D)
-	{
-		return false;
-	}
-
-	// Initialize the Direct3D object.
-	result = _D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
-		return false;
-	}
-
-	// Create the shader manager object.
-	_ShaderManager = new ShaderManagerClass;
-	if (!_ShaderManager)
-	{
-		return false;
-	}
-
-	// Initialize the shader manager object.
-	result = _ShaderManager->Initialize(_D3D->GetDevice(), hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the shader manager object.", L"Error", MB_OK);
-		return false;
-	}
-
-	// Create the camera object.
-	_Camera = new Camera;
-	if (!_Camera)
-	{
-		return false;
-	}
-
-	// Set the initial position of the camera.
-	_Camera->SetPosition(0.0f, 0.0f, -4.f);
-	_Camera->Render();
-	//_Camera->RenderBaseViewMatrix();
-	//_Camera->GetViewMatrix(baseViewMatrix); // needed for text class
-
-	////////////////
-	// UI RELATED //
-	////////////////
-	// Create the render to texture object.
-	_RenderTexture = new RenderTextureClass;
-	if (!_RenderTexture)
-	{
-		return false;
-	}
-
-	// Initialize the render to texture object.
-	result = _RenderTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Create the debug window object.
-	_DebugWindow = new DebugWindowClass;
-	if (!_DebugWindow)
-	{
-		return false;
-	}
-
-	// Initialize the debug window object.
-	result = _DebugWindow->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, 100, 100);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the debug window object.", L"Error", MB_OK);
-		return false;
-	}
-
-	//// Create the texture shader object.
-	//_TextureShader = new TextureShaderClass;
-	//if (!_TextureShader)
-	//{
-	//	return false;
-	//}
-
-	//// Initialize the texture shader object.
-	//result = _TextureShader->Initialize(_D3D->GetDevice(), hwnd);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the texture shader object.", L"Error", MB_OK);
-	//	return false;
-	//}
 
 	// Create the first font object.
-	_Font1 = new FontClass;
+	_Font1.reset(new FontClass);
 	if (!_Font1)
 	{
 		return false;
@@ -151,463 +240,110 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Initialize the first font object.
 	result = _Font1->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/font.txt",
 		"../DirectX11Engine/data/font.tga", 32.0f, 3);
-	if (!result)
+	if (FAILED(result))
 	{
+		throw std::runtime_error("Could not initialize the font object. - line " + std::to_string(__LINE__));
 		return false;
 	}
 
-	//// Create the font shader object.
-	//_FontShader = new FontShaderClass;
-	//if (!_FontShader)
-	//{
-	//	return false;
-	//}
-	//
-	//// Initialize the font shader object.
-	//result = _FontShader->Initialize(_D3D->GetDevice(), hwnd);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the font shader object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
 	// Create the text object for the fps string.
-	_FpsString = new TextClass;
+	_FpsString.reset(new TextClass);
 	if (!_FpsString)
 	{
 		return false;
 	}
 
 	// Initialize the fps text string.
-	result = _FpsString->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1,
+	result = _FpsString->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
 		"Fps: 0", 10, 50, 0.0f, 1.0f, 0.0f);
-	if (!result)
+	if (FAILED(result))
 	{
+		throw std::runtime_error("Could not initialize the fps string object. - line " + std::to_string(__LINE__));
 		return false;
 	}
 
 	// Initial the previous frame fps.
 	_previousFps = -1;
 
-	// Create the text objects for the position strings.
-	_PositionStrings = new TextClass[6];
-	if (!_PositionStrings)
-	{
-		return false;
-	}
-
 	// Initialize the position text strings.
-	result = _PositionStrings[0].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1,
-		"X: 0", 10, 310, 1.0f, 1.0f, 1.0f);
-	if (!result)
+	vector<char*> labels = { "X: 0", "Y: 0", "Z: 0", "rX: 0", "rY: 0", "rZ: 0" };
+	char offset = 0;
+	for (int i = 0; i < 6; ++i)
 	{
-		return false;
-	}
+		_PositionStrings.push_back(unique_ptr<TextClass>(new TextClass()));
+		if (!_PositionStrings[i]) return false;
 
-	result = _PositionStrings[1].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1,
-		"Y: 0", 10, 330, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
+		result = _PositionStrings[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
+			labels[i], 10, 310 + offset, 1.0f, 1.0f, 1.0f);
+		if (FAILED(result))
+		{
+			throw std::runtime_error("Could not initialize position string number " + to_string(i) + " - line " + std::to_string(__LINE__));
+			return false;
+		}
 
-	result = _PositionStrings[2].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1,
-		"Z: 0", 10, 350, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
-
-	result = _PositionStrings[3].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1,
-		"rX: 0", 10, 370, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
-
-	result = _PositionStrings[4].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1,
-		"rY: 0", 10, 390, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
-
-	result = _PositionStrings[5].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1,
-		"rZ: 0", 10, 410, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Initialize the previous frame position.
-	for (int i = 0; i<6; i++)
-	{
+		offset += 20;
 		_previousPosition[i] = -1;
 	}
 
 	// Create the text objects for the render count strings.
-	_RenderCountStrings = new TextClass[3];
-	if (!_RenderCountStrings)
+	vector<char*> renderLabels = { "Polys Drawn: 0", "Cells Drawn: 0", "Cells Culled: 0" };
+	offset = 0;
+	for (int i =0; i< 3; ++i)
 	{
-		return false;
+		_RenderCountStrings.push_back(unique_ptr<TextClass>(new TextClass()));
+		if (!_RenderCountStrings[i]) return false;
+
+		result = _RenderCountStrings[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), renderLabels[i], 10, 260 + offset, 1.0f, 1.0f, 1.0f);
+		if (FAILED(result))
+		{
+			throw std::runtime_error("Could not initialize render count string number " + to_string(i) + " - line " + std::to_string(__LINE__));
+			return false;
+		}
+
+		offset += 20;
 	}
-
-	// Initialize the render count strings.
-	result = _RenderCountStrings[0].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1,	"Polys Drawn: 0", 10, 260, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
-
-	result = _RenderCountStrings[1].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1,	"Cells Drawn: 0", 10, 280, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
-
-	result = _RenderCountStrings[2].Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1,	"Cells Culled: 0", 10, 300, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
-
-	////////////////
-	// SCENE RELATED //
-	////////////////
-
-	// Create the model object.
-	_Model = new Model;
-	if (!_Model)
-	{
-		return false;
-	}
-
-	// Initialize the model object.
-	result = _Model->Initialize(
-		_D3D->GetDevice(),
-		_D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/sphere.txt",
-			"../DirectX11Engine/data/stone.tga", // tex1
-			"../DirectX11Engine/data/dirt.tga", // tex2
-				"../DirectX11Engine/data/light.tga", // lightmap
-		"../DirectX11Engine/data/alpha.tga", // alpha
-			"../DirectX11Engine/data/bumpMap.tga", // normal map
-		"../DirectX11Engine/data/specMap.tga"); // specMap
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-		return false;
-	}
-
-	//// Create the light shader object.
-	//_LightShader = new LightShaderClass;
-	//if (!_LightShader)
-	//{
-	//	return false;
-	//}
-
-	//// Initialize the light shader object.
-	//result = _LightShader->Initialize(_D3D->GetDevice(), hwnd);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the light shader object.", L"Error", MB_OK);
-	//	return false;
-	//}
-
-	// Create the light object.
-	_Light = new LightClass;
-	if (!_Light)
-	{
-		return false;
-	}
-
-	// Initialize the light object.
-	_Light->SetAmbientColor(.2f, .2f, .2f, 1.0f);
-	_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_Light->SetDirection(0.0f, 0.0f, 1.0f);
-	_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_Light->SetSpecularPower(16.0f); // the lower the power, the higher the effect intensity
-
-	// Create the model list object.
-	_ModelList = new ModelListClass;
-	if (!_ModelList)
-	{
-		return false;
-	}
-
-	// Initialize the model list object.
-	result = _ModelList->Initialize(20);
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the model list object.", L"Error", MB_OK);
-		return false;
-	}
-
-	// Create the frustum object.
-	_Frustum = new FrustumClass;
-	if (!_Frustum)
-	{
-		return false;
-	}
-
-	// Create the render to texture object.
-	_ReflectionTexture = new RenderTextureClass;
-	if (!_ReflectionTexture)
-	{
-		return false;
-	}
-
-	// Initialize the render to texture object.
-	result = _ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
-	if (!result)
-	{
-		return false;
-	}
-
-	//Create and initialize the blue floor model object.
-	_FloorModel = new Model;
-	if (!_FloorModel)
-	{
-		return false;
-	}
-
-	// Initialize the floor model object. //TODO: make tga
-	result = _FloorModel->Initialize(_D3D->GetDevice(),
-		_D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/floor.txt",
-		"../DirectX11Engine/data/blue01.tga", 
-		"../DirectX11Engine/data/blue01.tga",
-		"../DirectX11Engine/data/blue01.tga",
-		"../DirectX11Engine/data/blue01.tga",
-		"../DirectX11Engine/data/blue01.tga",
-		"../DirectX11Engine/data/blue01.tga");
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the floor model object.", L"Error", MB_OK);
-		return false;
-	}
-
-	_ModelSingle = new Model;
-	if (!_ModelSingle)
-	{
-		return false;
-	}
-
-	result = _ModelSingle->Initialize(
-		_D3D->GetDevice(),
-		_D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/sphere.txt",
-		"../DirectX11Engine/data/stone.tga", // tex1
-		"../DirectX11Engine/data/dirt.tga", // tex2
-		"../DirectX11Engine/data/light.tga", // lightmap
-		"../DirectX11Engine/data/alpha.tga", // alpha
-		"../DirectX11Engine/data/bumpMap.tga", // normal map
-		"../DirectX11Engine/data/specMap.tga"); // specMap
-	if (!result)
-	{
-		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
-		return false;
-	}
-
+	
 	return true;
 }
 
-void Graphics::Shutdown() //TODO - Reorder these in proper reverse order of intialization
-{
-	// Release the floor model object.
-	if (_ModelSingle)
-	{
-		_ModelSingle->Shutdown();
-		delete _ModelSingle;
-		_ModelSingle = 0;
-	}
-
-	// Release the floor model object.
-	if (_FloorModel)
-	{
-		_FloorModel->Shutdown();
-		delete _FloorModel;
-		_FloorModel = 0;
-	}
-
-	// Release the render to texture object.
-	if (_ReflectionTexture)
-	{
-		_RenderTexture->Shutdown();
-		delete _ReflectionTexture;
-		_ReflectionTexture = 0;
-	}
-
-	// Release the debug window object.
-	if (_DebugWindow)
-	{
-		_DebugWindow->Shutdown();
-		delete _DebugWindow;
-		_DebugWindow = 0;
-	}
-
-	// Release the render to texture object.
-	if (_RenderTexture)
-	{
-		_RenderTexture->Shutdown();
-		delete _RenderTexture;
-		_RenderTexture = 0;
-	}
-
-	// Release the frustum object.
-	if (_Frustum)
-	{
-		delete _Frustum;
-		_Frustum = 0;
-	}
-
-	// Release the model list object.
-	if (_ModelList)
-	{
-		_ModelList->Shutdown();
-		delete _ModelList;
-		_ModelList = 0;
-	}
-	
-	// Release the light object.
-	if (_Light)
-	{
-		delete _Light;
-		_Light = 0;
-	}
-
-	// Release the model object.
-	if (_Model)
-	{
-		_Model->Shutdown();
-		delete _Model;
-		_Model = 0;
-	}
-
-	// Release the camera object.
-	if (_Camera)
-	{
-		delete _Camera;
-		_Camera = 0;
-	}
-
-	if (_D3D)
-	{
-		_D3D->Shutdown();
-		delete _D3D;
-		_D3D = 0;
-	}
-
-	// Release the render count strings.
-	if (_RenderCountStrings)
-	{
-		_RenderCountStrings[0].Shutdown();
-		_RenderCountStrings[1].Shutdown();
-		_RenderCountStrings[2].Shutdown();
-
-		delete[] _RenderCountStrings;
-		_RenderCountStrings = 0;
-	}
-
-	// Release the position text strings.
-	if (_PositionStrings)
-	{
-		_PositionStrings[0].Shutdown();
-		_PositionStrings[1].Shutdown();
-		_PositionStrings[2].Shutdown();
-		_PositionStrings[3].Shutdown();
-		_PositionStrings[4].Shutdown();
-		_PositionStrings[5].Shutdown();
-
-		delete[] _PositionStrings;
-		_PositionStrings = 0;
-	}
-
-	// Release the video card string.
-	if (_VideoStrings)
-	{
-		_VideoStrings[0].Shutdown();
-		_VideoStrings[1].Shutdown();
-
-		delete[] _VideoStrings;
-		_VideoStrings = 0;
-	}
-
-
-	// Release the fps text string.
-	if (_FpsString)
-	{
-		_FpsString->Shutdown();
-		delete _FpsString;
-		_FpsString = 0;
-	}
-
-	// Release the font object.
-	if (_Font1)
-	{
-		_Font1->Shutdown();
-		delete _Font1;
-		_Font1 = 0;
-	}
-
-	return;
-}
-
-bool Graphics::Frame(float frameTime, int fps, float posX, float posY, float posZ, float rotX, float rotY, float rotZ)
+bool Graphics::UpdateFrame(float frameTime, World* world, int fps, float camX, float camY, float camZ, float rotX, float rotY, float rotZ)
 {
 	bool result;
 
-	// Set the position of the camera.
-	_Camera->SetPosition(posX, posY, posZ);
+	// 1. Update Effects
+	_waterTranslation += 0.001f;
+	if (_waterTranslation > 1.0f)
+	{_waterTranslation -= 1.0f;	}
 
-	// Set the rotation of the camera.
-	_Camera->SetRotation(rotX, rotY/*rotationY*/, rotZ);
+	// 2. Update Camera
+	_Camera->SetPosition(camX, camY, camZ);
+	_Camera->SetRotation(rotX, rotY, rotZ);
 
-	if (Camera* cam = GetCamera())
-	{
-		_Camera->Tick();
-	}
-
-	// Update the rotation variable each frame.
-	_modelRotation += (float)XM_PI * 0.0003f;
-	if (_modelRotation > 360.0f)
-	{
-		_modelRotation -= 360.0f;
-	}
-
-	// Update the fps string. //@TODO
+	// 3. Update World Actors
+	//@TODO: SET ALL MODEL POSITIONS HERE
+	
+	// 4. Update UI
 	result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
-	if (!result)
-	{
-		return false;
-	}
+	if (!result){return false;}
+	result = UpdatePositionStrings(_D3D->GetDeviceContext(), camX, camY, camZ, rotX, rotY, rotZ);
+	if (!result){return false;}
 
-	// Update the position strings.
-	result = UpdatePositionStrings(_D3D->GetDeviceContext(), posX, posY, posZ, rotX, rotY, rotZ);
-	if (!result)
-	{
-		return false;
-	}
-
-	// @DEBUG why do they now disable rendering inside frame?
-	// Render the graphics scene.
-	result = Render(frameTime/*_modelRotation*/);
-	if (!result)
-	{
-		return false;
-	}
+	result = DrawFrame(frameTime); if (!result)return false;
 
 	return true;
 }
 
-bool Graphics::Render(float frameTime)
+bool Graphics::DrawFrame(float frameTime)
 {
 	XMFLOAT3 fogColor(.6f, .6f, .6f);	float fogStart = 0.0f;	float fogEnd = 3.f;
 
-	bool result = RenderToReflection(frameTime);
-	if (!result) { return false; }
+	// Render the refraction of the scene to a texture.
+	bool result = RenderRefractionToTexture();
+	if (!result){return false;}
 
-	_D3D->BeginScene(fogColor.x, fogColor.y, fogColor.z, 1.0f);
+	// Render the reflection of the scene to a texture.
+	result = RenderReflectionToTexture();
+	if (!result){return false;}
 
 	// Render the scene as normal to the back buffer.
 	result = RenderScene(fogStart, fogEnd, frameTime);
@@ -615,22 +351,8 @@ bool Graphics::Render(float frameTime)
 
 	_D3D->TurnZBufferOff();
 
-	// Put the debug window vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	//result = _DebugWindow->Render(_D3D->GetDeviceContext(), 80, 50);
-	//if (!result) {	return false; }
-	//result = _ShaderManager->RenderTextureShader(
-	//	_D3D->GetDeviceContext(),
-	//	_DebugWindow->GetIndexCount(),
-	//	worldMatrix,
-	//	baseViewMatrix, //viewMatrix,
-	//	orthoMatrix,
-	//	_RenderTexture->GetShaderResourceView());
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
 	RenderText();
+
 	_D3D->TurnZBufferOn(); // Turn the Z buffer back on now that all 2D rendering has completed.
 
 	_D3D->EndScene(); // Present the rendered scene to the screen.
@@ -638,58 +360,83 @@ bool Graphics::Render(float frameTime)
 	return true;
 }
 
-bool Graphics::RenderToReflection(float time) // same as rendertotexture in rastertek
+bool Graphics::RenderRefractionToTexture()
 {
-	XMMATRIX worldMatrix, reflectionViewMatrix, projectionMatrix;
-	static float rotation = 0.0f;
+	XMFLOAT4 clipPlane;
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	bool result;
 
-	// Set the render target to be the render to texture.
-	_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
+	// Setup a clipping plane based on the height of the water to clip everything above it.
+	clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, _waterHeight + 0.1f);
 
-	// Clear the render to texture.
-	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
+	// Set the render target to be the refraction render to texture.
+	_RefractionTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
 
-	// Use the camera to calculate the reflection matrix.
-	_Camera->RenderReflection(-1.f); //@TODO - must be same as rendering height
+	// Clear the refraction render to texture.
+	_RefractionTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Generate the view matrix based on the camera's position.
+	_Camera->UpdateViewFromPosition();
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	_D3D->GetWorldMatrix(worldMatrix);
+	_Camera->GetViewMatrix(viewMatrix);
+	_D3D->GetProjectionMatrix(projectionMatrix);
+
+	// Translate to where the bath model will be rendered.
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0.0f, 2.0f, 0.0f));
+
+	// Put the bath model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	_BathModel->Render(_D3D->GetDeviceContext());
+
+	// Render the bath model using the light shader.
+	result = _ShaderManager->RenderRefractionShader(_D3D->GetDeviceContext(), _BathModel->GetIndexCount(), worldMatrix, viewMatrix,
+		projectionMatrix, 
+		_BathModel->GetMaterial()->GetResourceArray()[0],
+		_Light->GetDirection(),
+		_Light->GetAmbientColor(), _Light->GetDiffuseColor(), clipPlane);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Reset the render target back to the original back buffer and not the render to texture anymore.
+	_D3D->SetBackBufferRenderTarget();
+
+	return true;
+}
+
+bool Graphics::RenderReflectionToTexture()
+{
+	XMMATRIX reflectionViewMatrix, worldMatrix, projectionMatrix;
+	bool result;
 	
+	// Set the render target to be the reflection render to texture.
+	_ReflectionTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
+
+	// Clear the reflection render to texture.
+	_ReflectionTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Use the camera to render the reflection and create a reflection view matrix.
+	_Camera->RenderReflection(_waterHeight);
+
 	// Get the camera reflection view matrix instead of the normal view matrix.
 	reflectionViewMatrix = _Camera->GetReflectionViewMatrix();
 
-	// Get the world and projection matrices.
+	// Get the world and projection matrices from the d3d object.
 	_D3D->GetWorldMatrix(worldMatrix);
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
-	// Update the rotation variable each frame.
-	rotation += (float)XM_PI * 0.001f;
-	if (rotation > 360.0f){rotation -= 360.0f;}
-	XMMATRIX rotMat = XMMatrixRotationY(rotation);
-	worldMatrix = XMMatrixMultiply(worldMatrix, rotMat);
+	// Translate to where the wall model will be rendered.
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0.0f, 6.0f, 8.0f));
 
-	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	_ModelSingle->Render(_D3D->GetDeviceContext());
+	// Put the wall model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	_WallModel->Render(_D3D->GetDeviceContext());
 
-	// Render the model IMAGE upside down in the reflective surface.
-	XMFLOAT3 fogColor(.6f, .6f, .6f);	float fogStart = 0.0f;	float fogEnd = 3.f;
-	XMFLOAT4 clipPlane = XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f);
-	result = _ShaderManager->RenderLightShader(
-		_D3D->GetDeviceContext(),
-		_Model->GetIndexCount(),
-		worldMatrix,
-		reflectionViewMatrix,
-		projectionMatrix,
-		_ModelSingle->GetTextureArray(),
-		_Light->GetDirection(),
-		_Light->GetAmbientColor(),
-		_Light->GetDiffuseColor(),
-		_Camera->GetPosition(),
-		_Light->GetSpecularColor(),
-		_Light->GetSpecularPower(),
-		fogStart,
-		fogEnd,
-		clipPlane,
-		0.f,
-		.5f);
+	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, reflectionViewMatrix,
+		projectionMatrix, 
+		_WallModel->GetMaterial()->GetResourceArray(),
+		_Light->GetDirection(),	_Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), 0, 0, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
 	if (!result)
 	{
 		return false;
@@ -704,77 +451,104 @@ bool Graphics::RenderToReflection(float time) // same as rendertotexture in rast
 
 bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 {
-	XMMATRIX worldPosition, viewMatrix, projectionMatrix;
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix;
 	bool result;
 
-	_Camera->Render(); // Generate the view matrix based on the camera's position.
+#pragma region WATER
+	// Clear the buffers to begin the scene.
+	_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
-     ///////////// RENDER SPINNING CUBE ///////////////////
-	_D3D->GetWorldMatrix(worldPosition);
+	// Generate the view matrix based on the camera's position.
+	_Camera->UpdateViewFromPosition();
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	_D3D->GetWorldMatrix(worldMatrix);
 	_Camera->GetViewMatrix(viewMatrix);
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
-	// Update the rotation variable each frame.
-	static float rotation = 0.0f;
-	rotation += (float)XM_PI * 0.001f;
-	if (rotation > 360.0f) { rotation -= 360.0f; }
-	XMMATRIX rotMat = XMMatrixRotationY(rotation);
-	worldPosition = XMMatrixMultiply(worldPosition, rotMat);
+	// Translate to where the ground model will be rendered.
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0.0f, 1.0f, 0.0f));
 
-	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	_ModelSingle->Render(_D3D->GetDeviceContext());
+	// Put the ground model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	_GroundModel->Render(_D3D->GetDeviceContext());
 
-	// @OPTIMIZATION: Render the model with the texture shader.
-	//result = _ShaderManager->RenderTextureShader(
-	//	_D3D->GetDeviceContext(), _Model->GetIndexCount(), worldPosition, 
-	//	viewMatrix,	projectionMatrix, _ModelSingle->GetTextureArray()[0]);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	/// TEST - use light shader on cube instead
-	XMMATRIX reflectionMatrix = _Camera->GetReflectionViewMatrix();
-	XMFLOAT4 clipPlane = XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f);
-	result = _ShaderManager->RenderLightShader(
-		_D3D->GetDeviceContext(),
-		_Model->GetIndexCount(),
-		worldPosition,
-		viewMatrix,
-		projectionMatrix,
-		_ModelSingle->GetTextureArray(),
-		_Light->GetDirection(),
-		_Light->GetAmbientColor(),
-		_Light->GetDiffuseColor(), 
-		_Camera->GetPosition(),
-		 _Light->GetSpecularColor(),
-		_Light->GetSpecularPower(),
-		fogStart,
-		fogEnd,
-		clipPlane,
-		0.f,
-		.5f);
+	// Render the ground model using the light shader.
+	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix,
+		projectionMatrix, 
+		//_GroundModel->GetTextureArray(),
+		_GroundModel->GetMaterial()->GetResourceArray(),
+		_Light->GetDirection(),_Light->GetAmbientColor(), _Light->GetDiffuseColor(),_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), fogStart, fogEnd, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
 	if (!result)
 	{
 		return false;
 	}
-	
-	///////////// RENDER REFLECTIVE FLOOR ///////////////////
-	// Get the world matrix again and translate down for the floor model to render underneath the cube.
-	_D3D->GetWorldMatrix(worldPosition);
-	XMMATRIX translation = XMMatrixTranslation(0.0f, -1.f, 0.0f);
-	worldPosition = XMMatrixMultiply(worldPosition, translation);
+
+	// Reset the world matrix.
+	_D3D->GetWorldMatrix(worldMatrix);
+
+	// Translate to where the wall model will be rendered.
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0.0f, 6.0f, 8.0f));
+
+	// Put the wall model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	_WallModel->Render(_D3D->GetDeviceContext());
+
+	// Render the wall model using the light shader.
+	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, viewMatrix,
+		projectionMatrix, 
+		_WallModel->GetMaterial()->GetResourceArray(),
+		_Light->GetDirection(),
+		_Light->GetAmbientColor(), _Light->GetDiffuseColor(),_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), fogStart, fogEnd, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Reset the world matrix.
+	_D3D->GetWorldMatrix(worldMatrix);
+
+	// Translate to where the bath model will be rendered.
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0.0f, 2.0f, 0.0f));
+
+	// Put the bath model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	_BathModel->Render(_D3D->GetDeviceContext());
+
+	// Render the bath model using the light shader.
+	result = _ShaderManager->RenderLightShader(_D3D->GetDeviceContext(), _BathModel->GetIndexCount(), worldMatrix, viewMatrix,
+		projectionMatrix, 
+		//_BathModel->GetTextureArray(), 
+		_BathModel->GetMaterial()->GetResourceArray(),
+		_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(),
+		_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), fogStart, fogEnd, XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f), 0.f, 0.f);
+
+	if (!result)
+	{
+		return false;
+	}
+
+	// Reset the world matrix.
+	_D3D->GetWorldMatrix(worldMatrix);
 
 	// Get the camera reflection view matrix.
-	//XMMATRIX reflectionMatrix = _Camera->GetReflectionViewMatrix();
+	reflectionMatrix = _Camera->GetReflectionViewMatrix();
 
-	// Put the floor model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	_FloorModel->Render(_D3D->GetDeviceContext());
+	// Translate to where the water model will be rendered.
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0.0f, _waterHeight, 0.0f));
 
-	// Render the floor model using the reflection shader, reflection texture, and reflection view matrix.
-	result = _ShaderManager->RenderReflectionShader(_D3D->GetDeviceContext(), _FloorModel->GetIndexCount(), worldPosition, viewMatrix,
-		projectionMatrix, _FloorModel->GetTextureArray()[0], _RenderTexture->GetShaderResourceView(),
-		reflectionMatrix);
+	// Put the water model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	_WaterModel->Render(_D3D->GetDeviceContext());
+
+	// Render the water model using the water shader.
+	result =
+		_ShaderManager->RenderWaterShader(_D3D->GetDeviceContext(), _WaterModel->GetIndexCount(), worldMatrix, viewMatrix,
+		projectionMatrix, reflectionMatrix, _ReflectionTexture->GetShaderResourceView(), _RefractionTexture->GetShaderResourceView(), 
+			_WaterModel->GetMaterial()->GetResourceArray()[0],
+			_waterTranslation, 0.01f);
+	if (!result)
+	{
+		return false;
+	}
+
+#pragma endregion
 
 #pragma region MULTIMODELS
 	//textureTranslation += .004f;	if (textureTranslation > 1.0f) { textureTranslation -= 1.0f; }
@@ -827,7 +601,7 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	//			worldPosition,
 	//			viewMatLocal,//viewMatrix,
 	//			projectionMatrix,
-	//			_Model->GetTextureArray(),
+	//			_Model->GetTextureArrayDDS(),
 	//			_Light->GetDirection(),
 	//			/*color,*/ _Light->GetAmbientColor(),
 	//			color, //_Light->GetDiffuseColor(), 
@@ -839,7 +613,7 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	//			clipPlane,
 	//			textureTranslation,
 	//			blendAmount,
-	//			_Model->GetTextureArray()[0], //@TODO: must fix
+	//			_Model->GetTextureArrayDDS()[0], //@TODO: must fix
 	//			_Camera->GetReflectionViewMatrix());//viewMatrix); // @TODO: 
 	//		if (!result)
 	//		{
@@ -861,32 +635,7 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	return true;
 }
 
-
-//bool Graphics::RenderToTexture(float frameTime)
-//{
-//	// Set the render target to be the render to texture.
-//	_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
-//
-//	// Clear the render to texture.
-//	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 1.0f, 1.0f);
-//
-//	// Render the scene now and it will draw to the render to texture instead of the back buffer.
-//	XMMATRIX viewMatrix;
-//	_Camera->GetViewMatrix(viewMatrix);
-//	bool result = RenderScene(viewMatrix, 0.f,10.f, frameTime); //@REFACTOR later
-//	if (!result)
-//	{
-//		return false;
-//	}
-//
-//	// Reset the render target back to the original back buffer and not the render to texture anymore.
-//	_D3D->SetBackBufferRenderTarget();
-//
-//	return result;
-//}
-
-
-void Graphics::RenderText(/*const DirectX::XMMATRIX &worldMatrix, const DirectX::XMMATRIX &baseViewMatrix, const DirectX::XMMATRIX &orthoMatrix*/)
+void Graphics::RenderText()
 {
 	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
 
@@ -898,22 +647,21 @@ void Graphics::RenderText(/*const DirectX::XMMATRIX &worldMatrix, const DirectX:
 	_D3D->EnableAlphaBlending();
 
 	// Render the fps string.
-	_FpsString->Render(_D3D->GetDeviceContext(), _ShaderManager,/*_FontShader),*/ worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+	_FpsString->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture());
 	// Render the position and rotation strings.
-	for (int i = 0; i<6; i++)
+	for (int i = 0; i < 6; i++)
 	{
-		_PositionStrings[i].Render(_D3D->GetDeviceContext(), _ShaderManager/*_FontShader*/, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+		_PositionStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture());
 	}
 	// Render the render count strings.
-	for (int i = 0; i<3; i++)
+	for (int i = 0; i < 3; i++)
 	{
-		_RenderCountStrings[i].Render(_D3D->GetDeviceContext(), _ShaderManager/*_FontShader*/, worldMatrix, /*viewMatrix*/baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+		_RenderCountStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture());
 	}
 
 	// Turn off alpha blending after rendering the text.
 	_D3D->DisableAlphaBlending();
 }
-
 
 bool Graphics::UpdateFpsString(ID3D11DeviceContext* deviceContext, int fps)
 {
@@ -921,8 +669,7 @@ bool Graphics::UpdateFpsString(ID3D11DeviceContext* deviceContext, int fps)
 	char finalString[16];
 	float red, green, blue;
 	bool result;
-
-
+	
 	// Check if the fps from the previous frame was the same, if so don't need to update the text string.
 	if (_previousFps == fps)
 	{
@@ -970,7 +717,7 @@ bool Graphics::UpdateFpsString(ID3D11DeviceContext* deviceContext, int fps)
 	}
 
 	// Update the sentence vertex buffer with the new string information.
-	result = _FpsString->UpdateSentence(deviceContext, _Font1, finalString, 10, 50, red, green, blue);
+	result = _FpsString->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 50, red, green, blue);
 	if (!result)
 	{
 		return false;
@@ -987,74 +734,24 @@ bool Graphics::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float p
 	char finalString[16];
 	bool result;
 
-
-	// Convert the float values to integers.
-	positionX = (int)posX;
-	positionY = (int)posY;
-	positionZ = (int)posZ;
-	rotationX = (int)rotX;
-	rotationY = (int)rotY;
-	rotationZ = (int)rotZ;
-
-	// Update the position strings if the value has changed since the last frame.
-	if (positionX != _previousPosition[0])
+	// Initialize the position text strings.
+	vector<char*> labels = { "X: ", "Y: ", "Z: ", "rX: ", "rY: ", "rZ: " };
+	vector<float> posRot = { posX, posY, posZ, rotX, rotY, rotZ };
+	char offset = 0;
+	for (int i = 0; i < 6; ++i)
 	{
-		_previousPosition[0] = positionX;
-		_itoa_s(positionX, tempString, 10);
-		strcpy_s(finalString, "X: ");
+		_previousPosition[i] = (int)posRot[i];
+		_itoa_s(posRot[i], tempString, 10);
+		strcpy_s(finalString, labels[i]);
 		strcat_s(finalString, tempString);
-		result = _PositionStrings[0].UpdateSentence(deviceContext, _Font1, finalString, 10, 100, 1.0f, 1.0f, 1.0f);
-		if (!result) { return false; }
-	}
+		result = _PositionStrings[i]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 100 + offset, 1.0f, 1.0f, 1.0f);
+		if (FAILED(result))
+		{
+			throw std::runtime_error("Could not update sentence number " + to_string(i) + " - line " + std::to_string(__LINE__));
+			return false;
+		}
 
-	if (positionY != _previousPosition[1])
-	{
-		_previousPosition[1] = positionY;
-		_itoa_s(positionY, tempString, 10);
-		strcpy_s(finalString, "Y: ");
-		strcat_s(finalString, tempString);
-		result = _PositionStrings[1].UpdateSentence(deviceContext, _Font1, finalString, 10, 120, 1.0f, 1.0f, 1.0f);
-		if (!result) { return false; }
-	}
-
-	if (positionZ != _previousPosition[2])
-	{
-		_previousPosition[2] = positionZ;
-		_itoa_s(positionZ, tempString, 10);
-		strcpy_s(finalString, "Z: ");
-		strcat_s(finalString, tempString);
-		result = _PositionStrings[2].UpdateSentence(deviceContext, _Font1, finalString, 10, 140, 1.0f, 1.0f, 1.0f);
-		if (!result) { return false; }
-	}
-
-	if (rotationX != _previousPosition[3])
-	{
-		_previousPosition[3] = rotationX;
-		_itoa_s(rotationX, tempString, 10);
-		strcpy_s(finalString, "rX: ");
-		strcat_s(finalString, tempString);
-		result = _PositionStrings[3].UpdateSentence(deviceContext, _Font1, finalString, 10, 180, 1.0f, 1.0f, 1.0f);
-		if (!result) { return false; }
-	}
-
-	if (rotationY != _previousPosition[4])
-	{
-		_previousPosition[4] = rotationY;
-		_itoa_s(rotationY, tempString, 10);
-		strcpy_s(finalString, "rY: ");
-		strcat_s(finalString, tempString);
-		result = _PositionStrings[4].UpdateSentence(deviceContext, _Font1, finalString, 10, 200, 1.0f, 1.0f, 1.0f);
-		if (!result) { return false; }
-	}
-
-	if (rotationZ != _previousPosition[5])
-	{
-		_previousPosition[5] = rotationZ;
-		_itoa_s(rotationZ, tempString, 10);
-		strcpy_s(finalString, "rZ: ");
-		strcat_s(finalString, tempString);
-		result = _PositionStrings[5].UpdateSentence(deviceContext, _Font1, finalString, 10, 220, 1.0f, 1.0f, 1.0f);
-		if (!result) { return false; }
+		offset += 20;
 	}
 
 	return true;
@@ -1066,8 +763,7 @@ bool Graphics::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int render
 	char tempString[32];
 	char finalString[32];
 	bool result;
-
-
+	
 	// Convert the render count integer to string format.
 	_itoa_s(renderCount, tempString, 10);
 
@@ -1076,7 +772,7 @@ bool Graphics::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int render
 	strcat_s(finalString, tempString);
 
 	// Update the sentence vertex buffer with the new string information.
-	result = _RenderCountStrings[0].UpdateSentence(deviceContext, _Font1, finalString, 10, 260, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[0]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 260, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
@@ -1090,7 +786,7 @@ bool Graphics::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int render
 	strcat_s(finalString, tempString);
 
 	// Update the sentence vertex buffer with the new string information.
-	result = _RenderCountStrings[1].UpdateSentence(deviceContext, _Font1, finalString, 10, 280, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[1]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 280, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;
@@ -1104,7 +800,7 @@ bool Graphics::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int render
 	strcat_s(finalString, tempString);
 
 	// Update the sentence vertex buffer with the new string information.
-	result = _RenderCountStrings[2].UpdateSentence(deviceContext, _Font1, finalString, 10, 300, 1.0f, 1.0f, 1.0f);
+	result = _RenderCountStrings[2]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 300, 1.0f, 1.0f, 1.0f);
 	if (!result)
 	{
 		return false;

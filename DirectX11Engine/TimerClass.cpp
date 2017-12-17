@@ -32,7 +32,7 @@ bool TimerClass::Initialize()
 	return true;
 }
 
-void TimerClass::Frame()
+void TimerClass::Tick()
 {
 	INT64 currentTime;
 	float timeDifference;
@@ -47,7 +47,6 @@ void TimerClass::Frame()
 
 	return;
 }
-
 
 float TimerClass::GetTime()
 {

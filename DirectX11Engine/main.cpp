@@ -1,29 +1,41 @@
 #include "System.h"
+#include <stdexcept>
+
+using namespace std;
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PSTR pScmdline, int iCmdshow)
 {
-	System* system;
-	bool result;
-
-
-	// Create the system object.
-	system = new System;
-	if (!system)
+	try
 	{
-		return 0;
-	}
+		System* system;
+		bool result;
 
-	// Initialize and run the system object.
-	result = system->Initialize();
-	if (result)
+		// Create the system object.
+		system = new System;
+		if (!system)
+		{
+			return 0;
+		}
+
+		// Initialize and run the system object.
+		result = system->Initialize();
+		if (result)
+		{
+			system->Run();
+		}
+
+		// Shutdown and release the system object.
+		system->Shutdown();
+		delete system;
+		system = 0;
+	}
+	catch (const std::runtime_error& e)
 	{
-		system->Run();
-	}
+		const std::string errMsg = e.what();
+		const std::string ErrMsg(errMsg.begin(), errMsg.end());
 
-	// Shutdown and release the system object.
-	system->Shutdown();
-	delete system;
-	system = 0;
+		MessageBox(nullptr, ErrMsg.c_str(), "Runtime error.", MB_OK);
+	}
 
 	return 0;
 }

@@ -131,7 +131,11 @@ bool FontClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	}
 
 	// Initialize the texture object.
-	result = _Texture->Initialize(device, deviceContext, filename, filename, filename, filename, filename, filename);
+
+
+	vector<char*> filenames{ filename };
+	result = _Texture->InitializeArray(device, deviceContext, filenames);
+
 	if (!result)
 	{
 		return false;
@@ -146,7 +150,6 @@ void FontClass::ReleaseTexture()
 	// Release the texture object.
 	if (_Texture)
 	{
-		_Texture->Shutdown();
 		delete _Texture;
 		_Texture = 0;
 	}

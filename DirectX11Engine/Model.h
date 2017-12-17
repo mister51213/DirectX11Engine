@@ -9,6 +9,8 @@
 #include <d3d11.h>
 #include <directxmath.h>
 #include <fstream>
+#include <string>
+#include <vector>
 
 using namespace std;
 using namespace DirectX;
@@ -17,6 +19,9 @@ using namespace DirectX;
 // CUSTOM INCLUDES //
 /////////////////////
 #include "texture.h"
+#include "GfxUtil.h"
+
+using namespace GfxUtil;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: ModelClass
@@ -62,17 +67,17 @@ public:
 	Model(const Model&);
 	~Model();
 
-	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, char* textureFilename1, char* textureFilename2, char* textureFilename3, char* textureFilename4, char* textureFilename5, char* textureFilename6);
+	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, vector<char*> fileNames, EShaderType shaderType);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 
 	/** Needed by the shader to draw this model */
 	int GetIndexCount();
-	//ID3D11ShaderResourceView* GetTexture();
-	ID3D11ShaderResourceView** GetTextureArray();
+
+	Material* GetMaterial();
+	ID3D11ShaderResourceView** GetTextureArray(); // TODO: replace w material
 
 	bool LoadModel(char*);
-	void ReleaseModel();
 
 private:
 	bool InitializeBuffers(ID3D11Device* device);
@@ -80,9 +85,6 @@ private:
 
 	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
 	void RenderBuffers(ID3D11DeviceContext* deviceContext);
-
-	bool LoadTextures(ID3D11Device*, ID3D11DeviceContext*, char* fileName1, char* fileName2, char* fileName3, char* fileName4, char* textureFileName5, char* texFileName6);
-	void ReleaseTextures();
 
 	//functions for calculating the tangent and binormal vectors for the model.
 	void CalculateModelVectors();
@@ -92,8 +94,8 @@ private:
 private:
 	ID3D11Buffer *_vertexBuffer, *_indexBuffer;
 	int _vertexCount, _indexCount;
-	ModelType* _model; // used to read in and hold the model data before it is placed in the vertex buffer.
-	//TextureClass* _Texture;
-	TextureClass* _TextureArray;
+	unique_ptr<ModelType> _model; // used to read in and hold the model data before it is placed in the vertex buffer.
+	
+	unique_ptr<Material> _material;
 };
 
