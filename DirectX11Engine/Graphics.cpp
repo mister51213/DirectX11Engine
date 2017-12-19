@@ -77,17 +77,6 @@ bool Graphics::InitializeLights()
 
 bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight, vector<unique_ptr<Actor>>* sceneActors)
 {
-	///////////////MODEL LIST///////////////////// @TODO - move into scene class
-	for (int i = 0; i < 4; ++i)
-	{
-//		Model* pMod;
-//		sceneModels.push_back(pMod);
-
-		(*sceneActors).push_back(unique_ptr<Actor>());
-		(*sceneActors)[i].reset(new Actor);
-		(*sceneActors)[i]->Initialize();
-	}
-
 	///////////////// WATER DEMO /////////////////////
 	_GroundModel.reset(new Model);
 	if (!_GroundModel)
@@ -111,9 +100,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		throw std::runtime_error("Could not initialize the ground model object. - line " + std::to_string(__LINE__));
 		return false;
 	}
-	//sceneModels[0] = _GroundModel.get();
 	(*sceneActors)[0]->SetModel(_GroundModel.get());
-	(*sceneActors)[0]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 1.0f, 0.0f));
 
 	// Create the wall model object.
 	_WallModel.reset(new Model);
@@ -134,9 +121,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		throw std::runtime_error("Could not initialize the wall model object. - line " + std::to_string(__LINE__));
 		return false;
 	}
-	//sceneModels[1] = _WallModel.get();
 	(*sceneActors)[1]->SetModel(_WallModel.get());
-	(*sceneActors)[1]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 6.0f, 8.0f));
 
 	// Create the bath model object.
 	_BathModel.reset(new Model);
@@ -160,9 +145,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		throw std::runtime_error("Could not initialize the bath model object. - line " + std::to_string(__LINE__));
 		return false;
 	}
-	//sceneModels[2] = _BathModel.get();
 	(*sceneActors)[2]->SetModel(_BathModel.get());
-	(*sceneActors)[2]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.0f, 0.0f));
 
 	// Create the water model object.
 	_WaterModel.reset(new Model);
@@ -181,10 +164,9 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		return false;
 	}
 	_WaterModel->GetMaterial()->reflectRefractScale = 0.01f;
-	_WaterModel->GetMaterial()->waterHeight = 2.75f;
-	//sceneModels[3] = _WaterModel.get();
+	_WaterModel->GetMaterial()->waterHeight = (*sceneActors)[3]->GetMovementComponent()->GetPosition().y;
+
 	(*sceneActors)[3]->SetModel(_WaterModel.get());
-	(*sceneActors)[3]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, _WaterModel->GetMaterial()->waterHeight, 0.0f));
 
 	///////////////////////////////////////////////
 	///////////// INIT RENDER TEXTURES //////////// (LATER ENCAPASULATE INTO MATERIALS)
@@ -359,7 +341,7 @@ bool Graphics::UpdateFrame(float frameTime, Scene* scene, int fps, float camX, f
 bool Graphics::DrawFrame(vector<unique_ptr<Actor>>* sceneActors, float frameTime)
 {
 	// Render the refraction of the scene to a texture.
-	bool result = RenderRefractionToTexture();
+	bool result = RenderRefractionToTexture(_WaterModel->GetMaterial()->waterHeight);
 	if (!result){return false;}
 
 	// Render the reflection of the scene to a texture.
@@ -381,14 +363,14 @@ bool Graphics::DrawFrame(vector<unique_ptr<Actor>>* sceneActors, float frameTime
 	return true;
 }
 
-bool Graphics::RenderRefractionToTexture()
+bool Graphics::RenderRefractionToTexture(float surfaceHeight)
 {
 	XMFLOAT4 clipPlane;
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
 	bool result;
 
 	// Setup a clipping plane based on the height of the water to clip everything above it.
-	_globalEffects.clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, _WaterModel->GetMaterial()->waterHeight + 0.1f);
+	_globalEffects.clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, surfaceHeight);
 
 	// Set the render target to be the refraction render to texture.
 	_RefractionTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
@@ -483,8 +465,6 @@ bool Graphics::RenderScene(vector<unique_ptr<Actor>>* sceneActors, float frameTi
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
 	//@TODO: TEMP HACK!!!!!! - MUST ENCAPSULATE!!!!!!!
-	//sceneModels[3]->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
-	//sceneModels[3]->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
 	(*sceneActors)[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
 	(*sceneActors)[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
 	//@TODO: TEMP HACK!!!!!! - MUST ENCAPSULATE!!!!!!!

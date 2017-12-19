@@ -50,7 +50,7 @@ public:
 
 	bool DrawFrame(vector<unique_ptr<Actor>>* sceneActors, float frameTime);
 
-	bool RenderRefractionToTexture();
+	bool RenderRefractionToTexture(float surfaceHeight);
 
 	void RenderText();
 
@@ -90,8 +90,6 @@ private:
 	/////////// WATER DEMO ////////////////
 	unique_ptr<Model> _GroundModel, _WallModel, _BathModel, _WaterModel;
 	unique_ptr<RenderTextureClass> _RefractionTexture, _ReflectionTexture;
-	//vector<Model*> sceneModels;
-	vector<unique_ptr<Actor>> sceneActors;
 
 	/////////// GLOBAL EFFECTS /////////////
 	SceneEffects _globalEffects;

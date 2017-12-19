@@ -12,8 +12,10 @@ Actor::~Actor()
 {
 }
 
-bool Actor::Initialize()
+bool Actor::Initialize(bool visible)
 {
+	bVisible = visible;
+
 	_MovementComp->Initialize();
 	//_Model->Initialize();
 

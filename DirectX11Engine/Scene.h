@@ -21,7 +21,8 @@ public:
 	
 	Actor** GetActors() const;
 
-	//unique_ptr<MovementComponent> _Camera;
+	int _numActors = 4;
+
 	unique_ptr<Actor> _Camera;
 	vector<unique_ptr<Actor>> _Actors;
 	vector<unique_ptr<LightClass>> _Lights;

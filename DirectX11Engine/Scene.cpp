@@ -14,9 +14,20 @@ Scene::~Scene()
 
 bool Scene::Initialize()
 {
-	// Create the position object.
 	_Camera.reset(new Actor);
-	//_Camera.reset(new MovementComponent);
+	_Camera->Initialize(false);
+
+	for (int i = 0; i < _numActors; ++i)
+	{
+		_Actors.push_back(unique_ptr<Actor>());
+		_Actors[i].reset(new Actor);
+		_Actors[i]->Initialize(true);
+	}
+
+	_Actors[0]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 1.0f, 0.0f));
+	_Actors[1]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 6.0f, 8.0f));
+	_Actors[2]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.0f, 0.0f));
+	_Actors[3]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.75, 0.0f));
 
 	return true;
 }

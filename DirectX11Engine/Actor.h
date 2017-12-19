@@ -12,7 +12,7 @@ public:
 	Actor();
 	~Actor();
 
-	bool Initialize();
+	bool Initialize(bool visible);
 
 	inline MovementComponent* GetMovementComponent()
 	{
@@ -22,6 +22,8 @@ public:
 	inline void SetModel(Model* model){_Model = model;}
 
 	inline Model* GetModel() const { return _Model; }
+
+	bool bVisible = true;
 
 private:
 	unique_ptr<MovementComponent> _MovementComp;
