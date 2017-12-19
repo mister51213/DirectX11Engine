@@ -554,8 +554,8 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 
 	result =
 		_ShaderManager->RenderWaterShader(_D3D->GetDeviceContext(), _WaterModel->GetIndexCount(), worldMatrix, viewMatrix,
-		projectionMatrix, reflectionMatrix, tempTexViews.data()->GetAddressOf(), _ReflectionTexture->GetShaderResourceView(), _RefractionTexture->GetShaderResourceView(),
-			_WaterModel->GetMaterial()->GetResourceArray()[0],
+		projectionMatrix, reflectionMatrix, tempTexViews.data()->GetAddressOf(), /*_ReflectionTexture->GetShaderResourceView(), _RefractionTexture->GetShaderResourceView(),
+			_WaterModel->GetMaterial()->GetResourceArray()[0],*/
 			_waterTranslation, 0.01f);
 	if (!result)
 	{

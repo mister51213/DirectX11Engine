@@ -48,8 +48,8 @@ public:
 
 	bool RenderWaterShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 		XMMATRIX projectionMatrix, XMMATRIX reflectionMatrix,
-		ID3D11ShaderResourceView** textureArray, ID3D11ShaderResourceView* reflectionTexture, ID3D11ShaderResourceView* refractionTexture,
-		ID3D11ShaderResourceView* normalTexture, float waterTranslation, float reflectRefractScale);
+		ID3D11ShaderResourceView** textureArray, /*ID3D11ShaderResourceView* reflectionTexture, ID3D11ShaderResourceView* refractionTexture,
+		ID3D11ShaderResourceView* normalTexture, */float waterTranslation, float reflectRefractScale);
 
 	bool RenderRefractionShader(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, ID3D11ShaderResourceView * texture, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT4 clipPlane);
 
