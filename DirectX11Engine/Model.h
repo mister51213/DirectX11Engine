@@ -69,7 +69,6 @@ public:
 
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, vector<char*> fileNames, EShaderType shaderType);
 	void Shutdown();
-	void Render(ID3D11DeviceContext*);
 
 	/** Needed by the shader to draw this model */
 	int GetIndexCount();
@@ -79,14 +78,12 @@ public:
 	ID3D11ShaderResourceView** GetTextureArray(); // TODO: replace w material
 
 	bool LoadModel(char*);
+	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
+	void RenderBuffers(ID3D11DeviceContext* deviceContext);
 
 private:
 	bool InitializeBuffers(ID3D11Device* device);
 	void ShutdownBuffers();
-
-	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
-	void RenderBuffers(ID3D11DeviceContext* deviceContext);
-
 	//functions for calculating the tangent and binormal vectors for the model.
 	void CalculateModelVectors();
 	void CalculateTangentBinormal(TempVertexType, TempVertexType, TempVertexType, VectorType&, VectorType&);

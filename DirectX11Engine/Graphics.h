@@ -25,6 +25,8 @@ const float SCREEN_NEAR = 0.1f;
 #include "modellistclass.h"
 #include "frustumclass.h"
 #include "shadermanagerclass.h"
+#include "Actor.h"
+#include "Position.h"
 #include "GfxUtil.h"
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,11 +85,12 @@ private:
 	
 	unique_ptr<ShaderManagerClass> _ShaderManager;
 
-	/////////// WATER ////////////////
+	/////////// WATER DEMO ////////////////
 	unique_ptr<Model> _GroundModel, _WallModel, _BathModel, _WaterModel;
 	unique_ptr<RenderTextureClass> _RefractionTexture, _ReflectionTexture;
-	float _waterHeight;
+	vector<Model*> sceneModels;
+	vector<unique_ptr<Actor>> sceneActors;
 
 	/////////// GLOBAL EFFECTS /////////////
-	SceneEffects _effects;
+	SceneEffects _globalEffects;
 };

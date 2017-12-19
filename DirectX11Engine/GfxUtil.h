@@ -80,6 +80,7 @@ namespace GfxUtil
 		// Effects @TODO: encapsulate into different struct
 		float transparency = 0.f;
 		float translation = 0.f;
+		float waterHeight = 2.75f;
 		float reflectRefractScale = 0.01f;
 	};
 }

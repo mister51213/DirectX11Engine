@@ -55,6 +55,11 @@ XMFLOAT3 MovementComponent::GetPosition() const
 	return _position;
 }
 
+void MovementComponent::SetPosition(const XMFLOAT3 & pos)
+{
+	_position = pos;
+}
+
 void MovementComponent::SetOrientation(XMFLOAT3& newOrientation)
 {
 	_orientation = newOrientation;

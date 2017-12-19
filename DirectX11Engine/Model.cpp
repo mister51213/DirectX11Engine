@@ -19,7 +19,7 @@ Model::Model(const Model& other)
 Model::~Model()
 {}
 
-bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, vector<char*> fileNames, EShaderType shaderType)
+bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, vector<char*> texFileNames, EShaderType shaderType)
 {
 	bool result;
 
@@ -43,8 +43,7 @@ bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 	// Loads the textures in the material. Material now holds pointer to texture class
 	_material.reset(new Material);
 
-	//vector<char*> fileNames{ textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6 };
-	_material->Initialize(device, deviceContext, shaderType, fileNames);
+	_material->Initialize(device, deviceContext, shaderType, texFileNames);
 
 	// TESTING AREA for different string functions
 	//WCHAR* wstr = (WCHAR*)fileName1; // not working
@@ -70,14 +69,6 @@ void Model::Shutdown()
 {
 	// Shutdown the vertex and index buffers.
 	ShutdownBuffers();
-}
-
-void Model::Render(ID3D11DeviceContext* deviceContext)
-{
-	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	RenderBuffers(deviceContext);
-
-	return;
 }
 
 int Model::GetIndexCount()
