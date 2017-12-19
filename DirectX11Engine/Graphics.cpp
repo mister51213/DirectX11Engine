@@ -51,12 +51,10 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Initialize UI
 	result = InitializeUI(screenWidth, screenHeight);
 	
-
 	// Initialize global effects
-	XMFLOAT3 fogColor(.6f, .6f, .6f);	float fogStart = 0.0f;	float fogEnd = 3.f;
 	_globalEffects.clipPlane = XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f);
-	_globalEffects.fogStart = fogStart;
-	_globalEffects.fogEnd = fogEnd;
+	_globalEffects.fogStart = 0.f;
+	_globalEffects.fogEnd = 3.f;
 
 	return true;
 }
@@ -79,12 +77,10 @@ bool Graphics::InitializeLights()
 bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight)
 {
 	///////////////MODEL LIST///////////////////// @TODO - make in scene class
-	//vector<Model*> sceneModels;
-	//vector<unique_ptr<Actor>> sceneActors;
 	for (int i = 0; i < 4; ++i)
 	{
-		Model* pMod;
-		sceneModels.push_back(pMod);
+//		Model* pMod;
+//		sceneModels.push_back(pMod);
 
 		sceneActors.push_back(unique_ptr<Actor>());
 		sceneActors[i].reset(new Actor);
@@ -92,7 +88,6 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	}
 
 	///////////////// WATER DEMO /////////////////////
-	// Create the ground model object.
 	_GroundModel.reset(new Model);
 	if (!_GroundModel)
 	{
@@ -115,7 +110,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		throw std::runtime_error("Could not initialize the ground model object. - line " + std::to_string(__LINE__));
 		return false;
 	}
-	sceneModels[0] = _GroundModel.get();
+	//sceneModels[0] = _GroundModel.get();
+	sceneActors[0]->SetModel(_GroundModel.get());
 	sceneActors[0]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 1.0f, 0.0f));
 
 	// Create the wall model object.
@@ -137,7 +133,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		throw std::runtime_error("Could not initialize the wall model object. - line " + std::to_string(__LINE__));
 		return false;
 	}
-	sceneModels[1] = _WallModel.get();
+	//sceneModels[1] = _WallModel.get();
+	sceneActors[1]->SetModel(_WallModel.get());
 	sceneActors[1]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 6.0f, 8.0f));
 
 	// Create the bath model object.
@@ -162,7 +159,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		throw std::runtime_error("Could not initialize the bath model object. - line " + std::to_string(__LINE__));
 		return false;
 	}
-	sceneModels[2] = _BathModel.get();
+	//sceneModels[2] = _BathModel.get();
+	sceneActors[2]->SetModel(_BathModel.get());
 	sceneActors[2]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.0f, 0.0f));
 
 	// Create the water model object.
@@ -183,7 +181,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	}
 	_WaterModel->GetMaterial()->reflectRefractScale = 0.01f;
 	_WaterModel->GetMaterial()->waterHeight = 2.75f;
-	sceneModels[3] = _WaterModel.get();
+	//sceneModels[3] = _WaterModel.get();
+	sceneActors[3]->SetModel(_WaterModel.get());
 	sceneActors[3]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, _WaterModel->GetMaterial()->waterHeight, 0.0f));
 
 	///////////////////////////////////////////////
@@ -483,8 +482,10 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
 	//@TODO: TEMP HACK!!!!!! - MUST ENCAPSULATE!!!!!!!
-	sceneModels[3]->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
-	sceneModels[3]->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
+	//sceneModels[3]->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
+	//sceneModels[3]->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
+	sceneActors[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
+	sceneActors[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
 	//@TODO: TEMP HACK!!!!!! - MUST ENCAPSULATE!!!!!!!
 
 	for (int i = 0; i < sceneActors.size(); ++i)
@@ -492,16 +493,16 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 		XMFLOAT3 translation = sceneActors[i]->GetMovementComponent()->GetPosition();
 		worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z));
 
-		sceneModels[i]->RenderBuffers(_D3D->GetDeviceContext());
+		sceneActors[i]->GetModel()->RenderBuffers(_D3D->GetDeviceContext());
 
-		if(sceneModels[i]->GetMaterial()->transparency != 0.f)
+		if(sceneActors[i]->GetModel()->GetMaterial()->transparency != 0.f)
 			_D3D->EnableAlphaBlending();
 
-		result = _ShaderManager->Render(_D3D->GetDeviceContext(), sceneModels[i]->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-			sceneModels[i]->GetMaterial(), _Light.get(), _globalEffects, XMFLOAT3(0,0,0), _Camera->GetReflectionViewMatrix());
+		result = _ShaderManager->Render(_D3D->GetDeviceContext(), sceneActors[i]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			sceneActors[i]->GetModel()->GetMaterial(), _Light.get(), _globalEffects, XMFLOAT3(0,0,0), _Camera->GetReflectionViewMatrix());
 		if (!result) return false;
 
-		if (sceneModels[i]->GetMaterial()->transparency != 0.f)
+		if (sceneActors[i]->GetModel()->GetMaterial()->transparency != 0.f)
 			_D3D->DisableAlphaBlending();
 
 		// reset world matrix

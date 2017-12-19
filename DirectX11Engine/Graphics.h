@@ -53,7 +53,8 @@ public:
 
 	void RenderText();
 
-	inline Camera* GetCamera() { return _Camera.get(); }
+	inline D3DClass* GetD3D()const { return _D3D.get();}
+	inline Camera* GetCamera() const { return _Camera.get(); }
 	bool UpdateRenderCounts(ID3D11DeviceContext*, int, int, int);
 
 private:
@@ -88,7 +89,7 @@ private:
 	/////////// WATER DEMO ////////////////
 	unique_ptr<Model> _GroundModel, _WallModel, _BathModel, _WaterModel;
 	unique_ptr<RenderTextureClass> _RefractionTexture, _ReflectionTexture;
-	vector<Model*> sceneModels;
+	//vector<Model*> sceneModels;
 	vector<unique_ptr<Actor>> sceneActors;
 
 	/////////// GLOBAL EFFECTS /////////////

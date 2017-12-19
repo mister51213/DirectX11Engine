@@ -19,9 +19,12 @@ public:
 		return _MovementComp.get();
 	}
 
+	inline void SetModel(Model* model){_Model = model;}
+
+	inline Model* GetModel() const { return _Model; }
+
 private:
 	unique_ptr<MovementComponent> _MovementComp;
-	unique_ptr<Model> _Model;
-
+	Model* _Model;
 };
 
