@@ -405,7 +405,7 @@ bool Graphics::RenderRefractionToTexture()
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
 	// Translate to where the bath model will be rendered.
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0.0f, 2.0f, 0.0f));
+	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(0.0f, 2.0f, 0.0f));
 
 	// Put the bath model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	_BathModel->RenderBuffers(_D3D->GetDeviceContext());
@@ -447,7 +447,7 @@ bool Graphics::RenderReflectionToTexture()
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
 	// Translate to where the wall model will be rendered.
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(0.0f, 6.0f, 8.0f));
+	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(0.0f, 6.0f, 8.0f));
 
 	// Put the wall model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	_WallModel->RenderBuffers(_D3D->GetDeviceContext());
@@ -485,6 +485,7 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	//@TODO: TEMP HACK!!!!!! - MUST ENCAPSULATE!!!!!!!
 	sceneModels[3]->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
 	sceneModels[3]->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
+	//@TODO: TEMP HACK!!!!!! - MUST ENCAPSULATE!!!!!!!
 
 	for (int i = 0; i < sceneActors.size(); ++i)
 	{
@@ -493,13 +494,14 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 
 		sceneModels[i]->RenderBuffers(_D3D->GetDeviceContext());
 
-		result = _ShaderManager->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-			_GroundModel->GetMaterial(), _Light.get(), _globalEffects);
+		result = _ShaderManager->Render(_D3D->GetDeviceContext(), sceneModels[i]->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			sceneModels[i]->GetMaterial(), _Light.get(), _globalEffects, XMFLOAT3(0,0,0), _Camera->GetReflectionViewMatrix());
 		if (!result)
 		{
 			return false;
 		}
 
+		_D3D->GetWorldMatrix(worldMatrix);
 	}
 
 #pragma region WATER
@@ -561,17 +563,8 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	//// Put the water model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	//_WaterModel->RenderBuffers(_D3D->GetDeviceContext());
 
-	//// TRY 1 - SUCCESS
-	////vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>tempTexViews;
-	////tempTexViews.push_back(_ReflectionTexture->GetShaderResourceView());
-	////tempTexViews.push_back(_RefractionTexture->GetShaderResourceView());
-	////tempTexViews.push_back(_WaterModel->GetMaterial()->GetResourceArray()[0]);
-	////	_ShaderManager->RenderWaterShader(_D3D->GetDeviceContext(), _WaterModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 
-	////		reflectionMatrix, tempTexViews.data()->GetAddressOf(),_WaterModel->GetMaterial()->translation, _WaterModel->GetMaterial()->reflectRefractScale);
-
-	//// TRY 3 - SUCCESS
-	//_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
-	//_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
+	////_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
+	////_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
 
 	//result =_ShaderManager->Render(_D3D->GetDeviceContext(), _WaterModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 		
 	//	_WaterModel->GetMaterial(), _Light.get(), _globalEffects, 
