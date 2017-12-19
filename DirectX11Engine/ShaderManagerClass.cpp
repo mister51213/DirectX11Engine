@@ -105,7 +105,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 }
 
 // @TODO the params at teh end need to be encapsulated
-bool ShaderManagerClass::RenderAll(ID3D11DeviceContext * device, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, Material * material, LightClass * light, SceneEffects effects, XMFLOAT3 cameraPos, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView * reflectionTexture, ID3D11ShaderResourceView * refractionTexture, ID3D11ShaderResourceView * normalTexture)
+bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, Material * material, LightClass * light, SceneEffects effects, XMFLOAT3 cameraPos, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView * reflectionTexture, ID3D11ShaderResourceView * refractionTexture, ID3D11ShaderResourceView * normalTexture)
 {
 	//@TODO: GO THROUGH EVERY SINGLE FUCKING CALL IN GRAPHICS.CPP AND MAKE SURE THEY MATCH WITH THE CALLS BELOW
 	// (may have passed in wrong textures in water or reflection shader)
@@ -139,7 +139,7 @@ bool ShaderManagerClass::RenderAll(ID3D11DeviceContext * device, int indexCount,
 
 	case EShaderType::EWATER:
 		result = _WaterShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix,
-			material->GetResourceArray(), /*reflectionTexture, refractionTexture, normalTexture, */material->translation, material->reflectRefractScale);
+			material->GetResourceArray(), material->translation, material->reflectRefractScale);
 		if (!result) return false;
 		break;
 
@@ -221,12 +221,12 @@ bool ShaderManagerClass::RenderReflectionShader(ID3D11DeviceContext* deviceConte
 	return true;
 }
 
-bool ShaderManagerClass::RenderWaterShader(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, /*ID3D11ShaderResourceView * reflectionTexture, ID3D11ShaderResourceView * refractionTexture, ID3D11ShaderResourceView * normalTexture, */float waterTranslation, float reflectRefractScale)
+bool ShaderManagerClass::RenderWaterShader(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, float waterTranslation, float reflectRefractScale)
 {
 	bool result;
 
 	// Render the model using the reflection shader. 
-	result = _WaterShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, textureArray, /*reflectionTexture, refractionTexture, normalTexture, */waterTranslation, reflectRefractScale);
+	result = _WaterShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, textureArray, waterTranslation, reflectRefractScale);
 	if (!result)
 	{
 		return false;

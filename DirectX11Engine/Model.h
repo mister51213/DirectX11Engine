@@ -75,6 +75,7 @@ public:
 	int GetIndexCount();
 
 	Material* GetMaterial();
+	void SetMaterial(Material* mat);
 	ID3D11ShaderResourceView** GetTextureArray(); // TODO: replace w material
 
 	bool LoadModel(char*);

@@ -37,6 +37,7 @@ public:
 	bool InitializeTexTga(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename, unsigned char** targaData, ID3D11Texture2D** pTexture, ID3D11ShaderResourceView** pTexView);
 	
 	ID3D11ShaderResourceView** GetTextureArray();
+	void ResetTextureArray(ID3D11ShaderResourceView** array, int size);
 
 private:
 	unsigned char* LoadTarga(char*, int&, int&, unsigned char* pTargaData);

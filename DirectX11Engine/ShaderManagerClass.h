@@ -34,7 +34,7 @@ public:
 
 	bool Initialize(ID3D11Device*, HWND);
 
-	bool RenderAll(ID3D11DeviceContext* device, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, Material* material, LightClass* light, SceneEffects effects, 
+	bool Render(ID3D11DeviceContext* device, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, Material* material, LightClass* light, SceneEffects effects, 
 		XMFLOAT3 cameraPos = XMFLOAT3(0,0,0), XMMATRIX reflectionMatrix = XMMatrixIdentity(), ID3D11ShaderResourceView * reflectionTexture = nullptr, ID3D11ShaderResourceView * refractionTexture = nullptr, ID3D11ShaderResourceView * normalTexture = nullptr);
 
 	bool RenderTextureShader(ID3D11DeviceContext*, int, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*);

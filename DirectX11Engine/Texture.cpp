@@ -148,6 +148,17 @@ ID3D11ShaderResourceView** TextureClass::GetTextureArray()
 	return _textureViews.data()->GetAddressOf();
 }
 
+void TextureClass::ResetTextureArray(ID3D11ShaderResourceView ** array, int size)
+{
+	_textureViews.clear();
+
+	for (int i = 0; i < size; ++i)
+	{
+		_textureViews.push_back(Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>());
+		_textureViews[i] = array[i];
+	}
+}
+
 unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, unsigned char* pTargaData)
 {
 	int error, bpp, imageSize, index, i, j, k;

@@ -86,5 +86,8 @@ private:
 	/////////// WATER ////////////////
 	unique_ptr<Model> _GroundModel, _WallModel, _BathModel, _WaterModel;
 	unique_ptr<RenderTextureClass> _RefractionTexture, _ReflectionTexture;
-	float _waterHeight, _waterTranslation;
+	float _waterHeight;
+
+	/////////// GLOBAL EFFECTS /////////////
+	SceneEffects _effects;
 };

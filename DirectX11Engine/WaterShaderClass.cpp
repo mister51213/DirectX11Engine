@@ -15,12 +15,12 @@ WaterShaderClass::~WaterShaderClass()
 {}
 
 bool WaterShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, 
-	XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, /*ID3D11ShaderResourceView * reflectionTexture, ID3D11ShaderResourceView * refractionTexture, ID3D11ShaderResourceView * normalTexture, */float waterTranslation, float reflectRefractScale)
+	XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, float waterTranslation, float reflectRefractScale)
 {
 	bool result;
 
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, textureArray, /*reflectionTexture, refractionTexture, normalTexture, */waterTranslation, reflectRefractScale);
+	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, textureArray, waterTranslation, reflectRefractScale);
 	if (!result)
 	{
 		return false;
@@ -236,8 +236,6 @@ void WaterShaderClass::ShutdownShader()
 bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, XMMATRIX reflectionMatrix,
 	ID3D11ShaderResourceView** textureArray,
-	/*ID3D11ShaderResourceView* reflectionTexture,
-	ID3D11ShaderResourceView* refractionTexture, ID3D11ShaderResourceView* normalTexture,*/
 	float waterTranslation, float reflectRefractScale)
 {
 	HRESULT result;
@@ -251,16 +249,6 @@ bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	{
 		return false;
 	}
-
-
-	// Set the reflection texture resource in the pixel shader.
-	//deviceContext->PSSetShaderResources(0, 1, &reflectionTexture);
-
-	// Set the refraction texture resource in the pixel shader.
-	//deviceContext->PSSetShaderResources(1, 1, &refractionTexture);
-
-	// Set the normal map texture resource in the pixel shader.
-	//deviceContext->PSSetShaderResources(2, 1, &normalTexture);
 
 	deviceContext->PSSetShaderResources(0, 3, textureArray);
 	

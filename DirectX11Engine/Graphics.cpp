@@ -51,6 +51,13 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Initialize UI
 	result = InitializeUI(screenWidth, screenHeight);
 	
+
+	// Initialize global effects
+	XMFLOAT3 fogColor(.6f, .6f, .6f);	float fogStart = 0.0f;	float fogEnd = 3.f;
+	_effects.clipPlane = XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f);
+	_effects.fogStart = fogStart;
+	_effects.fogEnd = fogEnd;
+
 	return true;
 }
 
@@ -147,8 +154,10 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		return false;
 	}
 
+
+	//@TODO: SET ALL MATERIAL VALUES HERE!!!!!!!!!!!!!!!
 	// Initialize the water model object.
-	vector<char*> waterTextures{ "../DirectX11Engine/data/water.dds"};
+	vector<char*> waterTextures{ "../DirectX11Engine/data/water.dds", "../DirectX11Engine/data/water.dds" , "../DirectX11Engine/data/water.dds" };
 	result = _WaterModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/water.txt",
 		waterTextures,
@@ -159,6 +168,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		return false;
 	}
 
+	_WaterModel->GetMaterial()->reflectRefractScale = 0.01f;
 
 	// Create the refraction render to texture object.
 	_RefractionTexture.reset(new RenderTextureClass);
@@ -193,8 +203,6 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	// Set the height of the water.
 	_waterHeight = 2.75f;
 
-	// Initialize the position of the water.
-	_waterTranslation = 0.0f;
 
 	//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^//
 	///////////////////////// WATER ////////////////////////
@@ -310,10 +318,8 @@ bool Graphics::UpdateFrame(float frameTime, Scene* world, int fps, float camX, f
 {
 	bool result;
 
-	// 1. Update Effects
-	_waterTranslation += 0.001f;
-	if (_waterTranslation > 1.0f)
-	{_waterTranslation -= 1.0f;	}
+	// 1. Update Effects // @TODO - loop through all models
+	_WaterModel->GetMaterial()->Animate(true);
 
 	// 2. Update Camera
 	_Camera->SetPosition(camX, camY, camZ);
@@ -546,17 +552,33 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	// Put the water model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	_WaterModel->Render(_D3D->GetDeviceContext());
 
-	// Render the water model using the water shader.
-	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>tempTexViews;
-	tempTexViews.push_back(_ReflectionTexture->GetShaderResourceView());
-	tempTexViews.push_back(_RefractionTexture->GetShaderResourceView());
-	tempTexViews.push_back(_WaterModel->GetMaterial()->GetResourceArray()[0]);
+	//@TODO: put in initialize function?
 
-	result =
-		_ShaderManager->RenderWaterShader(_D3D->GetDeviceContext(), _WaterModel->GetIndexCount(), worldMatrix, viewMatrix,
-		projectionMatrix, reflectionMatrix, tempTexViews.data()->GetAddressOf(), /*_ReflectionTexture->GetShaderResourceView(), _RefractionTexture->GetShaderResourceView(),
-			_WaterModel->GetMaterial()->GetResourceArray()[0],*/
-			_waterTranslation, 0.01f);
+
+	// TRY 2 - SUCCESS
+	//_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
+	//_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
+	//_ShaderManager->RenderWaterShader(_D3D->GetDeviceContext(), _WaterModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, 
+	//	_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray(),_WaterModel->GetMaterial()->translation, _WaterModel->GetMaterial()->reflectRefractScale);
+
+	// TRY 1 - SUCCESS
+	//vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>tempTexViews;
+	//tempTexViews.push_back(_ReflectionTexture->GetShaderResourceView());
+	//tempTexViews.push_back(_RefractionTexture->GetShaderResourceView());
+	//tempTexViews.push_back(_WaterModel->GetMaterial()->GetResourceArray()[0]);
+	//	_ShaderManager->RenderWaterShader(_D3D->GetDeviceContext(), _WaterModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 
+	//		reflectionMatrix, tempTexViews.data()->GetAddressOf(),_WaterModel->GetMaterial()->translation, _WaterModel->GetMaterial()->reflectRefractScale);
+
+	// TRY 3 - SUCCESS
+	//_WaterModel->GetMaterial()->GetTextureObject()->ResetTextureArray(tempTexViews.data()->GetAddressOf(), tempTexViews.size());
+	_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
+	_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
+
+	result =_ShaderManager->Render(_D3D->GetDeviceContext(), _WaterModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 		
+		_WaterModel->GetMaterial(), _Light.get(), _effects, 
+
+		XMFLOAT3(0,0,0), reflectionMatrix); // need cleanup
+
 	if (!result)
 	{
 		return false;

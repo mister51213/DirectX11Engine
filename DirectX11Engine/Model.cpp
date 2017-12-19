@@ -44,7 +44,7 @@ bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 	_material.reset(new Material);
 
 	//vector<char*> fileNames{ textureFilename1, textureFilename2, lightMapFileName3, alphaFileName4, normalMapFilename5, specMapFilename6 };
-	_material->Initialize(device, deviceContext, EShaderType::ELIGHT_SPECULAR, fileNames);
+	_material->Initialize(device, deviceContext, shaderType, fileNames);
 
 	// TESTING AREA for different string functions
 	//WCHAR* wstr = (WCHAR*)fileName1; // not working
@@ -59,6 +59,11 @@ bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext,
 Material* Model::GetMaterial()
 {
 	return _material.get();
+}
+
+void Model::SetMaterial(Material* mat)
+{
+	_material.reset(mat);
 }
 
 void Model::Shutdown()

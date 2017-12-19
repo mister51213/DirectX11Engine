@@ -64,39 +64,13 @@ namespace GfxUtil
 	{
 	public:
 		Material();
-		//{
-		//	shaderType = ETEXTURE;
-		//	texArraySize = 1;
-		//}
 
 		bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, EShaderType inShaderType, vector<char*> fileNames);
-		//{
-		//	texArraySize = fileNames.size();
 
-		//	shaderType = inShaderType;
-
-		//	_TextureArray.reset(new TextureClass);
-		//	if (!_TextureArray)
-		//	{
-		//		return false;
-		//	}
-
-		//	bool result = _TextureArray->InitializeArray(device, deviceContext, fileNames);
-		//	if (!result)
-		//	{
-		//		return false;
-		//	}
-
-		//	return true;
-		//}
-
+		TextureClass* GetTextureObject();
 		ID3D11ShaderResourceView** GetResourceArray();
-		//{
-		//	if (_TextureArray)
-		//	{
-		//		return _TextureArray->GetTextureArray();
-		//	}
-		//}
+		
+		void Animate(bool bAnimated = true, float deltaTime = 1.f);
 
 		unique_ptr<TextureClass> _TextureArray;
 		EShaderType shaderType;
@@ -106,6 +80,6 @@ namespace GfxUtil
 		// Effects @TODO: encapsulate into different struct
 		float transparency = 0.f;
 		float translation = 0.f;
-		float reflectRefractScale = 0.f;
+		float reflectRefractScale = 0.01f;
 	};
 }
