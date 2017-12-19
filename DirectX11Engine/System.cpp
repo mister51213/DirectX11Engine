@@ -57,7 +57,7 @@ bool System::Initialize()
 	}
 
 	// Initialize the graphics object.
-	result = _Graphics->Initialize(screenWidth, screenHeight, _hwnd);
+	result = _Graphics->Initialize(screenWidth, screenHeight, _hwnd, _Scene.get());
 	if (!result)
 	{
 		throw std::runtime_error("Could not initialize the graphics object. - line " + std::to_string(__LINE__));

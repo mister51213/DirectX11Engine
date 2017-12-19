@@ -28,6 +28,7 @@ const float SCREEN_NEAR = 0.1f;
 #include "Actor.h"
 #include "Position.h"
 #include "GfxUtil.h"
+#include "Scene.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
@@ -40,14 +41,14 @@ public:
 	~Graphics();
 
 	// Create the D3DClass object and call the D3DClass Initialize function.
-	bool Initialize(int, int, HWND);
+	bool Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* scene);
 	bool InitializeLights();
-	bool InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight);
+	bool InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight, vector<unique_ptr<Actor>>* sceneActors);
 	bool InitializeUI(int screenWidth, int screenHeight);
-	bool UpdateFrame(float frameTime, class Scene* world, int fps, float posX, float posY, float posZ,
+	bool UpdateFrame(float frameTime, class Scene* scene, int fps, float posX, float posY, float posZ,
 		float rotX, float rotY, float rotZ);
 
-	bool DrawFrame(float frameTime);
+	bool DrawFrame(vector<unique_ptr<Actor>>* sceneActors, float frameTime);
 
 	bool RenderRefractionToTexture();
 
@@ -59,7 +60,7 @@ public:
 
 private:
 	bool RenderReflectionToTexture();
-	bool RenderScene(float fogStart, float fogEnd, float frameTime);
+	bool RenderScene(vector<unique_ptr<Actor>>* sceneActors, float frameTime);
 
 	bool UpdateFpsString(ID3D11DeviceContext*, int);
 	bool UpdatePositionStrings(ID3D11DeviceContext*, float, float, float, float, float, float);

@@ -19,6 +19,8 @@ public:
 	void ProcessInput(float deltaTime, Input * pInput);
 	void UpdateActors(float deltaTime);
 	
+	Actor** GetActors() const;
+
 	//unique_ptr<MovementComponent> _Camera;
 	unique_ptr<Actor> _Camera;
 	vector<unique_ptr<Actor>> _Actors;

@@ -14,7 +14,7 @@ Graphics::Graphics(const Graphics& other)
 Graphics::~Graphics()
 {}
 
-bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
+bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* scene)
 {
 	bool result;
 
@@ -40,10 +40,11 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Create the camera object.
-	_Camera.reset(new Camera);if (!_Camera){ return false;}	_Camera->SetPosition(0.0f, 0.0f, -4.f);	_Camera->UpdateViewFromPosition();
+	_Camera.reset(new Camera);if (!_Camera){ return false;}	
+	_Camera->SetPosition(0.0f, 0.0f, -4.f);	_Camera->UpdateViewFromPosition();
 
 	// InitializeModels
-	result = InitializeModels(hwnd, screenWidth, screenHeight);
+	result = InitializeModels(hwnd, screenWidth, screenHeight, &(scene->_Actors));
 
 	// Initialize Lights
 	result = InitializeLights();
@@ -74,17 +75,17 @@ bool Graphics::InitializeLights()
 	return true;
 }
 
-bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight)
+bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight, vector<unique_ptr<Actor>>* sceneActors)
 {
-	///////////////MODEL LIST///////////////////// @TODO - make in scene class
+	///////////////MODEL LIST///////////////////// @TODO - move into scene class
 	for (int i = 0; i < 4; ++i)
 	{
 //		Model* pMod;
 //		sceneModels.push_back(pMod);
 
-		sceneActors.push_back(unique_ptr<Actor>());
-		sceneActors[i].reset(new Actor);
-		sceneActors[i]->Initialize();
+		(*sceneActors).push_back(unique_ptr<Actor>());
+		(*sceneActors)[i].reset(new Actor);
+		(*sceneActors)[i]->Initialize();
 	}
 
 	///////////////// WATER DEMO /////////////////////
@@ -111,8 +112,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		return false;
 	}
 	//sceneModels[0] = _GroundModel.get();
-	sceneActors[0]->SetModel(_GroundModel.get());
-	sceneActors[0]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 1.0f, 0.0f));
+	(*sceneActors)[0]->SetModel(_GroundModel.get());
+	(*sceneActors)[0]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 1.0f, 0.0f));
 
 	// Create the wall model object.
 	_WallModel.reset(new Model);
@@ -134,8 +135,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		return false;
 	}
 	//sceneModels[1] = _WallModel.get();
-	sceneActors[1]->SetModel(_WallModel.get());
-	sceneActors[1]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 6.0f, 8.0f));
+	(*sceneActors)[1]->SetModel(_WallModel.get());
+	(*sceneActors)[1]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 6.0f, 8.0f));
 
 	// Create the bath model object.
 	_BathModel.reset(new Model);
@@ -160,8 +161,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		return false;
 	}
 	//sceneModels[2] = _BathModel.get();
-	sceneActors[2]->SetModel(_BathModel.get());
-	sceneActors[2]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.0f, 0.0f));
+	(*sceneActors)[2]->SetModel(_BathModel.get());
+	(*sceneActors)[2]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.0f, 0.0f));
 
 	// Create the water model object.
 	_WaterModel.reset(new Model);
@@ -182,8 +183,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	_WaterModel->GetMaterial()->reflectRefractScale = 0.01f;
 	_WaterModel->GetMaterial()->waterHeight = 2.75f;
 	//sceneModels[3] = _WaterModel.get();
-	sceneActors[3]->SetModel(_WaterModel.get());
-	sceneActors[3]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, _WaterModel->GetMaterial()->waterHeight, 0.0f));
+	(*sceneActors)[3]->SetModel(_WaterModel.get());
+	(*sceneActors)[3]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, _WaterModel->GetMaterial()->waterHeight, 0.0f));
 
 	///////////////////////////////////////////////
 	///////////// INIT RENDER TEXTURES //////////// (LATER ENCAPASULATE INTO MATERIALS)
@@ -330,7 +331,7 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	return true;
 }
 
-bool Graphics::UpdateFrame(float frameTime, Scene* world, int fps, float camX, float camY, float camZ, float rotX, float rotY, float rotZ)
+bool Graphics::UpdateFrame(float frameTime, Scene* scene, int fps, float camX, float camY, float camZ, float rotX, float rotY, float rotZ)
 {
 	bool result;
 
@@ -350,12 +351,12 @@ bool Graphics::UpdateFrame(float frameTime, Scene* world, int fps, float camX, f
 	result = UpdatePositionStrings(_D3D->GetDeviceContext(), camX, camY, camZ, rotX, rotY, rotZ);
 	if (!result){return false;}
 
-	result = DrawFrame(frameTime); if (!result)return false;
+	result = DrawFrame(&(scene->_Actors), frameTime); if (!result)return false;
 
 	return true;
 }
 
-bool Graphics::DrawFrame(float frameTime)
+bool Graphics::DrawFrame(vector<unique_ptr<Actor>>* sceneActors, float frameTime)
 {
 	// Render the refraction of the scene to a texture.
 	bool result = RenderRefractionToTexture();
@@ -366,7 +367,7 @@ bool Graphics::DrawFrame(float frameTime)
 	if (!result){return false;}
 
 	// Render the scene as normal to the back buffer.
-	result = RenderScene(_globalEffects.fogStart, _globalEffects.fogEnd, frameTime);
+	result = RenderScene(sceneActors, frameTime);
 	if (!result) { return false; }
 
 	_D3D->TurnZBufferOff();
@@ -465,7 +466,7 @@ bool Graphics::RenderReflectionToTexture()
 	return true;
 }
 
-bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
+bool Graphics::RenderScene(vector<unique_ptr<Actor>>* sceneActors, float frameTime)
 {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix;
 	bool result;
@@ -484,25 +485,25 @@ bool Graphics::RenderScene(float fogStart, float fogEnd, float frameTime)
 	//@TODO: TEMP HACK!!!!!! - MUST ENCAPSULATE!!!!!!!
 	//sceneModels[3]->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
 	//sceneModels[3]->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
-	sceneActors[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
-	sceneActors[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
+	(*sceneActors)[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
+	(*sceneActors)[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
 	//@TODO: TEMP HACK!!!!!! - MUST ENCAPSULATE!!!!!!!
 
-	for (int i = 0; i < sceneActors.size(); ++i)
+	for (int i = 0; i < (*sceneActors).size(); ++i)
 	{
-		XMFLOAT3 translation = sceneActors[i]->GetMovementComponent()->GetPosition();
+		XMFLOAT3 translation = (*sceneActors)[i]->GetMovementComponent()->GetPosition();
 		worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z));
 
-		sceneActors[i]->GetModel()->RenderBuffers(_D3D->GetDeviceContext());
+		(*sceneActors)[i]->GetModel()->RenderBuffers(_D3D->GetDeviceContext());
 
-		if(sceneActors[i]->GetModel()->GetMaterial()->transparency != 0.f)
+		if((*sceneActors)[i]->GetModel()->GetMaterial()->transparency != 0.f)
 			_D3D->EnableAlphaBlending();
 
-		result = _ShaderManager->Render(_D3D->GetDeviceContext(), sceneActors[i]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-			sceneActors[i]->GetModel()->GetMaterial(), _Light.get(), _globalEffects, XMFLOAT3(0,0,0), _Camera->GetReflectionViewMatrix());
+		result = _ShaderManager->Render(_D3D->GetDeviceContext(), (*sceneActors)[i]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			(*sceneActors)[i]->GetModel()->GetMaterial(), _Light.get(), _globalEffects, XMFLOAT3(0,0,0), _Camera->GetReflectionViewMatrix());
 		if (!result) return false;
 
-		if (sceneActors[i]->GetModel()->GetMaterial()->transparency != 0.f)
+		if ((*sceneActors)[i]->GetModel()->GetMaterial()->transparency != 0.f)
 			_D3D->DisableAlphaBlending();
 
 		// reset world matrix

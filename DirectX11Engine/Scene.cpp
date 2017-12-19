@@ -59,4 +59,16 @@ void Scene::UpdateActors(float deltaTime)
 
 }
 
+Actor ** Scene::GetActors() const
+{
+	vector<Actor*> actors;
+
+	for (auto& actor : _Actors)
+	{
+		actors.push_back(actor.get());
+	}
+
+	return actors.data();
+}
+
 
