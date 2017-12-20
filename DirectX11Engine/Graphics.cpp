@@ -18,33 +18,26 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* s
 {
 	HRESULT result;
 
-	// Create the Direct3D object.
 	_D3D.reset(new D3DClass);
 	if (!_D3D){return false;}
 
-	// Initialize the Direct3D object.
 	result = _D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
 	CHECK(result, "Direct3D");
 
-	// Create / initialize the shader manager object.
 	_ShaderManager.reset(new ShaderManagerClass);	
 	if (!_ShaderManager){return false;}
 	
 	result = _ShaderManager->Initialize(_D3D->GetDevice(), hwnd);
 	CHECK(result, "shader manager");
 
-	// Create the camera object.
 	_Camera.reset(new Camera);if (!_Camera){ return false;}	
 	_Camera->SetPosition(0.0f, 0.0f, -4.f);	_Camera->UpdateViewFromPosition();
 
-	// InitializeModels
-	result = InitializeModels(hwnd, screenWidth, screenHeight, &(scene->_Actors));
+	InitializeModels(hwnd, screenWidth, screenHeight, &(scene->_Actors));
 
-	// Initialize Lights
-	result = InitializeLights();
+	InitializeLights();
 
-	// Initialize UI
-	result = InitializeUI(screenWidth, screenHeight);
+	InitializeUI(screenWidth, screenHeight);
 	
 	// Initialize global effects
 	_globalEffects.clipPlane = XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f);
@@ -56,7 +49,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* s
 
 bool Graphics::InitializeLights()
 {
-	// Create the light object.
+	// Create the skylight object.
 	_Light.reset(new LightClass);
 
 	// Initialize the light object.
@@ -66,6 +59,31 @@ bool Graphics::InitializeLights()
 	_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_Light->SetSpecularPower(16.0f); // the lower the power, the higher the effect intensity
 
+	// Create list of point lights
+	for (int i = 0; i < NUM_LIGHTS; ++i)
+	{
+		_Lights.push_back(unique_ptr<LightClass>());
+		_Lights[i].reset(new LightClass);
+	}
+
+	_Lights[0]->SetDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f);
+	_Lights[0]->SetPosition(-3.0f, 1.0f, 3.0f);
+
+	_Lights[1]->SetDiffuseColor(0.0f, 1.0f, 0.0f, 1.0f);
+	_Lights[1]->SetPosition(3.0f, 1.0f, 3.0f);
+
+	_Lights[2]->SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);
+	_Lights[2]->SetPosition(-3.0f, 1.0f, -3.0f);
+
+	_Lights[3]->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	_Lights[3]->SetPosition(3.0f, 1.0f, -3.0f);
+
+	// STORE LIGHT DATA
+	for (auto& light : _Lights)
+	{
+		_LightData.push_back(light.get());
+	}
+	
 	return true;
 }
 
@@ -371,7 +389,7 @@ bool Graphics::RenderRefractionToTexture(float surfaceHeight)
 	_BathModel->RenderBuffers(_D3D->GetDeviceContext());
 
 	result = _ShaderManager->Render(_D3D->GetDeviceContext(), _BathModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		_BathModel->GetMaterial(), _Light.get(), _globalEffects);
+		_BathModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
 	if (!result)
 	{
 		return false;
@@ -413,7 +431,7 @@ bool Graphics::RenderReflectionToTexture()
 	_WallModel->RenderBuffers(_D3D->GetDeviceContext());
 
 	result = _ShaderManager->Render(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
-		_WallModel->GetMaterial(), _Light.get(), _globalEffects);
+		_WallModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
 	if (!result)
 	{
 		return false;
@@ -457,7 +475,7 @@ bool Graphics::RenderScene(vector<unique_ptr<Actor>>* sceneActors, float frameTi
 			_D3D->EnableAlphaBlending();
 
 		result = _ShaderManager->Render(_D3D->GetDeviceContext(), (*sceneActors)[i]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-			(*sceneActors)[i]->GetModel()->GetMaterial(), _Light.get(), _globalEffects, XMFLOAT3(0,0,0), _Camera->GetReflectionViewMatrix());
+			(*sceneActors)[i]->GetModel()->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0,0,0), _Camera->GetReflectionViewMatrix());
 		if (!result) return false;
 
 		if ((*sceneActors)[i]->GetModel()->GetMaterial()->transparency != 0.f)
