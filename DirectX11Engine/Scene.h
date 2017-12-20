@@ -20,6 +20,7 @@ public:
 	void UpdateActors(float deltaTime);
 	
 	Actor** GetActors() const;
+	inline Actor* GetCamera() const { return _Camera.get(); }
 
 	int _numActors = 4;
 

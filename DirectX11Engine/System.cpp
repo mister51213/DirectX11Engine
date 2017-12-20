@@ -14,21 +14,16 @@ System::~System()
 
 bool System::Initialize()
 {
-	int screenWidth, screenHeight;
+	int screenWidth = 0;
+	int screenHeight = 0;
 	bool result;
 
-	// Initialize the width and height of the screen to zero before sending the variables into the function.
-	screenWidth = 0;
-	screenHeight = 0;
-
-	// Initialize the windows api.
 	InitializeWindows(screenWidth, screenHeight);
 
-	// Create the input object.  This object will be used to handle reading the keyboard input from the user.
+	// This object will be used to handle reading the keyboard input from the user.
 	_Input.reset(new Input);
 	if (!_Input){return false;}
 
-	// Initialize the input object.
 	result = _Input->Initialize(_hinstance, _hwnd, screenWidth, screenHeight);
 	if (FAILED(result))
 	{
@@ -39,7 +34,6 @@ bool System::Initialize()
 	_Physics.reset(new Physics);
 	if (!_Physics) return false;
 
-	// Initialize the physics oject.
 	result = _Physics->Initialize();
 	if (!result)
 	{
@@ -49,14 +43,13 @@ bool System::Initialize()
 	_Scene.reset(new Scene);
 	if (_Scene) result = _Scene->Initialize();
 
-	// Create the graphics object.  This object will handle rendering all the graphics for this application.
+	// This object will handle rendering all the graphics for this application.
 	_Graphics.reset(new Graphics);
 	if (!_Graphics)
 	{
 		return false;
 	}
 
-	// Initialize the graphics object.
 	result = _Graphics->Initialize(screenWidth, screenHeight, _hwnd, _Scene.get());
 	if (!result)
 	{
@@ -64,14 +57,12 @@ bool System::Initialize()
 		return false;
 	}
 
-	// Create the timer object.
 	_Timer.reset(new TimerClass);
 	if (!_Timer)
 	{
 		return false;
 	}
 
-	// Initialize the timer object.
 	result = _Timer->Initialize();
 	if (!result)
 	{
@@ -81,6 +72,23 @@ bool System::Initialize()
 
 	_UI.reset(new UI);
 	result = _UI->Initialize();
+
+	return true;
+}
+
+bool System::Tick()
+{
+	_Timer->Tick();
+
+	_Input->Tick();
+
+	_Physics->Tick(_Timer->GetTime());
+
+	_Scene->Tick(_Timer->GetTime(), _Input.get());
+
+	_Graphics->UpdateFrame(_Timer->GetTime(), _Scene.get(), _UI->_Fps->GetFps());
+
+	_UI->Tick();
 
 	return true;
 }
@@ -138,21 +146,6 @@ void System::Run()
 	}
 	
 	return;
-}
-
-bool System::Tick()
-{
-	_Timer->Tick();
-
-	_Input->Tick();
-
-	_Scene->Tick(_Timer->GetTime(), _Input.get());
-
-	_Graphics->UpdateFrame(_Timer->GetTime(), _Scene.get(), _UI->_Fps->GetFps(), _Scene->_Camera->GetMovementComponent()->GetPosition().x, _Scene->_Camera->GetMovementComponent()->GetPosition().y, _Scene->_Camera->GetMovementComponent()->GetPosition().z, _Scene->_Camera->GetMovementComponent()->GetOrientation().x, _Scene->_Camera->GetMovementComponent()->GetOrientation().y, _Scene->_Camera->GetMovementComponent()->GetOrientation().z);
-
-	_UI->Tick();
-
-	return true;
 }
 
 LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)

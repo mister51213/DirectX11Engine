@@ -313,7 +313,7 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	return true;
 }
 
-bool Graphics::UpdateFrame(float frameTime, Scene* scene, int fps, float camX, float camY, float camZ, float rotX, float rotY, float rotZ)
+bool Graphics::UpdateFrame(float frameTime, Scene* scene, int fps)
 {
 	bool result;
 
@@ -321,8 +321,10 @@ bool Graphics::UpdateFrame(float frameTime, Scene* scene, int fps, float camX, f
 	_WaterModel->GetMaterial()->Animate(true);
 
 	// 2. Update Camera
-	_Camera->SetPosition(camX, camY, camZ);
-	_Camera->SetRotation(rotX, rotY, rotZ);
+	XMFLOAT3 camPos= scene->GetCamera()->GetMovementComponent()->GetPosition();
+	XMFLOAT3 camRot = scene->GetCamera()->GetMovementComponent()->GetOrientation();
+	_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
+	_Camera->SetRotation(camRot.x, camRot.y, camRot.z);
 
 	// 3. Update World Actors
 	//@TODO: SET ALL MODEL POSITIONS HERE
@@ -330,7 +332,7 @@ bool Graphics::UpdateFrame(float frameTime, Scene* scene, int fps, float camX, f
 	// 4. Update UI
 	result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
 	if (!result){return false;}
-	result = UpdatePositionStrings(_D3D->GetDeviceContext(), camX, camY, camZ, rotX, rotY, rotZ);
+	result = UpdatePositionStrings(_D3D->GetDeviceContext(), camPos.x, camPos.y, camPos.z, camRot.x, camRot.y, camRot.z);
 	if (!result){return false;}
 
 	result = DrawFrame(&(scene->_Actors), frameTime); if (!result)return false;
