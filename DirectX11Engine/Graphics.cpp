@@ -16,7 +16,7 @@ Graphics::~Graphics()
 
 bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* scene)
 {
-	bool result;
+	HRESULT result;
 
 	// Create the Direct3D object.
 	_D3D.reset(new D3DClass);
@@ -24,20 +24,14 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* s
 
 	// Initialize the Direct3D object.
 	result = _D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Could not initialize Direct3D - line " + std::to_string(__LINE__));
-		return false;
-	}
+	CHECK(result, "Direct3D");
 
 	// Create / initialize the shader manager object.
-	_ShaderManager.reset(new ShaderManagerClass);	if (!_ShaderManager){return false;}
+	_ShaderManager.reset(new ShaderManagerClass);	
+	if (!_ShaderManager){return false;}
+	
 	result = _ShaderManager->Initialize(_D3D->GetDevice(), hwnd);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Could not initialize the shader manager object. - line " + std::to_string(__LINE__));
-		return false;
-	}
+	CHECK(result, "shader manager");
 
 	// Create the camera object.
 	_Camera.reset(new Camera);if (!_Camera){ return false;}	
@@ -96,13 +90,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 			"../DirectX11Engine/data/bumpMap.dds", // normal map
 			"../DirectX11Engine/data/specMap.dds" };
 
-		bool result = _DefaultModels[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
-			"../DirectX11Engine/data/sphere.txt", defaultTex, EShaderType::ELIGHT_SPECULAR);
-		if (FAILED(result))
-		{
-			throw std::runtime_error("Could not initialize the default model object. - line " + std::to_string(__LINE__));
-			return false;
-		}
+		bool result = _DefaultModels[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/sphere.txt", defaultTex, EShaderType::ELIGHT_SPECULAR);
+		CHECK(result, "default model");
 	}
 
 	///////////////// CUSTOM WATER DEMO /////////////////////
@@ -123,11 +112,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 
 	bool result = _GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/ground.txt",groundTex,	EShaderType::ELIGHT_SPECULAR);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Could not initialize the ground model object. - line " + std::to_string(__LINE__));
-		return false;
-	}
+	CHECK(result, "ground model");
+
 	(*sceneActors)[(*sceneActors).size() - 4]->SetModel(_GroundModel.get());
 
 	// Create the wall model object.
@@ -144,11 +130,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		"../DirectX11Engine/data/specMap.dds" };
 
 	result = _WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),"../DirectX11Engine/data/wall.txt",	wallTex,EShaderType::ELIGHT_SPECULAR);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Could not initialize the wall model object. - line " + std::to_string(__LINE__));
-		return false;
-	}
+	CHECK(result, "wall model");
 	(*sceneActors)[(*sceneActors).size() - 3]->SetModel(_WallModel.get());
 
 	// Create the bath model object.
@@ -168,11 +150,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	// Initialize the bath model object.
 	result = _BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/bath.txt",	bathTex,EShaderType::EREFRACTION);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Could not initialize the bath model object. - line " + std::to_string(__LINE__));
-		return false;
-	}
+	CHECK(result, "bath model");
 	(*sceneActors)[(*sceneActors).size() - 2]->SetModel(_BathModel.get());
 
 	// Create the water model object.
@@ -186,11 +164,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		"../DirectX11Engine/data/water.txt",
 		waterTextures,
 		EShaderType::EWATER);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Could not initialize the water model object. - line " + std::to_string(__LINE__));
-		return false;
-	}
+	CHECK(result, "water model");
+
 	_WaterModel->GetMaterial()->reflectRefractScale = 0.01f;
 	_WaterModel->GetMaterial()->waterHeight = (*sceneActors)[3]->GetMovementComponent()->GetPosition().y;
 
@@ -209,11 +184,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 
 	// Initialize the refraction render to texture object.
 	result = _RefractionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Could not initialize the refraction render to texture object. - line " + std::to_string(__LINE__));
-		return false;
-	}
+	CHECK(result, "refraction render to texture");
 
 	// Create the reflection render to texture object.
 	_ReflectionTexture.reset(new RenderTextureClass);
@@ -224,11 +195,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 
 	// Initialize the reflection render to texture object.
 	result = _ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Could not initialize the reflection render to texture object. - line " + std::to_string(__LINE__));
-		return false;
-	}
+	CHECK(result, "reflection render to texture");
 
 	//////////////////////////////////////////////////////
 	////// GLOBAL OBJECTS ////////////////////////////////
@@ -246,11 +213,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 
 	// Initialize the model list object.
 	result = _ModelList->Initialize(20);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Could not initialize the model list object - line " + std::to_string(__LINE__));
-		return false;
-	}
+	CHECK(result, "model list");
 
 	return true;
 }

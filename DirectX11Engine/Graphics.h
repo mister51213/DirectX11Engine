@@ -29,6 +29,7 @@ const float SCREEN_NEAR = 0.1f;
 #include "Position.h"
 #include "GfxUtil.h"
 #include "Scene.h"
+#include "GlobalIncludes.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
