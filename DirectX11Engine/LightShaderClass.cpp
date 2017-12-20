@@ -435,9 +435,10 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	HRESULT result;
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	unsigned int bufferNumber;
 
 	///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
+	unsigned int bufferNumber = 0;
+
 	result = SetBaseParameters(&mappedResource, deviceContext, worldMatrix, viewMatrix, projectionMatrix, bufferNumber);
 	if (FAILED(result))
 	{
@@ -467,6 +468,8 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	///////////////////// CAM INIT - VS BUFFER 1 //////////////////////////////////
 	// Lock the camera constant buffer so it can be written to.
+	bufferNumber = 1;
+	
 	result = deviceContext->Map(_cameraBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
@@ -484,7 +487,6 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	deviceContext->Unmap(_cameraBuffer, 0);
 
 	// Set the position of the camera constant buffer in the vertex shader.
-	bufferNumber = 1;
 
 	// Now set the camera constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_cameraBuffer);
@@ -500,8 +502,12 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 
 
+
+
 	//////////////// CLIP PLANE - VS BUFFER 3 ///////////////////////
 	// Lock the clip plane constant buffer so it can be written to.
+	bufferNumber = 3;
+
 	result = deviceContext->Map(_clipPlaneBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
@@ -517,14 +523,13 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	// Unlock the buffer.
 	deviceContext->Unmap(_clipPlaneBuffer, 0);
 
-	// Set the position of the clip plane constant buffer in the vertex shader.
-	bufferNumber = 3;
-
 	// Now set the clip plane constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_clipPlaneBuffer);
 
 	/////////// FOG INIT - VS BUFFER 4 /////////////////////////// @TODO: is the data packed correctly???
 	// Lock the fog constant buffer so it can be written to.
+	bufferNumber = 4; ///////////@TODO: fix these numbers in correct order
+
 	result = deviceContext->Map(_fogBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
@@ -541,9 +546,6 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	// Unlock the constant buffer.
 	deviceContext->Unmap(_fogBuffer, 0);
 
-	// Set the position of the fog constant buffer in the vertex shader.
-	bufferNumber = 4; ///////////@TODO: fix these numbers in correct order
-
 	// Now set the fog buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_fogBuffer);
 
@@ -553,6 +555,8 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	
 	///////////////////////// LIGHT INIT - PS BUFFER 0 //////////////////////
 	// Lock the light constant buffer so it can be written to.
+	bufferNumber = 0;
+
 	result = deviceContext->Map(_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
@@ -572,9 +576,6 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	// Unlock the constant buffer.
 	deviceContext->Unmap(_lightBuffer, 0);
 
-	// Set the position of the light constant buffer in the pixel shader.
-	bufferNumber = 0;
-
 	// Finally set the light constant buffer in the pixel shader with the updated values.
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &_lightBuffer);
 
@@ -587,7 +588,14 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 
 
+
+
+
+
+
 	////////////// TEX TRANSLATION - PS BUFFER 2 //////////////////
+	bufferNumber = 2;
+
 	// Lock the texture translation constant buffer so it can be written to.
 	result = deviceContext->Map(_translateBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
@@ -603,14 +611,13 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	// Unlock the buffer.
 	deviceContext->Unmap(_translateBuffer, 0);
-
-	// Set the position of the texture translation constant buffer in the pixel shader.
-	bufferNumber = 2;
-
+	
 	// Now set the texture translation constant buffer in the pixel shader with the updated values.
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &_translateBuffer);
 
 	/////////////////// TRANSPARENCY BUFFER - PS BUFFER 3 ///////////////////////////
+	bufferNumber = 3;
+
 	// Lock the transparent constant buffer so it can be written to.
 	result = deviceContext->Map(_transparentBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
@@ -626,9 +633,6 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	// Unlock the buffer.
 	deviceContext->Unmap(_transparentBuffer, 0);
-
-	// Set the position of the transparent constant buffer in the pixel shader.
-	bufferNumber = 3;
 
 	// Now set the texture translation constant buffer in the pixel shader with the updated values.
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &_transparentBuffer);
