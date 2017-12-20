@@ -70,7 +70,7 @@ namespace GfxUtil
 		TextureClass* GetTextureObject();
 		ID3D11ShaderResourceView** GetResourceArray();
 		
-		void Animate(bool bAnimated = true, float deltaTime = 1.f);
+		void Animate(float deltaTime = 1.f);
 
 		unique_ptr<TextureClass> _TextureArray;
 		EShaderType shaderType;
@@ -78,6 +78,7 @@ namespace GfxUtil
 		XMFLOAT4 pixelColor = XMFLOAT4(1,1,1,1);
 
 		// Effects @TODO: encapsulate into different struct
+		bool bAnimated = false;
 		float transparency = 0.f;
 		float translation = 0.f;
 		float reflectRefractScale = 0.01f;

@@ -168,6 +168,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 
 	_WaterModel->GetMaterial()->reflectRefractScale = 0.01f;
 	_WaterModel->GetMaterial()->waterHeight = (*sceneActors)[3]->GetMovementComponent()->GetPosition().y;
+	_WaterModel->GetMaterial()->bAnimated = true;
 
 	(*sceneActors)[(*sceneActors).size() - 1]->SetModel(_WaterModel.get());
 
@@ -238,11 +239,7 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	// Initialize the first font object.
 	result = _Font1->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/font.txt",
 		"../DirectX11Engine/data/font.tga", 32.0f, 3);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Could not initialize the font object. - line " + std::to_string(__LINE__));
-		return false;
-	}
+	CHECK(result, "font");
 
 	// Create the text object for the fps string.
 	_FpsString.reset(new TextClass);
@@ -254,11 +251,7 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 	// Initialize the fps text string.
 	result = _FpsString->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
 		"Fps: 0", 10, 50, 0.0f, 1.0f, 0.0f);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Could not initialize the fps string object. - line " + std::to_string(__LINE__));
-		return false;
-	}
+	CHECK(result, "fps string");
 
 	// Initial the previous frame fps.
 	_previousFps = -1;
@@ -273,11 +266,7 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 
 		result = _PositionStrings[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
 			labels[i], 10, 310 + offset, 1.0f, 1.0f, 1.0f);
-		if (FAILED(result))
-		{
-			throw std::runtime_error("Could not initialize position string number " + to_string(i) + " - line " + std::to_string(__LINE__));
-			return false;
-		}
+		CHECK(result, "position string number " + to_string(i));
 
 		offset += 20;
 		_previousPosition[i] = -1;
@@ -292,11 +281,7 @@ bool Graphics::InitializeUI(int screenWidth, int screenHeight)
 		if (!_RenderCountStrings[i]) return false;
 
 		result = _RenderCountStrings[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), renderLabels[i], 10, 260 + offset, 1.0f, 1.0f, 1.0f);
-		if (FAILED(result))
-		{
-			throw std::runtime_error("Could not initialize render count string number " + to_string(i) + " - line " + std::to_string(__LINE__));
-			return false;
-		}
+		CHECK(result, "render count string number " + to_string(i));
 
 		offset += 20;
 	}
@@ -308,19 +293,19 @@ bool Graphics::UpdateFrame(float frameTime, Scene* scene, int fps)
 {
 	bool result;
 
-	// 1. Update Effects // @TODO - loop through all models
-	_WaterModel->GetMaterial()->Animate(true);
-
+	// 1. Animate Materials
+	for (auto& actor : scene->_Actors)
+	{
+		actor->GetModel()->GetMaterial()->Animate();
+	}
+	
 	// 2. Update Camera
 	XMFLOAT3 camPos= scene->GetCamera()->GetMovementComponent()->GetPosition();
 	XMFLOAT3 camRot = scene->GetCamera()->GetMovementComponent()->GetOrientation();
 	_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
 	_Camera->SetRotation(camRot.x, camRot.y, camRot.z);
 
-	// 3. Update World Actors
-	//@TODO: SET ALL MODEL POSITIONS HERE
-	
-	// 4. Update UI
+	// 3. Update UI
 	result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
 	if (!result){return false;}
 	result = UpdatePositionStrings(_D3D->GetDeviceContext(), camPos.x, camPos.y, camPos.z, camRot.x, camRot.y, camRot.z);
@@ -433,7 +418,6 @@ bool Graphics::RenderReflectionToTexture()
 	{
 		return false;
 	}
-
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
 	_D3D->SetBackBufferRenderTarget();

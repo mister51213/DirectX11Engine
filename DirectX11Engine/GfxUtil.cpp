@@ -42,7 +42,7 @@ ID3D11ShaderResourceView** GfxUtil::Material::GetResourceArray()
 	}
 }
 
-void GfxUtil::Material::Animate(bool bAnimated, float deltaTime)
+void GfxUtil::Material::Animate(float deltaTime)
 {
 	if (bAnimated)
 	{
