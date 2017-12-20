@@ -80,6 +80,9 @@ private:
 	float textureTranslation = 0.f;
 
 	unique_ptr<LightClass> _Light;
+	vector<unique_ptr<LightClass>> _Lights;
+	vector<LightClass*> _LightData;
+
 	unique_ptr<ModelListClass>_ModelList;
 	unique_ptr<FrustumClass> _Frustum;
 	unique_ptr<RenderTextureClass> _RenderTexture;
@@ -94,4 +97,8 @@ private:
 
 	/////////// GLOBAL EFFECTS /////////////
 	SceneEffects _globalEffects;
+
+	////////// GLOBAL LIGHTS ///////////
+	const int NUM_LIGHTS = 4;
+
 };

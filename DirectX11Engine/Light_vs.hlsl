@@ -7,6 +7,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 /////////////
+// DEFINES //
+/////////////
+#define NUM_LIGHTS 4
+
+/////////////
 // GLOBALS //
 /////////////
 /*
@@ -30,21 +35,22 @@ cbuffer CameraBuffer:register(b1)
     float padding;
 };
 
-cbuffer ClipPlaneBuffer:register(b2)
+cbuffer LightPositionBuffer:register(b2)
+{
+    float4 lightPosition[NUM_LIGHTS];
+};
+
+cbuffer ClipPlaneBuffer:register(b3)
 {
     float4 clipPlane;
 };
 
-//cbuffer ReflectionBuffer:register(b3)
-//{
-//    matrix reflectionMatrix;
-//};
-
-cbuffer FogBuffer:register(b3)
+cbuffer FogBuffer:register(b4)
 {
     float fogStart;
     float fogEnd;
 };
+
 
 //////////////
 // TYPEDEFS //
@@ -72,6 +78,10 @@ struct PixelInputType
 	float3 tangent : TANGENT;
     float3 binormal : BINORMAL;
 	float3 viewDirection : TEXCOORD1;
+	float3 lightPos1 : TEXCOORD2;
+    float3 lightPos2 : TEXCOORD3;
+    float3 lightPos3 : TEXCOORD4;
+    float3 lightPos4 : TEXCOORD5;
 	float fogFactor : FOG; 
 	float clip : SV_ClipDistance0; //@TODO: Properly byte alligned?
 };
@@ -84,7 +94,6 @@ PixelInputType LightVertexShader(VertexInputType input)
 {
 	PixelInputType output;
 	float4 worldPosition;
-    //matrix reflectProjectWorld;
 
 	// Change the position vector to be 4 units for proper matrix calculations.
 	input.position.w = 1.0f;
@@ -94,11 +103,6 @@ PixelInputType LightVertexShader(VertexInputType input)
 	output.position = mul(input.position, worldMatrix);
 	output.position = mul(output.position, viewMatrix);
 	output.position = mul(output.position, projectionMatrix);
-
-	/////////////// REFLECTION ////////////////
-	// Create the reflection projection world matrix.
-   // reflectProjectWorld = mul(reflectionMatrix, projectionMatrix);
-   // reflectProjectWorld = mul(worldMatrix, reflectProjectWorld);
 
 	// Store the input color for the pixel shader to use.
 	output.tex  = input.tex;
@@ -148,9 +152,18 @@ All three equations produce a fog factor. To apply that fog factor to the model'
     // Normalize the viewing direction vector.
     output.viewDirection = normalize(output.viewDirection);
 
-	////////////////////////// REFLECTION ////////////////////////
-	// Calculate the input position against the reflectProjectWorld matrix.
-    //output.reflectionPosition = mul(input.position, reflectProjectWorld);
+	//////////// POINT LIGHTS ////////////////////
+	// Determine the light positions based on the position of the lights and the position of the vertex in the world.
+    output.lightPos1.xyz = lightPosition[0].xyz - worldPosition.xyz;
+    output.lightPos2.xyz = lightPosition[1].xyz - worldPosition.xyz;
+    output.lightPos3.xyz = lightPosition[2].xyz - worldPosition.xyz;
+    output.lightPos4.xyz = lightPosition[3].xyz - worldPosition.xyz;
+
+    // Normalize the light position vectors.
+    output.lightPos1 = normalize(output.lightPos1);
+    output.lightPos2 = normalize(output.lightPos2);
+    output.lightPos3 = normalize(output.lightPos3);
+    output.lightPos4 = normalize(output.lightPos4);
 	
 	// Set the clipping plane.
     output.clip = dot(mul(input.position, worldMatrix), clipPlane);

@@ -333,7 +333,9 @@ void TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, /*class FontS
 
 	// Render the text using the font shader. //@PROBLEM - do it the old way using the old texture
 	//result = pFontShader->Render(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, /**_Font->GetTexture(),*/ fontTexture, m_pixelColor);
-	result = pShaderManager->RenderFontShader(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, m_pixelColor);
+	result = pShaderManager->RenderFontShader(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, m_pixelColor); //@TODO: implement generic function
+	//result = pShaderManager->Render(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, 
+	//	(*sceneActors)[i]->GetModel()->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix(), m_pixelColor);
 	if (!result)
 	{
 		false;

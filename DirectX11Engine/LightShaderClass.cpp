@@ -8,6 +8,8 @@ LightShaderClass::LightShaderClass()
 	:
 	_cameraBuffer(0),
 	_lightBuffer(0),
+	_lightColorBuffer(0),
+	_lightPositionBuffer(0),
 	_fogBuffer(0),
 	_clipPlaneBuffer(0),
 	_translateBuffer(0), 
@@ -21,11 +23,11 @@ LightShaderClass::~LightShaderClass()
 {}
 
 bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
+	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, LightClass* lights[],
 	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency)
 {
 	// Set the shader parameters that it will use for rendering.
-	bool result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, lightDirection, ambientColor, diffuseColor, cameraPosition, specularColor, specularPower, fogStart, fogEnd, clipPlane, translation, transparency/*, reflectionTexture, reflectionMatrix*/);
+	bool result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, lightDirection, ambientColor, diffuseColor, lights, cameraPosition, specularColor, specularPower, fogStart, fogEnd, clipPlane, translation, transparency/*, reflectionTexture, reflectionMatrix*/);
 	if (!result)
 	{
 		return false;
@@ -55,6 +57,8 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	
 	D3D11_BUFFER_DESC cameraBufferDesc;
 	D3D11_BUFFER_DESC lightBufferDesc;
+		D3D11_BUFFER_DESC lightColorBufferDesc;
+		D3D11_BUFFER_DESC lightPositionBufferDesc;
 	D3D11_BUFFER_DESC fogBufferDesc;
 	D3D11_BUFFER_DESC clipPlaneBufferDesc;
 	D3D11_BUFFER_DESC translateBufferDesc;
@@ -65,6 +69,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	vertexShaderBuffer = 0;
 	pixelShaderBuffer = 0;
 
+#pragma region COMPILE
 	// Compile the vertex shader code.
 	result = 
 		D3DCompileFromFile(
@@ -133,6 +138,8 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	{
 		return false;
 	}
+
+#pragma endregion
 
 	// Create the vertex input layout description.
 	// This setup needs to match the VertexType stucture in the ModelClass and in the shader.
@@ -371,8 +378,11 @@ void LightShaderClass::ShutdownShader()
 
 bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
-	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency/*, ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix*/)
+	LightClass* lights[],
+	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency)
 {
+	//TODO: USE LIGHTS[] POSITION and COLOR HERE
+
 	HRESULT result;
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -389,6 +399,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	deviceContext->PSSetShaderResources(0, 6, textureArray); // sextuple tex with lightmap
 
 	LightBufferType* pLightBuff; //NOTE - dataPtr1 define in parent class
+
 	CameraBufferType* pCamBuff;
 	FogBufferType* pFogBuff;
 	ClipPlaneBufferType* pClipPlaneBuff;

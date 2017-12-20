@@ -105,7 +105,8 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 }
 
 // @TODO the params at teh end need to be encapsulated
-bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, Material * material, LightClass * light, SceneEffects effects, XMFLOAT3 cameraPos, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView * reflectionTexture, ID3D11ShaderResourceView * refractionTexture, ID3D11ShaderResourceView * normalTexture)
+bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, Material * material, LightClass * light, 
+	LightClass* lights[], SceneEffects effects, XMFLOAT3 cameraPos, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView * reflectionTexture, ID3D11ShaderResourceView * refractionTexture, ID3D11ShaderResourceView * normalTexture)
 {
 	//@TODO: GO THROUGH EVERY SINGLE FUCKING CALL IN GRAPHICS.CPP AND MAKE SURE THEY MATCH WITH THE CALLS BELOW
 	// (may have passed in wrong textures in water or reflection shader)
@@ -120,8 +121,11 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 
 	case EShaderType::ELIGHT_SPECULAR:
 		result = _LightShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
-			material->GetResourceArray(), light->GetDirection(), light->GetAmbientColor(), light->GetDiffuseColor(),
+			material->GetResourceArray(), light->GetDirection(), light->GetAmbientColor(), light->GetDiffuseColor(), 
+			lights, 
 			cameraPos, light->GetSpecularColor(), light->GetSpecularPower(), effects.fogStart, effects.fogEnd, effects.clipPlane, material->translation, material->transparency);
+
+
 		if (!result) return false;
 		break;
 
@@ -158,37 +162,12 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 	return result;
 }
 
-bool ShaderManagerClass::RenderTextureShader(ID3D11DeviceContext* device, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
-	ID3D11ShaderResourceView* texture)
+FontShaderClass * ShaderManagerClass::GetFontShader()
 {
-	bool result;
-	
-	// Render the model using the texture shader.
-	result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture);
-	if (!result)
-	{
-		return false;
-	}
+	if (_FontShader)
+	return _FontShader.get();
 
-	return true;
-}
-
-bool ShaderManagerClass::RenderLightShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, Material* material, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
-	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency/*,
-	ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix*/)
-{
-	// Render the model using the light shader.
-	bool result = _LightShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix,
-		projectionMatrix, textureArray, lightDirection, ambientColor, diffuseColor,
-		cameraPosition, specularColor, specularPower, fogStart, fogEnd, clipPlane, translation, transparency/*,
-		reflectionTexture, reflectionMatrix*/); // @TODO: REMOVE REFLECTION FROM INSIDE HERE!!!!!! This is just for lighting effects
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
+	return nullptr;
 }
 
 bool ShaderManagerClass::RenderFontShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
@@ -206,53 +185,77 @@ bool ShaderManagerClass::RenderFontShader(ID3D11DeviceContext* deviceContext, in
 	return true;
 }
 
-bool ShaderManagerClass::RenderReflectionShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix)
-{
-	bool result;
-
-	// Render the model using the reflection shader. 
-	result = _ReflectionShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, reflectionTexture, reflectionMatrix);
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-bool ShaderManagerClass::RenderWaterShader(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, float waterTranslation, float reflectRefractScale)
-{
-	bool result;
-
-	// Render the model using the reflection shader. 
-	result = _WaterShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, textureArray, waterTranslation, reflectRefractScale);
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-bool ShaderManagerClass::RenderRefractionShader(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, ID3D11ShaderResourceView * texture, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT4 clipPlane)
-{
-	bool result;
-
-	// Render the model using the reflection shader. 
-	result = _RefractionShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, lightDirection, ambientColor, diffuseColor, clipPlane);
-	if (!result)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-FontShaderClass * ShaderManagerClass::GetFontShader()
-{
-	if (_FontShader)
-	return _FontShader.get();
-
-	return nullptr;
-}
+//bool ShaderManagerClass::RenderTextureShader(ID3D11DeviceContext* device, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
+//	ID3D11ShaderResourceView* texture)
+//{
+//	bool result;
+//	
+//	// Render the model using the texture shader.
+//	result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture);
+//	if (!result)
+//	{
+//		return false;
+//	}
+//
+//	return true;
+//}
+//
+//bool ShaderManagerClass::RenderLightShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
+//	XMMATRIX projectionMatrix, Material* material, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
+//	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency)
+//{
+//	// Render the model using the light shader.
+//	bool result = _LightShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix,
+//		projectionMatrix, textureArray, lightDirection, ambientColor, diffuseColor, lights,
+//		cameraPosition, specularColor, specularPower, fogStart, fogEnd, clipPlane, translation, transparency);
+//	if (!result)
+//	{
+//		return false;
+//	}
+//
+//	return true;
+//}
+//
+//
+//bool ShaderManagerClass::RenderReflectionShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
+//	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* reflectionTexture, XMMATRIX reflectionMatrix)
+//{
+//	bool result;
+//
+//	// Render the model using the reflection shader. 
+//	result = _ReflectionShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, reflectionTexture, reflectionMatrix);
+//	if (!result)
+//	{
+//		return false;
+//	}
+//
+//	return true;
+//}
+//
+//bool ShaderManagerClass::RenderWaterShader(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, float waterTranslation, float reflectRefractScale)
+//{
+//	bool result;
+//
+//	// Render the model using the reflection shader. 
+//	result = _WaterShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, textureArray, waterTranslation, reflectRefractScale);
+//	if (!result)
+//	{
+//		return false;
+//	}
+//
+//	return true;
+//}
+//
+//bool ShaderManagerClass::RenderRefractionShader(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, ID3D11ShaderResourceView * texture, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT4 clipPlane)
+//{
+//	bool result;
+//
+//	// Render the model using the reflection shader. 
+//	result = _RefractionShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, lightDirection, ambientColor, diffuseColor, clipPlane);
+//	if (!result)
+//	{
+//		return false;
+//	}
+//
+//	return true;
+//}
