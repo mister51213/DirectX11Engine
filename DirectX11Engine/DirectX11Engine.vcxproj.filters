@@ -629,9 +629,6 @@
     <ClInclude Include="Texture.h">
       <Filter>Header Files\Tier2</Filter>
     </ClInclude>
-    <ClInclude Include="TimerClass.h">
-      <Filter>Header Files\Tier2</Filter>
-    </ClInclude>
     <ClInclude Include="GfxUtil.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
@@ -1297,6 +1294,9 @@
     </ClInclude>
     <ClInclude Include="GlobalIncludes.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerClass.h">
+      <Filter>Header Files\Tier1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

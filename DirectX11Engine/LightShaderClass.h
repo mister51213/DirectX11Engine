@@ -82,12 +82,12 @@ private:
 		XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float texTranslation, float transparency);
 
 private:
-	ID3D11Buffer* _cameraBuffer;
-	ID3D11Buffer* _lightBuffer;
-		ID3D11Buffer* _lightColorBuffer;	// NEW
-		ID3D11Buffer* _lightPositionBuffer;	// NEW
-	ID3D11Buffer* _fogBuffer;
-	ID3D11Buffer* _clipPlaneBuffer;
-	ID3D11Buffer* _translateBuffer;
-	ID3D11Buffer* _transparentBuffer;
+	Microsoft::WRL::ComPtr <ID3D11Buffer> _cameraBuffer;
+	Microsoft::WRL::ComPtr <ID3D11Buffer> _lightBuffer;
+	Microsoft::WRL::ComPtr <ID3D11Buffer> _lightColorBuffer;
+	Microsoft::WRL::ComPtr <ID3D11Buffer> _lightPositionBuffer;
+	Microsoft::WRL::ComPtr <ID3D11Buffer> _fogBuffer;
+	Microsoft::WRL::ComPtr <ID3D11Buffer> _clipPlaneBuffer;
+	Microsoft::WRL::ComPtr <ID3D11Buffer> _translateBuffer;
+	Microsoft::WRL::ComPtr <ID3D11Buffer> _transparentBuffer;
 };
