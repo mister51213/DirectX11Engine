@@ -77,7 +77,35 @@ bool Graphics::InitializeLights()
 
 bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight, vector<unique_ptr<Actor>>* sceneActors)
 {
-	///////////////// WATER DEMO /////////////////////
+	///////////////// DEFAULT APPEARANCE INIT /////////////////////
+	for (int i = 0; i < sceneActors->size(); ++i)
+	{
+		if ((*sceneActors)[i]->bCustomAppearance)
+		{
+			continue;
+		}
+
+		_DefaultModels.push_back(unique_ptr<Model>());
+		(*sceneActors)[i]->SetModel(_DefaultModels[i].get());
+
+		vector<char*>defaultTex{
+			"../DirectX11Engine/data/marble.png",
+			"../DirectX11Engine/data/dirt.dds",
+			"../DirectX11Engine/data/light.dds",
+			"../DirectX11Engine/data/alpha.dds",
+			"../DirectX11Engine/data/bumpMap.dds", // normal map
+			"../DirectX11Engine/data/specMap.dds" };
+
+		bool result = _DefaultModels[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+			"../DirectX11Engine/data/sphere.txt", defaultTex, EShaderType::ELIGHT_SPECULAR);
+		if (FAILED(result))
+		{
+			throw std::runtime_error("Could not initialize the default model object. - line " + std::to_string(__LINE__));
+			return false;
+		}
+	}
+
+	///////////////// CUSTOM WATER DEMO /////////////////////
 	_GroundModel.reset(new Model);
 	if (!_GroundModel)
 	{
@@ -100,7 +128,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		throw std::runtime_error("Could not initialize the ground model object. - line " + std::to_string(__LINE__));
 		return false;
 	}
-	(*sceneActors)[0]->SetModel(_GroundModel.get());
+	(*sceneActors)[(*sceneActors).size() - 4]->SetModel(_GroundModel.get());
 
 	// Create the wall model object.
 	_WallModel.reset(new Model);
@@ -121,7 +149,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		throw std::runtime_error("Could not initialize the wall model object. - line " + std::to_string(__LINE__));
 		return false;
 	}
-	(*sceneActors)[1]->SetModel(_WallModel.get());
+	(*sceneActors)[(*sceneActors).size() - 3]->SetModel(_WallModel.get());
 
 	// Create the bath model object.
 	_BathModel.reset(new Model);
@@ -145,7 +173,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		throw std::runtime_error("Could not initialize the bath model object. - line " + std::to_string(__LINE__));
 		return false;
 	}
-	(*sceneActors)[2]->SetModel(_BathModel.get());
+	(*sceneActors)[(*sceneActors).size() - 2]->SetModel(_BathModel.get());
 
 	// Create the water model object.
 	_WaterModel.reset(new Model);
@@ -166,7 +194,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	_WaterModel->GetMaterial()->reflectRefractScale = 0.01f;
 	_WaterModel->GetMaterial()->waterHeight = (*sceneActors)[3]->GetMovementComponent()->GetPosition().y;
 
-	(*sceneActors)[3]->SetModel(_WaterModel.get());
+	(*sceneActors)[(*sceneActors).size() - 1]->SetModel(_WaterModel.get());
 
 	///////////////////////////////////////////////
 	///////////// INIT RENDER TEXTURES //////////// (LATER ENCAPASULATE INTO MATERIALS)

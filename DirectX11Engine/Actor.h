@@ -23,6 +23,7 @@ public:
 
 	inline Model* GetModel() const { return _Model; }
 
+	bool bCustomAppearance = false;
 	bool bVisible = true;
 
 private:

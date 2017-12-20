@@ -87,6 +87,7 @@ private:
 	unique_ptr<ShaderManagerClass> _ShaderManager;
 
 	/////////// WATER DEMO ////////////////
+	vector<unique_ptr<Model>> _DefaultModels;
 	unique_ptr<Model> _GroundModel, _WallModel, _BathModel, _WaterModel;
 	unique_ptr<RenderTextureClass> _RefractionTexture, _ReflectionTexture;
 

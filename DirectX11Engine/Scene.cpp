@@ -24,10 +24,18 @@ bool Scene::Initialize()
 		_Actors[i]->Initialize(true);
 	}
 
-	_Actors[0]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 1.0f, 0.0f));
-	_Actors[1]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 6.0f, 8.0f));
-	_Actors[2]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.0f, 0.0f));
-	_Actors[3]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.75, 0.0f));
+	///// WATER DEMO SETUP //////
+	// Overwrite the last 4 actors in the array with custom appearance (initialization by hand)
+	int indexToStopAt = _Actors.size() - 4;
+	for (int i = _Actors.size() - 1; i >= indexToStopAt; --i)
+	{
+		_Actors[i]->bCustomAppearance = true;
+	}
+
+	_Actors[_Actors.size() - 4]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 1.0f, 0.0f));
+	_Actors[_Actors.size() - 3]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 6.0f, 8.0f));
+	_Actors[_Actors.size() - 2]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.0f, 0.0f));
+	_Actors[_Actors.size() - 1]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.75, 0.0f));
 
 	return true;
 }
@@ -70,7 +78,7 @@ void Scene::UpdateActors(float deltaTime)
 
 }
 
-Actor ** Scene::GetActors() const
+Actor ** Scene::GetActors() const //@CLEANUP - probably shouldnt use this
 {
 	vector<Actor*> actors;
 
