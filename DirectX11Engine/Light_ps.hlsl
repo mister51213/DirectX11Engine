@@ -170,8 +170,8 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
         specularIntensity = shaderTextures[5].Sample(SampleType, input.tex);
 
         // Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-        color += (diffuseColor * lightIntensity); //@TODO: TEST
-		//color += totalLightColor;
+       // color += (diffuseColor * lightIntensity); //@TODO: TEST
+		color += totalLightColor;
 
         // Saturate the ambient and diffuse color.
         color = saturate(color);

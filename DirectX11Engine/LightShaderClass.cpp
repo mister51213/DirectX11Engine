@@ -491,17 +491,31 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	// Now set the camera constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_cameraBuffer);
 
+
 	//////////////// LIGHT POSITION - VS BUFFER 2 ///////////////////////
 	bufferNumber = 2;
 
+	// Lock the light position constant buffer so it can be written to.
+	result = deviceContext->Map(_lightPositionBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result))
+	{
+		return false;
+	}
 
+	// Get a pointer to the data in the constant buffer.
+	pLightPosBuff = (LightPositionBufferType*)mappedResource.pData;
 
+	// Copy the light position variables into the constant buffer.
+	pLightPosBuff->lightPosition[0] = lights[0]->GetPosition();
+	pLightPosBuff->lightPosition[1] = lights[1]->GetPosition();
+	pLightPosBuff->lightPosition[2] = lights[2]->GetPosition();
+	pLightPosBuff->lightPosition[3] = lights[3]->GetPosition();
 
+	// Unlock the constant buffer.
+	deviceContext->Unmap(_lightPositionBuffer, 0);
 
-
-
-
-
+	// Finally set the constant buffer in the vertex shader with the updated values.
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_lightPositionBuffer);
 
 
 	//////////////// CLIP PLANE - VS BUFFER 3 ///////////////////////
@@ -525,6 +539,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	// Now set the clip plane constant buffer in the vertex shader with the updated values.
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_clipPlaneBuffer);
+
 
 	/////////// FOG INIT - VS BUFFER 4 /////////////////////////// @TODO: is the data packed correctly???
 	// Lock the fog constant buffer so it can be written to.
@@ -579,18 +594,31 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	// Finally set the light constant buffer in the pixel shader with the updated values.
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &_lightBuffer);
 
+
 	////////////// LIGHT COLOR - PS BUFFER 1 //////////////////
 	bufferNumber = 1;
 
+	// Lock the light color constant buffer so it can be written to.
+	result = deviceContext->Map(_lightColorBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	if (FAILED(result))
+	{
+		return false;
+	}
 
+	// Get a pointer to the data in the constant buffer.
+	pLightColBuff = (LightColorBufferType*)mappedResource.pData;
 
+	// Copy the light color variables into the constant buffer.
+	pLightColBuff->diffuseColor[0] = lights[0]->GetDiffuseColor();
+	pLightColBuff->diffuseColor[1] = lights[1]->GetDiffuseColor();
+	pLightColBuff->diffuseColor[2] = lights[2]->GetDiffuseColor();
+	pLightColBuff->diffuseColor[3] = lights[3]->GetDiffuseColor();
 
+	// Unlock the constant buffer.
+	deviceContext->Unmap(_lightColorBuffer, 0);
 
-
-
-
-
-
+	// Finally set the constant buffer in the pixel shader with the updated values.
+	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &_lightColorBuffer);
 
 
 	////////////// TEX TRANSLATION - PS BUFFER 2 //////////////////

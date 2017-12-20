@@ -44,7 +44,7 @@ private:
 
 	struct LightPositionBufferType
 	{
-		XMFLOAT4 lightPosition[NUM_LIGHTS];
+		XMFLOAT4 lightPosition[NUM_LIGHTS]; //@TODO: does this have to be the SAME NAME AS INSIDE SHADER????
 	};
 	struct FogBufferType
 	{
