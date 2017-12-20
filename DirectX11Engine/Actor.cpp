@@ -12,7 +12,7 @@ Actor::~Actor()
 {
 }
 
-bool Actor::Initialize(bool visible)
+bool Actor::InitializeMovement(bool visible)
 {
 	bVisible = visible;
 

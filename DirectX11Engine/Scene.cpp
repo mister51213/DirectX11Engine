@@ -15,13 +15,13 @@ Scene::~Scene()
 bool Scene::Initialize()
 {
 	_Camera.reset(new Actor);
-	_Camera->Initialize(false);
+	_Camera->InitializeMovement(false);
 
 	for (int i = 0; i < _numActors; ++i)
 	{
 		_Actors.push_back(unique_ptr<Actor>());
 		_Actors[i].reset(new Actor);
-		_Actors[i]->Initialize(true);
+		_Actors[i]->InitializeMovement(true);
 	}
 
 	///// WATER DEMO SETUP //////
@@ -37,6 +37,19 @@ bool Scene::Initialize()
 	_Actors[_Actors.size() - 2]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.0f, 0.0f));
 	_Actors[_Actors.size() - 1]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.75, 0.0f));
 
+	///// INIT LIGHTS //////
+	for (int i = 0; i < NUM_LIGHTS; ++i)
+	{
+		_LightActors.push_back(unique_ptr<Actor>());
+		_LightActors[i].reset(new Actor);
+		_LightActors[i]->InitializeMovement(true);
+	}
+
+	_LightActors[0]->GetMovementComponent()->SetPosition(XMFLOAT3(-3.0f, 1.0f, 3.0f));
+	_LightActors[1]->GetMovementComponent()->SetPosition(XMFLOAT3(3.0f, 1.0f, 3.0f));
+	_LightActors[2]->GetMovementComponent()->SetPosition(XMFLOAT3(-3.0f, 1.0f, -3.0f));
+	_LightActors[3]->GetMovementComponent()->SetPosition(XMFLOAT3(3.0f, 1.0f, -3.0f));
+
 	return true;
 }
 
@@ -45,12 +58,10 @@ void Scene::Tick(float deltaTime, Input* pInput)
 	ProcessInput(deltaTime, pInput);
 
 	UpdateActors(deltaTime);
-
 }
 
 void Scene::ProcessInput(float deltaTime, Input* pInput)
 {
-
 	_Camera->GetMovementComponent()->SetFrameTime(deltaTime);
 
 	// working old method
@@ -70,13 +81,23 @@ void Scene::ProcessInput(float deltaTime, Input* pInput)
 	_Camera->GetMovementComponent()->MoveBack(pInput->IsKeyDown(DIK_S));
 	_Camera->GetMovementComponent()->MoveLeft(pInput->IsKeyDown(DIK_A));
 	_Camera->GetMovementComponent()->MoveRight(pInput->IsKeyDown(DIK_D));
+
+
+	////////// MOVE LIGHTS (TEST) ////////////
+	for (int i = 0; i < NUM_LIGHTS; ++i)
+	{
+		_LightActors[i]->GetMovementComponent()->SetFrameTime(deltaTime);
+	}
+
+	_LightActors[0]->GetMovementComponent()->MoveForward(pInput->IsKeyDown(DIK_UP));
+	_LightActors[1]->GetMovementComponent()->MoveBack(pInput->IsKeyDown(DIK_DOWN));
+	_LightActors[2]->GetMovementComponent()->MoveLeft(pInput->IsKeyDown(DIK_LEFT));
+	_LightActors[3]->GetMovementComponent()->MoveRight(pInput->IsKeyDown(DIK_RIGHT));
+
 }
 
 void Scene::UpdateActors(float deltaTime)
-{
-
-
-}
+{}
 
 Actor ** Scene::GetActors() const //@CLEANUP - probably shouldnt use this
 {

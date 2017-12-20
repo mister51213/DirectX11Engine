@@ -22,56 +22,41 @@ bool System::Initialize()
 
 	// This object will be used to handle reading the keyboard input from the user.
 	_Input.reset(new Input);
-	if (!_Input){return false;}
+	if (!_Input)return false;
 
 	result = _Input->Initialize(_hinstance, _hwnd, screenWidth, screenHeight);
-	if (FAILED(result))
-	{
-		throw std::runtime_error("Could not initialize the input object. - line " + std::to_string(__LINE__));
-		return false;
-	}
+	CHECK(result, "input");
 
 	_Physics.reset(new Physics);
 	if (!_Physics) return false;
 
 	result = _Physics->Initialize();
-	if (!result)
-	{
-		throw std::runtime_error("Could not initialize the physics object. - line " + std::to_string(__LINE__));
-	}
+	CHECK(result, "physics");
 
 	_Scene.reset(new Scene);
-	if (_Scene) result = _Scene->Initialize();
+	if (!_Scene) return false;
+	
+	result = _Scene->Initialize();
+	CHECK(result, "scene");
 
 	// This object will handle rendering all the graphics for this application.
 	_Graphics.reset(new Graphics);
-	if (!_Graphics)
-	{
-		return false;
-	}
+	if (!_Graphics)	return false;
 
 	result = _Graphics->Initialize(screenWidth, screenHeight, _hwnd, _Scene.get());
-	if (!result)
-	{
-		throw std::runtime_error("Could not initialize the graphics object. - line " + std::to_string(__LINE__));
-		return false;
-	}
+	CHECK(result, "graphics");
 
 	_Timer.reset(new TimerClass);
-	if (!_Timer)
-	{
-		return false;
-	}
+	if (!_Timer)return false;
 
 	result = _Timer->Initialize();
-	if (!result)
-	{
-		throw std::runtime_error("Could not initialize the timer object. - line " + std::to_string(__LINE__));
-		return false;
-	}
+	CHECK(result, "timer");
 
 	_UI.reset(new UI);
+	if (!_UI)return false;
+
 	result = _UI->Initialize();
+	CHECK(result, "UI");
 
 	return true;
 }

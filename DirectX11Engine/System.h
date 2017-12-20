@@ -21,6 +21,7 @@
 #include "Graphics.h"
 #include "Scene.h"
 #include "UI.h"
+#include "GlobalIncludes.h"
 
 ///////////////////////
 // Physics //
@@ -74,8 +75,6 @@ private:
 	unique_ptr<Scene> _Scene;
 	unique_ptr<Graphics> _Graphics;
 	unique_ptr<UI> _UI;
-
-	//unique_ptr<MovementComponent> _Camera;
 };
 
 /////////////////////////

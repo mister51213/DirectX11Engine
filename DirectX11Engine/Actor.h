@@ -12,7 +12,7 @@ public:
 	Actor();
 	~Actor();
 
-	bool Initialize(bool visible);
+	bool InitializeMovement(bool visible);
 
 	inline MovementComponent* GetMovementComponent()
 	{

@@ -35,7 +35,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* s
 
 	InitializeModels(hwnd, screenWidth, screenHeight, &(scene->_Actors));
 
-	InitializeLights();
+	InitializeLights(scene);
 
 	InitializeUI(screenWidth, screenHeight);
 	
@@ -47,7 +47,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* s
 	return true;
 }
 
-bool Graphics::InitializeLights()
+bool Graphics::InitializeLights(Scene* pScene)
 {
 	// Create the skylight object.
 	_Light.reset(new LightClass);
@@ -64,19 +64,22 @@ bool Graphics::InitializeLights()
 	{
 		_Lights.push_back(unique_ptr<LightClass>());
 		_Lights[i].reset(new LightClass);
+
+		XMFLOAT3 worldPosition = pScene->_LightActors[i]->GetMovementComponent()->GetPosition();
+		_Lights[i]->SetPosition(worldPosition.x, worldPosition.y, worldPosition.z);
 	}
 
 	_Lights[0]->SetDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f);
-	_Lights[0]->SetPosition(-3.0f, 1.0f, 3.0f);
+	//_Lights[0]->SetPosition(-3.0f, 1.0f, 3.0f);
 
 	_Lights[1]->SetDiffuseColor(0.0f, 1.0f, 0.0f, 1.0f);
-	_Lights[1]->SetPosition(3.0f, 1.0f, 3.0f);
+	//_Lights[1]->SetPosition(3.0f, 1.0f, 3.0f);
 
 	_Lights[2]->SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);
-	_Lights[2]->SetPosition(-3.0f, 1.0f, -3.0f);
+	//_Lights[2]->SetPosition(-3.0f, 1.0f, -3.0f);
 
 	_Lights[3]->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_Lights[3]->SetPosition(3.0f, 1.0f, -3.0f);
+	//_Lights[3]->SetPosition(3.0f, 1.0f, -3.0f);
 
 	// STORE LIGHT DATA
 	for (auto& light : _Lights)
@@ -323,7 +326,14 @@ bool Graphics::UpdateFrame(float frameTime, Scene* scene, int fps)
 	_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
 	_Camera->SetRotation(camRot.x, camRot.y, camRot.z);
 
-	// 3. Update UI
+	// 3. Update Lights
+	for (int i = 0; i < NUM_LIGHTS; ++i)
+	{
+		XMFLOAT3 worldPosition = scene->_LightActors[i]->GetMovementComponent()->GetPosition();
+		_Lights[i]->SetPosition(worldPosition.x, worldPosition.y, worldPosition.z);
+	}
+
+	// 4. Update UI
 	result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
 	if (!result){return false;}
 	result = UpdatePositionStrings(_D3D->GetDeviceContext(), camPos.x, camPos.y, camPos.z, camRot.x, camRot.y, camRot.z);

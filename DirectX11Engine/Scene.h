@@ -26,6 +26,8 @@ public:
 
 	unique_ptr<Actor> _Camera;
 	vector<unique_ptr<Actor>> _Actors;
-	vector<unique_ptr<LightClass>> _Lights;
+	vector<unique_ptr<Actor>> _LightActors;
+
+	const int NUM_LIGHTS = 4;
 };
 
