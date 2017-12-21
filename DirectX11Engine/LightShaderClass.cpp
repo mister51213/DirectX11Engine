@@ -215,47 +215,47 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 		return false;
 	}
 
-	/////// INIT BUFFERS ///////////
-	//vector<UINT16> sizes =
-	//{
-	//	sizeof(MatrixBufferType),
-	//	sizeof(CameraBufferType),
-	//	sizeof(LightBufferType),
-	//	sizeof(LightColorBufferType),
-	//	sizeof(LightPositionBufferType),
-	//	sizeof(FogBufferType),
-	//	sizeof(ClipPlaneBufferType),
-	//	sizeof(TranslateBufferType),
-	//	sizeof(TransparentBufferType)
-	//};
-	//for (int i = 0; i < _numBufferDescs; ++i)
-	//{
-	//	_bufferDescs.push_back(D3D11_BUFFER_DESC());
-	//		
-	//	_bufferDescs[i].Usage = D3D11_USAGE_DYNAMIC;
-	//	_bufferDescs[i].ByteWidth = sizes[i];
-	//	_bufferDescs[i].BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	//	_bufferDescs[i].CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	//	_bufferDescs[i].MiscFlags = 0;
-	//	_bufferDescs[i].StructureByteStride = 0;
-	//	_buffers.push_back(Microsoft::WRL::ComPtr <ID3D11Buffer>());
-	//	
-	//	result = device->CreateBuffer(&_bufferDescs[i], NULL, &_buffers[i]);
-	//	if (FAILED(result))
-	//	{
-	//		return false;
-	//	}
-	//}
+	///// INIT BUFFERS ///////////
+	vector<UINT16> sizes =
+	{
+		sizeof(MatrixBufferType),
+		sizeof(CameraBufferType),
+		sizeof(LightBufferType),
+		sizeof(LightColorBufferType),
+		sizeof(LightPositionBufferType),
+		sizeof(FogBufferType),
+		sizeof(ClipPlaneBufferType),
+		sizeof(TranslateBufferType),
+		sizeof(TransparentBufferType)
+	};
+	for (int i = 0; i < _numBufferDescs; ++i)
+	{
+		_bufferDescs.push_back(D3D11_BUFFER_DESC());
+			
+		_bufferDescs[i].Usage = D3D11_USAGE_DYNAMIC;
+		_bufferDescs[i].ByteWidth = sizes[i];
+		_bufferDescs[i].BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		_bufferDescs[i].CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		_bufferDescs[i].MiscFlags = 0;
+		_bufferDescs[i].StructureByteStride = 0;
+		_buffers.push_back(Microsoft::WRL::ComPtr <ID3D11Buffer>());
+		
+		result = device->CreateBuffer(&_bufferDescs[i], NULL, &_buffers[i]);
+		if (FAILED(result))
+		{
+			return false;
+		}
+	}
 
-		_buffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
-		_buffers.emplace_back(MakeConstantBuffer<CameraBufferType>(device));
-		_buffers.emplace_back(MakeConstantBuffer<LightBufferType>(device));
-		_buffers.emplace_back(MakeConstantBuffer<LightColorBufferType>(device));
-		_buffers.emplace_back(MakeConstantBuffer<LightPositionBufferType>(device));
-		_buffers.emplace_back(MakeConstantBuffer<FogBufferType>(device));
-		_buffers.emplace_back(MakeConstantBuffer<ClipPlaneBufferType>(device));
-		_buffers.emplace_back(MakeConstantBuffer<TranslateBufferType>(device));
-	_buffers.emplace_back(MakeConstantBuffer<TransparentBufferType>(device));
+		//_buffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
+		//_buffers.emplace_back(MakeConstantBuffer<CameraBufferType>(device));
+		//_buffers.emplace_back(MakeConstantBuffer<LightBufferType>(device));
+		//_buffers.emplace_back(MakeConstantBuffer<LightColorBufferType>(device));
+		//_buffers.emplace_back(MakeConstantBuffer<LightPositionBufferType>(device));
+		//_buffers.emplace_back(MakeConstantBuffer<FogBufferType>(device));
+		//_buffers.emplace_back(MakeConstantBuffer<ClipPlaneBufferType>(device));
+		//_buffers.emplace_back(MakeConstantBuffer<TranslateBufferType>(device));
+		//_buffers.emplace_back(MakeConstantBuffer<TransparentBufferType>(device));
 
 #pragma region LEGACY
 	//// Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
@@ -487,7 +487,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	// Unlock the constant buffer.
 	deviceContext->Unmap(/*_matrixBuffer*/_buffers[0].Get(), 0);
 
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_buffers[0]);
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _buffers[0].GetAddressOf());
 
 	/////////////////////////////
 	/////////////////////////////
