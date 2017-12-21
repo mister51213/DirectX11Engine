@@ -79,8 +79,35 @@ namespace GfxUtil
 		return desc;
 	}
 
+	//@TODO - behaves really weird, must fix!
+	static Microsoft::WRL::ComPtr<ID3D11SamplerState> MakeSamplerState(ID3D11Device* device)
+	{
+		D3D11_SAMPLER_DESC desc;
+
+		desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.MipLODBias = 0.0f;
+		desc.MaxAnisotropy = 1;
+		desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		desc.BorderColor[0] = 0;
+		desc.BorderColor[1] = 0;
+		desc.BorderColor[2] = 0;
+		desc.BorderColor[3] = 0;
+		desc.MinLOD = 0;
+		desc.MaxLOD = D3D11_FLOAT32_MAX;
+
+		Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler;
+		HRESULT result = device->CreateSamplerState(&desc, &sampler);
+		CHECK(SUCCEEDED(result), "Failed to create sampler state.");
+
+		return sampler;
+	}
+
+
 	template<class BufferType>
-	Microsoft::WRL::ComPtr<ID3D11Buffer> MakeConstantBuffer(ID3D11Device* device)
+	static Microsoft::WRL::ComPtr<ID3D11Buffer> MakeConstantBuffer(ID3D11Device* device)
 	{
 		D3D11_BUFFER_DESC desc{};
 		desc.Usage = D3D11_USAGE_DYNAMIC;
@@ -98,7 +125,7 @@ namespace GfxUtil
 	}
 
 	template<class BufferType>
-	void MapBuffer(const BufferType& inData, ID3D11Buffer* pBuffer, ID3D11DeviceContext* deviceContext)
+	static void MapBuffer(const BufferType& inData, ID3D11Buffer* pBuffer, ID3D11DeviceContext* deviceContext)
 	{
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		HRESULT result = deviceContext->Map(pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);

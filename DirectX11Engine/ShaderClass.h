@@ -51,7 +51,7 @@ public:
 protected:
 	virtual bool InitializeShader(ID3D11Device* device, HWND hwnd, char* vsFileName, char* psFileName);
 
-	bool CompileShaders(ID3D11Device * device, /*ID3D10Blob* vertexShaderBuffer, ID3D10Blob** pixelShaderBuffer, */HWND hwnd, char* vsFilename, char* psFilename, char* vsDesc, char* psDesc, ID3D10Blob* errorMessage);
+	bool CompileShaders(ID3D11Device * device, HWND hwnd, char* vsFilename, char* psFilename, char* vsDesc, char* psDesc, ID3D10Blob* errorMessage);
 
 	virtual void ShutdownShader();
 	void OutputShaderErrorMessage(ID3D10Blob*, HWND hwnd, char*);

@@ -22,24 +22,18 @@ public:
 	WaterShaderClass(const WaterShaderClass&);
 	~WaterShaderClass();
 
-	bool Render(ID3D11DeviceContext*, int, XMMATRIX, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView** textureArray, /*ID3D11ShaderResourceView*,
-		ID3D11ShaderResourceView*, ID3D11ShaderResourceView*, */float, float);
+	bool Render(ID3D11DeviceContext*, int, XMMATRIX, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView** textureArray, float, float);
 
 private:
 	bool InitializeShader(ID3D11Device*, HWND, char*, char*);
 	void ShutdownShader();
 	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, XMMATRIX, 
-		ID3D11ShaderResourceView** textureArray, /*
-		ID3D11ShaderResourceView*, ID3D11ShaderResourceView*, ID3D11ShaderResourceView*, */float, float);
+		ID3D11ShaderResourceView** textureArray, float, float);
 
 private:
-	//ID3D11VertexShader* _vertexShader;
-	//ID3D11PixelShader* _pixelShader;
-	//ID3D11InputLayout* _layout;
-	//ID3D11SamplerState* _sampleState;
-	//ID3D11Buffer* _matrixBuffer;
+	const int _numBufferDescs = 3;
 
-	ID3D11Buffer* _reflectionBuffer;
-	ID3D11Buffer* _waterBuffer;
+//	ID3D11Buffer* _reflectionBuffer;
+//	ID3D11Buffer* _waterBuffer;
 };
 

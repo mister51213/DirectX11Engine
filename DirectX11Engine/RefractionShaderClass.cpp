@@ -3,9 +3,9 @@
 
 
 RefractionShaderClass::RefractionShaderClass()
-	:
-	_lightBuffer(0),
-	_clipPlaneBuffer(0)
+	//:
+	//_lightBuffer(0),
+	//_clipPlaneBuffer(0)
 {}
 
 RefractionShaderClass::RefractionShaderClass(const RefractionShaderClass & other)
@@ -110,29 +110,33 @@ bool RefractionShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, c
 
 	// Create the vertex input layout description.
 	// This setup needs to match the VertexType stucture in the ModelClass and in the shader.
-	polygonLayout[0].SemanticName = "POSITION";
-	polygonLayout[0].SemanticIndex = 0;
-	polygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	polygonLayout[0].InputSlot = 0;
-	polygonLayout[0].AlignedByteOffset = 0;
-	polygonLayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	polygonLayout[0].InstanceDataStepRate = 0;
+	polygonLayout[0] = MakeInputElementDesc("POSITION", DXGI_FORMAT_R32G32B32_FLOAT, 0);
+	polygonLayout[1] = MakeInputElementDesc("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
+	polygonLayout[2] = MakeInputElementDesc("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT);
+	
+	//polygonLayout[0].SemanticName = "POSITION";
+	//polygonLayout[0].SemanticIndex = 0;
+	//polygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	//polygonLayout[0].InputSlot = 0;
+	//polygonLayout[0].AlignedByteOffset = 0;
+	//polygonLayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	//polygonLayout[0].InstanceDataStepRate = 0;
 
-	polygonLayout[1].SemanticName = "TEXCOORD";
-	polygonLayout[1].SemanticIndex = 0;
-	polygonLayout[1].Format = DXGI_FORMAT_R32G32_FLOAT;
-	polygonLayout[1].InputSlot = 0;
-	polygonLayout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-	polygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	polygonLayout[1].InstanceDataStepRate = 0;
+	//polygonLayout[1].SemanticName = "TEXCOORD";
+	//polygonLayout[1].SemanticIndex = 0;
+	//polygonLayout[1].Format = DXGI_FORMAT_R32G32_FLOAT;
+	//polygonLayout[1].InputSlot = 0;
+	//polygonLayout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	//polygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	//polygonLayout[1].InstanceDataStepRate = 0;
 
-	polygonLayout[2].SemanticName = "NORMAL";
-	polygonLayout[2].SemanticIndex = 0;
-	polygonLayout[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	polygonLayout[2].InputSlot = 0;
-	polygonLayout[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-	polygonLayout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	polygonLayout[2].InstanceDataStepRate = 0;
+	//polygonLayout[2].SemanticName = "NORMAL";
+	//polygonLayout[2].SemanticIndex = 0;
+	//polygonLayout[2].Format = DXGI_FORMAT_R32G32B32_FLOAT;
+	//polygonLayout[2].InputSlot = 0;
+	//polygonLayout[2].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
+	//polygonLayout[2].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+	//polygonLayout[2].InstanceDataStepRate = 0;
 
 	// Get a count of the elements in the layout.
 	numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
@@ -153,19 +157,21 @@ bool RefractionShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, c
 	pixelShaderBuffer = 0;
 
 	// Create a texture sampler state description.
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.MipLODBias = 0.0f;
-	samplerDesc.MaxAnisotropy = 1;
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	samplerDesc.BorderColor[0] = 0;
-	samplerDesc.BorderColor[1] = 0;
-	samplerDesc.BorderColor[2] = 0;
-	samplerDesc.BorderColor[3] = 0;
-	samplerDesc.MinLOD = 0;
-	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	//samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	//samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	//samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	//samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	//samplerDesc.MipLODBias = 0.0f;
+	//samplerDesc.MaxAnisotropy = 1;
+	//samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	//samplerDesc.BorderColor[0] = 0;
+	//samplerDesc.BorderColor[1] = 0;
+	//samplerDesc.BorderColor[2] = 0;
+	//samplerDesc.BorderColor[3] = 0;
+	//samplerDesc.MinLOD = 0;
+	//samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	samplerDesc = MakeSamplerDesc();
 
 	// Create the texture sampler state.
 	result = device->CreateSamplerState(&samplerDesc, &_sampleState);
@@ -174,71 +180,64 @@ bool RefractionShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, c
 		return false;
 	}
 
-	// Setup the description of the matrix dynamic constant buffer that is in the vertex shader.
-	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	matrixBufferDesc.ByteWidth = sizeof(MatrixBufferType);
-	matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	matrixBufferDesc.MiscFlags = 0;
-	matrixBufferDesc.StructureByteStride = 0;
+	// VS Buffers
+	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
+	_vsBuffers.emplace_back(MakeConstantBuffer<ClipPlaneBufferType>(device));
 
-	// Create the matrix constant buffer pointer so we can access the vertex shader constant buffer from within this class.
-	result = device->CreateBuffer(&matrixBufferDesc, NULL, &_matrixBuffer);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	// PS Buffers
+	_psBuffers.emplace_back(MakeConstantBuffer<LightBufferType>(device));
 
-	// Setup the description of the light dynamic constant buffer that is in the pixel shader.
-	// Note that ByteWidth always needs to be a multiple of 16 if using D3D11_BIND_CONSTANT_BUFFER or CreateBuffer will fail.
-	lightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	lightBufferDesc.ByteWidth = sizeof(LightBufferType);
-	lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	lightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	lightBufferDesc.MiscFlags = 0;
-	lightBufferDesc.StructureByteStride = 0;
+	//// Setup the description of the matrix dynamic constant buffer that is in the vertex shader.
+	//matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	//matrixBufferDesc.ByteWidth = sizeof(MatrixBufferType);
+	//matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	//matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	//matrixBufferDesc.MiscFlags = 0;
+	//matrixBufferDesc.StructureByteStride = 0;
 
-	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
-	result = device->CreateBuffer(&lightBufferDesc, NULL, &_lightBuffer);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	//// Create the matrix constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	//result = device->CreateBuffer(&matrixBufferDesc, NULL, &_matrixBuffer);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
 
-	// Setup the description of the clip plane dynamic constant buffer that is in the vertex shader.
-	clipPlaneBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	clipPlaneBufferDesc.ByteWidth = sizeof(ClipPlaneBufferType);
-	clipPlaneBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	clipPlaneBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	clipPlaneBufferDesc.MiscFlags = 0;
-	clipPlaneBufferDesc.StructureByteStride = 0;
+	//// Setup the description of the light dynamic constant buffer that is in the pixel shader.
+	//// Note that ByteWidth always needs to be a multiple of 16 if using D3D11_BIND_CONSTANT_BUFFER or CreateBuffer will fail.
+	//lightBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	//lightBufferDesc.ByteWidth = sizeof(LightBufferType);
+	//lightBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	//lightBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	//lightBufferDesc.MiscFlags = 0;
+	//lightBufferDesc.StructureByteStride = 0;
 
-	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
-	result = device->CreateBuffer(&clipPlaneBufferDesc, NULL, &_clipPlaneBuffer);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	//// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	//result = device->CreateBuffer(&lightBufferDesc, NULL, &_lightBuffer);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
+
+	//// Setup the description of the clip plane dynamic constant buffer that is in the vertex shader.
+	//clipPlaneBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+	//clipPlaneBufferDesc.ByteWidth = sizeof(ClipPlaneBufferType);
+	//clipPlaneBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	//clipPlaneBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	//clipPlaneBufferDesc.MiscFlags = 0;
+	//clipPlaneBufferDesc.StructureByteStride = 0;
+
+	//// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
+	//result = device->CreateBuffer(&clipPlaneBufferDesc, NULL, &_clipPlaneBuffer);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
 
 	return true;
 }
 
 void RefractionShaderClass::ShutdownShader()
 {
-	// Release the clip plane constant buffer.
-	if (_clipPlaneBuffer)
-	{
-		_clipPlaneBuffer->Release();
-		_clipPlaneBuffer = 0;
-	}
-
-	// Release the light constant buffer.
-	if (_lightBuffer)
-	{
-		_lightBuffer->Release();
-		_lightBuffer = 0;
-	}
-
 	ShaderClass::ShutdownShader();
 }
 
@@ -246,60 +245,85 @@ bool RefractionShaderClass::SetShaderParameters(ID3D11DeviceContext * deviceCont
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
-	LightBufferType* dataPtr2;
-	unsigned int bufferNumber;
-	ClipPlaneBufferType* dataPtr3;
-
-	SetBaseParameters(&mappedResource, deviceContext, worldMatrix, viewMatrix, projectionMatrix, bufferNumber);
+	//LightBufferType* dataPtr2;
+	//ClipPlaneBufferType* dataPtr3;
 
 	// Set shader texture resource in the pixel shader.
 	deviceContext->PSSetShaderResources(0, 1, &texture);
 
-	// Lock the light constant buffer so it can be written to.
-	result = deviceContext->Map(_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	///////////////////////////////////////////////////////////////
+	///////////////////////// VS BUFFERS //////////////////////////
+	///////////////////////////////////////////////////////////////
 
-	// Get a pointer to the data in the constant buffer.
-	dataPtr2 = (LightBufferType*)mappedResource.pData;
+	//SetBaseParameters(&mappedResource, deviceContext, worldMatrix, viewMatrix, projectionMatrix, bufferNumber);
 
-	// Copy the lighting variables into the constant buffer.
-	dataPtr2->ambientColor = ambientColor;
-	dataPtr2->diffuseColor = diffuseColor;
-	dataPtr2->lightDirection = lightDirection;
+	///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
+	unsigned int bufferNumber = 0;
+	MatrixBufferType tempMatBuff = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix) };
+	MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
-	// Unlock the constant buffer.
-	deviceContext->Unmap(_lightBuffer, 0);
+	///////////////////// CLIP INIT - VS BUFFER 1 //////////////////////////////////
+	bufferNumber++;
+	ClipPlaneBufferType tempClipBuff = { clipPlane };
+	MapBuffer(tempClipBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
-	// Set the position of the light constant buffer in the pixel shader.
+	///////////////////////////////////////////////////////////////
+	///////////////////////// PS BUFFERS //////////////////////////
+	///////////////////////////////////////////////////////////////
+
+	///////////////////// LIGHT INIT - PS BUFFER 0 //////////////////////////////////
 	bufferNumber = 0;
+	LightBufferType tempLightBuff = { ambientColor, diffuseColor, lightDirection };
+	MapBuffer(tempLightBuff, _psBuffers[bufferNumber].Get(), deviceContext);
+	deviceContext->PSSetConstantBuffers(bufferNumber, 1, _psBuffers[bufferNumber].GetAddressOf());
 
-	// Finally set the light constant buffer in the pixel shader with the updated values.
-	deviceContext->PSSetConstantBuffers(bufferNumber, 1, &_lightBuffer);
+	//// Lock the light constant buffer so it can be written to.
+	//result = deviceContext->Map(_lightBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
 
-	// Lock the clip plane constant buffer so it can be written to.
-	result = deviceContext->Map(_clipPlaneBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	//// Get a pointer to the data in the constant buffer.
+	//dataPtr2 = (LightBufferType*)mappedResource.pData;
 
-	// Get a pointer to the data in the clip plane constant buffer.
-	dataPtr3 = (ClipPlaneBufferType*)mappedResource.pData;
+	//// Copy the lighting variables into the constant buffer.
+	//dataPtr2->ambientColor =    ambientColor;
+	//dataPtr2->diffuseColor =    diffuseColor;
+	//dataPtr2->lightDirection =  lightDirection;
 
-	// Copy the clip plane into the clip plane constant buffer.
-	dataPtr3->clipPlane = clipPlane;
+	//// Unlock the constant buffer.
+	//deviceContext->Unmap(_lightBuffer, 0);
 
-	// Unlock the buffer.
-	deviceContext->Unmap(_clipPlaneBuffer, 0);
+	//// Set the position of the light constant buffer in the pixel shader.
+	//bufferNumber = 0;
 
-	// Set the position of the clip plane constant buffer in the vertex shader.
-	bufferNumber = 1;
+	//// Finally set the light constant buffer in the pixel shader with the updated values.
+	//deviceContext->PSSetConstantBuffers(bufferNumber, 1, &_lightBuffer);
 
-	// Now set the clip plane constant buffer in the vertex shader with the updated values.
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_clipPlaneBuffer);
+	//// Lock the clip plane constant buffer so it can be written to.
+	//result = deviceContext->Map(_clipPlaneBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
+
+	//// Get a pointer to the data in the clip plane constant buffer.
+	//dataPtr3 = (ClipPlaneBufferType*)mappedResource.pData;
+
+	//// Copy the clip plane into the clip plane constant buffer.
+	//dataPtr3->clipPlane = clipPlane;
+
+	//// Unlock the buffer.
+	//deviceContext->Unmap(_clipPlaneBuffer, 0);
+
+	//// Set the position of the clip plane constant buffer in the vertex shader.
+	//bufferNumber = 1;
+
+	//// Now set the clip plane constant buffer in the vertex shader with the updated values.
+	//deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_clipPlaneBuffer);
 
 	return true;
 }
