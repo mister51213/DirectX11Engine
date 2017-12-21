@@ -33,5 +33,5 @@ private:
 	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*, XMFLOAT4);
 
 private:
-	ID3D11Buffer* _pixelBuffer;
+	const int _numBufferDescs = 2;
 };

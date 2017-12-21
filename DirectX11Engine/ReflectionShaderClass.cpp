@@ -1,8 +1,6 @@
 #include "ReflectionShaderClass.h"
 
 ReflectionShaderClass::ReflectionShaderClass()
-	:
-	_reflectionBuffer(nullptr)
 {}
 
 ReflectionShaderClass::ReflectionShaderClass(const ReflectionShaderClass &)
@@ -105,22 +103,9 @@ bool ReflectionShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, c
 
 	// Create the vertex input layout description.
 	// This setup needs to match the VertexType stucture in the ModelClass and in the shader.
-	polygonLayout[0].SemanticName = "POSITION";
-	polygonLayout[0].SemanticIndex = 0;
-	polygonLayout[0].Format = DXGI_FORMAT_R32G32B32_FLOAT;
-	polygonLayout[0].InputSlot = 0;
-	polygonLayout[0].AlignedByteOffset = 0;
-	polygonLayout[0].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	polygonLayout[0].InstanceDataStepRate = 0;
-
-	polygonLayout[1].SemanticName = "TEXCOORD";
-	polygonLayout[1].SemanticIndex = 0;
-	polygonLayout[1].Format = DXGI_FORMAT_R32G32_FLOAT;
-	polygonLayout[1].InputSlot = 0;
-	polygonLayout[1].AlignedByteOffset = D3D11_APPEND_ALIGNED_ELEMENT;
-	polygonLayout[1].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
-	polygonLayout[1].InstanceDataStepRate = 0;
-
+	polygonLayout[0] = MakeInputElementDesc("POSITION", DXGI_FORMAT_R32G32B32_FLOAT, 0);
+	polygonLayout[1] = MakeInputElementDesc("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
+		
 	// Get a count of the elements in the layout.
 	numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 
@@ -139,36 +124,8 @@ bool ReflectionShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, c
 	pixelShaderBuffer->Release();
 	pixelShaderBuffer = 0;
 
-	// Setup the description of the matrix dynamic constant buffer that is in the vertex shader.
-	matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	matrixBufferDesc.ByteWidth = sizeof(MatrixBufferType);
-	matrixBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	matrixBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	matrixBufferDesc.MiscFlags = 0;
-	matrixBufferDesc.StructureByteStride = 0;
-
-	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
-	result = device->CreateBuffer(&matrixBufferDesc, NULL, &_matrixBuffer);
-	if (FAILED(result))
-	{
-		return false;
-	}
-
 	// Create a texture sampler state description.
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.MipLODBias = 0.0f;
-	samplerDesc.MaxAnisotropy = 1;
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	samplerDesc.BorderColor[0] = 0;
-	samplerDesc.BorderColor[1] = 0;
-	samplerDesc.BorderColor[2] = 0;
-	samplerDesc.BorderColor[3] = 0;
-	samplerDesc.MinLOD = 0;
-	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
+	samplerDesc = MakeSamplerDesc();
 	// Create the texture sampler state.
 	result = device->CreateSamplerState(&samplerDesc, &_sampleState);
 	if (FAILED(result))
@@ -176,35 +133,15 @@ bool ReflectionShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, c
 		return false;
 	}
 
-	//////////////// MATRIX BUFFER TYPE UNIQUE TO THIS CLASS /////////////
-
-	// Setup the description of the reflection dynamic constant buffer that is in the vertex shader.
-	reflectionBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	reflectionBufferDesc.ByteWidth = sizeof(ReflectionBufferType);
-	reflectionBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	reflectionBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	reflectionBufferDesc.MiscFlags = 0;
-	reflectionBufferDesc.StructureByteStride = 0;
-
-	// Create the constant buffer pointer so we can access the vertex shader constant buffer from within this class.
-	result = device->CreateBuffer(&reflectionBufferDesc, NULL, &_reflectionBuffer);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	// VS Buffers
+	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
+	_vsBuffers.emplace_back(MakeConstantBuffer<ReflectionBufferType>(device));
 
 	return true;
 }
 
 void ReflectionShaderClass::ShutdownShader()
 {
-	// Release the reflection constant buffer.
-	if (_reflectionBuffer)
-	{
-		_reflectionBuffer->Release();
-		_reflectionBuffer = 0;
-	}
-
 	ShaderClass::ShutdownShader();
 }
 
@@ -212,47 +149,29 @@ bool ReflectionShaderClass::SetShaderParameters(ID3D11DeviceContext * deviceCont
 {
 	HRESULT result;
 
-	D3D11_MAPPED_SUBRESOURCE mappedResource;//MatrixBufferType* dataPtr;
-	unsigned int bufferNumber;
-
-	result = SetBaseParameters(&mappedResource, deviceContext, worldMatrix, viewMatrix, projectionMatrix, bufferNumber);
-	if (FAILED(result))
-	{
-		return false;
-	}
-
-	ReflectionBufferType* dataPtr2;
-
-	// Transpose the relfection matrix to prepare it for the shader.
-	reflectionMatrix = XMMatrixTranspose(reflectionMatrix);
-
-	// Lock the reflection constant buffer so it can be written to.
-	result = deviceContext->Map(_reflectionBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	if (FAILED(result))
-	{
-		return false;
-	}
-
-	// Get a pointer to the data in the matrix constant buffer.
-	dataPtr2 = (ReflectionBufferType*)mappedResource.pData;
-
-	// Copy the matrix into the reflection constant buffer.
-	dataPtr2->reflectionMatrix = reflectionMatrix;
-
-	// Unlock the reflection constant buffer.
-	deviceContext->Unmap(_reflectionBuffer, 0);
-
-	// Set the position of the reflection constant buffer in the vertex shader.
-	bufferNumber = 1;
-
-	// Now set the reflection constant buffer in the vertex shader with the updated values.
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_reflectionBuffer);
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
 	// Set shader texture resource in the pixel shader.
 	deviceContext->PSSetShaderResources(0, 1, &texture);
 	//Set the reflection texture as the second texture inside the pixel shader.
 	deviceContext->PSSetShaderResources(1, 1, &reflectionTexture);
 
+	///////////////////////////////////////////////////////////////
+	///////////////////////// VS BUFFERS //////////////////////////
+	///////////////////////////////////////////////////////////////
+
+	///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
+	unsigned int bufferNumber = 0;
+	MatrixBufferType tempMatBuff = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix) };
+	MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
+
+	///////////////////// REFLECTION INIT - VS BUFFER 1 //////////////////////////////////
+	bufferNumber++;
+	ReflectionBufferType tempRefBuff = { XMMatrixTranspose(reflectionMatrix) };
+	MapBuffer(tempRefBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
+	
 	return true;
 }
 

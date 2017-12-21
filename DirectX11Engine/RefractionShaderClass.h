@@ -36,9 +36,6 @@ private:
 		XMFLOAT4 clipPlane);
 
 private:
-	//ID3D11Buffer* _lightBuffer;
-	//ID3D11Buffer* _clipPlaneBuffer;
-
 	const int _numBufferDescs = 3;
 };
 
