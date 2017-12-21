@@ -27,8 +27,6 @@ bool GfxUtil::Material::Initialize(ID3D11Device* device, ID3D11DeviceContext* de
 	return true;
 }
 
-
-
 TextureClass * GfxUtil::Material::GetTextureObject()
 {
 	return _TextureArray.get();

@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include "Texture.h"
+#include "GlobalIncludes.h"
 #include <memory>
 #include <wrl/client.h>
 
@@ -41,6 +42,30 @@ namespace GfxUtil
 
 		return wcstring;
 	}
+
+	template<class BufferType>
+	static Microsoft::WRL::ComPtr<ID3D11Buffer> MakeConstantBuffer(ID3D11Device* device)
+	{
+		D3D11_BUFFER_DESC desc{};
+		desc.Usage = D3D11_USAGE_DYNAMIC;
+		desc.ByteWidth = sizeof(BufferType);
+		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		desc.MiscFlags = 0;
+		desc.StructureByteStride = 0;
+
+		Microsoft::WRL::ComPtr<ID3D11Buffer> buffer;
+		HRESULT result = device->CreateBuffer(&desc, nullptr, &buffer);
+		CHECK(SUCCEEDED(result), "Failed to create constant buffer.");
+
+		return buffer;
+	}
+
+
+
+
+
+
 
 	enum EShaderType
 	{
@@ -84,4 +109,5 @@ namespace GfxUtil
 		float reflectRefractScale = 0.01f;
 		float waterHeight = 2.75f;
 	};
+
 }

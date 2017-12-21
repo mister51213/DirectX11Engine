@@ -216,39 +216,48 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	}
 
 	/////// INIT BUFFERS ///////////
-	vector<UINT16> sizes =
-	{
-		sizeof(MatrixBufferType),
-		sizeof(CameraBufferType),
-		sizeof(LightBufferType),
-		sizeof(LightColorBufferType),
-		sizeof(LightPositionBufferType),
-		sizeof(FogBufferType),
-		sizeof(ClipPlaneBufferType),
-		sizeof(TranslateBufferType),
-		sizeof(TransparentBufferType)
-	};
+	//vector<UINT16> sizes =
+	//{
+	//	sizeof(MatrixBufferType),
+	//	sizeof(CameraBufferType),
+	//	sizeof(LightBufferType),
+	//	sizeof(LightColorBufferType),
+	//	sizeof(LightPositionBufferType),
+	//	sizeof(FogBufferType),
+	//	sizeof(ClipPlaneBufferType),
+	//	sizeof(TranslateBufferType),
+	//	sizeof(TransparentBufferType)
+	//};
+	//for (int i = 0; i < _numBufferDescs; ++i)
+	//{
+	//	_bufferDescs.push_back(D3D11_BUFFER_DESC());
+	//		
+	//	_bufferDescs[i].Usage = D3D11_USAGE_DYNAMIC;
+	//	_bufferDescs[i].ByteWidth = sizes[i];
+	//	_bufferDescs[i].BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	//	_bufferDescs[i].CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	//	_bufferDescs[i].MiscFlags = 0;
+	//	_bufferDescs[i].StructureByteStride = 0;
+	//	_buffers.push_back(Microsoft::WRL::ComPtr <ID3D11Buffer>());
+	//	
+	//	result = device->CreateBuffer(&_bufferDescs[i], NULL, &_buffers[i]);
+	//	if (FAILED(result))
+	//	{
+	//		return false;
+	//	}
+	//}
 
-	for (int i = 0; i < _numBufferDescs; ++i)
-	{
-		_bufferDescs.push_back(D3D11_BUFFER_DESC());
-			
-		_bufferDescs[i].Usage = D3D11_USAGE_DYNAMIC;
-		_bufferDescs[i].ByteWidth = sizes[i];
-		_bufferDescs[i].BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		_bufferDescs[i].CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		_bufferDescs[i].MiscFlags = 0;
-		_bufferDescs[i].StructureByteStride = 0;
+		_buffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
+		_buffers.emplace_back(MakeConstantBuffer<CameraBufferType>(device));
+		_buffers.emplace_back(MakeConstantBuffer<LightBufferType>(device));
+		_buffers.emplace_back(MakeConstantBuffer<LightColorBufferType>(device));
+		_buffers.emplace_back(MakeConstantBuffer<LightPositionBufferType>(device));
+		_buffers.emplace_back(MakeConstantBuffer<FogBufferType>(device));
+		_buffers.emplace_back(MakeConstantBuffer<ClipPlaneBufferType>(device));
+		_buffers.emplace_back(MakeConstantBuffer<TranslateBufferType>(device));
+	_buffers.emplace_back(MakeConstantBuffer<TransparentBufferType>(device));
 
-		_buffers.push_back(Microsoft::WRL::ComPtr <ID3D11Buffer>());
-		
-		result = device->CreateBuffer(&_bufferDescs[i], NULL, &_buffers[i]);
-		if (FAILED(result))
-		{
-			return false;
-		}
-	}
-
+#pragma region LEGACY
 	//// Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
 	//matrixBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 	//matrixBufferDesc.ByteWidth = sizeof(MatrixBufferType);
@@ -391,6 +400,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	//	return false;
 	//}
 
+#pragma endregion
 	return true;
 }
 
@@ -415,6 +425,28 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	HRESULT result;
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
+
+	/////////////////////// SET TEXTURE RESOURCES //////////////////////
+	// Set shader texture resource in the pixel shader.
+	deviceContext->PSSetShaderResources(0, 6, textureArray); // sextuple tex with lightmap
+
+	LightBufferType* pLightBuff; //NOTE - dataPtr1 define in parent class
+
+	LightPositionBufferType* pLightPosBuff;
+	LightColorBufferType* pLightColBuff;
+
+	CameraBufferType* pCamBuff;
+	FogBufferType* pFogBuff;
+	ClipPlaneBufferType* pClipPlaneBuff;
+	TranslateBufferType* pTranslateBuff;
+	TransparentBufferType* pTransparentBuff;
+
+	///////////////////////////////////////////////////////////////
+	///////////////////////// VS BUFFERS //////////////////////////
+	///////////////////////////////////////////////////////////////
+	//// Set the position of the constant buffer in the vertex shader.
+	//@TODO just increment buffer number each time, and separate vertex and pixel buffers into 2 functions
+
 
 	///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
 	unsigned int bufferNumber = 0;
@@ -455,7 +487,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	// Unlock the constant buffer.
 	deviceContext->Unmap(/*_matrixBuffer*/_buffers[0].Get(), 0);
 
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_matrixBuffer);
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, &_buffers[0]);
 
 	/////////////////////////////
 	/////////////////////////////
@@ -463,27 +495,6 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	/////////////////////////////
 	/////////////////////////////
 	
-	/////////////////////// SET TEXTURE RESOURCES //////////////////////
-	// Set shader texture resource in the pixel shader.
-	deviceContext->PSSetShaderResources(0, 6, textureArray); // sextuple tex with lightmap
-
-	LightBufferType* pLightBuff; //NOTE - dataPtr1 define in parent class
-
-	LightPositionBufferType* pLightPosBuff;
-	LightColorBufferType* pLightColBuff;
-
-	CameraBufferType* pCamBuff;
-	FogBufferType* pFogBuff;
-	ClipPlaneBufferType* pClipPlaneBuff;
-	TranslateBufferType* pTranslateBuff;
-	TransparentBufferType* pTransparentBuff;
-
-	///////////////////////////////////////////////////////////////
-	///////////////////////// VS BUFFERS //////////////////////////
-	///////////////////////////////////////////////////////////////
-	//// Set the position of the constant buffer in the vertex shader.
-	//@TODO just increment buffer number each time, and separate vertex and pixel buffers into 2 functions
-
 	///////////////////// CAM INIT - VS BUFFER 1 //////////////////////////////////
 	// Lock the camera constant buffer so it can be written to.
 	bufferNumber = 1;
