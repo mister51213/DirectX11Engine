@@ -43,6 +43,42 @@ namespace GfxUtil
 		return wcstring;
 	}
 
+	static D3D11_INPUT_ELEMENT_DESC MakeInputElementDesc(LPCSTR name, DXGI_FORMAT format, UINT offset = D3D11_APPEND_ALIGNED_ELEMENT)
+	{
+		D3D11_INPUT_ELEMENT_DESC desc;
+
+		desc.SemanticName = name;
+		desc.SemanticIndex = 0;
+		desc.Format = format;
+		desc.InputSlot = 0;
+		desc.AlignedByteOffset = offset;
+		desc.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		desc.InstanceDataStepRate = 0;
+
+		return desc;
+	}
+
+	static D3D11_SAMPLER_DESC MakeSamplerDesc()
+	{
+		D3D11_SAMPLER_DESC desc;
+
+		desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.MipLODBias = 0.0f;
+		desc.MaxAnisotropy = 1;
+		desc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+		desc.BorderColor[0] = 0;
+		desc.BorderColor[1] = 0;
+		desc.BorderColor[2] = 0;
+		desc.BorderColor[3] = 0;
+		desc.MinLOD = 0;
+		desc.MaxLOD = D3D11_FLOAT32_MAX;
+
+		return desc;
+	}
+
 	template<class BufferType>
 	Microsoft::WRL::ComPtr<ID3D11Buffer> MakeConstantBuffer(ID3D11Device* device)
 	{
