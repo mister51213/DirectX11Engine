@@ -85,16 +85,17 @@ private:
 	vector<D3D11_BUFFER_DESC> _bufferDescs;
 	const int _numBufferDescs = 9;
 
-	vector<Microsoft::WRL::ComPtr <ID3D11Buffer>> _buffers;
-	vector<Microsoft::WRL::ComPtr <ID3D11Buffer>> _vsBuffers;
-	vector<Microsoft::WRL::ComPtr <ID3D11Buffer>> _psBuffers;
+//	vector<Microsoft::WRL::ComPtr <ID3D11Buffer>> _buffers;
 
-	Microsoft::WRL::ComPtr <ID3D11Buffer> _cameraBuffer;
-	Microsoft::WRL::ComPtr <ID3D11Buffer> _lightBuffer;
-	Microsoft::WRL::ComPtr <ID3D11Buffer> _lightColorBuffer;
-	Microsoft::WRL::ComPtr <ID3D11Buffer> _lightPositionBuffer;
-	Microsoft::WRL::ComPtr <ID3D11Buffer> _fogBuffer;
-	Microsoft::WRL::ComPtr <ID3D11Buffer> _clipPlaneBuffer;
-	Microsoft::WRL::ComPtr <ID3D11Buffer> _translateBuffer;
-	Microsoft::WRL::ComPtr <ID3D11Buffer> _transparentBuffer;
+	//vector<Microsoft::WRL::ComPtr <ID3D11Buffer>> _vsBuffers;
+	//vector<Microsoft::WRL::ComPtr <ID3D11Buffer>> _psBuffers;
+
+	//Microsoft::WRL::ComPtr <ID3D11Buffer> _cameraBuffer;
+	//Microsoft::WRL::ComPtr <ID3D11Buffer> _lightBuffer;
+	//Microsoft::WRL::ComPtr <ID3D11Buffer> _lightColorBuffer;
+	//Microsoft::WRL::ComPtr <ID3D11Buffer> _lightPositionBuffer;
+	//Microsoft::WRL::ComPtr <ID3D11Buffer> _fogBuffer;
+	//Microsoft::WRL::ComPtr <ID3D11Buffer> _clipPlaneBuffer;
+	//Microsoft::WRL::ComPtr <ID3D11Buffer> _translateBuffer;
+	//Microsoft::WRL::ComPtr <ID3D11Buffer> _transparentBuffer;
 };

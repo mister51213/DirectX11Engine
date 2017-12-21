@@ -44,7 +44,7 @@ namespace GfxUtil
 	}
 
 	template<class BufferType>
-	static Microsoft::WRL::ComPtr<ID3D11Buffer> MakeConstantBuffer(ID3D11Device* device)
+	Microsoft::WRL::ComPtr<ID3D11Buffer> MakeConstantBuffer(ID3D11Device* device)
 	{
 		D3D11_BUFFER_DESC desc{};
 		desc.Usage = D3D11_USAGE_DYNAMIC;
@@ -61,11 +61,15 @@ namespace GfxUtil
 		return buffer;
 	}
 
-
-
-
-
-
+	template<class BufferType>
+	void MapBuffer(const BufferType& inData, ID3D11Buffer* pBuffer, ID3D11DeviceContext* deviceContext)
+	{
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		HRESULT result = deviceContext->Map(pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		CHECK(SUCCEEDED(result), "cbuffer");
+		memcpy(mappedResource.pData, &inData, sizeof(BufferType));
+		deviceContext->Unmap(pBuffer, 0);
+	}
 
 	enum EShaderType
 	{

@@ -128,7 +128,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		"../DirectX11Engine/data/dirt.dds",
 		"../DirectX11Engine/data/light.dds",
 		"../DirectX11Engine/data/alpha.dds",
-		"../DirectX11Engine/data/blue.dds", // normal map
+		"../DirectX11Engine/data/bumpMap.dds", // normal map
 		"../DirectX11Engine/data/specMap.dds" };
 
 	bool result = _GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),

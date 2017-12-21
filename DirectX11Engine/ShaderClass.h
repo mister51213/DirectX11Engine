@@ -64,4 +64,7 @@ protected:
 	ID3D11InputLayout* _layout;
 	ID3D11Buffer* _matrixBuffer;
 	ID3D11SamplerState* _sampleState;
+
+	vector<Microsoft::WRL::ComPtr <ID3D11Buffer>> _vsBuffers;
+	vector<Microsoft::WRL::ComPtr <ID3D11Buffer>> _psBuffers;
 };

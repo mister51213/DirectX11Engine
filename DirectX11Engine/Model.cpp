@@ -9,8 +9,7 @@ using namespace GfxUtil;
 Model::Model()
 	:
 	_vertexBuffer(0),
-	_indexBuffer(0)//,
-	//_TextureArray(0)
+	_indexBuffer(0)
 {}
 
 Model::Model(const Model& other)

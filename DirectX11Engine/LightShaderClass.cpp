@@ -204,17 +204,6 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 		return false;
 	}
 
-	///// INIT BUFFERS ///////////
-	_buffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
-	_buffers.emplace_back(MakeConstantBuffer<CameraBufferType>(device));
-	_buffers.emplace_back(MakeConstantBuffer<LightBufferType>(device));
-	_buffers.emplace_back(MakeConstantBuffer<LightColorBufferType>(device));
-	_buffers.emplace_back(MakeConstantBuffer<LightPositionBufferType>(device));
-	_buffers.emplace_back(MakeConstantBuffer<FogBufferType>(device));
-	_buffers.emplace_back(MakeConstantBuffer<ClipPlaneBufferType>(device));
-	_buffers.emplace_back(MakeConstantBuffer<TranslateBufferType>(device));
-	_buffers.emplace_back(MakeConstantBuffer<TransparentBufferType>(device));
-
 	// VS Buffers
 	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<CameraBufferType>(device));
@@ -388,13 +377,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	LightClass* lights[],
 	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency)
 {
-	//TODO: USE LIGHTS[] POSITION and COLOR HERE
-	// TEMP DEBUG
-	LightClass* lightsHolder[4] = { lights[0], lights[1], lights [2], lights [3]};
-	// TEMP DEBUG
-
 	HRESULT result;
-
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
 	/////////////////////// SET TEXTURE RESOURCES //////////////////////
@@ -419,33 +402,45 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	//@TODO just increment buffer number each time, and separate vertex and pixel buffers into 2 functions
 
 
+
+
+
+
 	///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
 	unsigned int bufferNumber = 0;
 
-	MatrixBufferType* dataPtr;
+	//MatrixBufferType* pMatBuff;
+
+	//@NEW GENERIC
+
+	MatrixBufferType tempMatBuff = { XMMatrixTranspose(worldMatrix),
+	XMMatrixTranspose(viewMatrix),
+	XMMatrixTranspose(projectionMatrix) };
+
+	MapBuffer(tempMatBuff, _vsBuffers[0].Get(), deviceContext);
 
 	// Transpose the matrices to prepare them for the shader.
-	worldMatrix = XMMatrixTranspose(worldMatrix);
-	viewMatrix = XMMatrixTranspose(viewMatrix);
-	projectionMatrix = XMMatrixTranspose(projectionMatrix);
+	//worldMatrix =         XMMatrixTranspose(worldMatrix);
+	//viewMatrix =          XMMatrixTranspose(viewMatrix);
+	//projectionMatrix =    XMMatrixTranspose(projectionMatrix);
 
 	// Lock the constant buffer so it can be written to.
-	result = deviceContext->Map(_vsBuffers[0].Get()/*_matrixBuffer*/, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	//result = deviceContext->Map(_vsBuffers[0].Get()/*_matrixBuffer*/, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	//if (FAILED(result))
+	//{
+	//	return false;
+	//}
 
 	// Get a pointer to the data in the constant buffer.
-	dataPtr = (MatrixBufferType*)mappedResource.pData;
+	//pMatBuff = (MatrixBufferType*)mappedResource.pData;
 
 	// Copy the matrices into the constant buffer.
-	dataPtr->world = worldMatrix;
-	dataPtr->view = viewMatrix;
-	dataPtr->projection = projectionMatrix;
+	//pMatBuff->world = worldMatrix;
+	//pMatBuff->view = viewMatrix;
+	//pMatBuff->projection = projectionMatrix;
 
 	// Unlock the constant buffer.
-	deviceContext->Unmap(/*_matrixBuffer*/_vsBuffers[0].Get(), 0);
+	//deviceContext->Unmap(/*_matrixBuffer*/_vsBuffers[0].Get(), 0);
 
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[0].GetAddressOf());
 	
@@ -564,7 +559,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	bufferNumber = 0;
 
 	//result = deviceContext->Map(/*_lightBuffer.Get()*/_buffers[2].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-	result = deviceContext->Map(/*_lightBuffer.Get()*/_psBuffers[0].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = deviceContext->Map(_psBuffers[0].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
 		return false;
