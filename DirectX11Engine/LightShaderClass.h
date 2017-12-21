@@ -86,6 +86,8 @@ private:
 	const int _numBufferDescs = 9;
 
 	vector<Microsoft::WRL::ComPtr <ID3D11Buffer>> _buffers;
+	vector<Microsoft::WRL::ComPtr <ID3D11Buffer>> _vsBuffers;
+	vector<Microsoft::WRL::ComPtr <ID3D11Buffer>> _psBuffers;
 
 	Microsoft::WRL::ComPtr <ID3D11Buffer> _cameraBuffer;
 	Microsoft::WRL::ComPtr <ID3D11Buffer> _lightBuffer;

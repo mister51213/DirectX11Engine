@@ -45,17 +45,6 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	unsigned int numElements;
 	D3D11_BUFFER_DESC matrixBufferDesc;
 	D3D11_SAMPLER_DESC samplerDesc;
-	
-	//_customBuffers.
-
-	D3D11_BUFFER_DESC cameraBufferDesc;
-	D3D11_BUFFER_DESC lightBufferDesc;
-	D3D11_BUFFER_DESC lightColorBufferDesc;
-	D3D11_BUFFER_DESC lightPositionBufferDesc;
-	D3D11_BUFFER_DESC fogBufferDesc;
-	D3D11_BUFFER_DESC clipPlaneBufferDesc;
-	D3D11_BUFFER_DESC translateBufferDesc;
-	D3D11_BUFFER_DESC transparentBufferDesc;
 
 	// Initialize the pointers this function will use to null.
 	errorMessage = 0;
@@ -216,46 +205,28 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	}
 
 	///// INIT BUFFERS ///////////
-	vector<UINT16> sizes =
-	{
-		sizeof(MatrixBufferType),
-		sizeof(CameraBufferType),
-		sizeof(LightBufferType),
-		sizeof(LightColorBufferType),
-		sizeof(LightPositionBufferType),
-		sizeof(FogBufferType),
-		sizeof(ClipPlaneBufferType),
-		sizeof(TranslateBufferType),
-		sizeof(TransparentBufferType)
-	};
-	for (int i = 0; i < _numBufferDescs; ++i)
-	{
-		_bufferDescs.push_back(D3D11_BUFFER_DESC());
-			
-		_bufferDescs[i].Usage = D3D11_USAGE_DYNAMIC;
-		_bufferDescs[i].ByteWidth = sizes[i];
-		_bufferDescs[i].BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		_bufferDescs[i].CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		_bufferDescs[i].MiscFlags = 0;
-		_bufferDescs[i].StructureByteStride = 0;
-		_buffers.push_back(Microsoft::WRL::ComPtr <ID3D11Buffer>());
-		
-		result = device->CreateBuffer(&_bufferDescs[i], NULL, &_buffers[i]);
-		if (FAILED(result))
-		{
-			return false;
-		}
-	}
+	_buffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
+	_buffers.emplace_back(MakeConstantBuffer<CameraBufferType>(device));
+	_buffers.emplace_back(MakeConstantBuffer<LightBufferType>(device));
+	_buffers.emplace_back(MakeConstantBuffer<LightColorBufferType>(device));
+	_buffers.emplace_back(MakeConstantBuffer<LightPositionBufferType>(device));
+	_buffers.emplace_back(MakeConstantBuffer<FogBufferType>(device));
+	_buffers.emplace_back(MakeConstantBuffer<ClipPlaneBufferType>(device));
+	_buffers.emplace_back(MakeConstantBuffer<TranslateBufferType>(device));
+	_buffers.emplace_back(MakeConstantBuffer<TransparentBufferType>(device));
 
-		//_buffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
-		//_buffers.emplace_back(MakeConstantBuffer<CameraBufferType>(device));
-		//_buffers.emplace_back(MakeConstantBuffer<LightBufferType>(device));
-		//_buffers.emplace_back(MakeConstantBuffer<LightColorBufferType>(device));
-		//_buffers.emplace_back(MakeConstantBuffer<LightPositionBufferType>(device));
-		//_buffers.emplace_back(MakeConstantBuffer<FogBufferType>(device));
-		//_buffers.emplace_back(MakeConstantBuffer<ClipPlaneBufferType>(device));
-		//_buffers.emplace_back(MakeConstantBuffer<TranslateBufferType>(device));
-		//_buffers.emplace_back(MakeConstantBuffer<TransparentBufferType>(device));
+	// VS Buffers
+	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
+	_vsBuffers.emplace_back(MakeConstantBuffer<CameraBufferType>(device));
+	_vsBuffers.emplace_back(MakeConstantBuffer<LightPositionBufferType>(device));
+	_vsBuffers.emplace_back(MakeConstantBuffer<ClipPlaneBufferType>(device));
+	_vsBuffers.emplace_back(MakeConstantBuffer<FogBufferType>(device));
+
+	// PS Buffers
+	_psBuffers.emplace_back(MakeConstantBuffer<LightBufferType>(device));
+	_psBuffers.emplace_back(MakeConstantBuffer<LightColorBufferType>(device));
+	_psBuffers.emplace_back(MakeConstantBuffer<TranslateBufferType>(device));
+	_psBuffers.emplace_back(MakeConstantBuffer<TransparentBufferType>(device));
 
 #pragma region LEGACY
 	//// Setup the description of the dynamic matrix constant buffer that is in the vertex shader.
@@ -451,17 +422,6 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
 	unsigned int bufferNumber = 0;
 
-	//result = SetBaseParameters(&mappedResource, deviceContext, worldMatrix, viewMatrix, projectionMatrix, bufferNumber);
-	//if (FAILED(result))
-	//{
-	//	return false;
-	//}
-
-	/////////////////////////////
-	/////////////////////////////
-	// TEMP TO GET IT WORKING //
-	/////////////////////////////
-	/////////////////////////////
 	MatrixBufferType* dataPtr;
 
 	// Transpose the matrices to prepare them for the shader.
@@ -470,7 +430,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	projectionMatrix = XMMatrixTranspose(projectionMatrix);
 
 	// Lock the constant buffer so it can be written to.
-	result = deviceContext->Map(_buffers[0].Get()/*_matrixBuffer*/, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = deviceContext->Map(_vsBuffers[0].Get()/*_matrixBuffer*/, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
 		return false;
@@ -485,21 +445,15 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	dataPtr->projection = projectionMatrix;
 
 	// Unlock the constant buffer.
-	deviceContext->Unmap(/*_matrixBuffer*/_buffers[0].Get(), 0);
+	deviceContext->Unmap(/*_matrixBuffer*/_vsBuffers[0].Get(), 0);
 
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _buffers[0].GetAddressOf());
-
-	/////////////////////////////
-	/////////////////////////////
-	// TEMP TO GET IT WORKING //
-	/////////////////////////////
-	/////////////////////////////
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[0].GetAddressOf());
 	
 	///////////////////// CAM INIT - VS BUFFER 1 //////////////////////////////////
 	// Lock the camera constant buffer so it can be written to.
 	bufferNumber = 1;
 	
-	result = deviceContext->Map(/*_cameraBuffer.Get()*/_buffers[1].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = deviceContext->Map(/*_cameraBuffer.Get()*/_vsBuffers[1].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
 		return false;
@@ -513,19 +467,20 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	pCamBuff->padding = 0.0f;
 
 	// Unlock the camera constant buffer.
-	deviceContext->Unmap(/*_cameraBuffer.Get()*/_buffers[1].Get(), 0);
+	deviceContext->Unmap(/*_cameraBuffer.Get()*/_vsBuffers[1].Get(), 0);
 
 	// Set the position of the camera constant buffer in the vertex shader.
 
 	// Now set the camera constant buffer in the vertex shader with the updated values.
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, /*_cameraBuffer.GetAddressOf()*/_buffers[1].GetAddressOf());
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, /*_cameraBuffer.GetAddressOf()*/_vsBuffers[1].GetAddressOf());
 
 
 	//////////////// LIGHT POSITION - VS BUFFER 2 ///////////////////////
 	bufferNumber = 2;
 
 	// Lock the light position constant buffer so it can be written to.
-	result = deviceContext->Map(/*_lightPositionBuffer.Get()*/_buffers[4].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	//result = deviceContext->Map(/*_lightPositionBuffer.Get()*/_buffers[4].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = deviceContext->Map(/*_lightPositionBuffer.Get()*/_vsBuffers[2].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
 		return false;
@@ -541,17 +496,20 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	pLightPosBuff->lightPosition[3] = lights[3]->GetPosition();
 
 	// Unlock the constant buffer.
-	deviceContext->Unmap(/*_lightPositionBuffer.Get()*/_buffers[4].Get(), 0);
+	//deviceContext->Unmap(/*_lightPositionBuffer.Get()*/_buffers[4].Get(), 0);
+	deviceContext->Unmap(/*_lightPositionBuffer.Get()*/_vsBuffers[2].Get(), 0);
 
 	// Finally set the constant buffer in the vertex shader with the updated values.
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, /*_lightPositionBuffer.GetAddressOf()*/_buffers[4].GetAddressOf());
+//	deviceContext->VSSetConstantBuffers(bufferNumber, 1, /*_lightPositionBuffer.GetAddressOf()*/_buffers[4].GetAddressOf());
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, /*_lightPositionBuffer.GetAddressOf()*/_vsBuffers[2].GetAddressOf());
 
 
 	//////////////// CLIP PLANE - VS BUFFER 3 ///////////////////////
 	// Lock the clip plane constant buffer so it can be written to.
 	bufferNumber = 3;
 
-	result = deviceContext->Map(/*_clipPlaneBuffer.Get()*/_buffers[6].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+//	result = deviceContext->Map(/*_clipPlaneBuffer.Get()*/_buffers[6].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = deviceContext->Map(/*_clipPlaneBuffer.Get()*/_vsBuffers[3].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
 		return false;
@@ -564,17 +522,19 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	pClipPlaneBuff->clipPlane = clipPlane;
 
 	// Unlock the buffer.
-	deviceContext->Unmap(/*_clipPlaneBuffer.Get()*/_buffers[6].Get(), 0);
+//	deviceContext->Unmap(/*_clipPlaneBuffer.Get()*/_buffers[6].Get(), 0);
+	deviceContext->Unmap(/*_clipPlaneBuffer.Get()*/_vsBuffers[3].Get(), 0);
 
 	// Now set the clip plane constant buffer in the vertex shader with the updated values.
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, /*_clipPlaneBuffer.GetAddressOf()*/_buffers[6].GetAddressOf());
-
+	//deviceContext->VSSetConstantBuffers(bufferNumber, 1, /*_clipPlaneBuffer.GetAddressOf()*/_buffers[6].GetAddressOf());
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, /*_clipPlaneBuffer.GetAddressOf()*/_vsBuffers[3].GetAddressOf());
 
 	/////////// FOG INIT - VS BUFFER 4 /////////////////////////// @TODO: is the data packed correctly???
 	// Lock the fog constant buffer so it can be written to.
 	bufferNumber = 4; ///////////@TODO: fix these numbers in correct order
 
-	result = deviceContext->Map(/*_fogBuffer.Get()*/_buffers[5].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+//	result = deviceContext->Map(/*_fogBuffer.Get()*/_buffers[5].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = deviceContext->Map(/*_fogBuffer.Get()*/_vsBuffers[4].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
 		return false;
@@ -588,10 +548,12 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	pFogBuff->fogEnd = fogEnd;
 
 	// Unlock the constant buffer.
-	deviceContext->Unmap(/*_fogBuffer.Get()*/_buffers[5].Get(), 0);
+	//deviceContext->Unmap(/*_fogBuffer.Get()*/_vsBuffers[5].Get(), 0);
+	deviceContext->Unmap(/*_fogBuffer.Get()*/_vsBuffers[4].Get(), 0);
 
 	// Now set the fog buffer in the vertex shader with the updated values.
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, /*_fogBuffer.GetAddressOf()*/_buffers[5].GetAddressOf());
+	//deviceContext->VSSetConstantBuffers(bufferNumber, 1, /*_fogBuffer.GetAddressOf()*/_vsBuffers[5].GetAddressOf());
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, /*_fogBuffer.GetAddressOf()*/_vsBuffers[4].GetAddressOf());
 
 	/////////////////////////////////////////////////////////////
 	/////////////////////// PS BUFFERS //////////////////////////
@@ -601,7 +563,8 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	// Lock the light constant buffer so it can be written to.
 	bufferNumber = 0;
 
-	result = deviceContext->Map(/*_lightBuffer.Get()*/_buffers[2].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	//result = deviceContext->Map(/*_lightBuffer.Get()*/_buffers[2].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = deviceContext->Map(/*_lightBuffer.Get()*/_psBuffers[0].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
 		return false;
@@ -618,17 +581,20 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	pLightBuff->specularPower = specularPower;
 
 	// Unlock the constant buffer.
-	deviceContext->Unmap(/*_lightBuffer.Get()*/_buffers[2].Get(), 0);
+//	deviceContext->Unmap(/*_lightBuffer.Get()*/_buffers[2].Get(), 0);
+	deviceContext->Unmap(/*_lightBuffer.Get()*/_psBuffers[0].Get(), 0);
 
 	// Finally set the light constant buffer in the pixel shader with the updated values.
-	deviceContext->PSSetConstantBuffers(bufferNumber, 1, /*_lightBuffer.GetAddressOf()*/_buffers[2].GetAddressOf());
+	//deviceContext->PSSetConstantBuffers(bufferNumber, 1, /*_lightBuffer.GetAddressOf()*/_buffers[2].GetAddressOf());
+	deviceContext->PSSetConstantBuffers(bufferNumber, 1, /*_lightBuffer.GetAddressOf()*/_psBuffers[0].GetAddressOf());
 
 
 	////////////// LIGHT COLOR - PS BUFFER 1 //////////////////
 	bufferNumber = 1;
 
 	// Lock the light color constant buffer so it can be written to.
-	result = deviceContext->Map(/*_lightColorBuffer.Get()*/_buffers[3].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	//result = deviceContext->Map(/*_lightColorBuffer.Get()*/_buffers[3].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = deviceContext->Map(/*_lightColorBuffer.Get()*/_psBuffers[1].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
 		return false;
@@ -644,17 +610,20 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	pLightColBuff->diffuseColor[3] = lights[3]->GetDiffuseColor();
 
 	// Unlock the constant buffer.
-	deviceContext->Unmap(/*_lightColorBuffer.Get()*/_buffers[3].Get(), 0);
+	//deviceContext->Unmap(/*_lightColorBuffer.Get()*/_buffers[3].Get(), 0);
+	deviceContext->Unmap(/*_lightColorBuffer.Get()*/_psBuffers[1].Get(), 0);
 
 	// Finally set the constant buffer in the pixel shader with the updated values.
-	deviceContext->PSSetConstantBuffers(bufferNumber, 1, /*_lightColorBuffer.GetAddressOf()*/_buffers[3].GetAddressOf());
+	//deviceContext->PSSetConstantBuffers(bufferNumber, 1, /*_lightColorBuffer.GetAddressOf()*/_buffers[3].GetAddressOf());
+	deviceContext->PSSetConstantBuffers(bufferNumber, 1, /*_lightColorBuffer.GetAddressOf()*/_psBuffers[1].GetAddressOf());
 
 
 	////////////// TEX TRANSLATION - PS BUFFER 2 //////////////////
 	bufferNumber = 2;
 
 	// Lock the texture translation constant buffer so it can be written to.
-	result = deviceContext->Map(/*_translateBuffer.Get()*/_buffers[7].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	//result = deviceContext->Map(/*_translateBuffer.Get()*/_buffers[7].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = deviceContext->Map(/*_translateBuffer.Get()*/_psBuffers[2].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
 		return false;
@@ -667,16 +636,19 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	pTranslateBuff->translation = translation;
 
 	// Unlock the buffer.
-	deviceContext->Unmap(/*_translateBuffer.Get()*/_buffers[7].Get(), 0);
+	//deviceContext->Unmap(/*_translateBuffer.Get()*/_buffers[7].Get(), 0);
+	deviceContext->Unmap(/*_translateBuffer.Get()*/_psBuffers[2].Get(), 0);
 	
 	// Now set the texture translation constant buffer in the pixel shader with the updated values.
-	deviceContext->PSSetConstantBuffers(bufferNumber, 1, /*_translateBuffer.GetAddressOf()*/_buffers[7].GetAddressOf());
+	//deviceContext->PSSetConstantBuffers(bufferNumber, 1, /*_translateBuffer.GetAddressOf()*/_buffers[7].GetAddressOf());
+	deviceContext->PSSetConstantBuffers(bufferNumber, 1, /*_translateBuffer.GetAddressOf()*/_psBuffers[2].GetAddressOf());
 
 	/////////////////// TRANSPARENCY BUFFER - PS BUFFER 3 ///////////////////////////
 	bufferNumber = 3;
 
 	// Lock the transparent constant buffer so it can be written to.
-	result = deviceContext->Map(/*_transparentBuffer.Get()*/_buffers[8].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	//result = deviceContext->Map(/*_transparentBuffer.Get()*/_buffers[8].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = deviceContext->Map(/*_transparentBuffer.Get()*/_psBuffers[3].Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
 		return false;
@@ -689,10 +661,12 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	pTransparentBuff->blendAmount = transparency;
 
 	// Unlock the buffer.
-	deviceContext->Unmap(/*_transparentBuffer.Get()*/_buffers[8].Get(), 0);
+	//deviceContext->Unmap(/*_transparentBuffer.Get()*/_buffers[8].Get(), 0);
+	deviceContext->Unmap(/*_transparentBuffer.Get()*/_psBuffers[3].Get(), 0);
 
 	// Now set the texture translation constant buffer in the pixel shader with the updated values.
-	deviceContext->PSSetConstantBuffers(bufferNumber, 1, /*_transparentBuffer.GetAddressOf()*/_buffers[8].GetAddressOf());
+	//deviceContext->PSSetConstantBuffers(bufferNumber, 1, /*_transparentBuffer.GetAddressOf()*/_buffers[8].GetAddressOf());
+	deviceContext->PSSetConstantBuffers(bufferNumber, 1, /*_transparentBuffer.GetAddressOf()*/_psBuffers[3].GetAddressOf());
 
 	return true;
 }

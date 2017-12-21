@@ -11,10 +11,12 @@ using namespace std;
 
 //#define CHECK(cond, msg) if (!cond) {throw std::runtime_error("Could not initialize the " + msg + " object. - line " + std::to_string(__LINE__));}
 
-static void CHECK(bool cond, string msg)
-{
-	if (!cond)
-	{
-		throw std::runtime_error("Could not initialize the " + msg + " object. - line " + std::to_string(__LINE__));
-	}
-}
+#define CHECK(cond, msg)if (!(cond)){throw std::runtime_error( "Could not initialize the " + std::string((msg)) + " object. - line " + std::to_string( __LINE__ ) );}
+
+//static void CHECK(bool cond, string msg)
+//{
+//	if (!cond)
+//	{
+//		throw std::runtime_error("Could not initialize the " + msg + " object. - line " + std::to_string(__LINE__));
+//	}
+//}
