@@ -90,9 +90,9 @@ void Scene::ProcessInput(float deltaTime, Input* pInput)
 	}
 
 	_LightActors[0]->GetMovementComponent()->MoveForward(pInput->IsKeyDown(DIK_UP));
-	_LightActors[1]->GetMovementComponent()->MoveBack(pInput->IsKeyDown(DIK_DOWN));
-	_LightActors[2]->GetMovementComponent()->MoveLeft(pInput->IsKeyDown(DIK_LEFT));
-	_LightActors[3]->GetMovementComponent()->MoveRight(pInput->IsKeyDown(DIK_RIGHT));
+	_LightActors[0]->GetMovementComponent()->MoveBack(pInput->IsKeyDown(DIK_DOWN));
+	_LightActors[0]->GetMovementComponent()->MoveLeft(pInput->IsKeyDown(DIK_LEFT));
+	_LightActors[0]->GetMovementComponent()->MoveRight(pInput->IsKeyDown(DIK_RIGHT));
 
 }
 

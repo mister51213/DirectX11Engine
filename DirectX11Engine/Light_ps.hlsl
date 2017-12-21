@@ -147,10 +147,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 	/////////////////// BLENDING /////////////////////////
     // Blend the two pixels together and multiply by the gamma value.
-    blendColor = (alphaValue * color1) + ((1.0f - alphaValue) * color2) * /*lightColor **/ gamma;
-    
-    // Saturate the final color.
-    blendColor = saturate(blendColor);
+    blendColor =  saturate((alphaValue * color1) + ((1.0f - alphaValue) * color2) /** lightColor * gamma*/);
 
     // Set the default output color to the ambient light value for all pixels.
     color = ambientColor;

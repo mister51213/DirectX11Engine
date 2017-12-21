@@ -20,10 +20,6 @@ const int NUM_LIGHTS = 4;
 class LightShaderClass: public ShaderClass
 {
 private:
-	struct ClipPlaneBufferType
-	{
-		XMFLOAT4 clipPlane;
-	};
 	struct CameraBufferType
 	{
 		XMFLOAT3 cameraPosition;
@@ -51,6 +47,10 @@ private:
 		float fogStart;
 		float fogEnd;
 		float padding1, padding2;
+	};
+	struct ClipPlaneBufferType
+	{
+		XMFLOAT4 clipPlane;
 	};
 	struct TranslateBufferType
 	{
@@ -82,6 +82,11 @@ private:
 		XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float texTranslation, float transparency);
 
 private:
+	vector<D3D11_BUFFER_DESC> _bufferDescs;
+	const int _numBufferDescs = 9;
+
+	vector<Microsoft::WRL::ComPtr <ID3D11Buffer>> _buffers;
+
 	Microsoft::WRL::ComPtr <ID3D11Buffer> _cameraBuffer;
 	Microsoft::WRL::ComPtr <ID3D11Buffer> _lightBuffer;
 	Microsoft::WRL::ComPtr <ID3D11Buffer> _lightColorBuffer;
