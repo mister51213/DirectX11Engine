@@ -51,42 +51,6 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* s
 	return true;
 }
 
-bool Graphics::InitializeLights(Scene* pScene)
-{
-	// Create the skylight object.
-	_Light.reset(new LightClass);
-
-	// Initialize the light object.
-	_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-	_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_Light->SetDirection(0.0f, -1.0f, 0.5f);
-	_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_Light->SetSpecularPower(16.0f); // the lower the power, the higher the effect intensity
-
-	// Create list of point lights
-	for (int i = 0; i < NUM_LIGHTS; ++i)
-	{
-		_Lights.push_back(unique_ptr<LightClass>());
-		_Lights[i].reset(new LightClass);
-
-		XMFLOAT3 worldPosition = pScene->_LightActors[i]->GetMovementComponent()->GetPosition();
-		_Lights[i]->SetPosition(worldPosition.x, worldPosition.y, worldPosition.z);
-	}
-
-	_Lights[0]->SetDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f);
-	_Lights[1]->SetDiffuseColor(0.0f, 1.0f, 0.0f, 1.0f);
-	_Lights[2]->SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);
-	_Lights[3]->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-
-	// STORE LIGHT DATA
-	for (auto& light : _Lights)
-	{
-		_LightData.push_back(light.get());
-	}
-	
-	return true;
-}
-
 bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight, vector<unique_ptr<Actor>>* sceneActors)
 {
 	///////////////// DEFAULT APPEARANCE INIT /////////////////////
@@ -204,8 +168,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	_SphereModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/sphere.txt",
 		bathTex, EShaderType::ETEXTURE);
 
-	_ShadowTexture.reset(new RenderTextureClass);
-	result = _ShadowTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
+	_ShadowMap.reset(new RenderTextureClass);
+	result = _ShadowMap->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
 	CHECK(result, "refraction render to texture");
 
 	///////////////////////////////////////////////
@@ -252,6 +216,46 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	result = _ModelList->Initialize(20);
 	CHECK(result, "model list");
 
+	return true;
+}
+
+bool Graphics::InitializeLights(Scene* pScene)
+{
+	// Create the skylight object.
+	_Light.reset(new LightClass);
+
+	// Initialize the light object.
+	_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
+	_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	_Light->SetDirection(0.0f, -1.0f, 0.5f);
+	_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
+	_Light->SetSpecularPower(16.0f); // the lower the power, the higher the effect intensity
+
+	// Shadows
+	_Light->SetLookAt(0.0f, 0.0f, 0.0f);
+	_Light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+
+	// Create list of point lights
+	for (int i = 0; i < NUM_LIGHTS; ++i)
+	{
+		_Lights.push_back(unique_ptr<LightClass>());
+		_Lights[i].reset(new LightClass);
+
+		XMFLOAT3 worldPosition = pScene->_LightActors[i]->GetMovementComponent()->GetPosition();
+		_Lights[i]->SetPosition(worldPosition.x, worldPosition.y, worldPosition.z);
+	}
+
+	_Lights[0]->SetDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f);
+	_Lights[1]->SetDiffuseColor(0.0f, 1.0f, 0.0f, 1.0f);
+	_Lights[2]->SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);
+	_Lights[3]->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+
+	// STORE LIGHT DATA
+	for (auto& light : _Lights)
+	{
+		_LightData.push_back(light.get());
+	}
+	
 	return true;
 }
 
@@ -348,13 +352,22 @@ bool Graphics::UpdateFrame(float frameTime, Scene* scene, int fps)
 		_Lights[i]->SetPosition(worldPosition.x, worldPosition.y, worldPosition.z);
 	}
 
+	// Update the position of the light each frame.
+	static float lightPositionX = -5.f;
+	lightPositionX += 0.05f;
+	if (lightPositionX > 5.0f)
+	lightPositionX = -5.0f;
+	_Light->SetPosition(lightPositionX, 8.0f, -5.0f);
+
 	// 4. Update UI
 	result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
 	if (!result){return false;}
 	result = UpdatePositionStrings(_D3D->GetDeviceContext(), camPos.x, camPos.y, camPos.z, camRot.x, camRot.y, camRot.z);
 	if (!result){return false;}
 
-	result = DrawFrame(&(scene->_Actors), frameTime); if (!result)return false;
+	// 5. Draw the Actual frame
+	result = DrawFrame(&(scene->_Actors), frameTime); 
+	if (!result)return false;
 
 	return true;
 }
@@ -386,7 +399,10 @@ bool Graphics::DrawFrame(vector<unique_ptr<Actor>>* sceneActors, float frameTime
 
 bool Graphics::RenderRefractionToTexture(float surfaceHeight)
 {
-	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	XMMATRIX worldMatrix;
+
+	////////// WATER REFRACTION ///////////
+	XMMATRIX viewMatrix, projectionMatrix;
 
 	// Setup a clipping plane based on the height of the water to clip everything above it.
 	_globalEffects.clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, surfaceHeight);
@@ -420,8 +436,60 @@ bool Graphics::RenderRefractionToTexture(float surfaceHeight)
 
 	_globalEffects.clipPlane = XMFLOAT4(0, 0, 0,0);
 
+	///////////////////////////////////
+	///////// SHADOW MAPPING //////////
+	///////////////////////////////////
+
+	XMMATRIX lightViewMatrix, lightProjectionMatrix, translateMatrix;
+
+	// Set the render target to be the render to texture.
+	_ShadowMap->SetRenderTarget(_D3D->GetDeviceContext(),_D3D->GetDepthStencilView());
+
+	// Clear the render to texture.
+	_ShadowMap->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Generate the light view matrix based on the light's position.
+	_Light->GenerateViewMatrix();
+
+	// Get the world matrix from the d3d object.
+	_D3D->GetWorldMatrix(worldMatrix);
+
+	// Get the view and orthographic matrices from the light object.
+	lightViewMatrix = _Light->GetViewMatrix();
+	lightProjectionMatrix = _Light->GetProjectionMatrix();
+
+	// Setup the translation matrix for the cube model.
+	worldMatrix = DirectX::XMMatrixTranslation(-2.0f, 0.0f, 0.0f);
+
+	// RENDER THE CUBE MODEL WITH THE DEPTH SHADER.
+	_CubeModel->LoadVertices(_D3D->GetDeviceContext());
+	_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+
+	// Reset the world matrix.
+	_D3D->GetWorldMatrix(worldMatrix);
+	worldMatrix = DirectX::XMMatrixTranslation(2.0f, 0.0f, 0.0f);
+
+	// RENDER THE SPHERE MODEL WITH THE DEPTH SHADER.
+	_SphereModel->LoadVertices(_D3D->GetDeviceContext());
+	_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+
+	// Reset the world matrix.
+	_D3D->GetWorldMatrix(worldMatrix);
+	worldMatrix = DirectX::XMMatrixTranslation(0.0f, -1.0f, 0.0f);
+
+	// RENDER THE GROUND MODEL WITH THE DEPTH SHADER.
+	_GroundModel->LoadVertices(_D3D->GetDeviceContext());
+	_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+
+	///////////////////////////////////
+	///////// RESET ALL //////////
+	///////////////////////////////////
+
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
 	_D3D->SetBackBufferRenderTarget();
+
+	// Reset the viewport back to the original.
+	_D3D->ResetViewport();
 
 	return true;
 }
@@ -515,31 +583,39 @@ bool Graphics::RenderScene(vector<unique_ptr<Actor>>* sceneActors, float frameTi
 	//	_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix());
 
 	// TESTING SHADOWS //
+
+	// Generate the light view matrix based on the light's position.
+	_Light->GenerateViewMatrix();
+
+	// Get the light's view and projection matrices from the light object.
+	XMMATRIX lightViewMatrix = _Light->GetViewMatrix();
+	XMMATRIX lightProjectionMatrix = _Light->GetProjectionMatrix();
+
 	// CUBE
 	_D3D->GetWorldMatrix(worldMatrix);
+	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(-2.0f, 0.0f, 0.0f));
 
 	_CubeModel->LoadVertices(_D3D->GetDeviceContext());
-	
-	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(-2.0f, 0.0f, 0.0f));
-	
+		
 	_ShaderManager->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		_CubeModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
 	
 	// SPHERE
 	_D3D->GetWorldMatrix(worldMatrix);
+	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(2.0f, 0.0f, 0.0f));
 
 	_SphereModel->LoadVertices(_D3D->GetDeviceContext());
-	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(2.0f, 0.0f, 0.0f));
+	
 	_ShaderManager->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		_SphereModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
 
 	// GROUND
 	_D3D->GetWorldMatrix(worldMatrix);
-
-	_GroundModel->GetMaterial()->shaderType = ETEXTURE;
 	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(0.0f, -1.0f, 0.0f));
-
+	
 	_GroundModel->LoadVertices(_D3D->GetDeviceContext());
+
+	_GroundModel->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _ShadowMap->GetShaderResourceView();
 
 	_ShaderManager->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix());

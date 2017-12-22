@@ -100,7 +100,7 @@ private:
 
 	////////// SHADOW DEMO ///////////////
 	unique_ptr<Model> _CubeModel, _SphereModel;
-	unique_ptr<RenderTextureClass> _ShadowTexture;
+	unique_ptr<RenderTextureClass> _ShadowMap;
 
 	/////////// GLOBAL EFFECTS /////////////
 	SceneEffects _globalEffects;
