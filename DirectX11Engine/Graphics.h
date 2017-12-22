@@ -89,8 +89,6 @@ private:
 	unique_ptr<ModelListClass>_ModelList;
 	unique_ptr<FrustumClass> _Frustum;
 	unique_ptr<RenderTextureClass> _RenderTexture;
-	unique_ptr<RenderTextureClass> _RenderTexture2;
-	
 	//unique_ptr<DebugWindowClass> _DebugWindow;
 	
 	unique_ptr<ShaderManagerClass> _ShaderManager;
@@ -101,7 +99,8 @@ private:
 	unique_ptr<RenderTextureClass> _RefractionTexture, _ReflectionTexture;
 
 	////////// SHADOW DEMO ///////////////
-
+	unique_ptr<Model> _CubeModel, _SphereModel;
+	unique_ptr<RenderTextureClass> _ShadowTexture;
 
 	/////////// GLOBAL EFFECTS /////////////
 	SceneEffects _globalEffects;

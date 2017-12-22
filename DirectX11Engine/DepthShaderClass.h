@@ -16,7 +16,6 @@ public:
 	DepthShaderClass(const DepthShaderClass&);
 	~DepthShaderClass();
 
-	void Shutdown();
 	bool Render(ID3D11DeviceContext*, int, XMMATRIX, XMMATRIX, XMMATRIX);
 
 private:

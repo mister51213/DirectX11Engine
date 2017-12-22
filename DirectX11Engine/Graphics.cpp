@@ -194,6 +194,20 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 
 	(*sceneActors)[(*sceneActors).size() - 1]->SetModel(_WaterModel.get());
 
+	//////////////////////////////////////////////
+	///////////// CUSTOM SHADOW DEMO /////////////
+	_CubeModel.reset(new Model);
+	_CubeModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/cube.txt",
+		groundTex, EShaderType::ETEXTURE);
+
+	_SphereModel.reset(new Model);
+	_SphereModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/sphere.txt",
+		bathTex, EShaderType::ETEXTURE);
+
+	_ShadowTexture.reset(new RenderTextureClass);
+	result = _ShadowTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
+	CHECK(result, "refraction render to texture");
+
 	///////////////////////////////////////////////
 	///////////// INIT RENDER TEXTURES //////////// (LATER ENCAPASULATE INTO MATERIALS)
 	///////////////////////////////////////////////
@@ -471,36 +485,65 @@ bool Graphics::RenderScene(vector<unique_ptr<Actor>>* sceneActors, float frameTi
 	(*sceneActors)[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
 	//@TODO: TEMP HACK!!!!!! - MUST ENCAPSULATE!!!!!!!
 
-	for (int i = 0; i < (*sceneActors).size(); ++i)
-	{
-		XMFLOAT3 translation = (*sceneActors)[i]->GetMovementComponent()->GetPosition();
-		worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z));
+	//for (int i = 0; i < (*sceneActors).size(); ++i)
+	//{
+	//	XMFLOAT3 translation = (*sceneActors)[i]->GetMovementComponent()->GetPosition();
+	//	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z));
 
-		(*sceneActors)[i]->GetModel()->LoadVertices(_D3D->GetDeviceContext());
+	//	(*sceneActors)[i]->GetModel()->LoadVertices(_D3D->GetDeviceContext());
 
-		if((*sceneActors)[i]->GetModel()->GetMaterial()->transparency != 0.f)
-			_D3D->EnableAlphaBlending();
+	//	if((*sceneActors)[i]->GetModel()->GetMaterial()->transparency != 0.f)
+	//		_D3D->EnableAlphaBlending();
 
-		bool result = _ShaderManager->Render(_D3D->GetDeviceContext(), (*sceneActors)[i]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-			(*sceneActors)[i]->GetModel()->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0,0,0), _Camera->GetReflectionViewMatrix());
-		if (!result) return false;
+	//	bool result = _ShaderManager->Render(_D3D->GetDeviceContext(), (*sceneActors)[i]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	//		(*sceneActors)[i]->GetModel()->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0,0,0), _Camera->GetReflectionViewMatrix());
+	//	if (!result) return false;
 
-		if ((*sceneActors)[i]->GetModel()->GetMaterial()->transparency != 0.f)
-			_D3D->DisableAlphaBlending();
+	//	if ((*sceneActors)[i]->GetModel()->GetMaterial()->transparency != 0.f)
+	//		_D3D->DisableAlphaBlending();
 
-		// reset world matrix
-		_D3D->GetWorldMatrix(worldMatrix);
-	}
+	//	// reset world matrix
+	//	_D3D->GetWorldMatrix(worldMatrix);
+	//}
 	
 	//@TEST SECTION - Point lights not working
-	XMFLOAT3 translation = (*sceneActors)[0]->GetMovementComponent()->GetPosition();
-	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z));
-	(*sceneActors)[0]->GetModel()->LoadVertices(_D3D->GetDeviceContext());
+	//XMFLOAT3 translation = (*sceneActors)[0]->GetMovementComponent()->GetPosition();
+	//worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z));
+	//(*sceneActors)[0]->GetModel()->LoadVertices(_D3D->GetDeviceContext());
+
+	//_ShaderManager->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	//	_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix());
+
+	// TESTING SHADOWS //
+	// CUBE
+	_D3D->GetWorldMatrix(worldMatrix);
+
+	_CubeModel->LoadVertices(_D3D->GetDeviceContext());
+	
+	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(-2.0f, 0.0f, 0.0f));
+	
+	_ShaderManager->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		_CubeModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+	
+	// SPHERE
+	_D3D->GetWorldMatrix(worldMatrix);
+
+	_SphereModel->LoadVertices(_D3D->GetDeviceContext());
+	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(2.0f, 0.0f, 0.0f));
+	_ShaderManager->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		_SphereModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+
+	// GROUND
+	_D3D->GetWorldMatrix(worldMatrix);
+
+	_GroundModel->GetMaterial()->shaderType = ETEXTURE;
+	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(0.0f, -1.0f, 0.0f));
+
+	_GroundModel->LoadVertices(_D3D->GetDeviceContext());
 
 	_ShaderManager->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix());
 
-	// TESTING SHADOWS //
 
 
 
