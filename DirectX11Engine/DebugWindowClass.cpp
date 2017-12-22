@@ -64,7 +64,7 @@ bool DebugWindowClass::Render(ID3D11DeviceContext* deviceContext, int positionX,
 	}
 
 	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	RenderBuffers(deviceContext);
+	LoadVertices(deviceContext);
 
 	return true;
 }
@@ -268,7 +268,7 @@ bool DebugWindowClass::UpdateBuffers(ID3D11DeviceContext* deviceContext, int pos
 }
 
 
-void DebugWindowClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
+void DebugWindowClass::LoadVertices(ID3D11DeviceContext* deviceContext)
 {
 	unsigned int stride;
 	unsigned int offset;

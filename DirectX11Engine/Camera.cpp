@@ -125,7 +125,7 @@ void Camera::UpdateViewFromPosition()
 	roll = _rotationZ * 0.0174532925f;
 
 	// Create the rotation matrix from the yaw, pitch, and roll values.
-	rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+	rotationMatrix = DirectX::XMMatrixRotationRollPitchYaw(pitch, yaw, roll); //@TODO reverse order
 
 	// Transform the lookAt and up vector by the rotation matrix so the view is correctly rotated at the origin.
 	lookAtVector = XMVector3TransformCoord(lookAtVector, rotationMatrix);

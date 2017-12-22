@@ -98,7 +98,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     float4 bumpMap;
     float3 bumpNormal;
 
-	float gamma = 2.5f;
+	float gamma = 1.2f;
 	
 	////////// POINT LIGHTS ////////////
 	float lightIntensity1, lightIntensity2, lightIntensity3, lightIntensity4;
@@ -147,7 +147,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 	/////////////////// BLENDING /////////////////////////
     // Blend the two pixels together and multiply by the gamma value.
-    blendColor =  saturate((alphaValue * color1) + ((1.0f - alphaValue) * color2) /** lightColor * gamma*/);
+    blendColor =  saturate((alphaValue * color1) + ((1.0f - alphaValue) * color2) /** lightColor*/ * gamma);
 
     // Set the default output color to the ambient light value for all pixels.
     color = ambientColor;
@@ -167,8 +167,8 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
         specularIntensity = shaderTextures[5].Sample(SampleType, input.tex);
 
         // Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-       // color += (diffuseColor * lightIntensity); //@TODO: TEST
-		color += totalLightColor;
+        color += (diffuseColor * lightIntensity); //@TODO: TEST
+		//color += totalLightColor;
 
         // Saturate the ambient and diffuse color.
         color = saturate(color);
@@ -180,7 +180,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
         specular = pow(saturate(dot(reflection, input.viewDirection)), specularPower);
 
 		// Use the specular map to determine the intensity of specular light at this pixel.
-        specular = specular * specularIntensity;
+       // specular = specular * specularIntensity;
     }
 
     // Multiply the texture pixel and the final diffuse color to get the final pixel color result.
@@ -194,4 +194,5 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     color.a = blendAmount;
 
     return color;
+	//return shaderTextures[0].Sample(SampleType, input.tex);
 }

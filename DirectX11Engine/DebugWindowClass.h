@@ -38,7 +38,7 @@ private:
 	bool InitializeBuffers(ID3D11Device*);
 	void ShutdownBuffers();
 	bool UpdateBuffers(ID3D11DeviceContext*, int, int);
-	void RenderBuffers(ID3D11DeviceContext*);
+	void LoadVertices(ID3D11DeviceContext*);
 
 private:
 	ID3D11Buffer *_vertexBuffer, *_indexBuffer;

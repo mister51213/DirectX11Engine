@@ -9,13 +9,13 @@ Scene::Scene()
 }
 
 Scene::~Scene()
-{
-}
+{}
 
 bool Scene::Initialize()
 {
 	_Camera.reset(new Actor);
 	_Camera->InitializeMovement(false);
+	_Camera->GetMovementComponent()->SetPosition(XMFLOAT3(0.f,5.f,-12.f));
 
 	for (int i = 0; i < _numActors; ++i)
 	{

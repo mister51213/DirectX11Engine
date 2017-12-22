@@ -21,17 +21,21 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* s
 	_D3D.reset(new D3DClass);
 	if (!_D3D){return false;}
 
-	result = _D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
-	CHECK(result, "Direct3D");
+	_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
 
-	_ShaderManager.reset(new ShaderManagerClass);	
-	if (!_ShaderManager){return false;}
+	_ShaderManager.reset(new ShaderManagerClass);
+	if (!_ShaderManager)
+	{return false;}
 	
-	result = _ShaderManager->Initialize(_D3D->GetDevice(), hwnd);
-	CHECK(result, "shader manager");
+	_ShaderManager->Initialize(_D3D->GetDevice(), hwnd);
 
-	_Camera.reset(new Camera);if (!_Camera){ return false;}	
-	_Camera->SetPosition(0.0f, 0.0f, -4.f);	_Camera->UpdateViewFromPosition();
+	_Camera.reset(new Camera);
+	if (!_Camera)
+	{ return false;}	
+
+	XMFLOAT3 camPos = scene->GetCamera()->GetMovementComponent()->GetPosition();
+	_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
+	_Camera->UpdateViewFromPosition();
 
 	InitializeModels(hwnd, screenWidth, screenHeight, &(scene->_Actors));
 
@@ -70,16 +74,9 @@ bool Graphics::InitializeLights(Scene* pScene)
 	}
 
 	_Lights[0]->SetDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f);
-	//_Lights[0]->SetPosition(-3.0f, 1.0f, 3.0f);
-
 	_Lights[1]->SetDiffuseColor(0.0f, 1.0f, 0.0f, 1.0f);
-	//_Lights[1]->SetPosition(3.0f, 1.0f, 3.0f);
-
 	_Lights[2]->SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);
-	//_Lights[2]->SetPosition(-3.0f, 1.0f, -3.0f);
-
 	_Lights[3]->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	//_Lights[3]->SetPosition(3.0f, 1.0f, -3.0f);
 
 	// STORE LIGHT DATA
 	for (auto& light : _Lights)
@@ -104,12 +101,12 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		(*sceneActors)[i]->SetModel(_DefaultModels[i].get());
 
 		vector<char*>defaultTex{
-			"../DirectX11Engine/data/marble.png",
-			"../DirectX11Engine/data/dirt.dds",
-			"../DirectX11Engine/data/light.dds",
-			"../DirectX11Engine/data/alpha.dds",
-			"../DirectX11Engine/data/bumpMap.dds", // normal map
-			"../DirectX11Engine/data/specMap.dds" };
+			"../DirectX11Engine/data/noise.png",
+			"../DirectX11Engine/data/noise.png",
+			"../DirectX11Engine/data/noise.png",
+			"../DirectX11Engine/data/noise.png",
+			"../DirectX11Engine/data/noise.png", // normal map
+			"../DirectX11Engine/data/noise.png"};
 
 		bool result = _DefaultModels[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/sphere.txt", defaultTex, EShaderType::ELIGHT_SPECULAR);
 		CHECK(result, "default model");
@@ -124,11 +121,11 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 
 	// Initialize the ground model object.
 	vector<char*>groundTex{
-		"../DirectX11Engine/data/ground.dds",
+		"../DirectX11Engine/data/stone.dds",
 		"../DirectX11Engine/data/dirt.dds",
-		"../DirectX11Engine/data/light.dds",
-		"../DirectX11Engine/data/alpha.dds",
-		"../DirectX11Engine/data/bumpMap.dds", // normal map
+		"../DirectX11Engine/data/light.dds", // light map - not used
+		"../DirectX11Engine/data/noise.png",
+		"../DirectX11Engine/data/nMap2.png",
 		"../DirectX11Engine/data/specMap.dds" };
 
 	bool result = _GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
@@ -371,9 +368,7 @@ bool Graphics::DrawFrame(vector<unique_ptr<Actor>>* sceneActors, float frameTime
 
 bool Graphics::RenderRefractionToTexture(float surfaceHeight)
 {
-	XMFLOAT4 clipPlane;
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
-	bool result;
 
 	// Setup a clipping plane based on the height of the water to clip everything above it.
 	_globalEffects.clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, surfaceHeight);
@@ -396,9 +391,9 @@ bool Graphics::RenderRefractionToTexture(float surfaceHeight)
 	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(0.0f, 2.0f, 0.0f));
 
 	// Put the bath model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	_BathModel->RenderBuffers(_D3D->GetDeviceContext());
+	_BathModel->LoadVertices(_D3D->GetDeviceContext());
 
-	result = _ShaderManager->Render(_D3D->GetDeviceContext(), _BathModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	bool result = _ShaderManager->Render(_D3D->GetDeviceContext(), _BathModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		_BathModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
 	if (!result)
 	{
@@ -416,7 +411,6 @@ bool Graphics::RenderRefractionToTexture(float surfaceHeight)
 bool Graphics::RenderReflectionToTexture()
 {
 	XMMATRIX reflectionViewMatrix, worldMatrix, projectionMatrix;
-	bool result;
 	
 	// Set the render target to be the reflection render to texture.
 	_ReflectionTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
@@ -438,9 +432,9 @@ bool Graphics::RenderReflectionToTexture()
 	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(0.0f, 6.0f, 8.0f));
 
 	// Put the wall model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	_WallModel->RenderBuffers(_D3D->GetDeviceContext());
+	_WallModel->LoadVertices(_D3D->GetDeviceContext());
 
-	result = _ShaderManager->Render(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
+	bool result = _ShaderManager->Render(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
 		_WallModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
 	if (!result)
 	{
@@ -456,7 +450,6 @@ bool Graphics::RenderReflectionToTexture()
 bool Graphics::RenderScene(vector<unique_ptr<Actor>>* sceneActors, float frameTime)
 {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix;
-	bool result;
 
 	// Clear the buffers to begin the scene.
 	_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f); //@EFFECT - init to fog color here if you want to use fog
@@ -479,12 +472,12 @@ bool Graphics::RenderScene(vector<unique_ptr<Actor>>* sceneActors, float frameTi
 		XMFLOAT3 translation = (*sceneActors)[i]->GetMovementComponent()->GetPosition();
 		worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z));
 
-		(*sceneActors)[i]->GetModel()->RenderBuffers(_D3D->GetDeviceContext());
+		(*sceneActors)[i]->GetModel()->LoadVertices(_D3D->GetDeviceContext());
 
 		if((*sceneActors)[i]->GetModel()->GetMaterial()->transparency != 0.f)
 			_D3D->EnableAlphaBlending();
 
-		result = _ShaderManager->Render(_D3D->GetDeviceContext(), (*sceneActors)[i]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		bool result = _ShaderManager->Render(_D3D->GetDeviceContext(), (*sceneActors)[i]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 			(*sceneActors)[i]->GetModel()->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0,0,0), _Camera->GetReflectionViewMatrix());
 		if (!result) return false;
 
@@ -494,7 +487,14 @@ bool Graphics::RenderScene(vector<unique_ptr<Actor>>* sceneActors, float frameTi
 		// reset world matrix
 		_D3D->GetWorldMatrix(worldMatrix);
 	}
+	
+	//@TEST SECTION - Point lights not working
+	//XMFLOAT3 translation = (*sceneActors)[0]->GetMovementComponent()->GetPosition();
+	//worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z));
+	//(*sceneActors)[0]->GetModel()->LoadVertices(_D3D->GetDeviceContext());
 
+	//_ShaderManager->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	//	_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix());
 
 #pragma region MULTIMODELS
 	//textureTranslation += .004f;	if (textureTranslation > 1.0f) { textureTranslation -= 1.0f; }
@@ -699,7 +699,6 @@ bool Graphics::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float p
 
 	return true;
 }
-
 
 bool Graphics::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int renderCount, int nodesDrawn, int nodesCulled)
 {

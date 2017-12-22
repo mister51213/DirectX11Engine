@@ -79,7 +79,7 @@ public:
 
 	bool LoadModel(char*);
 	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
-	void RenderBuffers(ID3D11DeviceContext* deviceContext);
+	void LoadVertices(ID3D11DeviceContext* deviceContext);
 
 private:
 	bool InitializeBuffers(ID3D11Device* device);
