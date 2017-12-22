@@ -15,10 +15,10 @@ LightShaderClass::~LightShaderClass()
 
 bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, LightClass* lights[],
-	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency)
+	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, float translation, float transparency)
 {
 	// Set the shader parameters that it will use for rendering.
-	bool result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, lightDirection, ambientColor, diffuseColor, lights, cameraPosition, specularColor, specularPower, fogStart, fogEnd, clipPlane, translation, transparency/*, reflectionTexture, reflectionMatrix*/);
+	bool result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, lightDirection, ambientColor, diffuseColor, lights, cameraPosition, specularColor, specularPower, fogStart, fogEnd, translation, transparency);
 	if (!result)
 	{
 		return false;
@@ -57,7 +57,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<CameraBufferType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<LightPositionBufferType>(device));
-	_vsBuffers.emplace_back(MakeConstantBuffer<ClipPlaneBufferType>(device));
+	//_vsBuffers.emplace_back(MakeConstantBuffer<ClipPlaneBufferType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<FogBufferType>(device));
 
 	// PS Buffers
@@ -72,7 +72,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
 	LightClass* lights[],
-	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency)
+	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, float translation, float transparency)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
@@ -101,13 +101,13 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	MapBuffer(tempLightPosBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
-	//////////////// CLIP PLANE - VS BUFFER 3 ///////////////////////
-	bufferNumber++;
-	ClipPlaneBufferType tempClipBuff = { clipPlane };
-	MapBuffer(tempClipBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
+	////////////////// CLIP PLANE - VS BUFFER 3 ///////////////////////
+	//bufferNumber++;
+	//ClipPlaneBufferType tempClipBuff = { clipPlane };
+	//MapBuffer(tempClipBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
+	//deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
-	/////////// FOG INIT - VS BUFFER 4 /////////////////////////// @TODO: is the data packed correctly???
+	/////////// FOG INIT - VS BUFFER 3 /////////////////////////// @TODO: is the data packed correctly???
 	bufferNumber++;
 	FogBufferType tempFogBuff = { fogStart, fogEnd, 0.f, 0.f };
 	MapBuffer(tempFogBuff, _vsBuffers[bufferNumber].Get(), deviceContext);

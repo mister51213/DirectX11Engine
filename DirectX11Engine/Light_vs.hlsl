@@ -40,12 +40,7 @@ cbuffer LightPositionBuffer:register(b2)
     float4 lightPosition[NUM_LIGHTS];
 };
 
-cbuffer ClipPlaneBuffer:register(b3)
-{
-    float4 clipPlane;
-};
-
-cbuffer FogBuffer:register(b4)
+cbuffer FogBuffer:register(b3)
 {
     float fogStart;
     float fogEnd;
@@ -83,7 +78,7 @@ struct PixelInputType
     float3 lightPos3 : TEXCOORD4;
     float3 lightPos4 : TEXCOORD5;
 	float fogFactor : FOG; 
-	float clip : SV_ClipDistance0; //@TODO: Properly byte alligned?
+	//float clip : SV_ClipDistance0; //@TODO: Properly byte alligned?
 };
 
 // The output of the vertex shader will be sent to the pixel shader.
@@ -166,7 +161,7 @@ All three equations produce a fog factor. To apply that fog factor to the model'
     output.lightPos4 = normalize(output.lightPos4);
 	
 	// Set the clipping plane.
-    output.clip = dot(mul(input.position, worldMatrix), clipPlane);
+  //  output.clip = dot(mul(input.position, worldMatrix), clipPlane);
 
 	return output;
 }

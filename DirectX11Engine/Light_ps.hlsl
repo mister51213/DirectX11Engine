@@ -67,7 +67,7 @@ struct PixelInputType
     float3 lightPos3 : TEXCOORD4;
     float3 lightPos4 : TEXCOORD5;
 	float fogFactor : FOG;
-	float clip : SV_ClipDistance0;
+	//float clip : SV_ClipDistance0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

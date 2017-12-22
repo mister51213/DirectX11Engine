@@ -48,10 +48,10 @@ private:
 		float fogEnd;
 		float padding1, padding2;
 	};
-	struct ClipPlaneBufferType
-	{
-		XMFLOAT4 clipPlane;
-	};
+	//struct ClipPlaneBufferType
+	//{
+	//	XMFLOAT4 clipPlane;
+	//};
 	struct TranslateBufferType
 	{
 		float translation;
@@ -71,16 +71,16 @@ public:
 	bool Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 		XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, 
 		LightClass* lights[],
-		XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float translation, float transparency);
+		XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, float translation, float transparency);
 
 private:
 	bool InitializeShader(ID3D11Device*, HWND, char*, char*);
 
 	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
 		LightClass* lights[],
-		XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, XMFLOAT4 clipPlane, float texTranslation, float transparency);
+		XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, float texTranslation, float transparency);
 
 private:
 	// Total number of buffers including parent matrix buffer
-	const int _numBufferDescs = 9;
+	const int _numBufferDescs = 8;
 };

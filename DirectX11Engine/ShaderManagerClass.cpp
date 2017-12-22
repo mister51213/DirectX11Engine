@@ -123,7 +123,7 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 		result = _LightShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
 			material->GetResourceArray(), light->GetDirection(), light->GetAmbientColor(), light->GetDiffuseColor(), 
 			lights, 
-			cameraPos, light->GetSpecularColor(), light->GetSpecularPower(), effects.fogStart, effects.fogEnd, effects.clipPlane, material->translation, material->transparency);
+			cameraPos, light->GetSpecularColor(), light->GetSpecularPower(), effects.fogStart, effects.fogEnd, material->translation, material->transparency);
 
 
 		if (!result) return false;
