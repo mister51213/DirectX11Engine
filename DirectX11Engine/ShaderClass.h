@@ -59,7 +59,7 @@ protected:
 	void RenderShader(ID3D11DeviceContext* deviceContext, int indexCount);
 
 protected:
-	ID3D11SamplerState* _sampleState;
+	ComPtr <ID3D11SamplerState> _sampleState;
 	ComPtr <ID3D11VertexShader> _vertexShader;
 	ComPtr <ID3D11PixelShader> _pixelShader;
 	ComPtr <ID3D11InputLayout> _layout;

@@ -7,12 +7,6 @@
 #include "ShaderClass.h"
 
 ShaderClass::ShaderClass()
-	:
-	_vertexShader(0),
-	_pixelShader(0),
-	_layout(0),
-	_matrixBuffer(0),
-	_sampleState(0)
 {}
 
 ShaderClass::ShaderClass(const ShaderClass& other)
@@ -116,12 +110,6 @@ bool ShaderClass::CompileShaders(ID3D11Device * device, HWND hwnd, char* vsFilen
 
 void ShaderClass::ShutdownShader()
 {
-	// Release the sampler state.
-	if (_sampleState)
-	{
-		_sampleState->Release();
-		_sampleState = 0;
-	}
 }
 
 void ShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, char* shaderFilename)
@@ -218,7 +206,7 @@ void ShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCoun
 	deviceContext->PSSetShader(_pixelShader.Get(), NULL, 0);
 
 	// Set the sampler state in the pixel shader.
-	deviceContext->PSSetSamplers(0, 1, &_sampleState);
+	deviceContext->PSSetSamplers(0, 1, /*&_sampleState*/_sampleState.GetAddressOf());
 
 	// Render the triangle.
 	deviceContext->DrawIndexed(indexCount, 0, 0);
