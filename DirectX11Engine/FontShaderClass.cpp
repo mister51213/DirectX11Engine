@@ -32,76 +32,14 @@ bool FontShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount,
 
 bool FontShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* vsFilename, char* psFilename)
 {
-	WCHAR* vsFilenameW = charToWChar(vsFilename);
-	WCHAR* psFilenameW = charToWChar(psFilename);
-
 	HRESULT result;
-	ID3D10Blob* errorMessage;
-	ID3D10Blob* vertexShaderBuffer;
-	ID3D10Blob* pixelShaderBuffer;
+	ID3D10Blob* errorMessage = 0;
 
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[2];
 	unsigned int numElements;
-	D3D11_BUFFER_DESC matrixBufferDesc;
-	D3D11_SAMPLER_DESC samplerDesc;
-	D3D11_BUFFER_DESC pixelBufferDesc;
-	
-	// Initialize the pointers this function will use to null.
-	errorMessage = 0;
 
 	// Compile the vertex shader code.
-	//result = CompileShaders(device, hwnd, vsFilename, psFilename, "FontVertexShader", "FontPixelShader", errorMessage);
-
-	result = D3DCompileFromFile(vsFilenameW, NULL, NULL, "FontVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &vertexShaderBuffer,
-		&errorMessage);
-	if (FAILED(result))
-	{
-		// If the shader failed to compile it should have writen something to the error message.
-		if (errorMessage)
-		{
-			OutputShaderErrorMessage(errorMessage, hwnd, vsFilename);
-		}
-		// If there was nothing in the error message then it simply could not find the shader file itself.
-		else
-		{
-			MessageBox(hwnd, vsFilename, "Missing Shader File", MB_OK);
-		}
-
-		return false;
-	}
-
-	// Compile the pixel shader code.
-	result = D3DCompileFromFile(psFilenameW, NULL, NULL, "FontPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, &pixelShaderBuffer,
-		&errorMessage);
-	if (FAILED(result))
-	{
-		// If the shader failed to compile it should have writen something to the error message.
-		if (errorMessage)
-		{
-			OutputShaderErrorMessage(errorMessage, hwnd, psFilename);
-		}
-		// If there was nothing in the error message then it simply could not find the file itself.
-		else
-		{
-			MessageBox(hwnd, psFilename, "Missing Shader File", MB_OK);
-		}
-
-		return false;
-	}
-
-	// Create the vertex shader from the buffer.
-	result = device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &_vertexShader);
-	if (FAILED(result))
-	{
-		return false;
-	}
-
-	// Create the pixel shader from the buffer.
-	result = device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &_pixelShader);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	result = CompileShaders(device, hwnd, vsFilename, psFilename, "FontVertexShader", "FontPixelShader", errorMessage);
 
 	// Create the vertex input layout description.
 	polygonLayout[0] = MakeInputElementDesc("POSITION", DXGI_FORMAT_R32G32B32_FLOAT, 0);
@@ -111,21 +49,14 @@ bool FontShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* vs
 	numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 
 	// Create the vertex input layout.
-	result = device->CreateInputLayout(polygonLayout, numElements, vertexShaderBuffer->GetBufferPointer(),
-		vertexShaderBuffer->GetBufferSize(), &_layout);
+	result = device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(),
+		_vertexShaderBuffer->GetBufferSize(), &_layout);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	// Release the vertex shader buffer and pixel shader buffer since they are no longer needed.
-	vertexShaderBuffer->Release();
-	vertexShaderBuffer = 0;
-
-	pixelShaderBuffer->Release();
-	pixelShaderBuffer = 0;
-
-	samplerDesc = MakeSamplerDesc();
+	D3D11_SAMPLER_DESC samplerDesc = MakeSamplerDesc();
 
 	// Create the texture sampler state.
 	result = device->CreateSamplerState(&samplerDesc, &_sampleState);

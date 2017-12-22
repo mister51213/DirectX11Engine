@@ -45,8 +45,8 @@ public:
 	bool Initialize(ID3D11Device* device, HWND hwnd, char* vsFilename, char* psFilename);
 
 	// Temp holders //
-	ID3D10Blob* vertexShaderBuffer = 0;
-	ID3D10Blob* pixelShaderBuffer = 0;
+	ComPtr<ID3D10Blob> _vertexShaderBuffer = 0;
+	ComPtr<ID3D10Blob> _pixelShaderBuffer = 0;
 
 protected:
 	virtual bool InitializeShader(ID3D11Device* device, HWND hwnd, char* vsFileName, char* psFileName);
@@ -59,12 +59,12 @@ protected:
 	void RenderShader(ID3D11DeviceContext* deviceContext, int indexCount);
 
 protected:
-	ID3D11VertexShader* _vertexShader;
-	ID3D11PixelShader* _pixelShader;
-	ID3D11InputLayout* _layout;
-	ID3D11Buffer* _matrixBuffer;
 	ID3D11SamplerState* _sampleState;
+	ComPtr <ID3D11VertexShader> _vertexShader;
+	ComPtr <ID3D11PixelShader> _pixelShader;
+	ComPtr <ID3D11InputLayout> _layout;
+	ComPtr <ID3D11Buffer> _matrixBuffer;
 
-	vector<Microsoft::WRL::ComPtr <ID3D11Buffer>> _vsBuffers;
-	vector<Microsoft::WRL::ComPtr <ID3D11Buffer>> _psBuffers;
+	vector<ComPtr <ID3D11Buffer>> _vsBuffers;
+	vector<ComPtr <ID3D11Buffer>> _psBuffers;
 };

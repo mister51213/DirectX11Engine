@@ -52,14 +52,14 @@ bool ShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, char * vsFi
 	return false;
 }
 
-bool ShaderClass::CompileShaders(ID3D11Device * device, /*ID3D10Blob* vertexShaderBuffer, ID3D10Blob** pixelShaderBuffer, */HWND hwnd, char* vsFilename, char* psFilename, char* vsDesc, char* psDesc, ID3D10Blob* errorMessage)
+bool ShaderClass::CompileShaders(ID3D11Device * device, HWND hwnd, char* vsFilename, char* psFilename, char* vsDesc, char* psDesc, ID3D10Blob* errorMessage)
 {
 	WCHAR* vsFilenameW = charToWChar(vsFilename);
 	WCHAR* psFilenameW = charToWChar(psFilename);
 
 	// Compile the vertex shader code. @TODO!!!!!! WATCH OUT FOR NULL POINTERS HERE!!!!!
 	bool result = D3DCompileFromFile(vsFilenameW, NULL, NULL, vsDesc, "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
-		0, &vertexShaderBuffer, &errorMessage);
+		0, &_vertexShaderBuffer, &errorMessage);
 	if (FAILED(result))
 	{
 		// If the shader failed to compile it should have writen something to the error message.
@@ -78,7 +78,7 @@ bool ShaderClass::CompileShaders(ID3D11Device * device, /*ID3D10Blob* vertexShad
 
 	// Compile the pixel shader code.
 	result = D3DCompileFromFile(psFilenameW, NULL, NULL, psDesc, "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
-		0, &pixelShaderBuffer, &errorMessage);
+		0, &_pixelShaderBuffer, &errorMessage);
 	if (FAILED(result))
 	{
 		// If the shader failed to compile it should have writen something to the error message.
@@ -96,7 +96,7 @@ bool ShaderClass::CompileShaders(ID3D11Device * device, /*ID3D10Blob* vertexShad
 	}
 
 	// Create the vertex shader from the buffer.
-	result = device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL,
+	result = device->CreateVertexShader(_vertexShaderBuffer->GetBufferPointer(), _vertexShaderBuffer->GetBufferSize(), NULL,
 		&_vertexShader);
 	if (FAILED(result))
 	{
@@ -104,7 +104,7 @@ bool ShaderClass::CompileShaders(ID3D11Device * device, /*ID3D10Blob* vertexShad
 	}
 
 	// Create the vertex shader from the buffer.
-	result = device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL,
+	result = device->CreatePixelShader(_pixelShaderBuffer->GetBufferPointer(), _pixelShaderBuffer->GetBufferSize(), NULL,
 		&_pixelShader);
 	if (FAILED(result))
 	{
@@ -121,34 +121,6 @@ void ShaderClass::ShutdownShader()
 	{
 		_sampleState->Release();
 		_sampleState = 0;
-	}
-
-	// Release the matrix constant buffer.
-	if (_matrixBuffer)
-	{
-		_matrixBuffer->Release();
-		_matrixBuffer = 0;
-	}
-
-	// Release the layout.
-	if (_layout)
-	{
-		_layout->Release();
-		_layout = 0;
-	}
-
-	// Release the pixel shader.
-	if (_pixelShader)
-	{
-		_pixelShader->Release();
-		_pixelShader = 0;
-	}
-
-	// Release the vertex shader.
-	if (_vertexShader)
-	{
-		_vertexShader->Release();
-		_vertexShader = 0;
 	}
 }
 
@@ -200,7 +172,7 @@ bool ShaderClass::SetBaseParameters(D3D11_MAPPED_SUBRESOURCE* const mappedResour
 	projectionMatrix = XMMatrixTranspose(projectionMatrix);
 
 	// Lock the constant buffer so it can be written to.
-	result = deviceContext->Map(_matrixBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, /*&*/mappedResource);
+	result = deviceContext->Map(_matrixBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, /*&*/mappedResource);
 	if (FAILED(result))
 	{
 		return false;
@@ -215,7 +187,7 @@ bool ShaderClass::SetBaseParameters(D3D11_MAPPED_SUBRESOURCE* const mappedResour
 	dataPtr->projection = projectionMatrix;
 
 	// Unlock the constant buffer.
-	deviceContext->Unmap(_matrixBuffer, 0);
+	deviceContext->Unmap(_matrixBuffer.Get(), 0);
 
 	// Set the position of the constant buffer in the vertex shader.
 	bufferNumber = 0;
@@ -239,11 +211,11 @@ bool ShaderClass::SetBaseParameters(D3D11_MAPPED_SUBRESOURCE* const mappedResour
 void ShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
 {
 	// Set the vertex input layout.
-	deviceContext->IASetInputLayout(_layout);
+	deviceContext->IASetInputLayout(_layout.Get());
 
 	// Set the vertex and pixel shaders that will be used to render this triangle.
-	deviceContext->VSSetShader(_vertexShader, NULL, 0);
-	deviceContext->PSSetShader(_pixelShader, NULL, 0);
+	deviceContext->VSSetShader(_vertexShader.Get(), NULL, 0);
+	deviceContext->PSSetShader(_pixelShader.Get(), NULL, 0);
 
 	// Set the sampler state in the pixel shader.
 	deviceContext->PSSetSamplers(0, 1, &_sampleState);

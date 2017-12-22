@@ -32,8 +32,5 @@ private:
 
 private:
 	const int _numBufferDescs = 3;
-
-//	ID3D11Buffer* _reflectionBuffer;
-//	ID3D11Buffer* _waterBuffer;
 };
 
