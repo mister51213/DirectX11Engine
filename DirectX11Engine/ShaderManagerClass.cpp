@@ -101,6 +101,14 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 		return false;
 	}
 
+	result = _DepthShader->Initialize(device, hwnd, "../DirectX11Engine/depth.vs", "../DirectX11Engine/depth.ps");
+	if (!result)
+	{
+		throw std::runtime_error("Could not initialize the depth shader object. - " + to_string(__LINE__));
+
+		return false;
+	}
+
 	return true;
 }
 
@@ -158,6 +166,12 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 			material->GetResourceArray()[0], material->pixelColor);
 		if (!result) return false;
 		//_FontShader->RenderShader(device, indexCount);
+		break;
+
+	case EShaderType::EDEPTH:
+		result = _DepthShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix);
+		if (!result) return false;
+		//_DepthShader->RenderShader(device, indexCount);
 		break;
 
 	default:

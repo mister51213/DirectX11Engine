@@ -295,6 +295,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CpuClass.cpp" />
     <ClCompile Include="DebugWindowClass.cpp" />
+    <ClCompile Include="DepthShaderClass.cpp" />
     <ClCompile Include="FontClass.cpp" />
     <ClCompile Include="FontShaderClass.cpp" />
     <ClCompile Include="FpsClass.cpp" />
@@ -542,6 +543,7 @@
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CpuClass.h" />
     <ClInclude Include="DebugWindowClass.h" />
+    <ClInclude Include="DepthShaderClass.h" />
     <ClInclude Include="FontClass.h" />
     <ClInclude Include="FontShaderClass.h" />
     <ClInclude Include="FpsClass.h" />

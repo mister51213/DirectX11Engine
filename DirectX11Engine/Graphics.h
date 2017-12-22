@@ -12,6 +12,9 @@ const bool VSYNC_ENABLED = false;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.1f;
 
+const int SHADOWMAP_WIDTH = 1024;
+const int SHADOWMAP_HEIGHT = 1024;
+
 //////////////
 // INCLUDES //
 //////////////
@@ -86,7 +89,9 @@ private:
 	unique_ptr<ModelListClass>_ModelList;
 	unique_ptr<FrustumClass> _Frustum;
 	unique_ptr<RenderTextureClass> _RenderTexture;
-	unique_ptr<DebugWindowClass> _DebugWindow;
+	unique_ptr<RenderTextureClass> _RenderTexture2;
+	
+	//unique_ptr<DebugWindowClass> _DebugWindow;
 	
 	unique_ptr<ShaderManagerClass> _ShaderManager;
 
@@ -94,6 +99,9 @@ private:
 	vector<unique_ptr<Model>> _DefaultModels;
 	unique_ptr<Model> _GroundModel, _WallModel, _BathModel, _WaterModel;
 	unique_ptr<RenderTextureClass> _RefractionTexture, _ReflectionTexture;
+
+	////////// SHADOW DEMO ///////////////
+
 
 	/////////// GLOBAL EFFECTS /////////////
 	SceneEffects _globalEffects;

@@ -558,6 +558,9 @@
     <ClCompile Include="GfxUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DepthShaderClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VectorMath.h">
@@ -1297,6 +1300,9 @@
     </ClInclude>
     <ClInclude Include="TimerClass.h">
       <Filter>Header Files\Tier1</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthShaderClass.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

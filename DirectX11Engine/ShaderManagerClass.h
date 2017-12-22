@@ -14,6 +14,7 @@
 #include "ReflectionShaderClass.h"
 #include "WaterShaderClass.h"
 #include "RefractionShaderClass.h"
+#include "DepthShaderClass.h"
 
 #include "GfxUtil.h"
 
@@ -50,4 +51,5 @@ private:
 	unique_ptr<ReflectionShaderClass> _ReflectionShader;
 	unique_ptr<WaterShaderClass> _WaterShader;
 	unique_ptr<RefractionShaderClass> _RefractionShader;
+	unique_ptr<DepthShaderClass> _DepthShader;
 };

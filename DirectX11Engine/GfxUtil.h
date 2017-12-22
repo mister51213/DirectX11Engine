@@ -142,7 +142,8 @@ namespace GfxUtil
 		EREFRACTION = 3,
 		EWATER = 4,
 		EFONT = 5,
-		ESIZE = 6
+		EDEPTH = 6,
+		ESIZE = 7
 	};
 
 	struct SceneEffects
