@@ -26,14 +26,14 @@ using namespace GfxUtil;
 class ShaderClass
 {
 protected:
-	// cBuffer type that will be used with the vertex shader.
-	// This typedef must be exactly the same as the one in the vertex shader as the model data needs to match the typedefs in the shader for proper rendering.
-	struct MatrixBufferType
-	{
-		XMMATRIX world;
-		XMMATRIX view;
-		XMMATRIX projection;
-	};
+	//// cBuffer type that will be used with the vertex shader.
+	//// This typedef must be exactly the same as the one in the vertex shader as the model data needs to match the typedefs in the shader for proper rendering.
+	//struct MatrixBufferType
+	//{
+	//	XMMATRIX world;
+	//	XMMATRIX view;
+	//	XMMATRIX projection;
+	//};
 
 	// record the location of each vertex that is in the vertex buffer.
 	// The GPU then uses the index buffer to quickly find specific vertices in the vertex buffer.
@@ -43,14 +43,14 @@ public:
 	~ShaderClass();
 	bool Initialize(ID3D11Device* device, HWND hwnd, char* vsFilename, char* psFilename);
 
+	virtual void RenderShader(ID3D11DeviceContext* deviceContext, int indexCount);
 protected:
 	virtual bool InitializeShader(ID3D11Device* device, HWND hwnd, char* vsFileName, char* psFileName);
 
 	bool CompileShaders(ID3D11Device * device, HWND hwnd, char* vsFilename, char* psFilename, char* vsDesc, char* psDesc, ID3D10Blob* errorMessage);
 
 	void OutputShaderErrorMessage(ID3D10Blob*, HWND hwnd, char*);
-	virtual bool SetBaseParameters(D3D11_MAPPED_SUBRESOURCE* const mappedResource, ID3D11DeviceContext*, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, /*ID3D11ShaderResourceView* texture*/unsigned int& bufferNumber);
-	void RenderShader(ID3D11DeviceContext* deviceContext, int indexCount);
+	//virtual bool SetBaseParameters(D3D11_MAPPED_SUBRESOURCE* const mappedResource, ID3D11DeviceContext*, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, /*ID3D11ShaderResourceView* texture*/unsigned int& bufferNumber);
 
 protected:
 	ComPtr<ID3D10Blob> _vertexShaderBuffer;

@@ -13,12 +13,19 @@ LightShaderClass::LightShaderClass(const LightShaderClass& other)
 LightShaderClass::~LightShaderClass()
 {}
 
-bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, LightClass* lights[],
+bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix, 
+	XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix, 
+	ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, 
+	LightClass* shadowLight, 
+	LightClass* lights[],
 	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, float translation, float transparency)
 {
 	// Set the shader parameters that it will use for rendering.
-	bool result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, lightDirection, ambientColor, diffuseColor, lights, cameraPosition, specularColor, specularPower, fogStart, fogEnd, translation, transparency);
+	bool result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, 
+		lightViewMatrix, lightProjectionMatrix,
+		textureArray, lightDirection, ambientColor, diffuseColor, 
+		shadowLight,
+		lights, cameraPosition, specularColor, specularPower, fogStart, fogEnd, translation, transparency);
 	if (!result)
 	{
 		return false;
@@ -28,6 +35,27 @@ bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount
 	RenderShader(deviceContext, indexCount);
 
 	return true;
+}
+
+void LightShaderClass::RenderShader(ID3D11DeviceContext * deviceContext, int indexCount)
+{
+	// Set the vertex input layout.
+	deviceContext->IASetInputLayout(_layout.Get());
+
+	// Set the vertex and pixel shaders that will be used to render this triangle.
+	deviceContext->VSSetShader(_vertexShader.Get(), NULL, 0);
+	deviceContext->PSSetShader(_pixelShader.Get(), NULL, 0);
+
+	// The new clamp sampler state is set in the pixel shader here.
+
+	// Set the sampler states in the pixel shader.
+	deviceContext->PSSetSamplers(1, 1, _sampleState.GetAddressOf());
+	deviceContext->PSSetSamplers(0, 1, _sampleStateClamp.GetAddressOf());
+
+	// Render the triangle.
+	deviceContext->DrawIndexed(indexCount, 0, 0);
+
+	return;
 }
 
 bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* vsFilename, char* psFilename)
@@ -49,14 +77,20 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	HRESULT result = device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(), _vertexShaderBuffer->GetBufferSize(), &_layout);
 	CHECK(SUCCEEDED(result), "input layout");
 
-	// Create the texture sampler state.
+	// Create the texture wrap sampler state.
 	result = device->CreateSamplerState(&MakeSamplerDesc(), &_sampleState);
 	CHECK(SUCCEEDED(result), "sampler state");
+
+	// Create the texture clamp sampler state.
+	result = device->CreateSamplerState(&MakeSamplerDesc(D3D11_TEXTURE_ADDRESS_CLAMP), &_sampleStateClamp);
+	CHECK(SUCCEEDED(result), "sampler state");
+
 
 	// VS Buffers
 	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<CameraBufferType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<LightPositionBufferType>(device));
+	_vsBuffers.emplace_back(MakeConstantBuffer<LightShadowBufferType>(device)); // NEW SHADOW BUFFER
 	//_vsBuffers.emplace_back(MakeConstantBuffer<ClipPlaneBufferType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<FogBufferType>(device));
 
@@ -69,15 +103,17 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	return true;
 }
 
-bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
+bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix, 
+	XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix,
+	ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, 
+	LightClass* shadowLight,
 	LightClass* lights[],
 	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, float translation, float transparency)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
 	/////////////////////// SET TEXTURE RESOURCES //////////////////////
-	deviceContext->PSSetShaderResources(0, 6, textureArray); // sextuple tex with lightmap
+	deviceContext->PSSetShaderResources(0, 7, textureArray); // @SHADOWING - TODO: Feed in texture view elsewhere in the framework!!!
 
 	///////////////////////////////////////////////////////////////
 	///////////////////////// VS BUFFERS //////////////////////////
@@ -85,7 +121,9 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
 	unsigned int bufferNumber = 0;
-	MatrixBufferType tempMatBuff = { XMMatrixTranspose(worldMatrix),XMMatrixTranspose(viewMatrix),XMMatrixTranspose(projectionMatrix) };
+	MatrixBufferType tempMatBuff = { XMMatrixTranspose(worldMatrix),XMMatrixTranspose(viewMatrix),XMMatrixTranspose(projectionMatrix),
+		XMMatrixTranspose(lightViewMatrix),				// @SHADOWING
+		XMMatrixTranspose(lightProjectionMatrix)};		// @SHADOWING
 	MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
@@ -101,11 +139,11 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	MapBuffer(tempLightPosBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
-	////////////////// CLIP PLANE - VS BUFFER 3 ///////////////////////
-	//bufferNumber++;
-	//ClipPlaneBufferType tempClipBuff = { clipPlane };
-	//MapBuffer(tempClipBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
-	//deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
+	////////////////// LIGHT SHADOW - VS BUFFER 3 ///////////////////////	@SHADOWING
+	bufferNumber++;
+	LightShadowBufferType tempShadowBuff = { XMFLOAT3(shadowLight->GetPosition().x, shadowLight->GetPosition().y, shadowLight->GetPosition().z) };
+	MapBuffer(tempShadowBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
 	/////////// FOG INIT - VS BUFFER 3 /////////////////////////// @TODO: is the data packed correctly???
 	bufferNumber++;

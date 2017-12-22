@@ -26,6 +26,7 @@ public:
 	void SetDirection(float, float, float);
 	void SetSpecularColor(float, float, float, float);
 	void SetSpecularPower(float);
+	void SetLookAt(float, float, float);
 
 	XMFLOAT4 GetAmbientColor() const;
 	XMFLOAT4 GetDiffuseColor() const;
@@ -34,6 +35,12 @@ public:
 	XMFLOAT4 GetSpecularColor() const;
 	float GetSpecularPower() const;
 
+	void GenerateViewMatrix();
+	void GenerateProjectionMatrix(float screenDepth, float screenNear);
+
+	XMMATRIX GetViewMatrix() const;
+	XMMATRIX GetProjectionMatrix() const;
+
 private:
 	XMFLOAT4 _ambientColor;
 	XMFLOAT4 _diffuseColor;
@@ -41,4 +48,8 @@ private:
 	XMFLOAT4 _position;
 	XMFLOAT4 _specularColor;
 	float _specularPower;
+
+	XMFLOAT3 _lookAt;
+	XMMATRIX _viewMatrix;
+	XMMATRIX _projectionMatrix;
 };

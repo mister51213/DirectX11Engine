@@ -106,6 +106,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 			"../DirectX11Engine/data/noise.png",
 			"../DirectX11Engine/data/noise.png",
 			"../DirectX11Engine/data/noise.png", // normal map
+			"../DirectX11Engine/data/noise.png",
 			"../DirectX11Engine/data/noise.png"};
 
 		bool result = _DefaultModels[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/sphere.txt", defaultTex, EShaderType::ELIGHT_SPECULAR);
@@ -126,7 +127,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		"../DirectX11Engine/data/light.dds", // light map - not used
 		"../DirectX11Engine/data/noise.png",
 		"../DirectX11Engine/data/nMap2.png",
-		"../DirectX11Engine/data/specMap.dds" };
+		"../DirectX11Engine/data/specMap.dds",
+		"../DirectX11Engine/data/noise.png" }; // TEMP PLACE HOLDER - replace with DEPTH BUFFER!!!
 
 	bool result = _GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/ground.txt",groundTex,	EShaderType::ELIGHT_SPECULAR);
@@ -145,7 +147,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		"../DirectX11Engine/data/light.dds",
 		"../DirectX11Engine/data/alpha.dds",
 		"../DirectX11Engine/data/bumpMap.dds", // normal map
-		"../DirectX11Engine/data/specMap.dds" };
+		"../DirectX11Engine/data/specMap.dds",
+		"../DirectX11Engine/data/noise.png" };
 
 	result = _WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),"../DirectX11Engine/data/wall.txt",	wallTex,EShaderType::ELIGHT_SPECULAR);
 	CHECK(result, "wall model");
@@ -163,7 +166,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		"../DirectX11Engine/data/light.dds",
 		"../DirectX11Engine/data/alpha.dds",
 		"../DirectX11Engine/data/blue.dds", // normal map
-		"../DirectX11Engine/data/specMap.dds" };
+		"../DirectX11Engine/data/specMap.dds",
+		"../DirectX11Engine/data/noise.png" };
 
 	// Initialize the bath model object.
 	result = _BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),

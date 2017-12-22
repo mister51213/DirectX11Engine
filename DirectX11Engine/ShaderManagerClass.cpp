@@ -117,48 +117,55 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 	case EShaderType::ETEXTURE:
 		result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray()[0]);
 		if (!result) return false;
+		//_TextureShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::ELIGHT_SPECULAR:
 		result = _LightShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
+			light->GetViewMatrix(), 
+			light->GetProjectionMatrix(),
 			material->GetResourceArray(), light->GetDirection(), light->GetAmbientColor(), light->GetDiffuseColor(), 
+			light,
 			lights, 
 			cameraPos, light->GetSpecularColor(), light->GetSpecularPower(), effects.fogStart, effects.fogEnd, material->translation, material->transparency);
-
-
 		if (!result) return false;
+		//_LightShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::EREFLECTION:
 		result = _ReflectionShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
 			material->GetResourceArray()[0], reflectionTexture, reflectionMatrix);
 		if (!result) return false;
+		//_ReflectionShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::EREFRACTION:
 		result = _RefractionShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
 			material->GetResourceArray()[0], light->GetDirection(), light->GetAmbientColor(), light->GetDiffuseColor(), effects.clipPlane);
 		if (!result) return false;
+		//_RefractionShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::EWATER:
 		result = _WaterShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix,
 			material->GetResourceArray(), material->translation, material->reflectRefractScale);
 		if (!result) return false;
+	//	_WaterShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::EFONT:
 		result = _FontShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
 			material->GetResourceArray()[0], material->pixelColor);
 		if (!result) return false;
+		//_FontShader->RenderShader(device, indexCount);
 		break;
 
 	default:
 		result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray()[0]);
 		if (!result) return false;
+		//_TextureShader->RenderShader(device, indexCount);
 		break;
 	}
-
 	return result;
 }
 

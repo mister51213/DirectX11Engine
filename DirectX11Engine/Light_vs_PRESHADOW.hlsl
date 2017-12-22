@@ -26,8 +26,6 @@ cbuffer MatrixBuffer:register(b0)
 	matrix worldMatrix;
 	matrix viewMatrix;
 	matrix projectionMatrix;
-	matrix lightViewMatrix;
-    matrix lightProjectionMatrix;
 };
 
 // pass in position of camera for reflection
@@ -42,13 +40,7 @@ cbuffer LightPositionBuffer:register(b2)
     float4 lightPosition[NUM_LIGHTS];
 };
 
-cbuffer LightShadowBuffer:register(b3)
-{
-    float3 c_lightShadowPos;
-    float padding;
-};
-
-cbuffer FogBuffer:register(b4)
+cbuffer FogBuffer:register(b3)
 {
     float fogStart;
     float fogEnd;
@@ -85,9 +77,8 @@ struct PixelInputType
     float3 lightPos2 : TEXCOORD3;
     float3 lightPos3 : TEXCOORD4;
     float3 lightPos4 : TEXCOORD5;
-	float4 lightViewPosition : TEXCOORD6;
-    float3 lightShadowPos : TEXCOORD7;
 	float fogFactor : FOG; 
+	//float clip : SV_ClipDistance0; //@TODO: Properly byte alligned?
 };
 
 // The output of the vertex shader will be sent to the pixel shader.
@@ -137,6 +128,22 @@ PixelInputType LightVertexShader(VertexInputType input)
     // Calculate linear fog.
     output.fogFactor = saturate((fogEnd - /*vertexPosViewSpace.z*/cameraPosition.z) / (fogEnd - fogStart));
 
+	//@TODO: Try other fog types:
+	/*
+	Linear fog adds a linear amount of fog based on the distance you are viewing the object from:
+
+	Linear Fog = (FogEnd - ViewpointDistance) / (FogEnd - FogStart)
+Exponential fog adds exponentially more fog the further away an object is inside the fog:
+
+	Exponential Fog = 1.0 / 2.71828 power (ViewpointDistance * FogDensity)
+Exponential 2 fog adds even more exponential fog than the previous equation giving a very thick fog appearance:
+
+	Exponential Fog 2 = 1.0 / 2.71828 power ((ViewpointDistance * FogDensity) * (ViewpointDistance * FogDensity))
+All three equations produce a fog factor. To apply that fog factor to the model's texture and produce a final pixel color value we use the following equation:
+
+	Fog Color = FogFactor * TextureColor + (1.0 - FogFactor) * FogColor
+	*/
+
     // Normalize the viewing direction vector.
     output.viewDirection = normalize(output.viewDirection);
 
@@ -153,15 +160,8 @@ PixelInputType LightVertexShader(VertexInputType input)
     output.lightPos3 = normalize(output.lightPos3);
     output.lightPos4 = normalize(output.lightPos4);
 	
-	//... SHADOWING ... //
-	// Calculate the position of the vertice as viewed by the light source.
-    output.lightViewPosition = mul(input.position, worldMatrix);
-    output.lightViewPosition = mul(output.lightViewPosition, lightViewMatrix);
-    output.lightViewPosition = mul(output.lightViewPosition, lightProjectionMatrix);
-
-	 // Determine the light position based on the position of the light and the position of the vertex in the world.
-    output.lightShadowPos = c_lightShadowPos.xyz - worldPosition.xyz;
-    output.lightShadowPos = normalize(output.lightShadowPos);
+	// Set the clipping plane.
+  //  output.clip = dot(mul(input.position, worldMatrix), clipPlane);
 
 	return output;
 }

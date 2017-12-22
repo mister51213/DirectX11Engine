@@ -15,15 +15,11 @@
 /////////////
 // texture resource that will be used for rendering the texture on the model
 //Texture2D shaderTexture;
-Texture2D shaderTextures[7];
+Texture2D shaderTextures[6];
 // allows modifying how pixels are written to the polygon face, for example choosing which to draw. 
 SamplerState SampleType;
 
-///////////////////
-// SAMPLE STATES //
-///////////////////
-SamplerState SampleTypeClamp : register(s0);
-SamplerState SampleTypeWrap  : register(s1);
+//Texture2D reflectionTexture;
 
 //////////////////////
 // CONSTANT BUFFERS //
@@ -70,8 +66,6 @@ struct PixelInputType
     float3 lightPos2 : TEXCOORD3;
     float3 lightPos3 : TEXCOORD4;
     float3 lightPos4 : TEXCOORD5;
-	float4 lightViewPosition : TEXCOORD6;
-    float3 lightShadowPos : TEXCOORD7;
 	float fogFactor : FOG;
 };
 
@@ -198,53 +192,6 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     // Set the alpha value of this pixel to the blending amount to create the alpha blending effect.
     color.a = blendAmount;
 
-    //return color;
-
-	//////////////////////
-	/// SHADOW MAPPING ///
-	//////////////////////
-
-	color = ambientColor;
-    float bias = 0.001f; // for fixing floating point precision issues
-    float2 projectTexCoord;
-	projectTexCoord.x =  input.lightViewPosition.x / input.lightViewPosition.w / 2.0f + 0.5f;
-    projectTexCoord.y = -input.lightViewPosition.y / input.lightViewPosition.w / 2.0f + 0.5f;
-    
-	    // Determine if the projected coordinates are in the 0 to 1 range.  If so then this pixel is in the view of the light.
-    if((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
-    {
-	 // Sample the shadow map depth value from the depth texture using the sampler at the projected texture coordinate location.
-     float depthValue = shaderTextures[6].Sample(SampleTypeClamp, projectTexCoord).r;
-
-        // Calculate the depth of the light.
-        float lightDepthValue = input.lightViewPosition.z / input.lightViewPosition.w;
-
-        // Subtract the bias from the lightDepthValue.
-        lightDepthValue = lightDepthValue - bias;	
-
-		// Compare the depth of the shadow map value and the depth of the light to determine whether to shadow or to light this pixel.
-        // If the light is in front of the object then light the pixel, if not then shadow this pixel since an object (occluder) is casting a shadow on it.
-        if(lightDepthValue < depthValue)
-        {
-		    // Calculate the amount of light on this pixel.
-            lightIntensity = saturate(dot(input.normal, input.lightPos));
-
-            if(lightIntensity > 0.0f)
-            {
-                // Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-                color += (diffuseColor * lightIntensity);
-
-                // Saturate the final light color.
-                color = saturate(color);
-            }
-        }
-	}
-
-	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
-    textureColor = shaderTextures[0].Sample(SampleTypeWrap, input.tex);
-
-    // Combine the light and texture color.
-    color = color * textureColor;
-
     return color;
+	//return shaderTextures[0].Sample(SampleType, input.tex);
 }
