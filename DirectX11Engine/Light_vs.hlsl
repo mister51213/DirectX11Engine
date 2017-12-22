@@ -45,7 +45,7 @@ cbuffer LightPositionBuffer:register(b2)
 cbuffer LightShadowBuffer:register(b3)
 {
     float3 c_lightShadowPos;
-    float padding;
+    float padding2;
 };
 
 cbuffer FogBuffer:register(b4)

@@ -44,7 +44,7 @@ bool ShaderClass::CompileShaders(ID3D11Device * device, HWND hwnd, char* vsFilen
 	WCHAR* psFilenameW = charToWChar(psFilename);
 
 	// Compile the vertex shader code. @TODO!!!!!! WATCH OUT FOR NULL POINTERS HERE!!!!!
-	bool result = D3DCompileFromFile(vsFilenameW, NULL, NULL, vsDesc, "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
+	HRESULT result = D3DCompileFromFile(vsFilenameW, NULL, NULL, vsDesc, "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
 		0, &_vertexShaderBuffer, &errorMessage);
 	if (FAILED(result))
 	{

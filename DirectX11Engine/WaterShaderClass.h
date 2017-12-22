@@ -35,7 +35,6 @@ public:
 
 private:
 	bool InitializeShader(ID3D11Device*, HWND, char*, char*);
-	void ShutdownShader();
 	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, XMMATRIX, 
 		ID3D11ShaderResourceView** textureArray, float, float);
 

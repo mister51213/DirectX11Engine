@@ -101,6 +101,8 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 		return false;
 	}
 
+	_DepthShader.reset(new DepthShaderClass);
+
 	result = _DepthShader->Initialize(device, hwnd, "../DirectX11Engine/depth.vs", "../DirectX11Engine/depth.ps");
 	if (!result)
 	{
@@ -137,7 +139,7 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 			lights, 
 			cameraPos, light->GetSpecularColor(), light->GetSpecularPower(), effects.fogStart, effects.fogEnd, material->translation, material->transparency);
 		if (!result) return false;
-		//_LightShader->RenderShader(device, indexCount);
+		_LightShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::EREFLECTION:
@@ -180,7 +182,7 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 		//_TextureShader->RenderShader(device, indexCount);
 		break;
 	}
-	return result;
+	return true;
 }
 
 FontShaderClass * ShaderManagerClass::GetFontShader()

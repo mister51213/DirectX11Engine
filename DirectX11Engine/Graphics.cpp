@@ -493,12 +493,12 @@ bool Graphics::RenderScene(vector<unique_ptr<Actor>>* sceneActors, float frameTi
 	}
 	
 	//@TEST SECTION - Point lights not working
-	//XMFLOAT3 translation = (*sceneActors)[0]->GetMovementComponent()->GetPosition();
-	//worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z));
-	//(*sceneActors)[0]->GetModel()->LoadVertices(_D3D->GetDeviceContext());
+	XMFLOAT3 translation = (*sceneActors)[0]->GetMovementComponent()->GetPosition();
+	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z));
+	(*sceneActors)[0]->GetModel()->LoadVertices(_D3D->GetDeviceContext());
 
-	//_ShaderManager->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-	//	_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix());
+	_ShaderManager->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix());
 
 	// TESTING SHADOWS //
 

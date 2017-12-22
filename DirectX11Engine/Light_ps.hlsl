@@ -227,7 +227,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
         if(lightDepthValue < depthValue)
         {
 		    // Calculate the amount of light on this pixel.
-            lightIntensity = saturate(dot(input.normal, input.lightPos));
+            lightIntensity = saturate(dot(input.normal, input.lightShadowPos));
 
             if(lightIntensity > 0.0f)
             {
