@@ -28,31 +28,16 @@ bool ReflectionShaderClass::Render(ID3D11DeviceContext * deviceContext, int inde
 
 bool ReflectionShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, char * vsFilename, char * psFilename)
 {
-
-	WCHAR* vsFilenameW = charToWChar(vsFilename);
-	WCHAR* psFilenameW = charToWChar(psFilename);
-
-	HRESULT result;
 	ID3D10Blob* errorMessage = 0;
+	HRESULT result = CompileShaders(device, hwnd, vsFilename, psFilename, "ReflectionVertexShader", "ReflectionPixelShader", errorMessage);
 
+	// Create the vertex input layout description - needs to match the VertexType stucture in the ModelClass and in the shader.
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[2];
-	unsigned int numElements;
-	D3D11_BUFFER_DESC matrixBufferDesc;
-	D3D11_SAMPLER_DESC samplerDesc;
-
-
-	D3D11_BUFFER_DESC reflectionBufferDesc;
-	result = CompileShaders(device, hwnd, vsFilename, psFilename, "ReflectionVertexShader", "ReflectionPixelShader", errorMessage);
-
-	// Create the vertex input layout description.
-	// This setup needs to match the VertexType stucture in the ModelClass and in the shader.
 	polygonLayout[0] = MakeInputElementDesc("POSITION", DXGI_FORMAT_R32G32B32_FLOAT, 0);
 	polygonLayout[1] = MakeInputElementDesc("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
 		
-	// Get a count of the elements in the layout.
-	numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
-
 	// Create the vertex input layout.
+	unsigned int numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 	result = device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(),
 		_vertexShaderBuffer->GetBufferSize(), &_layout);
 	if (FAILED(result))
@@ -60,10 +45,8 @@ bool ReflectionShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, c
 		return false;
 	}
 
-	// Create a texture sampler state description.
-	samplerDesc = MakeSamplerDesc();
 	// Create the texture sampler state.
-	result = device->CreateSamplerState(&samplerDesc, &_sampleState);
+	result = device->CreateSamplerState(&MakeSamplerDesc(), &_sampleState);
 	if (FAILED(result))
 	{
 		return false;
@@ -74,11 +57,6 @@ bool ReflectionShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, c
 	_vsBuffers.emplace_back(MakeConstantBuffer<ReflectionBufferType>(device));
 
 	return true;
-}
-
-void ReflectionShaderClass::ShutdownShader()
-{
-	ShaderClass::ShutdownShader();
 }
 
 bool ReflectionShaderClass::SetShaderParameters(ID3D11DeviceContext * deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, ID3D11ShaderResourceView * texture, ID3D11ShaderResourceView * reflectionTexture, XMMATRIX reflectionMatrix)

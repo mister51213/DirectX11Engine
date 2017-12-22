@@ -70,11 +70,6 @@ bool RefractionShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, c
 	return true;
 }
 
-void RefractionShaderClass::ShutdownShader()
-{
-	ShaderClass::ShutdownShader();
-}
-
 bool RefractionShaderClass::SetShaderParameters(ID3D11DeviceContext * deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, ID3D11ShaderResourceView * texture, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT4 clipPlane)
 {
 	HRESULT result;

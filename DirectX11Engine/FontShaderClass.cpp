@@ -74,13 +74,6 @@ bool FontShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* vs
 	return true;
 }
 
-void FontShaderClass::ShutdownShader()
-{
-	ShaderClass::ShutdownShader();
-
-	return;
-}
-
 bool FontShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT4 pixelColor)
 {

@@ -76,13 +76,6 @@ bool TextureShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char*
 	return true;
 }
 
-void TextureShaderClass::ShutdownShader()
-{
-	ShaderClass::ShutdownShader();
-
-	return;
-}
-
 bool TextureShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture)
 {

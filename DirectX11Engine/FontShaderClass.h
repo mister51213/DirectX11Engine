@@ -29,7 +29,6 @@ public:
 
 private:
 	bool InitializeShader(ID3D11Device*, HWND, char*, char*);
-	virtual void ShutdownShader() override;
 	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*, XMFLOAT4);
 
 private:

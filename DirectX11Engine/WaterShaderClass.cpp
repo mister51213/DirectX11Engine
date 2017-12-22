@@ -74,11 +74,6 @@ bool WaterShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	return true;
 }
 
-void WaterShaderClass::ShutdownShader()
-{
-	ShaderClass::ShutdownShader();
-}
-
 bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, XMMATRIX reflectionMatrix,
 	ID3D11ShaderResourceView** textureArray,

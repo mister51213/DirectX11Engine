@@ -15,14 +15,6 @@ ShaderClass::ShaderClass(const ShaderClass& other)
 ShaderClass::~ShaderClass()
 {}
 
-void ShaderClass::Shutdown()
-{
-	// Shutdown the vertex and pixel shaders as well as the related objects.
-	ShutdownShader();
-
-	return;
-}
-
 bool ShaderClass::Initialize(ID3D11Device * device, HWND hwnd, char * vsFilename, char * psFilename)
 {
 	bool result;
@@ -106,10 +98,6 @@ bool ShaderClass::CompileShaders(ID3D11Device * device, HWND hwnd, char* vsFilen
 	}
 
 	return true;
-}
-
-void ShaderClass::ShutdownShader()
-{
 }
 
 void ShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, char* shaderFilename)
@@ -206,7 +194,7 @@ void ShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCoun
 	deviceContext->PSSetShader(_pixelShader.Get(), NULL, 0);
 
 	// Set the sampler state in the pixel shader.
-	deviceContext->PSSetSamplers(0, 1, /*&_sampleState*/_sampleState.GetAddressOf());
+	deviceContext->PSSetSamplers(0, 1, _sampleState.GetAddressOf());
 
 	// Render the triangle.
 	deviceContext->DrawIndexed(indexCount, 0, 0);
