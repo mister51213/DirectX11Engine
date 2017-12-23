@@ -357,7 +357,7 @@ bool Graphics::UpdateFrame(float frameTime, Scene* scene, int fps)
 	lightPositionX += 0.002f*frameTime;
 	if (lightPositionX > 5.0f)
 	lightPositionX = -5.0f;
-	_Light->SetPosition(lightPositionX, 2.0f, -5.0f);
+	_Light->SetPosition(lightPositionX, 8.0f, -5.0f);
 
 	// 4. Update UI
 	result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
@@ -459,7 +459,7 @@ bool Graphics::RenderRefractionToTexture(float surfaceHeight)
 	lightProjectionMatrix = _Light->GetProjectionMatrix();
 
 	// Setup the translation matrix for the cube model.
-	worldMatrix = DirectX::XMMatrixTranslation(-2.0f, 0.0f, 0.0f);
+	worldMatrix = DirectX::XMMatrixTranslation(-2.0f, 0.0f, 0.f);
 
 	// RENDER THE CUBE MODEL WITH THE DEPTH SHADER.
 	_CubeModel->LoadVertices(_D3D->GetDeviceContext());
