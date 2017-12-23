@@ -575,6 +575,8 @@
     <ClInclude Include="Scene.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="depth.ps" />
+    <None Include="depth.vs" />
     <None Include="font.ps" />
     <None Include="font.vs" />
   </ItemGroup>

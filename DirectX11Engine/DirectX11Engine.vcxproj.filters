@@ -1343,13 +1343,17 @@
       <Filter>HLSL Files</Filter>
     </None>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Light_vs_PRESHADOW.hlsl">
+    <None Include="Light_vs_PRESHADOW.hlsl">
       <Filter>HLSL Files</Filter>
-    </FxCompile>
-    <FxCompile Include="Light_ps_PRESHADOW.hlsl">
+    </None>
+    <None Include="Light_ps_PRESHADOW.hlsl">
       <Filter>HLSL Files</Filter>
-    </FxCompile>
+    </None>
+    <None Include="depth.vs">
+      <Filter>HLSL Files</Filter>
+    </None>
+    <None Include="depth.ps">
+      <Filter>HLSL Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

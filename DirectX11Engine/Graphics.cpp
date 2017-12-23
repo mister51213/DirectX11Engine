@@ -354,10 +354,10 @@ bool Graphics::UpdateFrame(float frameTime, Scene* scene, int fps)
 
 	// Update the position of the light each frame.
 	static float lightPositionX = -5.f;
-	lightPositionX += 0.05f;
+	lightPositionX += 0.002f*frameTime;
 	if (lightPositionX > 5.0f)
 	lightPositionX = -5.0f;
-	_Light->SetPosition(lightPositionX, 8.0f, -5.0f);
+	_Light->SetPosition(lightPositionX, 2.0f, -5.0f);
 
 	// 4. Update UI
 	result = UpdateFpsString(_D3D->GetDeviceContext(), fps);
@@ -475,7 +475,7 @@ bool Graphics::RenderRefractionToTexture(float surfaceHeight)
 
 	// Reset the world matrix.
 	_D3D->GetWorldMatrix(worldMatrix);
-	worldMatrix = DirectX::XMMatrixTranslation(0.0f, -1.0f, 0.0f);
+	worldMatrix = DirectX::XMMatrixTranslation(0.0f, -0.5f, 0.0f);
 
 	// RENDER THE GROUND MODEL WITH THE DEPTH SHADER.
 	_GroundModel->LoadVertices(_D3D->GetDeviceContext());
@@ -582,7 +582,7 @@ bool Graphics::RenderScene(vector<unique_ptr<Actor>>* sceneActors, float frameTi
 	//_ShaderManager->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 	//	_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix());
 
-	// TESTING SHADOWS //
+	// TESTING SHADOWS // - WORKING
 
 	// Generate the light view matrix based on the light's position.
 	_Light->GenerateViewMatrix();
@@ -611,14 +611,14 @@ bool Graphics::RenderScene(vector<unique_ptr<Actor>>* sceneActors, float frameTi
 
 	// GROUND
 	_D3D->GetWorldMatrix(worldMatrix);
-	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(0.0f, -1.0f, 0.0f));
+	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(0.0f, -0.5f, 0.0f));
 	
 	_GroundModel->LoadVertices(_D3D->GetDeviceContext());
 
 	_GroundModel->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _ShadowMap->GetShaderResourceView();
 
 	_ShaderManager->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix());
+		_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
 
 
 #pragma region MULTIMODELS
