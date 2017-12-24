@@ -44,6 +44,7 @@ public:
 	FontShaderClass* GetFontShader();
 
 public:
+	unique_ptr<LightShaderClass> _LightShader;
 	unique_ptr<DepthShaderClass> _DepthShader;
 	unique_ptr<ReflectionShaderClass> _ReflectionShader;
 	unique_ptr<RefractionShaderClass> _RefractionShader;
@@ -51,7 +52,6 @@ public:
 private:
 	// Make a private class object for each shader type the application will be using.
 	unique_ptr<TextureShaderClass> _TextureShader;
-	unique_ptr<LightShaderClass> _LightShader;
 	unique_ptr<FontShaderClass> _FontShader;
 	unique_ptr<WaterShaderClass> _WaterShader;
 };

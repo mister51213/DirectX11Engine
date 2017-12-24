@@ -169,7 +169,12 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		bathTex, EShaderType::ETEXTURE);
 
 	_ShadowMap.reset(new RenderTextureClass);
-	result = _ShadowMap->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
+	//result = _ShadowMap->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR);
+	result = _ShadowMap->Initialize(_D3D->GetDevice(), 800,screenHeight, SCREEN_DEPTH, SCREEN_NEAR);
+
+
+
+	//result = _ShadowMap->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
 	CHECK(result, "refraction render to texture");
 
 	///////////////////////////////////////////////
@@ -543,9 +548,12 @@ bool Graphics::RenderScene(vector<unique_ptr<Actor>>& sceneActors, float frameTi
 	// Generate the view matrix based on the camera's position.
 	_Camera->UpdateViewPoint();
 
+	// Generate the light view matrix based on the light's position.
+	//_Light->GenerateViewMatrix();
+
 	// Get the world, view, and projection matrices from the camera and d3d objects.
-	_D3D->GetWorldMatrix(worldMatrix);
 	_Camera->GetViewMatrix(viewMatrix);
+	_D3D->GetWorldMatrix(worldMatrix);
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
 	//@TODO: TEMP HACK!!!!!! - MUST ENCAPSULATE!!!!!!!
@@ -586,6 +594,7 @@ bool Graphics::RenderScene(vector<unique_ptr<Actor>>& sceneActors, float frameTi
 
 	// Generate the light view matrix based on the light's position.
 	_Light->GenerateViewMatrix();
+	//_Light->GenerateProjectionMatrix();
 
 	// Get the light's view and projection matrices from the light object.
 	XMMATRIX lightViewMatrix = _Light->GetViewMatrix();
@@ -597,8 +606,13 @@ bool Graphics::RenderScene(vector<unique_ptr<Actor>>& sceneActors, float frameTi
 
 	_CubeModel->LoadVertices(_D3D->GetDeviceContext());
 		
-	_ShaderManager->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	_ShaderManager->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), 
+		worldMatrix, viewMatrix, projectionMatrix,
 		_CubeModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+	//_ShaderManager->_LightShader->Render(
+	//	_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(),
+	//	worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
+	//	_CubeModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
 	
 	// SPHERE
 	_D3D->GetWorldMatrix(worldMatrix);
@@ -608,6 +622,10 @@ bool Graphics::RenderScene(vector<unique_ptr<Actor>>& sceneActors, float frameTi
 	
 	_ShaderManager->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		_SphereModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+	//_ShaderManager->_LightShader->Render(
+	//	_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), 
+	//	worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
+	//	_SphereModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
 
 	// GROUND
 	_D3D->GetWorldMatrix(worldMatrix);
@@ -619,6 +637,10 @@ bool Graphics::RenderScene(vector<unique_ptr<Actor>>& sceneActors, float frameTi
 
 	_ShaderManager->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+	//_ShaderManager->_LightShader->Render(
+	//	_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), 
+	//	worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
+	//	_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
 
 
 #pragma region MULTIMODELS
