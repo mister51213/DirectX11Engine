@@ -31,7 +31,7 @@ public:
 	XMFLOAT3 GetPosition();
 	XMFLOAT3 GetRotation();
 
-	void UpdateViewFromPosition();
+	void UpdateViewPoint();
 	void GetViewMatrix(XMMATRIX&);
 
 	//void RenderBaseViewMatrix();

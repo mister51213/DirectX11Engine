@@ -160,8 +160,7 @@ PixelInputType LightVertexShader(VertexInputType input)
     output.lightViewPosition = mul(output.lightViewPosition, lightProjectionMatrix);
 
 	 // Determine the light position based on the position of the light and the position of the vertex in the world.
-    output.lightShadowPos = c_lightShadowPos.xyz - worldPosition.xyz;
-    output.lightShadowPos = normalize(output.lightShadowPos);
+    output.lightShadowPos = normalize(c_lightShadowPos.xyz - worldPosition.xyz);
 
 	return output;
 }

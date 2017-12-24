@@ -88,7 +88,7 @@ XMFLOAT3 Camera::GetRotation()
 	return XMFLOAT3(_rotationX, _rotationY, _rotationZ);
 }
 
-void Camera::UpdateViewFromPosition()
+void Camera::UpdateViewPoint()
 {
 	XMFLOAT3 up, position, lookAt;
 	XMVECTOR upVector, positionVector, lookAtVector;

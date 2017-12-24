@@ -35,7 +35,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* s
 
 	XMFLOAT3 camPos = scene->GetCamera()->GetMovementComponent()->GetPosition();
 	_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
-	_Camera->UpdateViewFromPosition();
+	_Camera->UpdateViewPoint();
 
 	InitializeModels(hwnd, screenWidth, screenHeight, scene->_Actors);
 
@@ -169,7 +169,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		bathTex, EShaderType::ETEXTURE);
 
 	_ShadowMap.reset(new RenderTextureClass);
-	result = _ShadowMap->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
+	result = _ShadowMap->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
 	CHECK(result, "refraction render to texture");
 
 	///////////////////////////////////////////////
@@ -184,7 +184,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	}
 
 	// Initialize the refraction render to texture object.
-	result = _RefractionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
+	result = _RefractionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR);
 	CHECK(result, "refraction render to texture");
 
 	// Create the reflection render to texture object.
@@ -195,7 +195,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	}
 
 	// Initialize the reflection render to texture object.
-	result = _ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight);
+	result = _ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR);
 	CHECK(result, "reflection render to texture");
 
 	//////////////////////////////////////////////////////
@@ -414,7 +414,7 @@ bool Graphics::RenderRefractionToTexture(float surfaceHeight)
 	_RefractionTexture->ClearRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView(), 0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Generate the view matrix based on the camera's position.
-	_Camera->UpdateViewFromPosition();
+	_Camera->UpdateViewPoint();
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	_D3D->GetWorldMatrix(worldMatrix);
@@ -541,7 +541,7 @@ bool Graphics::RenderScene(vector<unique_ptr<Actor>>& sceneActors, float frameTi
 	_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f); //@EFFECT - init to fog color here if you want to use fog
 
 	// Generate the view matrix based on the camera's position.
-	_Camera->UpdateViewFromPosition();
+	_Camera->UpdateViewPoint();
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	_D3D->GetWorldMatrix(worldMatrix);
