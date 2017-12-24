@@ -37,7 +37,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* s
 	_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
 	_Camera->UpdateViewFromPosition();
 
-	InitializeModels(hwnd, screenWidth, screenHeight, &(scene->_Actors));
+	InitializeModels(hwnd, screenWidth, screenHeight, scene->_Actors);
 
 	InitializeLights(scene);
 
@@ -51,18 +51,18 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* s
 	return true;
 }
 
-bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight, vector<unique_ptr<Actor>>* sceneActors)
+bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight, vector<unique_ptr<Actor>>& sceneActors)
 {
 	///////////////// DEFAULT APPEARANCE INIT /////////////////////
-	for (int i = 0; i < sceneActors->size(); ++i)
+	for (int i = 0; i < sceneActors.size(); ++i)
 	{
-		if ((*sceneActors)[i]->bCustomAppearance)
+		if (sceneActors[i]->bCustomAppearance)
 		{
 			continue;
 		}
 
 		_DefaultModels.push_back(unique_ptr<Model>());
-		(*sceneActors)[i]->SetModel(_DefaultModels[i].get());
+		sceneActors[i]->SetModel(_DefaultModels[i].get());
 
 		vector<char*>defaultTex{
 			"../DirectX11Engine/data/noise.png",
@@ -98,7 +98,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 		"../DirectX11Engine/data/ground.txt",groundTex,	EShaderType::ELIGHT_SPECULAR);
 	CHECK(result, "ground model");
 
-	(*sceneActors)[(*sceneActors).size() - 4]->SetModel(_GroundModel.get());
+	sceneActors[sceneActors.size() - 4]->SetModel(_GroundModel.get());
 
 	// Create the wall model object.
 	_WallModel.reset(new Model);
@@ -116,7 +116,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 
 	result = _WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),"../DirectX11Engine/data/wall.txt",	wallTex,EShaderType::ELIGHT_SPECULAR);
 	CHECK(result, "wall model");
-	(*sceneActors)[(*sceneActors).size() - 3]->SetModel(_WallModel.get());
+	sceneActors[sceneActors.size() - 3]->SetModel(_WallModel.get());
 
 	// Create the bath model object.
 	_BathModel.reset(new Model);
@@ -137,7 +137,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	result = _BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		"../DirectX11Engine/data/bath.txt",	bathTex,EShaderType::EREFRACTION);
 	CHECK(result, "bath model");
-	(*sceneActors)[(*sceneActors).size() - 2]->SetModel(_BathModel.get());
+	sceneActors[sceneActors.size() - 2]->SetModel(_BathModel.get());
 
 	// Create the water model object.
 	_WaterModel.reset(new Model);
@@ -153,10 +153,10 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	CHECK(result, "water model");
 
 	_WaterModel->GetMaterial()->reflectRefractScale = 0.01f;
-	_WaterModel->GetMaterial()->waterHeight = (*sceneActors)[3]->GetMovementComponent()->GetPosition().y;
+	_WaterModel->GetMaterial()->waterHeight = sceneActors[3]->GetMovementComponent()->GetPosition().y;
 	_WaterModel->GetMaterial()->bAnimated = true;
 
-	(*sceneActors)[(*sceneActors).size() - 1]->SetModel(_WaterModel.get());
+	sceneActors[sceneActors.size() - 1]->SetModel(_WaterModel.get());
 
 	//////////////////////////////////////////////
 	///////////// CUSTOM SHADOW DEMO /////////////

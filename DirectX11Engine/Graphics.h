@@ -47,7 +47,7 @@ public:
 	// Create the D3DClass object and call the D3DClass Initialize function.
 	bool Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* scene);
 	bool InitializeLights(Scene* pScene);
-	bool InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight, vector<unique_ptr<Actor>>* sceneActors);
+	bool InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight, vector<unique_ptr<Actor>>& sceneActors);
 	bool InitializeUI(int screenWidth, int screenHeight);
 	bool UpdateFrame(float frameTime, class Scene* scene, int fps);
 
