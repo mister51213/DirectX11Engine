@@ -51,7 +51,7 @@ public:
 	bool InitializeUI(int screenWidth, int screenHeight);
 	bool UpdateFrame(float frameTime, class Scene* scene, int fps);
 
-	bool DrawFrame(vector<unique_ptr<Actor>>* sceneActors, float frameTime);
+	bool DrawFrame(vector<unique_ptr<Actor>>& sceneActors, float frameTime);
 
 	bool RenderRefractionToTexture(float surfaceHeight);
 
@@ -63,7 +63,7 @@ public:
 
 private:
 	bool RenderReflectionToTexture();
-	bool RenderScene(vector<unique_ptr<Actor>>* sceneActors, float frameTime);
+	bool RenderScene(vector<unique_ptr<Actor>>& sceneActors, float frameTime);
 
 	bool UpdateFpsString(ID3D11DeviceContext*, int);
 	bool UpdatePositionStrings(ID3D11DeviceContext*, float, float, float, float, float, float);

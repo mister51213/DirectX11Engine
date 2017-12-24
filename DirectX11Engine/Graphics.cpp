@@ -354,7 +354,7 @@ bool Graphics::UpdateFrame(float frameTime, Scene* scene, int fps)
 
 	// Update the position of the light each frame.
 	static float lightPositionX = -5.f;
-	lightPositionX += 0.002f*frameTime;
+	lightPositionX += 0.002f * frameTime;
 	if (lightPositionX > 5.0f)
 	lightPositionX = -5.0f;
 	_Light->SetPosition(lightPositionX, 8.0f, -5.0f);
@@ -366,13 +366,13 @@ bool Graphics::UpdateFrame(float frameTime, Scene* scene, int fps)
 	if (!result){return false;}
 
 	// 5. Draw the Actual frame
-	result = DrawFrame(&(scene->_Actors), frameTime); 
+	result = DrawFrame(scene->_Actors, frameTime); 
 	if (!result)return false;
 
 	return true;
 }
 
-bool Graphics::DrawFrame(vector<unique_ptr<Actor>>* sceneActors, float frameTime)
+bool Graphics::DrawFrame(vector<unique_ptr<Actor>>& sceneActors, float frameTime)
 {
 	// Render the refraction of the scene to a texture.
 	bool result = RenderRefractionToTexture(_WaterModel->GetMaterial()->waterHeight);
@@ -533,7 +533,7 @@ bool Graphics::RenderReflectionToTexture()
 	return true;
 }
 
-bool Graphics::RenderScene(vector<unique_ptr<Actor>>* sceneActors, float frameTime)
+bool Graphics::RenderScene(vector<unique_ptr<Actor>>& sceneActors, float frameTime)
 {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix;
 
@@ -549,8 +549,8 @@ bool Graphics::RenderScene(vector<unique_ptr<Actor>>* sceneActors, float frameTi
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
 	//@TODO: TEMP HACK!!!!!! - MUST ENCAPSULATE!!!!!!!
-	(*sceneActors)[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
-	(*sceneActors)[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
+	sceneActors[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
+	sceneActors[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
 	//@TODO: TEMP HACK!!!!!! - MUST ENCAPSULATE!!!!!!!
 
 	//for (int i = 0; i < (*sceneActors).size(); ++i)
