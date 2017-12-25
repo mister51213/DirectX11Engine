@@ -176,6 +176,9 @@ void RenderTextureClass::SetRenderTarget(ID3D11DeviceContext* deviceContext/*, I
 	//deviceContext->OMSetRenderTargets(1, &_renderTargetView, depthStencilView);
 	deviceContext->OMSetRenderTargets(1, &_renderTargetView, _depthStencilView);
 
+	// Set the viewport.
+	deviceContext->RSSetViewports(1, &_viewport);
+
 	return;
 }
 
