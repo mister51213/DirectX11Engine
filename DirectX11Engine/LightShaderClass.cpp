@@ -136,7 +136,13 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	//////////////// LIGHT POSITION - VS BUFFER 2 ///////////////////////
 	bufferNumber++;
-	LightPositionBufferType tempLightPosBuff = { lights[0]->GetPosition(), lights[1]->GetPosition(), lights[2]->GetPosition(), lights[3]->GetPosition() };
+
+	XMFLOAT4 pos1(lights[0]->GetPosition().x, lights[0]->GetPosition().y, lights[0]->GetPosition().z, 1);
+	XMFLOAT4 pos2(lights[1]->GetPosition().x, lights[1]->GetPosition().y, lights[1]->GetPosition().z, 1);
+	XMFLOAT4 pos3(lights[2]->GetPosition().x, lights[2]->GetPosition().y, lights[2]->GetPosition().z, 1);
+	XMFLOAT4 pos4(lights[3]->GetPosition().x, lights[3]->GetPosition().y, lights[3]->GetPosition().z, 1);
+	//LightPositionBufferType tempLightPosBuff = { lights[0]->GetPosition(), lights[1]->GetPosition(), lights[2]->GetPosition(), lights[3]->GetPosition() };
+	LightPositionBufferType tempLightPosBuff = { pos1, pos2, pos3, pos4 };
 	MapBuffer(tempLightPosBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 

@@ -54,6 +54,8 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* s
 
 bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHeight, vector<unique_ptr<Actor>>& sceneActors)
 {
+#pragma region DEFAULT DRAWING
+
 	///////////////// DEFAULT APPEARANCE INIT /////////////////////
 	for (int i = 0; i < sceneActors.size(); ++i)
 	{
@@ -160,6 +162,19 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 
 	sceneActors[sceneActors.size() - 1]->SetModel(_WaterModel.get());
 
+	// Create the model list object.
+	_ModelList.reset(new ModelListClass);
+	if (!_ModelList)
+	{
+		return false;
+	}
+
+	// Initialize the model list object.
+	result = _ModelList->Initialize(20);
+	CHECK(result, "model list");
+
+#pragma endregion
+
 	//////////////////////////////////////////////
 	///////////// CUSTOM SHADOW DEMO /////////////
 	//////////////////////////////////////////////
@@ -181,13 +196,13 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	vector<char*>gTex = { "../DirectX11Engine/data/metal001.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds" };
 	_ShadowGround->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt",
 		gTex, EShaderType::ELIGHT_SPECULAR);
-	_ShadowGround->SetPosition(XMFLOAT3(0, 1.f, 0));
+	_ShadowGround->SetPosition(XMFLOAT3(0, 0.f, -2));
 	_ShadowGround->SetOrientation(XMFLOAT3(0, 0, 0));
 
 
 	_ShadowMap.reset(new RenderTextureClass);
 	//result = _ShadowMap->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR);
-	result = _ShadowMap->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH*2, SHADOWMAP_WIDTH*2, SCREEN_DEPTH, SCREEN_NEAR);
+	result = _ShadowMap->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_WIDTH, SCREEN_DEPTH, SCREEN_NEAR);
 	//result = _ShadowMap->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
 	CHECK(result, "refraction render to texture");
 
@@ -225,23 +240,13 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	// Create the frustum object.
 	_Frustum.reset(new FrustumClass);
 
-	// Create the model list object.
-	_ModelList.reset(new ModelListClass);
-	if (!_ModelList)
-	{
-		return false;
-	}
-
-	// Initialize the model list object.
-	result = _ModelList->Initialize(20);
-	CHECK(result, "model list");
-
 	return true;
 }
 
 bool Graphics::InitializeLights(Scene* pScene)
 {
 	// Create the skylight object.
+	_Light.reset(new LightClass);
 	_Light.reset(new LightClass);
 
 	// Initialize the light object.
@@ -403,8 +408,8 @@ bool Graphics::DrawFrame(vector<unique_ptr<Actor>>& sceneActors, float frameTime
 	if (!result){return false;}
 
 	// Render the reflection of the scene to a texture.
-	result = RenderReflectionToTexture();
-	if (!result){return false;}
+	//result = RenderReflectionToTexture();
+	//if (!result){return false;}
 
 	// Render the scene as normal to the back buffer.
 	result = RenderScene(sceneActors, frameTime);

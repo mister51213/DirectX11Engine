@@ -23,6 +23,7 @@ const int SHADOWMAP_HEIGHT = 1024;
 #include "textclass.h"
 #include "model.h"
 #include "LightClass.h"
+//#include "lightclassALT.h"
 #include "rendertextureclass.h"
 #include "debugwindowclass.h"
 #include "modellistclass.h"
@@ -83,6 +84,7 @@ private:
 	float textureTranslation = 0.f;
 
 	unique_ptr<LightClass> _Light;
+	//unique_ptr<lightclassALT> _Light;
 	vector<unique_ptr<LightClass>> _Lights;
 	vector<LightClass*> _LightData;
 
