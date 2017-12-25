@@ -10,24 +10,32 @@ class Actor
 {
 public:
 	Actor();
-	~Actor();
 
 	bool InitializeMovement(bool visible);
+
+	/////////// Accessor functions ///////////////
+	XMFLOAT3 GetPosition()const;
+	XMFLOAT3 GetOrientation()const;
+
+	void SetPosition(const XMFLOAT3& pos);
+	void SetOrientation(const XMFLOAT3& or);
 
 	inline MovementComponent* GetMovementComponent()
 	{
 		return _MovementComp.get();
 	}
 
-	inline void SetModel(Model* model){_Model = model;}
+	inline void SetModel(Model* model){_Model.reset(model);}
 
-	inline Model* GetModel() const { return _Model; }
+	inline Model* GetModel() const { return _Model.get(); }
+
+
 
 	bool bCustomAppearance = false;
 	bool bVisible = true;
 
 private:
 	unique_ptr<MovementComponent> _MovementComp;
-	Model* _Model;
+	unique_ptr<Model> _Model;
 };
 

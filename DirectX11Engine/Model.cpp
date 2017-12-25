@@ -7,15 +7,9 @@
 using namespace GfxUtil;
 
 Model::Model()
-	:
-	_vertexBuffer(0),
-	_indexBuffer(0)
 {}
 
 Model::Model(const Model& other)
-{}
-
-Model::~Model()
 {}
 
 bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, vector<char*> texFileNames, EShaderType shaderType)
@@ -62,12 +56,6 @@ Material* Model::GetMaterial()
 void Model::SetMaterial(Material* mat)
 {
 	_material.reset(mat);
-}
-
-void Model::Shutdown()
-{
-	// Shutdown the vertex and index buffers.
-	ShutdownBuffers();
 }
 
 int Model::GetIndexCount()
@@ -150,7 +138,7 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 	indexData.SysMemSlicePitch = 0;
 
 	// Create the index buffer.
-	result = device->CreateBuffer(&indexBufferDesc, &indexData, &_indexBuffer);
+	result = device->CreateBuffer(&indexBufferDesc, &indexData, _indexBuffer.GetAddressOf());
 	if (FAILED(result))
 	{
 		return false;
@@ -166,25 +154,6 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 	return true;
 }
 
-void Model::ShutdownBuffers()
-{
-	// Release the index buffer.
-	if (_indexBuffer)
-	{
-		_indexBuffer->Release();
-		_indexBuffer = 0;
-	}
-
-	// Release the vertex buffer.
-	if (_vertexBuffer)
-	{
-		_vertexBuffer->Release();
-		_vertexBuffer = 0;
-	}
-
-	return;
-}
-
 void Model::LoadVertices(ID3D11DeviceContext* deviceContext)
 {
 	unsigned int stride;
@@ -195,10 +164,10 @@ void Model::LoadVertices(ID3D11DeviceContext* deviceContext)
 	offset = 0;
 
 	// Set the vertex buffer to active in the input assembler so it can be rendered.
-	deviceContext->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
+	deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
 
 	// Set the index buffer to active in the input assembler so it can be rendered.
-	deviceContext->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	deviceContext->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

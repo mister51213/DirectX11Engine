@@ -29,7 +29,7 @@ public:
 	XMFLOAT3 GetOrientation() const;
 	XMFLOAT3 GetPosition() const;
 	void SetPosition(const XMFLOAT3& pos);
-	void SetOrientation(XMFLOAT3 & newOrientation);
+	void SetOrientation(const XMFLOAT3 & newOrientation);
 	void TurnLeft(bool);
 	void TurnRight(bool);
 

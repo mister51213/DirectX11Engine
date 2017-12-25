@@ -60,7 +60,7 @@ void MovementComponent::SetPosition(const XMFLOAT3 & pos)
 	_position = pos;
 }
 
-void MovementComponent::SetOrientation(XMFLOAT3& newOrientation)
+void MovementComponent::SetOrientation(const XMFLOAT3& newOrientation)
 {
 	_orientation = newOrientation;
 	return;

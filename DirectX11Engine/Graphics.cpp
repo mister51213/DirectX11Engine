@@ -33,7 +33,8 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* s
 	if (!_Camera)
 	{ return false;}	
 
-	XMFLOAT3 camPos = scene->GetCamera()->GetMovementComponent()->GetPosition();
+	//XMFLOAT3 camPos = scene->GetCamera()->GetMovementComponent()->GetPosition();
+	XMFLOAT3 camPos = scene->GetCamera()->GetPosition();
 	_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
 	_Camera->UpdateViewPoint();
 
@@ -153,7 +154,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	CHECK(result, "water model");
 
 	_WaterModel->GetMaterial()->reflectRefractScale = 0.01f;
-	_WaterModel->GetMaterial()->waterHeight = sceneActors[3]->GetMovementComponent()->GetPosition().y;
+	//_WaterModel->GetMaterial()->waterHeight = sceneActors[3]->GetMovementComponent()->GetPosition().y;
+	_WaterModel->GetMaterial()->waterHeight = sceneActors[3]->GetPosition().y;
 	_WaterModel->GetMaterial()->bAnimated = true;
 
 	sceneActors[sceneActors.size() - 1]->SetModel(_WaterModel.get());
@@ -246,7 +248,8 @@ bool Graphics::InitializeLights(Scene* pScene)
 		_Lights.push_back(unique_ptr<LightClass>());
 		_Lights[i].reset(new LightClass);
 
-		XMFLOAT3 worldPosition = pScene->_LightActors[i]->GetMovementComponent()->GetPosition();
+		//XMFLOAT3 worldPosition = pScene->_LightActors[i]->GetMovementComponent()->GetPosition();
+		XMFLOAT3 worldPosition = pScene->_LightActors[i]->GetPosition();
 		_Lights[i]->SetPosition(worldPosition.x, worldPosition.y, worldPosition.z);
 	}
 
@@ -345,15 +348,18 @@ bool Graphics::UpdateFrame(float frameTime, Scene* scene, int fps)
 	}
 	
 	// 2. Update Camera
-	XMFLOAT3 camPos= scene->GetCamera()->GetMovementComponent()->GetPosition();
-	XMFLOAT3 camRot = scene->GetCamera()->GetMovementComponent()->GetOrientation();
+	//XMFLOAT3 camPos = scene->GetCamera()->GetMovementComponent()->GetPosition();
+	XMFLOAT3 camPos= scene->GetCamera()->GetPosition();
+	//XMFLOAT3 camRot = scene->GetCamera()->GetMovementComponent()->GetOrientation();
+	XMFLOAT3 camRot = scene->GetCamera()->GetOrientation();
 	_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
 	_Camera->SetRotation(camRot.x, camRot.y, camRot.z);
 
 	// 3. Update Lights
 	for (int i = 0; i < NUM_LIGHTS; ++i)
 	{
-		XMFLOAT3 worldPosition = scene->_LightActors[i]->GetMovementComponent()->GetPosition();
+		//XMFLOAT3 worldPosition = scene->_LightActors[i]->GetMovementComponent()->GetPosition();
+		XMFLOAT3 worldPosition = scene->_LightActors[i]->GetPosition();
 		_Lights[i]->SetPosition(worldPosition.x, worldPosition.y, worldPosition.z);
 	}
 

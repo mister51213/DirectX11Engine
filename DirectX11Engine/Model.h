@@ -65,10 +65,9 @@ private:
 public:
 	Model();
 	Model(const Model&);
-	~Model();
+	//~Model();
 
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, vector<char*> fileNames, EShaderType shaderType);
-	void Shutdown();
 
 	/** Needed by the shader to draw this model */
 	int GetIndexCount();
@@ -83,14 +82,13 @@ public:
 
 private:
 	bool InitializeBuffers(ID3D11Device* device);
-	void ShutdownBuffers();
 	//functions for calculating the tangent and binormal vectors for the model.
 	void CalculateModelVectors();
 	void CalculateTangentBinormal(TempVertexType, TempVertexType, TempVertexType, VectorType&, VectorType&);
 	void CalculateNormal(VectorType, VectorType, VectorType&);
 
 private:
-	ID3D11Buffer *_vertexBuffer, *_indexBuffer;
+	ComPtr<ID3D11Buffer> _vertexBuffer, _indexBuffer;
 	int _vertexCount, _indexCount;
 	unique_ptr<ModelType> _model; // used to read in and hold the model data before it is placed in the vertex buffer.
 	
