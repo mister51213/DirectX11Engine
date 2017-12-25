@@ -1068,7 +1068,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Create the depth shader object.
-	m_DepthShader = new DepthShaderClass;
+	//m_DepthShader = new DepthShaderClass;
+	m_DepthShader = new depthShaderClassALT;
 	if (!m_DepthShader)
 	{
 		return false;
@@ -1076,7 +1077,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	// Initialize the depth shader object.
 	//result = m_DepthShader->Initialize(m_D3D->GetDevice(), hwnd);
-	result = m_DepthShader->Initialize(m_D3D->GetDevice(), hwnd, "../DirectX11Engine/depth.vs", "../DirectX11Engine/depth.ps");
+	result = m_DepthShader->Initialize(m_D3D->GetDevice(), hwnd/*, "../DirectX11Engine/depth.vs", "../DirectX11Engine/depth.ps"*/);
 
 	if (!result)
 	{

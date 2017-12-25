@@ -73,8 +73,8 @@ void Scene::ProcessInput(float deltaTime, Input* pInput)
 	uint32_t x = pInput->GetMouseXY() >> 32;
 	uint32_t y = pInput->GetMouseXY() & 0xffffffff;
 	_Camera->GetMovementComponent()->SetOrientation(XMFLOAT3(
-		static_cast<float>(*reinterpret_cast<int *>(&(y))), 
 		static_cast<float>(*reinterpret_cast<int *>(&(x))), 
+		static_cast<float>(*reinterpret_cast<int *>(&(y))), 
 		0.f));
 
 	_Camera->GetMovementComponent()->MoveForward(pInput->IsKeyDown(DIK_W));

@@ -136,7 +136,8 @@
 //#include "lightclass.h"
 #include "lightclassALT.h"
 #include "rendertextureclass.h"
-#include "depthshaderclass.h"
+//#include "depthshaderclass.h"
+#include "depthshaderclassALT.h"
 #include "shadowshaderclass.h"
 
 
@@ -175,7 +176,8 @@ private:
 	ModelClass *m_CubeModel, *m_GroundModel, *m_SphereModel;
 	lightclassALT* m_Light;
 	RenderTextureClass* m_RenderTexture;
-	DepthShaderClass* m_DepthShader;
+	//DepthShaderClass* m_DepthShader;
+	depthShaderClassALT* m_DepthShader;
 	ShadowShaderClass* m_ShadowShader;
 };
 

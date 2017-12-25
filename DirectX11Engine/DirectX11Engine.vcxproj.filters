@@ -558,9 +558,6 @@
     <ClCompile Include="GfxUtil.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DepthShaderClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CameraClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -574,6 +571,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="textureClassALT.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthShaderClass.cpp">
+      <Filter>Source Files\Shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="depthShaderClassALT.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1316,9 +1319,6 @@
     <ClInclude Include="TimerClass.h">
       <Filter>Header Files\Tier1</Filter>
     </ClInclude>
-    <ClInclude Include="DepthShaderClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CameraClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1332,6 +1332,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="textureClassALT.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthShaderClass.h">
+      <Filter>Header Files\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="depthShaderClassALT.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
