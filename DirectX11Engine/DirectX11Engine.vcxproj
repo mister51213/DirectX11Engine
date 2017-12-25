@@ -293,6 +293,7 @@
     <ClCompile Include="BULLET\LinearMath\btSerializer.cpp" />
     <ClCompile Include="BULLET\LinearMath\btVector3.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="CameraClass.cpp" />
     <ClCompile Include="CpuClass.cpp" />
     <ClCompile Include="DebugWindowClass.cpp" />
     <ClCompile Include="DepthShaderClass.cpp" />
@@ -302,7 +303,9 @@
     <ClCompile Include="FrustumClass.cpp" />
     <ClCompile Include="GfxUtil.cpp" />
     <ClCompile Include="LightClass.cpp" />
+    <ClCompile Include="lightclassALT.cpp" />
     <ClCompile Include="LightShaderClass.cpp" />
+    <ClCompile Include="ModelClass.cpp" />
     <ClCompile Include="ModelListClass.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Position.cpp" />
@@ -311,6 +314,7 @@
     <ClCompile Include="RenderTextureClass.cpp" />
     <ClCompile Include="ShaderClass.cpp" />
     <ClCompile Include="ShaderManagerClass.cpp" />
+    <ClCompile Include="shadowshaderclass.cpp" />
     <ClCompile Include="TextClass.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="D3DClass.cpp" />
@@ -319,6 +323,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="System.cpp" />
+    <ClCompile Include="textureClassALT.cpp" />
     <ClCompile Include="TextureShaderClass.cpp" />
     <ClCompile Include="TimerClass.cpp" />
     <ClCompile Include="UI.cpp" />
@@ -541,6 +546,7 @@
     <ClInclude Include="BULLET\LinearMath\btTransformUtil.h" />
     <ClInclude Include="BULLET\LinearMath\btVector3.h" />
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="CameraClass.h" />
     <ClInclude Include="CpuClass.h" />
     <ClInclude Include="DebugWindowClass.h" />
     <ClInclude Include="DepthShaderClass.h" />
@@ -551,7 +557,9 @@
     <ClInclude Include="GfxUtil.h" />
     <ClInclude Include="GlobalIncludes.h" />
     <ClInclude Include="LightClass.h" />
+    <ClInclude Include="lightclassALT.h" />
     <ClInclude Include="LightShaderClass.h" />
+    <ClInclude Include="ModelClass.h" />
     <ClInclude Include="ModelListClass.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Position.h" />
@@ -560,6 +568,7 @@
     <ClInclude Include="RenderTextureClass.h" />
     <ClInclude Include="ShaderClass.h" />
     <ClInclude Include="ShaderManagerClass.h" />
+    <ClInclude Include="shadowshaderclass.h" />
     <ClInclude Include="TextClass.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="D3DClass.h" />
@@ -567,6 +576,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="System.h" />
+    <ClInclude Include="textureClassALT.h" />
     <ClInclude Include="TextureShaderClass.h" />
     <ClInclude Include="TimerClass.h" />
     <ClInclude Include="UI.h" />

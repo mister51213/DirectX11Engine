@@ -170,16 +170,17 @@ void RenderTextureClass::Shutdown()
 	return;
 }
 
-void RenderTextureClass::SetRenderTarget(ID3D11DeviceContext* deviceContext, ID3D11DepthStencilView* depthStencilView)
+void RenderTextureClass::SetRenderTarget(ID3D11DeviceContext* deviceContext/*, ID3D11DepthStencilView* depthStencilView*/)
 {
 	// Bind the render target view and depth stencil buffer to the output render pipeline.
-	deviceContext->OMSetRenderTargets(1, &_renderTargetView, depthStencilView);
+	//deviceContext->OMSetRenderTargets(1, &_renderTargetView, depthStencilView);
+	deviceContext->OMSetRenderTargets(1, &_renderTargetView, _depthStencilView);
 
 	return;
 }
 
 //Same as D3DClass::BeginScene - should be called each frame before rendering to this render target view.
-void RenderTextureClass::ClearRenderTarget(ID3D11DeviceContext* deviceContext, ID3D11DepthStencilView* depthStencilView,
+void RenderTextureClass::ClearRenderTarget(ID3D11DeviceContext* deviceContext,/*, ID3D11DepthStencilView* depthStencilView,*/
 	float red, float green, float blue, float alpha)
 {
 	float color[4];
@@ -195,7 +196,8 @@ void RenderTextureClass::ClearRenderTarget(ID3D11DeviceContext* deviceContext, I
 	deviceContext->ClearRenderTargetView(_renderTargetView, color);
 
 	// Clear the depth buffer.
-	deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	//deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	deviceContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 	return;
 }

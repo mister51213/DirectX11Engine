@@ -80,6 +80,27 @@ public:
 	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
 	void LoadVertices(ID3D11DeviceContext* deviceContext);
 
+	inline XMFLOAT3 GetPosition() const
+	{
+		return _position;
+	}
+
+	inline XMFLOAT3 GetOrientation() const
+	{
+		return _orientation;
+	}
+
+	inline void SetPosition(XMFLOAT3 pos)
+	{
+		_position = pos;
+	}
+
+	inline void SetOrientation(XMFLOAT3 or)
+	{
+		_orientation = or ;
+	}
+
+
 private:
 	bool InitializeBuffers(ID3D11Device* device);
 	//functions for calculating the tangent and binormal vectors for the model.
@@ -91,7 +112,10 @@ private:
 	ComPtr<ID3D11Buffer> _vertexBuffer, _indexBuffer;
 	int _vertexCount, _indexCount;
 	unique_ptr<ModelType> _model; // used to read in and hold the model data before it is placed in the vertex buffer.
-	
 	unique_ptr<Material> _material;
+
+	// Relative position and orientation (TODO: tie to parent actor)
+	XMFLOAT3 _position;
+	XMFLOAT3 _orientation;
 };
 

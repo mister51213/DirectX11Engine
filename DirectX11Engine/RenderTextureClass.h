@@ -27,11 +27,11 @@ public:
 	RenderTextureClass(const RenderTextureClass&);
 	~RenderTextureClass();
 
-	bool Initialize(ID3D11Device*, int, int, float screenDepth, float screenNear);
+	bool Initialize(ID3D11Device* device, int textureWidth, int textureHeight, float screenDepth, float screenNear);
 	void Shutdown();
 
-	void SetRenderTarget(ID3D11DeviceContext*, ID3D11DepthStencilView*);
-	void ClearRenderTarget(ID3D11DeviceContext* deviceContext, ID3D11DepthStencilView* depthStencilView,
+	void SetRenderTarget(ID3D11DeviceContext*/*, ID3D11DepthStencilView**/);
+	void ClearRenderTarget(ID3D11DeviceContext* deviceContext/*, ID3D11DepthStencilView* depthStencilView*/,
 		float red, float green, float blue, float alpha);
 	ID3D11ShaderResourceView* GetShaderResourceView();
 	

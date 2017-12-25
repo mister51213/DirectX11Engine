@@ -73,7 +73,8 @@ private:
 	unique_ptr<Input> _Input;
 	unique_ptr<Physics> _Physics;
 	unique_ptr<Scene> _Scene;
-	unique_ptr<Graphics> _Graphics;
+	//unique_ptr<Graphics> _Graphics;
+	unique_ptr<GraphicsClass> _Graphics;
 	unique_ptr<UI> _UI;
 };
 
