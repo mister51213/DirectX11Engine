@@ -612,6 +612,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="shadow.ps" />
+    <None Include="shadow.vs" />
     <None Include="texture_ps.hlsl">
       <FileType>Document</FileType>
     </None>

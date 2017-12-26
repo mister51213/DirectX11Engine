@@ -1391,5 +1391,11 @@
     <None Include="depth.ps">
       <Filter>HLSL Files</Filter>
     </None>
+    <None Include="shadow.ps">
+      <Filter>HLSL Files</Filter>
+    </None>
+    <None Include="shadow.vs">
+      <Filter>HLSL Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
