@@ -19,21 +19,18 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* s
 	HRESULT result;
 
 	_D3D.reset(new D3DClass);
-	if (!_D3D){return false;}
-
 	_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
 
 	_ShaderManager.reset(new ShaderManagerClass);
-	if (!_ShaderManager)return false;
-	
 	_ShaderManager->Initialize(_D3D->GetDevice(), hwnd);
 
 	_ShadowShader.reset(new ShadowShaderClass);
 	_ShadowShader->Initialize(_D3D->GetDevice(), hwnd);
 
+	_DepthShader.reset(new depthShaderClassALT);
+	_DepthShader->Initialize(_D3D->GetDevice(), hwnd);
+
 	_Camera.reset(new Camera);
-	if (!_Camera)
-	{ return false;}	
 
 	//XMFLOAT3 camPos = scene->GetCamera()->GetMovementComponent()->GetPosition();
 	XMFLOAT3 camPos = scene->GetCamera()->GetPosition();
@@ -198,7 +195,7 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	vector<char*>gTex = { "../DirectX11Engine/data/metal001.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds" };
 	_ShadowGround->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt",
 		gTex, EShaderType::ELIGHT_SPECULAR);
-	_ShadowGround->SetPosition(XMFLOAT3(0, 0.f, -2));
+	_ShadowGround->SetPosition(XMFLOAT3(0, 0.f, 0));
 	_ShadowGround->SetOrientation(XMFLOAT3(0, 0, 0));
 
 
@@ -248,41 +245,41 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 bool Graphics::InitializeLights(Scene* pScene)
 {
 	// Create the skylight object.
-	_Light.reset(new LightClass);
-	_Light.reset(new LightClass);
+	//_Light.reset(new LightClass);
+	_Light.reset(new lightclassALT);
 
 	// Initialize the light object.
 	_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	//_Light->SetDirection(0.0f, -1.0f, 0.5f);
-	_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_Light->SetSpecularPower(16.0f); // the lower the power, the higher the effect intensity
+	//_Light->SetSpecularColor(1.0f, 1.0f, 1.0f, 1.0f);
+	//_Light->SetSpecularPower(16.0f); // the lower the power, the higher the effect intensity
 
 	// Shadows
 	_Light->SetLookAt(0.0f, 0.0f, 0.0f);
 	_Light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
 
 	// Create list of point lights
-	for (int i = 0; i < NUM_LIGHTS; ++i)
-	{
-		_Lights.push_back(unique_ptr<LightClass>());
-		_Lights[i].reset(new LightClass);
+	//for (int i = 0; i < NUM_LIGHTS; ++i)
+	//{
+	//	_Lights.push_back(unique_ptr<LightClass>());
+	//	_Lights[i].reset(new LightClass);
 
-		//XMFLOAT3 worldPosition = pScene->_LightActors[i]->GetMovementComponent()->GetPosition();
-		XMFLOAT3 worldPosition = pScene->_LightActors[i]->GetPosition();
-		_Lights[i]->SetPosition(worldPosition.x, worldPosition.y, worldPosition.z);
-	}
+	//	//XMFLOAT3 worldPosition = pScene->_LightActors[i]->GetMovementComponent()->GetPosition();
+	//	XMFLOAT3 worldPosition = pScene->_LightActors[i]->GetPosition();
+	//	_Lights[i]->SetPosition(worldPosition.x, worldPosition.y, worldPosition.z);
+	//}
 
-	_Lights[0]->SetDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f);
-	_Lights[1]->SetDiffuseColor(0.0f, 1.0f, 0.0f, 1.0f);
-	_Lights[2]->SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);
-	_Lights[3]->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	//_Lights[0]->SetDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f);
+	//_Lights[1]->SetDiffuseColor(0.0f, 1.0f, 0.0f, 1.0f);
+	//_Lights[2]->SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);
+	//_Lights[3]->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	// STORE LIGHT DATA
-	for (auto& light : _Lights)
-	{
-		_LightData.push_back(light.get());
-	}
+	//for (auto& light : _Lights)
+	//{
+	//	_LightData.push_back(light.get());
+	//}
 	
 	return true;
 }
@@ -384,7 +381,7 @@ bool Graphics::UpdateFrame(float frameTime, Scene* scene, int fps)
 	lightPositionX += 0.002f * frameTime;
 	if (lightPositionX > 5.0f)
 	lightPositionX = -5.0f;
-	_Light->SetPosition(lightPositionX, 8.0f, -5.0f);
+	_Light->SetPosition(lightPositionX, 6.0f, -5.0f);
 
 	// 4. Update UI
 	UpdateFpsString(_D3D->GetDeviceContext(), fps);
@@ -424,8 +421,10 @@ void Graphics::Render()
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
 	// Get the light's view and projection matrices from the light object.
-	lightViewMatrix = _Light->GetViewMatrix();
-	lightProjectionMatrix = _Light->GetProjectionMatrix();
+	//lightViewMatrix = _Light->GetViewMatrix();
+	_Light->GetViewMatrix(lightViewMatrix);
+	//lightProjectionMatrix = _Light->GetProjectionMatrix();
+	_Light->GetProjectionMatrix(lightProjectionMatrix);
 
 	// Setup the translation matrix for the cube model.
 	XMFLOAT3 cPos = _CubeModel->GetPosition(/*posX, posY, posZ*/);
@@ -500,8 +499,10 @@ void Graphics::RenderSceneToTexture()
 	_D3D->GetWorldMatrix(worldMatrix);
 
 	// Get the view and orthographic matrices from the light object.
-	lightViewMatrix = _Light->GetViewMatrix();
-	lightProjectionMatrix = _Light->GetProjectionMatrix();
+	//lightViewMatrix = _Light->GetViewMatrix();
+	_Light->GetViewMatrix(lightViewMatrix);
+	//lightProjectionMatrix = _Light->GetProjectionMatrix();
+	_Light->GetProjectionMatrix(lightProjectionMatrix);
 
 	// Setup the translation matrix for the cube model.
 	XMFLOAT3 cPos = _CubeModel->GetPosition(/*posX, posY, posZ*/);
@@ -614,28 +615,30 @@ bool Graphics::RenderRefractionToTexture(float surfaceHeight)
 	_D3D->GetWorldMatrix(worldMatrix);
 
 	// Get the view and orthographic matrices from the light object.
-	lightViewMatrix = _Light->GetViewMatrix();
-	lightProjectionMatrix = _Light->GetProjectionMatrix();
+	//lightViewMatrix = _Light->GetViewMatrix();
+	_Light->GetViewMatrix(lightViewMatrix);
+	//lightProjectionMatrix = _Light->GetProjectionMatrix();
+	_Light->GetProjectionMatrix(lightProjectionMatrix);
 
 	//////////////////////////////////////////////////////////////////
 	// Setup the translation matrix for the CUBE MODEL.
 	worldMatrix = DirectX::XMMatrixTranslation(_CubeModel->GetPosition().x, _CubeModel->GetPosition().y, _CubeModel->GetPosition().z);
 	_CubeModel->LoadVertices(_D3D->GetDeviceContext());
-	_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+	_DepthShader->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 	_D3D->GetWorldMatrix(worldMatrix);
 
 	//////////////////////////////////////////////////////////////////
 	// RENDER THE SPHERE MODEL WITH THE DEPTH SHADER.
 	worldMatrix = DirectX::XMMatrixTranslation(_SphereModel->GetPosition().x, _SphereModel->GetPosition().y, _SphereModel->GetPosition().z);
 	_SphereModel->LoadVertices(_D3D->GetDeviceContext());
-	_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+	_DepthShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 	_D3D->GetWorldMatrix(worldMatrix);
 
 	//////////////////////////////////////////////////////////////////
 	// RENDER THE GROUND MODEL WITH THE DEPTH SHADER.
 	worldMatrix = DirectX::XMMatrixTranslation(_ShadowGround->GetPosition().x, _ShadowGround->GetPosition().y, _ShadowGround->GetPosition().z);
 	_ShadowGround->LoadVertices(_D3D->GetDeviceContext());
-	_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _ShadowGround->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+	_DepthShader->Render(_D3D->GetDeviceContext(), _ShadowGround->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 
 	///////////////////////////////////
 	///////// RESET ALL //////////
@@ -691,107 +694,107 @@ bool Graphics::RenderReflectionToTexture()
 
 bool Graphics::RenderScene(vector<unique_ptr<Actor>>& sceneActors, float frameTime)
 {
-	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix;
+	//XMMATRIX worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix;
 
-	// Clear the buffers to begin the scene.
-	_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f); //@EFFECT - init to fog color here if you want to use fog
+	//// Clear the buffers to begin the scene.
+	//_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f); //@EFFECT - init to fog color here if you want to use fog
 
-	// Generate the view matrix based on the camera's position.
-	_Camera->UpdateViewPoint();
+	//// Generate the view matrix based on the camera's position.
+	//_Camera->UpdateViewPoint();
 
-	// Generate the light view matrix based on the light's position.
+	//// Generate the light view matrix based on the light's position.
+	////_Light->GenerateViewMatrix();
+
+	//// Get the world, view, and projection matrices from the camera and d3d objects.
+	//_Camera->GetViewMatrix(viewMatrix);
+	//_D3D->GetWorldMatrix(worldMatrix);
+	//_D3D->GetProjectionMatrix(projectionMatrix);
+
+	////@TODO: TEMP HACK!!!!!! - MUST ENCAPSULATE!!!!!!!
+	////sceneActors[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
+	////sceneActors[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
+	////@TODO: TEMP HACK!!!!!! - MUST ENCAPSULATE!!!!!!!
+
+	////for (int i = 0; i < (*sceneActors).size(); ++i)
+	////{
+	////	XMFLOAT3 translation = (*sceneActors)[i]->GetMovementComponent()->GetPosition();
+	////	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z));
+
+	////	(*sceneActors)[i]->GetModel()->LoadVertices(_D3D->GetDeviceContext());
+
+	////	if((*sceneActors)[i]->GetModel()->GetMaterial()->transparency != 0.f)
+	////		_D3D->EnableAlphaBlending();
+
+	////	bool result = _ShaderManager->Render(_D3D->GetDeviceContext(), (*sceneActors)[i]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	////		(*sceneActors)[i]->GetModel()->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0,0,0), _Camera->GetReflectionViewMatrix());
+	////	if (!result) return false;
+
+	////	if ((*sceneActors)[i]->GetModel()->GetMaterial()->transparency != 0.f)
+	////		_D3D->DisableAlphaBlending();
+
+	////	// reset world matrix
+	////	_D3D->GetWorldMatrix(worldMatrix);
+	////}
+	//
+	////@TEST SECTION - Point lights not working
+	////XMFLOAT3 translation = (*sceneActors)[0]->GetMovementComponent()->GetPosition();
+	////worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z));
+	////(*sceneActors)[0]->GetModel()->LoadVertices(_D3D->GetDeviceContext());
+
+	////_ShaderManager->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	////	_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix());
+
+	//// TESTING SHADOWS // - WORKING
+
+	//// Generate the light view matrix based on the light's position.
 	//_Light->GenerateViewMatrix();
+	////_Light->GenerateProjectionMatrix();
 
-	// Get the world, view, and projection matrices from the camera and d3d objects.
-	_Camera->GetViewMatrix(viewMatrix);
-	_D3D->GetWorldMatrix(worldMatrix);
-	_D3D->GetProjectionMatrix(projectionMatrix);
+	//// Get the light's view and projection matrices from the light object.
+	//XMMATRIX lightViewMatrix = _Light->GetViewMatrix();
+	//XMMATRIX lightProjectionMatrix = _Light->GetProjectionMatrix();
 
-	//@TODO: TEMP HACK!!!!!! - MUST ENCAPSULATE!!!!!!!
-	//sceneActors[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView();
-	//sceneActors[3]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView();
-	//@TODO: TEMP HACK!!!!!! - MUST ENCAPSULATE!!!!!!!
+	//// CUBE
+	//_D3D->GetWorldMatrix(worldMatrix);
+	//worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(_CubeModel->GetPosition().x, _CubeModel->GetPosition().y, _CubeModel->GetPosition().z));
 
-	//for (int i = 0; i < (*sceneActors).size(); ++i)
-	//{
-	//	XMFLOAT3 translation = (*sceneActors)[i]->GetMovementComponent()->GetPosition();
-	//	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z));
-
-	//	(*sceneActors)[i]->GetModel()->LoadVertices(_D3D->GetDeviceContext());
-
-	//	if((*sceneActors)[i]->GetModel()->GetMaterial()->transparency != 0.f)
-	//		_D3D->EnableAlphaBlending();
-
-	//	bool result = _ShaderManager->Render(_D3D->GetDeviceContext(), (*sceneActors)[i]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-	//		(*sceneActors)[i]->GetModel()->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0,0,0), _Camera->GetReflectionViewMatrix());
-	//	if (!result) return false;
-
-	//	if ((*sceneActors)[i]->GetModel()->GetMaterial()->transparency != 0.f)
-	//		_D3D->DisableAlphaBlending();
-
-	//	// reset world matrix
-	//	_D3D->GetWorldMatrix(worldMatrix);
-	//}
-	
-	//@TEST SECTION - Point lights not working
-	//XMFLOAT3 translation = (*sceneActors)[0]->GetMovementComponent()->GetPosition();
-	//worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(translation.x, translation.y, translation.z));
-	//(*sceneActors)[0]->GetModel()->LoadVertices(_D3D->GetDeviceContext());
-
-	//_ShaderManager->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-	//	_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix());
-
-	// TESTING SHADOWS // - WORKING
-
-	// Generate the light view matrix based on the light's position.
-	_Light->GenerateViewMatrix();
-	//_Light->GenerateProjectionMatrix();
-
-	// Get the light's view and projection matrices from the light object.
-	XMMATRIX lightViewMatrix = _Light->GetViewMatrix();
-	XMMATRIX lightProjectionMatrix = _Light->GetProjectionMatrix();
-
-	// CUBE
-	_D3D->GetWorldMatrix(worldMatrix);
-	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(_CubeModel->GetPosition().x, _CubeModel->GetPosition().y, _CubeModel->GetPosition().z));
-
-	_CubeModel->LoadVertices(_D3D->GetDeviceContext());
-		
-	_ShaderManager->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), 
-		worldMatrix, viewMatrix, projectionMatrix,
-		_CubeModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
-	//_ShaderManager->_LightShader->Render(
-	//	_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(),
-	//	worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
+	//_CubeModel->LoadVertices(_D3D->GetDeviceContext());
+	//	
+	//_ShaderManager->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), 
+	//	worldMatrix, viewMatrix, projectionMatrix,
 	//	_CubeModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
-	
-	// SPHERE
-	_D3D->GetWorldMatrix(worldMatrix);
-	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(_SphereModel->GetPosition().x, _SphereModel->GetPosition().y, _SphereModel->GetPosition().z));
+	////_ShaderManager->_LightShader->Render(
+	////	_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(),
+	////	worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
+	////	_CubeModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+	//
+	//// SPHERE
+	//_D3D->GetWorldMatrix(worldMatrix);
+	//worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(_SphereModel->GetPosition().x, _SphereModel->GetPosition().y, _SphereModel->GetPosition().z));
 
-	_SphereModel->LoadVertices(_D3D->GetDeviceContext());
-	
-	_ShaderManager->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		_SphereModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
-	//_ShaderManager->_LightShader->Render(
-	//	_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), 
-	//	worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
+	//_SphereModel->LoadVertices(_D3D->GetDeviceContext());
+	//
+	//_ShaderManager->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 	//	_SphereModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+	////_ShaderManager->_LightShader->Render(
+	////	_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), 
+	////	worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
+	////	_SphereModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
 
-	// GROUND
-	_D3D->GetWorldMatrix(worldMatrix);
-	worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(_ShadowGround->GetPosition().x, _ShadowGround->GetPosition().y, _ShadowGround->GetPosition().z));
-	
-	_ShadowGround->LoadVertices(_D3D->GetDeviceContext());
+	//// GROUND
+	//_D3D->GetWorldMatrix(worldMatrix);
+	//worldMatrix = DirectX::XMMatrixMultiply(worldMatrix, DirectX::XMMatrixTranslation(_ShadowGround->GetPosition().x, _ShadowGround->GetPosition().y, _ShadowGround->GetPosition().z));
+	//
+	//_ShadowGround->LoadVertices(_D3D->GetDeviceContext());
 
-	_ShadowGround->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _ShadowMap->GetShaderResourceView();
+	//_ShadowGround->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _ShadowMap->GetShaderResourceView();
 
-	_ShaderManager->Render(_D3D->GetDeviceContext(), _ShadowGround->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		_ShadowGround->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
-	//_ShaderManager->_LightShader->Render(
-	//	_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), 
-	//	worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
-	//	_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+	//_ShaderManager->Render(_D3D->GetDeviceContext(), _ShadowGround->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	//	_ShadowGround->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+	////_ShaderManager->_LightShader->Render(
+	////	_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), 
+	////	worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
+	////	_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
 
 
 #pragma region MULTIMODELS

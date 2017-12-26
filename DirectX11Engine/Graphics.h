@@ -23,7 +23,6 @@ const int SHADOWMAP_HEIGHT = 1024;
 #include "textclass.h"
 #include "model.h"
 #include "LightClass.h"
-//#include "lightclassALT.h"
 #include "rendertextureclass.h"
 #include "debugwindowclass.h"
 #include "modellistclass.h"
@@ -36,7 +35,9 @@ const int SHADOWMAP_HEIGHT = 1024;
 #include "GlobalIncludes.h"
 
 // Shadow debug
+#include "lightclassALT.h"
 #include "shadowshaderclass.h"
+#include "depthShaderClassALT.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
@@ -89,8 +90,8 @@ private:
 	int _previousPosition[6];
 	float textureTranslation = 0.f;
 
-	unique_ptr<LightClass> _Light;
-	//unique_ptr<lightclassALT> _Light;
+	//unique_ptr<LightClass> _Light;
+	unique_ptr<lightclassALT> _Light;
 	vector<unique_ptr<LightClass>> _Lights;
 	vector<LightClass*> _LightData;
 
@@ -111,6 +112,7 @@ private:
 	unique_ptr<Model> _CubeModel, _SphereModel, _ShadowGround;
 	unique_ptr<RenderTextureClass> _ShadowMap;
 	unique_ptr<ShadowShaderClass> _ShadowShader;
+	unique_ptr<depthShaderClassALT> _DepthShader;
 
 	/////////// GLOBAL EFFECTS /////////////
 	SceneEffects _globalEffects;
