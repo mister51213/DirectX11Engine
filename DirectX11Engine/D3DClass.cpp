@@ -782,7 +782,7 @@ void D3DClass::ResetViewport()
 }
 
 
-
+#pragma region OLD VERSION
 
 // WORKING VERSION // // WORKING VERSION // // WORKING VERSION //
 // WORKING VERSION // // WORKING VERSION // // WORKING VERSION //
@@ -1299,3 +1299,5 @@ void D3DClass::ResetViewport()
 //
 //	return;
 //}
+
+#pragma endregion

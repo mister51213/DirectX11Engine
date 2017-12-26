@@ -35,6 +35,9 @@ const int SHADOWMAP_HEIGHT = 1024;
 #include "Scene.h"
 #include "GlobalIncludes.h"
 
+// Shadow debug
+#include "shadowshaderclass.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,6 +56,9 @@ public:
 	bool UpdateFrame(float frameTime, class Scene* scene, int fps);
 
 	bool DrawFrame(vector<unique_ptr<Actor>>& sceneActors, float frameTime);
+	void Render();
+
+	void RenderSceneToTexture();
 
 	bool RenderRefractionToTexture(float surfaceHeight);
 
@@ -104,6 +110,7 @@ private:
 
 	unique_ptr<Model> _CubeModel, _SphereModel, _ShadowGround;
 	unique_ptr<RenderTextureClass> _ShadowMap;
+	unique_ptr<ShadowShaderClass> _ShadowShader;
 
 	/////////// GLOBAL EFFECTS /////////////
 	SceneEffects _globalEffects;
