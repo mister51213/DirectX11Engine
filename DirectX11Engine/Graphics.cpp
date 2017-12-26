@@ -44,9 +44,7 @@ bool Graphics::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* s
 	InitializeUI(screenWidth, screenHeight);
 	
 	// Initialize global effects
-	_globalEffects.clipPlane = XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f);
-	_globalEffects.fogStart = 0.f;
-	_globalEffects.fogEnd = 3.f;
+	_globalEffects = SceneEffects();
 
 	return true;
 }
@@ -55,122 +53,122 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 {
 #pragma region DEFAULT DRAWING
 
-	///////////////// DEFAULT APPEARANCE INIT /////////////////////
-	for (int i = 0; i < sceneActors.size(); ++i)
-	{
-		if (sceneActors[i]->bCustomAppearance)
-		{
-			continue;
-		}
+	/////////////////// DEFAULT APPEARANCE INIT /////////////////////
+	//for (int i = 0; i < sceneActors.size(); ++i)
+	//{
+	//	if (sceneActors[i]->bCustomAppearance)
+	//	{
+	//		continue;
+	//	}
 
-		_DefaultModels.push_back(unique_ptr<Model>());
-		sceneActors[i]->SetModel(_DefaultModels[i].get());
+	//	_DefaultModels.push_back(unique_ptr<Model>());
+	//	sceneActors[i]->SetModel(_DefaultModels[i].get());
 
-		vector<char*>defaultTex{
-			"../DirectX11Engine/data/noise.png",
-			"../DirectX11Engine/data/noise.png",
-			"../DirectX11Engine/data/noise.png",
-			"../DirectX11Engine/data/noise.png",
-			"../DirectX11Engine/data/noise.png", // normal map
-			"../DirectX11Engine/data/noise.png",
-			"../DirectX11Engine/data/noise.png"};
+	//	vector<char*>defaultTex{
+	//		"../DirectX11Engine/data/noise.png",
+	//		"../DirectX11Engine/data/noise.png",
+	//		"../DirectX11Engine/data/noise.png",
+	//		"../DirectX11Engine/data/noise.png",
+	//		"../DirectX11Engine/data/noise.png", // normal map
+	//		"../DirectX11Engine/data/noise.png",
+	//		"../DirectX11Engine/data/noise.png"};
 
-		bool result = _DefaultModels[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/sphere.txt", defaultTex, EShaderType::ELIGHT_SPECULAR);
-		CHECK(result, "default model");
-	}
+	//	bool result = _DefaultModels[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/sphere.txt", defaultTex, EShaderType::ELIGHT_SPECULAR);
+	//	CHECK(result, "default model");
+	//}
 
-	///////////////// CUSTOM WATER DEMO /////////////////////
-	_GroundModel.reset(new Model);
-	if (!_GroundModel)
-	{
-		return false;
-	}
+	/////////////////// CUSTOM WATER DEMO /////////////////////
+	//_GroundModel.reset(new Model);
+	//if (!_GroundModel)
+	//{
+	//	return false;
+	//}
 
-	// Initialize the ground model object.
-	vector<char*>groundTex{
-		"../DirectX11Engine/data/stone.dds",
-		"../DirectX11Engine/data/dirt.dds",
-		"../DirectX11Engine/data/light.dds", // light map - not used
-		"../DirectX11Engine/data/noise.png",
-		"../DirectX11Engine/data/nMap2.png",
-		"../DirectX11Engine/data/specMap.dds",
-		"../DirectX11Engine/data/noise.png" }; // TEMP PLACE HOLDER - replace with DEPTH BUFFER!!!
+	//// Initialize the ground model object.
+	//vector<char*>groundTex{
+	//	"../DirectX11Engine/data/stone.dds",
+	//	"../DirectX11Engine/data/dirt.dds",
+	//	"../DirectX11Engine/data/light.dds", // light map - not used
+	//	"../DirectX11Engine/data/noise.png",
+	//	"../DirectX11Engine/data/nMap2.png",
+	//	"../DirectX11Engine/data/specMap.dds",
+	//	"../DirectX11Engine/data/noise.png" }; // TEMP PLACE HOLDER - replace with DEPTH BUFFER!!!
 
-	bool result = _GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/ground.txt",groundTex,	EShaderType::ELIGHT_SPECULAR);
-	CHECK(result, "ground model");
+	//bool result = _GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+	//	"../DirectX11Engine/data/ground.txt",groundTex,	EShaderType::ELIGHT_SPECULAR);
+	//CHECK(result, "ground model");
 
-	sceneActors[sceneActors.size() - 4]->SetModel(_GroundModel.get());
+	//sceneActors[sceneActors.size() - 4]->SetModel(_GroundModel.get());
 
-	// Create the wall model object.
-	_WallModel.reset(new Model);
-	if (!_WallModel){return false;}
+	//// Create the wall model object.
+	//_WallModel.reset(new Model);
+	//if (!_WallModel){return false;}
 
-	// Initialize the wall model object.
-	vector<char*>wallTex{
-		"../DirectX11Engine/data/wall.dds",
-		"../DirectX11Engine/data/dirt.dds",
-		"../DirectX11Engine/data/light.dds",
-		"../DirectX11Engine/data/alpha.dds",
-		"../DirectX11Engine/data/bumpMap.dds", // normal map
-		"../DirectX11Engine/data/specMap.dds",
-		"../DirectX11Engine/data/noise.png" };
+	//// Initialize the wall model object.
+	//vector<char*>wallTex{
+	//	"../DirectX11Engine/data/wall.dds",
+	//	"../DirectX11Engine/data/dirt.dds",
+	//	"../DirectX11Engine/data/light.dds",
+	//	"../DirectX11Engine/data/alpha.dds",
+	//	"../DirectX11Engine/data/bumpMap.dds", // normal map
+	//	"../DirectX11Engine/data/specMap.dds",
+	//	"../DirectX11Engine/data/noise.png" };
 
-	result = _WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),"../DirectX11Engine/data/wall.txt",	wallTex,EShaderType::ELIGHT_SPECULAR);
-	CHECK(result, "wall model");
-	sceneActors[sceneActors.size() - 3]->SetModel(_WallModel.get());
+	//result = _WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),"../DirectX11Engine/data/wall.txt",	wallTex,EShaderType::ELIGHT_SPECULAR);
+	//CHECK(result, "wall model");
+	//sceneActors[sceneActors.size() - 3]->SetModel(_WallModel.get());
 
-	// Create the bath model object.
-	_BathModel.reset(new Model);
-	if (!_BathModel)
-	{
-		return false;
-	}
-	vector<char*>bathTex{
-		"../DirectX11Engine/data/marble.png", 
-		"../DirectX11Engine/data/dirt.dds",
-		"../DirectX11Engine/data/light.dds",
-		"../DirectX11Engine/data/alpha.dds",
-		"../DirectX11Engine/data/blue.dds", // normal map
-		"../DirectX11Engine/data/specMap.dds",
-		"../DirectX11Engine/data/noise.png" };
+	//// Create the bath model object.
+	//_BathModel.reset(new Model);
+	//if (!_BathModel)
+	//{
+	//	return false;
+	//}
+	//vector<char*>bathTex{
+	//	"../DirectX11Engine/data/marble.png", 
+	//	"../DirectX11Engine/data/dirt.dds",
+	//	"../DirectX11Engine/data/light.dds",
+	//	"../DirectX11Engine/data/alpha.dds",
+	//	"../DirectX11Engine/data/blue.dds", // normal map
+	//	"../DirectX11Engine/data/specMap.dds",
+	//	"../DirectX11Engine/data/noise.png" };
 
-	// Initialize the bath model object.
-	result = _BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/bath.txt",	bathTex,EShaderType::EREFRACTION);
-	CHECK(result, "bath model");
-	sceneActors[sceneActors.size() - 2]->SetModel(_BathModel.get());
+	//// Initialize the bath model object.
+	//result = _BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+	//	"../DirectX11Engine/data/bath.txt",	bathTex,EShaderType::EREFRACTION);
+	//CHECK(result, "bath model");
+	//sceneActors[sceneActors.size() - 2]->SetModel(_BathModel.get());
 
-	// Create the water model object.
-	_WaterModel.reset(new Model);
-	if (!_WaterModel)
-	{
-		return false;
-	}
-	vector<char*> waterTextures{ "../DirectX11Engine/data/water.dds", "../DirectX11Engine/data/water.dds" , "../DirectX11Engine/data/water.dds" };
-	result = _WaterModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/water.txt",
-		waterTextures,
-		EShaderType::EWATER);
-	CHECK(result, "water model");
+	//// Create the water model object.
+	//_WaterModel.reset(new Model);
+	//if (!_WaterModel)
+	//{
+	//	return false;
+	//}
+	//vector<char*> waterTextures{ "../DirectX11Engine/data/water.dds", "../DirectX11Engine/data/water.dds" , "../DirectX11Engine/data/water.dds" };
+	//result = _WaterModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+	//	"../DirectX11Engine/data/water.txt",
+	//	waterTextures,
+	//	EShaderType::EWATER);
+	//CHECK(result, "water model");
 
-	_WaterModel->GetMaterial()->reflectRefractScale = 0.01f;
-	//_WaterModel->GetMaterial()->waterHeight = sceneActors[3]->GetMovementComponent()->GetPosition().y;
-	_WaterModel->GetMaterial()->waterHeight = sceneActors[3]->GetPosition().y;
-	_WaterModel->GetMaterial()->bAnimated = true;
+	//_WaterModel->GetMaterial()->reflectRefractScale = 0.01f;
+	////_WaterModel->GetMaterial()->waterHeight = sceneActors[3]->GetMovementComponent()->GetPosition().y;
+	//_WaterModel->GetMaterial()->waterHeight = sceneActors[3]->GetPosition().y;
+	//_WaterModel->GetMaterial()->bAnimated = true;
 
-	sceneActors[sceneActors.size() - 1]->SetModel(_WaterModel.get());
+	//sceneActors[sceneActors.size() - 1]->SetModel(_WaterModel.get());
 
-	// Create the model list object.
-	_ModelList.reset(new ModelListClass);
-	if (!_ModelList)
-	{
-		return false;
-	}
+	//// Create the model list object.
+	//_ModelList.reset(new ModelListClass);
+	//if (!_ModelList)
+	//{
+	//	return false;
+	//}
 
-	// Initialize the model list object.
-	result = _ModelList->Initialize(20);
-	CHECK(result, "model list");
+	//// Initialize the model list object.
+	//result = _ModelList->Initialize(20);
+	//CHECK(result, "model list");
 
 #pragma endregion
 
@@ -178,32 +176,37 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	///////////// CUSTOM SHADOW DEMO /////////////
 	//////////////////////////////////////////////
 
-	_CubeModel.reset(new Model);
-	_CubeModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/cube2.txt",
-		groundTex, EShaderType::ELIGHT_SPECULAR);
-	_CubeModel->SetPosition(XMFLOAT3(-2.f,1.f,0.f));
-	_CubeModel->SetOrientation(XMFLOAT3(0,0,0));
+	//groundTex[0] = "../DirectX11Engine/data/wall01.dds";
+	//_CubeModel.reset(new Model);
+	//_CubeModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/cube2.txt",
+	//	groundTex, EShaderType::ELIGHT_SPECULAR);
+	//_CubeModel->SetPosition(XMFLOAT3(-2.0f, 1.f, 0.0f));
+	_CubeModel.reset(new ModelClass);
+	_CubeModel->Initialize(_D3D->GetDevice(), "../DirectX11Engine/data/cube2.txt", _D3D->GetDeviceContext(), L"../DirectX11Engine/data/wall01.dds");
+	_CubeModel->SetPosition(-2.0f, 1.f, 0.0f);
 
+	//bathTex[0] = "../DirectX11Engine/data/ice.dds";
+	//_SphereModel.reset(new Model);
+	//_SphereModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/sphere.txt",
+	//	bathTex, EShaderType::ELIGHT_SPECULAR);
+	//_SphereModel->SetPosition(XMFLOAT3(2.0f, 1.0f, 0.0f));
+	_SphereModel.reset(new ModelClass);
+	_SphereModel->Initialize(_D3D->GetDevice(), "../DirectX11Engine/data/sphere.txt", _D3D->GetDeviceContext(), L"../DirectX11Engine/data/ice.dds");
+	_SphereModel->SetPosition(2.0f, 1.0f, 0.0f);
 
-	_SphereModel.reset(new Model);
-	_SphereModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/sphere.txt",
-		bathTex, EShaderType::ELIGHT_SPECULAR);
-	_SphereModel->SetPosition(XMFLOAT3(2.f, 1.f, 0.f));
-	_SphereModel->SetOrientation(XMFLOAT3(0, 0, 0));
-
-	_ShadowGround.reset(new Model);
-	vector<char*>gTex = { "../DirectX11Engine/data/metal001.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds" };
-	_ShadowGround->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt",
-		gTex, EShaderType::ELIGHT_SPECULAR);
-	_ShadowGround->SetPosition(XMFLOAT3(0, 0.f, 0));
-	_ShadowGround->SetOrientation(XMFLOAT3(0, 0, 0));
-
+	//_ShadowGround.reset(new Model);
+	//vector<char*>gTex = { "../DirectX11Engine/data/metal001.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds","../DirectX11Engine/data/stone.dds" };
+	//_ShadowGround->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt",
+	//	gTex, EShaderType::ELIGHT_SPECULAR);
+	//_ShadowGround->SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
+	_ShadowGround.reset(new ModelClass);
+	_ShadowGround->Initialize(_D3D->GetDevice(), "../DirectX11Engine/data/plane01.txt", _D3D->GetDeviceContext(), L"../DirectX11Engine/data/metal001.dds");
+	_ShadowGround->SetPosition(0.0f, 0.0f, 0.0f);
 
 	_ShadowMap.reset(new RenderTextureClass);
 	//result = _ShadowMap->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR);
-	result = _ShadowMap->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_WIDTH, SCREEN_DEPTH, SCREEN_NEAR);
+	_ShadowMap->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_WIDTH, SCREEN_DEPTH, SCREEN_NEAR);
 	//result = _ShadowMap->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
-	CHECK(result, "refraction render to texture");
 
 	///////////////////////////////////////////////
 	///////////// INIT RENDER TEXTURES //////////// (LATER ENCAPASULATE INTO MATERIALS)
@@ -359,11 +362,11 @@ bool Graphics::UpdateFrame(float frameTime, Scene* scene, int fps)
 	// 1. Animate Materials
 	for (auto& actor : scene->_Actors)
 	{
-		actor->GetModel()->GetMaterial()->Animate();
+//		actor->GetModel()->GetMaterial()->Animate();
 	}
 	
 	// 2. Update Camera
-	XMFLOAT3 camPos= scene->GetCamera()->GetPosition();
+	XMFLOAT3 camPos = scene->GetCamera()->GetPosition();
 	XMFLOAT3 camRot = scene->GetCamera()->GetOrientation();
 	_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
 	_Camera->SetRotation(camRot.x, camRot.y, camRot.z);
@@ -400,11 +403,9 @@ void Graphics::Render()
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, translateMatrix;
 	XMMATRIX lightViewMatrix, lightProjectionMatrix;
 	float posX, posY, posZ;
-
-
+	
 	// First render the scene to a texture.
 	RenderSceneToTexture();
-
 
 	// Clear the buffers to begin the scene.
 	_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
@@ -427,53 +428,56 @@ void Graphics::Render()
 	_Light->GetProjectionMatrix(lightProjectionMatrix);
 
 	// Setup the translation matrix for the cube model.
-	XMFLOAT3 cPos = _CubeModel->GetPosition(/*posX, posY, posZ*/);
-	//D3DXMatrixTranslation(&worldMatrix, posX, posY, posZ);
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(cPos.x, cPos.y, cPos.z/*posX, posY, posZ*/));
+	//XMFLOAT3 cPos = _CubeModel->GetPosition(/*posX, posY, posZ*/);
+	_CubeModel->GetPosition(posX, posY, posZ);
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(/*cPos.x, cPos.y, cPos.z*/posX, posY, posZ));
 
 
 	// Put the cube model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	_CubeModel->LoadVertices(_D3D->GetDeviceContext());
+	//_CubeModel->LoadVertices(_D3D->GetDeviceContext());
+	_CubeModel->Render(_D3D->GetDeviceContext());
 
 	// Render the model using the shadow shader.
 	_ShadowShader->Render(
 		_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(),
 		worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
-		lightProjectionMatrix, _CubeModel->GetMaterial()->GetResourceArray()[0]/*GetTexture()*/, _ShadowMap->GetShaderResourceView(), _Light->GetPosition(),
+		lightProjectionMatrix, _CubeModel->/*GetMaterial()->GetResourceArray()[0]*/GetTexture(), _ShadowMap->GetShaderResourceView(), _Light->GetPosition(),
 		_Light->GetAmbientColor(), _Light->GetDiffuseColor());
 
 	// Reset the world matrix.
 	_D3D->GetWorldMatrix(worldMatrix);
 
 	// Setup the translation matrix for the sphere model.
-	XMFLOAT3 spherePos = _SphereModel->GetPosition(/*posX, posY, posZ*/);
-	//D3DXMatrixTranslation(&worldMatrix, posX, posY, posZ);
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(spherePos.x, spherePos.y, spherePos.z/*posX, posY, posZ*/));
+	//XMFLOAT3 spherePos = _SphereModel->GetPosition(/*posX, posY, posZ*/);
+	_SphereModel->GetPosition(posX, posY, posZ);
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(/*spherePos.x, spherePos.y, spherePos.z*/posX, posY, posZ));
 
 
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	_SphereModel->LoadVertices(_D3D->GetDeviceContext());
+	//_SphereModel->LoadVertices(_D3D->GetDeviceContext());
+	_SphereModel->Render(_D3D->GetDeviceContext());
 	_ShadowShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
-		lightProjectionMatrix, _SphereModel->GetMaterial()->GetResourceArray()[0]/*GetTexture()*/, _ShadowMap->GetShaderResourceView(), _Light->GetPosition(),
+		lightProjectionMatrix, _SphereModel->/*GetMaterial()->GetResourceArray()[0]*/GetTexture(), _ShadowMap->GetShaderResourceView(), _Light->GetPosition(),
 		_Light->GetAmbientColor(), _Light->GetDiffuseColor());
 
 	// Reset the world matrix.
 	_D3D->GetWorldMatrix(worldMatrix);
 
 	// Setup the translation matrix for the ground model.
-	XMFLOAT3 grPos = _ShadowGround->GetPosition(/*posX, posY, posZ*/);
-	//D3DXMatrixTranslation(&worldMatrix, posX, posY, posZ);
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(grPos.x, grPos.y, grPos.z/*posX, posY, posZ*/));
+	//XMFLOAT3 grPos = _ShadowGround->GetPosition(/*posX, posY, posZ*/);
+	_ShadowGround->GetPosition(posX, posY, posZ);
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(/*grPos.x, grPos.y, grPos.z*/posX, posY, posZ));
 
 
 	// Render the ground model using the shadow shader.
-	_ShadowGround->LoadVertices(_D3D->GetDeviceContext());
+	//_ShadowGround->LoadVertices(_D3D->GetDeviceContext());
+	_ShadowGround->Render(_D3D->GetDeviceContext());
 	_ShadowShader->Render(
 		_D3D->GetDeviceContext(),
 		_ShadowGround->GetIndexCount(),
 		worldMatrix, viewMatrix, projectionMatrix,
 		lightViewMatrix, lightProjectionMatrix,
-		_ShadowGround->GetMaterial()->GetResourceArray()[0], _ShadowMap->GetShaderResourceView(), _Light->GetPosition(),
+		_ShadowGround->GetTexture()/*_ShadowGround->GetMaterial()->GetResourceArray()[0]*/, _ShadowMap->GetShaderResourceView(), _Light->GetPosition(),
 		_Light->GetAmbientColor(), _Light->GetDiffuseColor());
 
 	// Present the rendered scene to the screen.
@@ -505,12 +509,13 @@ void Graphics::RenderSceneToTexture()
 	_Light->GetProjectionMatrix(lightProjectionMatrix);
 
 	// Setup the translation matrix for the cube model.
-	XMFLOAT3 cPos = _CubeModel->GetPosition(/*posX, posY, posZ*/);
-	//D3DXMatrixTranslation(&worldMatrix, posX, posY, posZ);
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(cPos.x, cPos.y, cPos.z/*posX, posY, posZ*/));
+	//XMFLOAT3 cPos = _CubeModel->GetPosition(/*posX, posY, posZ*/);
+	_CubeModel->GetPosition(posX, posY, posZ);
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(/*cPos.x, cPos.y, cPos.z*/posX, posY, posZ));
 
 	// Render the cube model with the depth shader.
-	_CubeModel->LoadVertices(_D3D->GetDeviceContext());
+	//_CubeModel->LoadVertices(_D3D->GetDeviceContext());
+	_CubeModel->Render(_D3D->GetDeviceContext());
 	_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(),_CubeModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 
 
@@ -518,26 +523,28 @@ void Graphics::RenderSceneToTexture()
 	_D3D->GetWorldMatrix(worldMatrix);
 
 	// Setup the translation matrix for the sphere model.
-	XMFLOAT3 spPos = _SphereModel->GetPosition(/*posX, posY, posZ*/);
-	//D3DXMatrixTranslation(&worldMatrix, posX, posY, posZ);
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(spPos.x, spPos.y, spPos.z/*posX, posY, posZ*/));
+	//XMFLOAT3 spPos = _SphereModel->GetPosition(/*posX, posY, posZ*/);
+	_SphereModel->GetPosition(posX, posY, posZ);
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(/*spPos.x, spPos.y, spPos.z*/posX, posY, posZ));
 
 
 	// Render the sphere model with the depth shader.
-	_SphereModel->LoadVertices(_D3D->GetDeviceContext());
+	//_SphereModel->LoadVertices(_D3D->GetDeviceContext());
+	_SphereModel->Render(_D3D->GetDeviceContext());
 	_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 
 	// Reset the world matrix.
 	_D3D->GetWorldMatrix(worldMatrix);
 
 	// Setup the translation matrix for the ground model.
-	XMFLOAT3 grPos = _ShadowGround->GetPosition(/*posX, posY, posZ*/);
-	//D3DXMatrixTranslation(&worldMatrix, posX, posY, posZ);
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(grPos.x, grPos.y, grPos.z/*posX, posY, posZ*/));
+	//XMFLOAT3 grPos = _ShadowGround->GetPosition(/*posX, posY, posZ*/);
+	_ShadowGround->GetPosition(posX, posY, posZ);
+	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(/*grPos.x, grPos.y, grPos.z*/posX, posY, posZ));
 
 
 	// Render the ground model with the depth shader.
-	_ShadowGround->LoadVertices(_D3D->GetDeviceContext());
+	//_ShadowGround->LoadVertices(_D3D->GetDeviceContext());
+	_ShadowGround->Render(_D3D->GetDeviceContext());
 	_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _ShadowGround->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
@@ -550,7 +557,7 @@ void Graphics::RenderSceneToTexture()
 bool Graphics::DrawFrame(vector<unique_ptr<Actor>>& sceneActors, float frameTime)
 {
 	// Render the refraction of the scene to a texture.
-	RenderRefractionToTexture(_WaterModel->GetMaterial()->waterHeight);
+	//RenderRefractionToTexture(_WaterModel->GetMaterial()->waterHeight);
 
 	// Render the reflection of the scene to a texture.
 	//result = RenderReflectionToTexture();
@@ -596,59 +603,59 @@ bool Graphics::RenderRefractionToTexture(float surfaceHeight)
 	//}
 	//_globalEffects.clipPlane = XMFLOAT4(0, 0, 0,0);
 
-	///////////////////////////////////
-	///////// SHADOW MAPPING //////////
-	///////////////////////////////////
+	/////////////////////////////////////
+	/////////// SHADOW MAPPING //////////
+	/////////////////////////////////////
 
-	XMMATRIX lightViewMatrix, lightProjectionMatrix, translateMatrix;
+	//XMMATRIX lightViewMatrix, lightProjectionMatrix, translateMatrix;
 
-	// Set the render target to be the render to texture.
-	_ShadowMap->SetRenderTarget(_D3D->GetDeviceContext()/*,_D3D->GetDepthStencilView()*/);
+	//// Set the render target to be the render to texture.
+	//_ShadowMap->SetRenderTarget(_D3D->GetDeviceContext()/*,_D3D->GetDepthStencilView()*/);
 
-	// Clear the render to texture.
-	_ShadowMap->ClearRenderTarget(_D3D->GetDeviceContext(), /*_D3D->GetDepthStencilView(),*/ 0.0f, 0.0f, 0.0f, 1.0f);
+	//// Clear the render to texture.
+	//_ShadowMap->ClearRenderTarget(_D3D->GetDeviceContext(), /*_D3D->GetDepthStencilView(),*/ 0.0f, 0.0f, 0.0f, 1.0f);
 
-	// Generate the light view matrix based on the light's position.
-	_Light->GenerateViewMatrix();
+	//// Generate the light view matrix based on the light's position.
+	//_Light->GenerateViewMatrix();
 
-	// Get the world matrix from the d3d object.
-	_D3D->GetWorldMatrix(worldMatrix);
+	//// Get the world matrix from the d3d object.
+	//_D3D->GetWorldMatrix(worldMatrix);
 
-	// Get the view and orthographic matrices from the light object.
-	//lightViewMatrix = _Light->GetViewMatrix();
-	_Light->GetViewMatrix(lightViewMatrix);
-	//lightProjectionMatrix = _Light->GetProjectionMatrix();
-	_Light->GetProjectionMatrix(lightProjectionMatrix);
+	//// Get the view and orthographic matrices from the light object.
+	////lightViewMatrix = _Light->GetViewMatrix();
+	//_Light->GetViewMatrix(lightViewMatrix);
+	////lightProjectionMatrix = _Light->GetProjectionMatrix();
+	//_Light->GetProjectionMatrix(lightProjectionMatrix);
 
-	//////////////////////////////////////////////////////////////////
-	// Setup the translation matrix for the CUBE MODEL.
-	worldMatrix = DirectX::XMMatrixTranslation(_CubeModel->GetPosition().x, _CubeModel->GetPosition().y, _CubeModel->GetPosition().z);
-	_CubeModel->LoadVertices(_D3D->GetDeviceContext());
-	_DepthShader->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-	_D3D->GetWorldMatrix(worldMatrix);
+	////////////////////////////////////////////////////////////////////
+	//// Setup the translation matrix for the CUBE MODEL.
+	//worldMatrix = DirectX::XMMatrixTranslation(_CubeModel->GetPosition().x, _CubeModel->GetPosition().y, _CubeModel->GetPosition().z);
+	//_CubeModel->LoadVertices(_D3D->GetDeviceContext());
+	//_DepthShader->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+	//_D3D->GetWorldMatrix(worldMatrix);
 
-	//////////////////////////////////////////////////////////////////
-	// RENDER THE SPHERE MODEL WITH THE DEPTH SHADER.
-	worldMatrix = DirectX::XMMatrixTranslation(_SphereModel->GetPosition().x, _SphereModel->GetPosition().y, _SphereModel->GetPosition().z);
-	_SphereModel->LoadVertices(_D3D->GetDeviceContext());
-	_DepthShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-	_D3D->GetWorldMatrix(worldMatrix);
+	////////////////////////////////////////////////////////////////////
+	//// RENDER THE SPHERE MODEL WITH THE DEPTH SHADER.
+	//worldMatrix = DirectX::XMMatrixTranslation(_SphereModel->GetPosition().x, _SphereModel->GetPosition().y, _SphereModel->GetPosition().z);
+	//_SphereModel->LoadVertices(_D3D->GetDeviceContext());
+	//_DepthShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+	//_D3D->GetWorldMatrix(worldMatrix);
 
-	//////////////////////////////////////////////////////////////////
-	// RENDER THE GROUND MODEL WITH THE DEPTH SHADER.
-	worldMatrix = DirectX::XMMatrixTranslation(_ShadowGround->GetPosition().x, _ShadowGround->GetPosition().y, _ShadowGround->GetPosition().z);
-	_ShadowGround->LoadVertices(_D3D->GetDeviceContext());
-	_DepthShader->Render(_D3D->GetDeviceContext(), _ShadowGround->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+	////////////////////////////////////////////////////////////////////
+	//// RENDER THE GROUND MODEL WITH THE DEPTH SHADER.
+	//worldMatrix = DirectX::XMMatrixTranslation(_ShadowGround->GetPosition().x, _ShadowGround->GetPosition().y, _ShadowGround->GetPosition().z);
+	//_ShadowGround->LoadVertices(_D3D->GetDeviceContext());
+	//_DepthShader->Render(_D3D->GetDeviceContext(), _ShadowGround->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 
-	///////////////////////////////////
-	///////// RESET ALL //////////
-	///////////////////////////////////
+	////////////////////////////////
+	/////////// RESET ALL //////////
+	////////////////////////////////
 
-	// Reset the render target back to the original back buffer and not the render to texture anymore.
-	_D3D->SetBackBufferRenderTarget();
+	//// Reset the render target back to the original back buffer and not the render to texture anymore.
+	//_D3D->SetBackBufferRenderTarget();
 
-	// Reset the viewport back to the original.
-	_D3D->ResetViewport();
+	//// Reset the viewport back to the original.
+	//_D3D->ResetViewport();
 
 	return true;
 }

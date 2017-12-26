@@ -21,7 +21,7 @@ const int SHADOWMAP_HEIGHT = 1024;
 #include "d3dclass.h"
 #include "camera.h"
 #include "textclass.h"
-#include "model.h"
+//#include "model.h"
 #include "LightClass.h"
 #include "rendertextureclass.h"
 #include "debugwindowclass.h"
@@ -35,6 +35,7 @@ const int SHADOWMAP_HEIGHT = 1024;
 #include "GlobalIncludes.h"
 
 // Shadow debug
+#include "ModelClass.h"
 #include "lightclassALT.h"
 #include "shadowshaderclass.h"
 #include "depthShaderClassALT.h"
@@ -103,13 +104,14 @@ private:
 	unique_ptr<ShaderManagerClass> _ShaderManager;
 
 	/////////// WATER DEMO ////////////////
-	vector<unique_ptr<Model>> _DefaultModels;
-	unique_ptr<Model> _GroundModel, _WallModel, _BathModel, _WaterModel;
+	//vector<unique_ptr<Model>> _DefaultModels;
+	//unique_ptr<Model> _GroundModel, _WallModel, _BathModel, _WaterModel;
 	unique_ptr<RenderTextureClass> _RefractionTexture, _ReflectionTexture;
 
 	////////// SHADOW DEMO ///////////////
 
-	unique_ptr<Model> _CubeModel, _SphereModel, _ShadowGround;
+	//unique_ptr<Model> _CubeModel, _SphereModel, _ShadowGround;
+	unique_ptr<ModelClass> _CubeModel, _SphereModel, _ShadowGround;
 	unique_ptr<RenderTextureClass> _ShadowMap;
 	unique_ptr<ShadowShaderClass> _ShadowShader;
 	unique_ptr<depthShaderClassALT> _DepthShader;

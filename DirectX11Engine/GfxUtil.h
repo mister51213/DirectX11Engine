@@ -151,6 +151,13 @@ namespace GfxUtil
 		float fogStart = 0.f;
 		float fogEnd = 0.f;
 		XMFLOAT4 clipPlane = XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f);
+
+		SceneEffects()
+		{
+			clipPlane = XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f);
+			fogStart = 0.f;
+			fogEnd = 3.f;
+		}
 	};
 
 	class Material
