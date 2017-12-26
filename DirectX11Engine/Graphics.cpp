@@ -182,8 +182,8 @@ bool Graphics::InitializeModels(const HWND &hwnd, int screenWidth, int screenHei
 	//	groundTex, EShaderType::ELIGHT_SPECULAR);
 	//_CubeModel->SetPosition(XMFLOAT3(-2.0f, 1.f, 0.0f));
 	_CubeModel.reset(new ModelClass);
-	_CubeModel->Initialize(_D3D->GetDevice(), "../DirectX11Engine/data/cube2.txt", _D3D->GetDeviceContext(), L"../DirectX11Engine/data/wall01.dds");
-	_CubeModel->SetPosition(-2.0f, 1.f, 0.0f);
+	_CubeModel->Initialize(_D3D->GetDevice(), "../DirectX11Engine/data/cube.txt", _D3D->GetDeviceContext(), L"../DirectX11Engine/data/wall01.dds");
+	_CubeModel->SetPosition(-2.0f, 1.0f, 0.0f);
 
 	//bathTex[0] = "../DirectX11Engine/data/ice.dds";
 	//_SphereModel.reset(new Model);
