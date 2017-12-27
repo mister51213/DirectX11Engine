@@ -157,12 +157,12 @@
 //#include "modelclass.h"
 //#include "depthshaderclassALT.h"
 //#include "rendertextureclass.h"
-#include "shadowshaderclass.h"
+//#include "shadowshaderclass.h"
 
 /////////////
 // GLOBALS //
 /////////////
-const bool FULL_SCREEN = false;
+const bool FULL_SCREEN = true;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 100.0f;
 const float SCREEN_NEAR = 1.0f;
@@ -180,7 +180,6 @@ public:
 	~GraphicsClass();
 
 	bool Initialize(int, int, HWND);
-	//void Shutdown();
 	bool Frame(float, float, float, float, float, float);
 
 private:
@@ -207,7 +206,7 @@ private:
 
 	//depthShaderClassALT* m_DepthShader;
 	//RenderTextureClass* m_RenderTexture;
-	ShadowShaderClass* m_ShadowShader;
+	//ShadowShaderClass* m_ShadowShader;
 };
 #pragma endregion
 

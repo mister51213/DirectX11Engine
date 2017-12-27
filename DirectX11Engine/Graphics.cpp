@@ -1089,17 +1089,7 @@
 
 
 GraphicsClass::GraphicsClass()
-{
-	//m_D3D = 0;
-	//m_Camera = 0;
-	//m_CubeModel = 0;
-	//m_GroundModel = 0;
-	//m_SphereModel = 0;
-	//m_Light = 0;
-	//m_RenderTexture = 0;
-	//m_DepthShader = 0;
-	m_ShadowShader = 0;
-}
+{}
 
 
 GraphicsClass::GraphicsClass(const GraphicsClass& other)
@@ -1248,98 +1238,21 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	//	return false;
 	//}
 
-	m_ShadowShader = new ShadowShaderClass;
-	if (!m_ShadowShader)
-	{
-		return false;
-	}
+	//m_ShadowShader = new ShadowShaderClass;
+	//if (!m_ShadowShader)
+	//{
+	//	return false;
+	//}
 
-	result = m_ShadowShader->Initialize(_D3D->GetDevice(), hwnd);
-	if (!result)
-	{
-		MessageBox(hwnd, "Could not initialize the shadow shader object.","Error", MB_OK);
-		return false;
-	}
+	//result = m_ShadowShader->Initialize(_D3D->GetDevice(), hwnd);
+	//if (!result)
+	//{
+	//	MessageBox(hwnd, "Could not initialize the shadow shader object.","Error", MB_OK);
+	//	return false;
+	//}
 
 	return true;
 }
-
-
-//void GraphicsClass::Shutdown()
-//{
-//	//// Release the shadow shader object.
-//	//if (m_ShadowShader)
-//	//{
-//	//	m_ShadowShader->Shutdown();
-//	//	delete m_ShadowShader;
-//	//	m_ShadowShader = 0;
-//	//}
-//
-//	//// Release the depth shader object.
-//	//if (m_DepthShader)
-//	//{
-//	//	m_DepthShader->Shutdown();
-//	//	delete m_DepthShader;
-//	//	m_DepthShader = 0;
-//	//}
-//
-//	// Release the render to texture object.
-//	//if (m_RenderTexture)
-//	//{
-//	//	m_RenderTexture->Shutdown();
-//	//	delete m_RenderTexture;
-//	//	m_RenderTexture = 0;
-//	//}
-//
-//	// Release the light object.
-//	//if (m_Light)
-//	//{
-//	//	delete m_Light;
-//	//	m_Light = 0;
-//	//}
-//
-//	// Release the ground model object.
-//	//if (m_GroundModel)
-//	//{
-//	//	m_GroundModel->Shutdown();
-//	//	delete m_GroundModel;
-//	//	m_GroundModel = 0;
-//	//}
-//
-//	// Release the sphere model object.
-//	//if (m_SphereModel)
-//	//{
-//	//	m_SphereModel->Shutdown();
-//	//	delete m_SphereModel;
-//	//	m_SphereModel = 0;
-//	//}
-//
-//	// Release the cube model object.
-//	//if (m_CubeModel)
-//	//{
-//	//	m_CubeModel->Shutdown();
-//	//	delete m_CubeModel;
-//	//	m_CubeModel = 0;
-//	//}
-//
-//	// Release the camera object.
-//	//if (m_Camera)
-//	//{
-//	//	delete m_Camera;
-//	//	m_Camera = 0;
-//	//}
-//
-//	// Release the D3D object.
-//	//if (m_D3D)
-//	//{
-//	//	m_D3D->Shutdown();
-//	//	delete m_D3D;
-//	//	m_D3D = 0;
-//	//}
-//
-//	return;
-//}
-
 
 bool GraphicsClass::Frame(float posX, float posY, float posZ, float rotX, float rotY, float rotZ)
 {
@@ -1504,6 +1417,7 @@ bool GraphicsClass::Render()
 	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(posX, posY, posZ));
 	XMFLOAT3 cPos = _CubeModel->GetPosition();
 	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(cPos.x, cPos.y, cPos.z));
+	_CubeModel->LoadVertices(_D3D->GetDeviceContext());
 
 	// Put the cube model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	//m_CubeModel->Render(_D3D->GetDeviceContext());
@@ -1512,7 +1426,6 @@ bool GraphicsClass::Render()
 	//	worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
 	//	lightProjectionMatrix, m_CubeModel->GetTexture(), m_RenderTexture->GetShaderResourceView(), _Light->GetPosition(),
 	//	_Light->GetAmbientColor(), _Light->GetDiffuseColor());
-	_CubeModel->LoadVertices(_D3D->GetDeviceContext());
 
 	//result = m_ShadowShader->Render(
 	//	_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 
@@ -1544,17 +1457,28 @@ bool GraphicsClass::Render()
 	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(posX, posY, posZ));
 	XMFLOAT3 sPos = _SphereModel->GetPosition();
 	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(sPos.x, sPos.y, sPos.z));
-
-
+	_SphereModel->LoadVertices(_D3D->GetDeviceContext());
+	
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	//m_SphereModel->Render(_D3D->GetDeviceContext());
 	//result = m_ShadowShader->Render(_D3D->GetDeviceContext(), m_SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
 	//	lightProjectionMatrix, m_SphereModel->GetTexture(), m_RenderTexture->GetShaderResourceView(), _Light->GetPosition(),
 	//	_Light->GetAmbientColor(), _Light->GetDiffuseColor());
-	_SphereModel->LoadVertices(_D3D->GetDeviceContext());
-	result = m_ShadowShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
-		lightProjectionMatrix, _SphereModel->GetMaterial()->GetResourceArray()[0], _RenderTexture->GetShaderResourceView(), _Light->GetPosition(),
-		_Light->GetAmbientColor(), _Light->GetDiffuseColor());
+
+	//result = m_ShadowShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
+	//	lightProjectionMatrix, _SphereModel->GetMaterial()->GetResourceArray()[0], _RenderTexture->GetShaderResourceView(), _Light->GetPosition(),
+	//	_Light->GetAmbientColor(), _Light->GetDiffuseColor());
+
+	_SphereModel->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTexture->GetShaderResourceView();
+
+	_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		lightViewMatrix, lightProjectionMatrix,
+		_SphereModel->GetMaterial()->GetResourceArray(),
+		_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Light.get(), lights,
+		_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(),
+		_globalEffects.fogStart, _globalEffects.fogEnd,
+		_SphereModel->GetMaterial()->translation, _SphereModel->GetMaterial()->transparency);
+
 	if (!result)
 	{
 		return false;
@@ -1568,8 +1492,8 @@ bool GraphicsClass::Render()
 	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(posX, posY, posZ));
 	XMFLOAT3 gPos = _GroundModel->GetPosition();
 	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(gPos.x, gPos.y, gPos.z));
-
-
+	_GroundModel->LoadVertices(_D3D->GetDeviceContext());
+	
 	// Render the ground model using the shadow shader.
 	//m_GroundModel->Render(_D3D->GetDeviceContext());
 	//result = m_ShadowShader->Render(
@@ -1579,14 +1503,26 @@ bool GraphicsClass::Render()
 	//	lightViewMatrix, lightProjectionMatrix,
 	//	m_GroundModel->GetTexture(), m_RenderTexture->GetShaderResourceView(), _Light->GetPosition(),
 	//	_Light->GetAmbientColor(), _Light->GetDiffuseColor());
-	_GroundModel->LoadVertices(_D3D->GetDeviceContext());
-	result = m_ShadowShader->Render(
-		_D3D->GetDeviceContext(),
-		_GroundModel->GetIndexCount(),
-		worldMatrix, viewMatrix, projectionMatrix,
+	
+	//result = m_ShadowShader->Render(
+	//	_D3D->GetDeviceContext(),
+	//	_GroundModel->GetIndexCount(),
+	//	worldMatrix, viewMatrix, projectionMatrix,
+	//	lightViewMatrix, lightProjectionMatrix,
+	//	_GroundModel->GetMaterial()->GetResourceArray()[0], _RenderTexture->GetShaderResourceView(), _Light->GetPosition(),
+	//	_Light->GetAmbientColor(), _Light->GetDiffuseColor());
+	
+	//REBUILT IMPLEMENTATION
+	_GroundModel->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTexture->GetShaderResourceView();
+
+	_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		lightViewMatrix, lightProjectionMatrix,
-		_GroundModel->GetMaterial()->GetResourceArray()[0], _RenderTexture->GetShaderResourceView(), _Light->GetPosition(),
-		_Light->GetAmbientColor(), _Light->GetDiffuseColor());
+		_GroundModel->GetMaterial()->GetResourceArray(),
+		_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Light.get(), lights,
+		_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(),
+		_globalEffects.fogStart, _globalEffects.fogEnd,
+		_GroundModel->GetMaterial()->translation, _GroundModel->GetMaterial()->transparency);
+
 	if (!result)
 	{
 		return false;
