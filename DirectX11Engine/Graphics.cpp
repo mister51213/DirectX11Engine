@@ -1091,197 +1091,135 @@
 GraphicsClass::GraphicsClass()
 {}
 
-
 GraphicsClass::GraphicsClass(const GraphicsClass& other)
-{
-}
-
+{}
 
 GraphicsClass::~GraphicsClass()
-{
-}
+{}
 
-
-bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
+bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* pScene)
 {
 	bool result;
 	
-	//m_D3D = new D3DClass;
 	_D3D.reset(new D3DClass);
 	if (!_D3D)
 	{
 		return false;
 	}
 
-
-	//result = m_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
-	result = _D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
-	if (!result)
-	{
-		MessageBox(hwnd, "Could not initialize Direct3D.", "Error", MB_OK);
-		return false;
-	}
+	CHECK(_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR), "Direct3D");
 
 	_ShaderManager.reset(new ShaderManagerClass);
 	_ShaderManager->Initialize(_D3D->GetDevice(), hwnd);
 
-	//m_Camera = new CameraClass;
 	_Camera.reset(new Camera);
 	if (!_Camera)
 	{
 		return false;
 	}
 
-	//m_Camera->SetPosition(0.0f, 0.0f, -10.0f);
-	_Camera->SetPosition(0.0f, 0.0f, -10.0f);
+	//_Camera->SetPosition(0.0f, 0.0f, -10.0f);
+	XMFLOAT3 camPos = pScene->GetCamera()->GetPosition();
+	_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
+	_Camera->UpdateViewPoint();
 
-	//m_CubeModel = new ModelClass;
+
 	_CubeModel.reset(new Model);
 	if (!_CubeModel)
 	{
 		return false;
 	}
 
-	//result = m_CubeModel->Initialize(_D3D->GetDevice(), "../DirectX11Engine/data/cube2.txt", _D3D->GetDeviceContext(), L"../DirectX11Engine/data/wall01.dds");
 	vector<char*> cubeTex(7, "../DirectX11Engine/data/wall01.dds");
-	_CubeModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/cube2.txt",
-		cubeTex, EShaderType::ELIGHT_SPECULAR);
-	if (!result)
-	{
-		MessageBox(hwnd, "Could not initialize the cube model object.", "Error", MB_OK);
-		return false;
-	}
+	CHECK(_CubeModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/cube2.txt",
+		cubeTex, EShaderType::ELIGHT_SPECULAR), "cube model");
 
-	//m_CubeModel->SetPosition(-2.0f, 1.f, 0.0f);
 	_CubeModel->SetPosition(XMFLOAT3(-2.0f, 1.f, 0.0f));
 
-	//m_SphereModel = new ModelClass;
 	_SphereModel.reset(new Model);
 	if (!_SphereModel)
 	{
 		return false;
 	}
 
-	//result = m_SphereModel->Initialize(_D3D->GetDevice(), "../DirectX11Engine/data/sphere.txt", _D3D->GetDeviceContext(), L"../DirectX11Engine/data/ice.dds");
 	vector<char*> spTex(7, "../DirectX11Engine/data/ice.dds");
-	_SphereModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/sphere.txt",
-		cubeTex, EShaderType::ELIGHT_SPECULAR);
-	if (!result)
-	{
-		MessageBox(hwnd, "Could not initialize the sphere model object.", "Error", MB_OK);
-		return false;
-	}
+	CHECK(_SphereModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/sphere.txt",
+		cubeTex, EShaderType::ELIGHT_SPECULAR), "sphere model");
 
-	//m_SphereModel->SetPosition(2.0f, 1.0f, 0.0f);
 	_SphereModel->SetPosition(XMFLOAT3(2.0f, 1.0f, 0.0f));
 
-	//m_GroundModel = new ModelClass;
 	_GroundModel.reset(new Model);
 	if (!_GroundModel)
 	{
 		return false;
 	}
 
-	//result = m_GroundModel->Initialize(_D3D->GetDevice(), "../DirectX11Engine/data/plane01.txt", _D3D->GetDeviceContext(), L"../DirectX11Engine/data/metal001.dds");
 	vector<char*>gTex(7, "../DirectX11Engine/data/metal001.dds");
-	_GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt",
-		gTex, EShaderType::ELIGHT_SPECULAR);
-	if (!result)
-	{
-		MessageBox(hwnd, "Could not initialize the ground model object.", "Error", MB_OK);
-		return false;
-	}
+	CHECK(_GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt",
+		gTex, EShaderType::ELIGHT_SPECULAR), "ground model");
 
-	//m_GroundModel->SetPosition(0.0f, 0.0f, 0.0f);
 	_GroundModel->SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
 
-	//m_Light = new lightclassALT;
 	_Light.reset(new LightClass);
 	if (!_Light)
 	{
 		return false;
 	}
 
-	// Initialize the light object.
 	_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_Light->SetLookAt(0.0f, 0.0f, 0.0f);
 	_Light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
 
-	// Create the render to texture object.
-	//m_RenderTexture = new RenderTextureClass;
 	_RenderTexture.reset(new RenderTextureClass);
 	if (!_RenderTexture)
 	{
 		return false;
 	}
+	
+	CHECK(_RenderTexture->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR), "render to texture");
 
-	// Initialize the render to texture object.
-	//result = m_RenderTexture->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
-	result = _RenderTexture->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
-	if (!result)
-	{
-		MessageBox(hwnd, "Could not initialize the render to texture object.", "Error", MB_OK);
-		return false;
-	}
-
-	//m_DepthShader = new DepthShaderClass;
-	//m_DepthShader = new depthShaderClassALT;
-	//if (!m_DepthShader)
-	//{
-	//	return false;
-	//}
-	//result = m_DepthShader->Initialize(_D3D->GetDevice(), hwnd);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, "Could not initialize the depth shader object.", "Error", MB_OK);
-	//	return false;
-	//}
-
-	//m_ShadowShader = new ShadowShaderClass;
-	//if (!m_ShadowShader)
-	//{
-	//	return false;
-	//}
-
-	//result = m_ShadowShader->Initialize(_D3D->GetDevice(), hwnd);
-	//if (!result)
-	//{
-	//	MessageBox(hwnd, "Could not initialize the shadow shader object.","Error", MB_OK);
-	//	return false;
-	//}
-
+	InitializeUI(screenWidth, screenHeight);
+	
 	return true;
 }
 
-bool GraphicsClass::Frame(float posX, float posY, float posZ, float rotX, float rotY, float rotZ)
+bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 {
-	bool result;
-	static float lightPositionX = -5.0f;
-
-
-	// Set the position of the camera.
-	//m_Camera->SetPosition(posX, posY, posZ);
-	//m_Camera->SetRotation(rotX, rotY, rotZ);
-	_Camera->SetPosition(posX, posY, posZ);
-	_Camera->SetRotation(rotX, rotY, rotZ);
-
-	// Update the position of the light each frame.
-	lightPositionX += 0.05f;
-	if (lightPositionX > 5.0f)
+	// 1. Animate Materials @TODO - initialize models in initialize function
+	for (auto& actor : pScene->_Actors)
 	{
-		lightPositionX = -5.0f;
+		if (actor->GetModel())
+		{
+			actor->GetModel()->GetMaterial()->Animate();
+		}
 	}
 
-	// Update the position of the light.
-	_Light->SetPosition(lightPositionX, 8.0f, -5.0f);
+	// 2. Update Camera
+	XMFLOAT3 camPos = pScene->GetCamera()->GetPosition();
+	XMFLOAT3 camRot = pScene->GetCamera()->GetOrientation();
+	_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
+	_Camera->SetRotation(camRot.x, camRot.y, camRot.z);
 
-	// Render the graphics scene.
-	result = Render();
-	if (!result)
+	// 3. Update Lights @TODO: Encapsulate lights in scene again!
+	if (_lightPositionX > 1.0f)
 	{
-		return false;
+		_lightPositionX = -1.f;
 	}
+	if (_lightPositionZ > 1.0f)
+	{
+		_lightPositionZ = -1.f;
+	}
+	_lightPositionX += _lightPosIncrement;
+	_lightPositionZ += _lightPosIncrement;
+	_Light->SetPosition(cos(_lightPositionX)*5.f, 8.0f, sin(_lightPositionZ)*5.f);
+
+	// 4. Update UI // @TODO: reintegrate
+	UpdateFpsString(_D3D->GetDeviceContext(), fps);
+	UpdatePositionStrings(_D3D->GetDeviceContext(), camPos.x, camPos.y, camPos.z, camRot.x, camRot.y, camRot.z);
+
+	// 5. Draw the Actual frame
+	Render();
 
 	return true;
 }
@@ -1293,33 +1231,20 @@ bool GraphicsClass::RenderSceneToTexture()
 	float posX, posY, posZ;
 	bool result;
 
-	// Set the render target to be the render to texture.
-	//m_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext());
 	_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext());
-
-	// Clear the render to texture.
-	//m_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
 	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
 
-	// Generate the light view matrix based on the light's position.
 	_Light->GenerateViewMatrix();
 
-	// Get the world matrix from the d3d object.
+	// Reset the world matrix.
 	_D3D->GetWorldMatrix(worldMatrix);
 
-	// Get the view and orthographic matrices from the light object.
 	lightViewMatrix = _Light->GetViewMatrix();
 	lightProjectionMatrix = _Light->GetProjectionMatrix();
-	//_Light->GetViewMatrix(lightViewMatrix);
-	//_Light->GetProjectionMatrix(lightProjectionMatrix);
 
-	// Setup the translation matrix for the cube model.
-	//m_CubeModel->GetPosition(posX, posY, posZ);
 	XMFLOAT3 cPos = _CubeModel->GetPosition();
 	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(cPos.x, cPos.y,cPos.z));
 
-	//m_CubeModel->Render(_D3D->GetDeviceContext());
-	//result = m_DepthShader->Render(_D3D->GetDeviceContext(), m_CubeModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 	_CubeModel->LoadVertices(_D3D->GetDeviceContext());
 	result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 	if (!result)
@@ -1330,16 +1255,9 @@ bool GraphicsClass::RenderSceneToTexture()
 	// Reset the world matrix.
 	_D3D->GetWorldMatrix(worldMatrix);
 
-	// Setup the translation matrix for the sphere model.
-	//m_SphereModel->GetPosition(posX, posY, posZ);
-	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(posX, posY, posZ));
 	XMFLOAT3 sPos = _SphereModel->GetPosition();
 	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(sPos.x, sPos.y, sPos.z));
 
-
-	// Render the sphere model with the depth shader.
-	//m_SphereModel->Render(_D3D->GetDeviceContext());
-	//result = m_DepthShader->Render(_D3D->GetDeviceContext(), m_SphereModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 	_SphereModel->LoadVertices(_D3D->GetDeviceContext());
 	result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 	if (!result)
@@ -1350,15 +1268,9 @@ bool GraphicsClass::RenderSceneToTexture()
 	// Reset the world matrix.
 	_D3D->GetWorldMatrix(worldMatrix);
 
-	// Setup the translation matrix for the ground model.
-	//m_GroundModel->GetPosition(posX, posY, posZ);
-	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(posX, posY, posZ));
 	XMFLOAT3 gPos = _GroundModel->GetPosition();
 	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(gPos.x, gPos.y, gPos.z));
 
-	// Render the ground model with the depth shader.
-	//m_GroundModel->Render(_D3D->GetDeviceContext());
-	//result = m_DepthShader->Render(_D3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 	_GroundModel->LoadVertices(_D3D->GetDeviceContext());
 	result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 	if (!result)
@@ -1374,7 +1286,6 @@ bool GraphicsClass::RenderSceneToTexture()
 
 	return true;
 }
-
 
 bool GraphicsClass::Render()
 {
@@ -1528,10 +1439,262 @@ bool GraphicsClass::Render()
 		return false;
 	}
 
+	////////////////////////////////////////
+	// UI //// UI //// UI //// UI //// UI //
+	////////////////////////////////////////
+	RenderText();
+
 	// Present the rendered scene to the screen.
 	_D3D->EndScene();
 
 	return true;
 }
+
+#pragma region UI
+
+bool GraphicsClass::InitializeUI(int screenWidth, int screenHeight)
+{
+	bool result;
+
+	char videoCard[128];
+	int videoMemory;
+	char videoString[144];
+	char memoryString[32];
+	char tempString[16];
+
+	// Create the first font object.
+	_Font1.reset(new FontClass);
+	if (!_Font1)
+	{
+		return false;
+	}
+
+	// Initialize the first font object.
+	result = _Font1->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/font.txt",
+		"../DirectX11Engine/data/font.tga", 32.0f, 3);
+	CHECK(result, "font");
+
+	// Create the text object for the fps string.
+	_FpsString.reset(new TextClass);
+	if (!_FpsString)
+	{
+		return false;
+	}
+
+	// Initialize the fps text string.
+	result = _FpsString->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
+		"Fps: 0", 10, 50, 0.0f, 1.0f, 0.0f);
+	CHECK(result, "fps string");
+
+	// Initial the previous frame fps.
+	_previousFps = -1;
+
+	// Initialize the position text strings.
+	vector<char*> labels = { "X: 0", "Y: 0", "Z: 0", "rX: 0", "rY: 0", "rZ: 0" };
+	char offset = 0;
+	for (int i = 0; i < 6; ++i)
+	{
+		_PositionStrings.push_back(unique_ptr<TextClass>(new TextClass()));
+		if (!_PositionStrings[i]) return false;
+
+		result = _PositionStrings[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
+			labels[i], 10, 310 + offset, 1.0f, 1.0f, 1.0f);
+		CHECK(result, "position string number " + to_string(i));
+
+		offset += 20;
+		_previousPosition[i] = -1;
+	}
+
+	// Create the text objects for the render count strings.
+	vector<char*> renderLabels = { "Polys Drawn: 0", "Cells Drawn: 0", "Cells Culled: 0" };
+	offset = 0;
+	for (int i =0; i< 3; ++i)
+	{
+		_RenderCountStrings.push_back(unique_ptr<TextClass>(new TextClass()));
+		if (!_RenderCountStrings[i]) return false;
+
+		result = _RenderCountStrings[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), renderLabels[i], 10, 260 + offset, 1.0f, 1.0f, 1.0f);
+		CHECK(result, "render count string number " + to_string(i));
+
+		offset += 20;
+	}
+	
+	return true;
+}
+
+bool GraphicsClass::UpdateFpsString(ID3D11DeviceContext* deviceContext, int fps)
+{
+	char tempString[16];
+	char finalString[16];
+	float red, green, blue;
+	bool result;
+	
+	// Check if the fps from the previous frame was the same, if so don't need to update the text string.
+	if (_previousFps == fps)
+	{
+		return true;
+	}
+
+	// Store the fps for checking next frame.
+	_previousFps = fps;
+
+	// Truncate the fps to below 100,000.
+	if (fps > 99999)
+	{
+		fps = 99999;
+	}
+
+	// Convert the fps integer to string format.
+	_itoa_s(fps, tempString, 10);
+
+	// Setup the fps string.
+	strcpy_s(finalString, "Fps: ");
+	strcat_s(finalString, tempString);
+
+	// If fps is 60 or above set the fps color to green.
+	if (fps >= 60)
+	{
+		red = 0.0f;
+		green = 1.0f;
+		blue = 0.0f;
+	}
+
+	// If fps is below 60 set the fps color to yellow.
+	if (fps < 60)
+	{
+		red = 1.0f;
+		green = 1.0f;
+		blue = 0.0f;
+	}
+
+	// If fps is below 30 set the fps color to red.
+	if (fps < 30)
+	{
+		red = 1.0f;
+		green = 0.0f;
+		blue = 0.0f;
+	}
+
+	// @TODO: Set material values here
+
+	// Update the sentence vertex buffer with the new string information.
+	result = _FpsString->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 50, red, green, blue);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool GraphicsClass::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, float posX, float posY, float posZ,
+	float rotX, float rotY, float rotZ)
+{
+	int positionX, positionY, positionZ, rotationX, rotationY, rotationZ;
+	char tempString[16];
+	char finalString[16];
+	bool result;
+
+	// Initialize the position text strings.
+	vector<char*> labels = { "X: ", "Y: ", "Z: ", "rX: ", "rY: ", "rZ: " };
+	vector<float> posRot = { posX, posY, posZ, rotX, rotY, rotZ };
+	char offset = 0;
+	for (int i = 0; i < 6; ++i)
+	{
+		_previousPosition[i] = (int)posRot[i];
+		_itoa_s(posRot[i], tempString, 10);
+		strcpy_s(finalString, labels[i]);
+		strcat_s(finalString, tempString);
+		result = _PositionStrings[i]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 100 + offset, 1.0f, 1.0f, 1.0f);
+		if (FAILED(result))
+		{
+			throw std::runtime_error("Could not update sentence number " + to_string(i) + " - line " + std::to_string(__LINE__));
+			return false;
+		}
+
+		offset += 20;
+	}
+
+	return true;
+}
+
+bool GraphicsClass::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int renderCount, int nodesDrawn, int nodesCulled)
+{
+	char tempString[32];
+	char finalString[32];
+	bool result;
+	
+	// Convert the render count integer to string format.
+	_itoa_s(renderCount, tempString, 10);
+
+	// Setup the render count string.
+	strcpy_s(finalString, "Polys Drawn: ");
+	strcat_s(finalString, tempString);
+
+	// Update the sentence vertex buffer with the new string information.
+	result = _RenderCountStrings[0]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 260, 1.0f, 1.0f, 1.0f);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Convert the cells drawn integer to string format.
+	_itoa_s(nodesDrawn, tempString, 10);
+
+	// Setup the cells drawn string.
+	strcpy_s(finalString, "Cells Drawn: ");
+	strcat_s(finalString, tempString);
+
+	// Update the sentence vertex buffer with the new string information.
+	result = _RenderCountStrings[1]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 280, 1.0f, 1.0f, 1.0f);
+	if (!result)
+	{
+		return false;
+	}
+
+	// Convert the cells culled integer to string format.
+	_itoa_s(nodesCulled, tempString, 10);
+
+	// Setup the cells culled string.
+	strcpy_s(finalString, "Cells Culled: ");
+	strcat_s(finalString, tempString);
+
+	// Update the sentence vertex buffer with the new string information.
+	result = _RenderCountStrings[2]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 300, 1.0f, 1.0f, 1.0f);
+	if (!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void GraphicsClass::RenderText()
+{
+	_D3D->TurnZBufferOff();
+	_D3D->EnableAlphaBlending();
+
+	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
+
+	_D3D->GetWorldMatrix(worldMatrix);
+	_Camera->GetBaseViewMatrix(baseViewMatrix);
+	_D3D->GetOrthoMatrix(orthoMatrix);
+
+
+	_FpsString->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+	for (int i = 0; i < 6; i++)
+	{
+		_PositionStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		_RenderCountStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+	}
+
+	_D3D->DisableAlphaBlending();
+	_D3D->TurnZBufferOn(); // Turn the Z buffer back on now that all 2D rendering has completed.
+}
+
+#pragma endregion UI
 
 #pragma endregion

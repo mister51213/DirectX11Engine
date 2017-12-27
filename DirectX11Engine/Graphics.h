@@ -71,12 +71,11 @@
 ////
 ////	void RenderText();
 ////
-////	bool UpdateRenderCounts(ID3D11DeviceContext*, int, int, int);
-////
 ////private:
 ////	bool RenderReflectionToTexture();
 ////	bool RenderScene(vector<unique_ptr<Actor>>& sceneActors, float frameTime);
 ////
+////	bool UpdateRenderCounts(ID3D11DeviceContext*, int, int, int);
 ////	bool UpdateFpsString(ID3D11DeviceContext*, int);
 ////	bool UpdatePositionStrings(ID3D11DeviceContext*, float, float, float, float, float, float);
 //
@@ -139,15 +138,16 @@
 #include "d3dclass.h"
 #include "shadermanagerclass.h"
 
+#include "Scene.h"
 #include "camera.h"
 #include "lightclass.h"
 #include "model.h"
 #include "rendertextureclass.h"
 
-//#include "Actor.h"
-//#include "Scene.h"
+#include "textclass.h"
 
-//#include "textclass.h"
+//#include "Actor.h" // @TODO use indexed map
+
 //#include "frustumclass.h"
 
 // OLD INCLUDES
@@ -162,7 +162,7 @@
 /////////////
 // GLOBALS //
 /////////////
-const bool FULL_SCREEN = true;
+const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 100.0f;
 const float SCREEN_NEAR = 1.0f;
@@ -179,8 +179,26 @@ public:
 	GraphicsClass(const GraphicsClass&);
 	~GraphicsClass();
 
-	bool Initialize(int, int, HWND);
-	bool Frame(float, float, float, float, float, float);
+	bool Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* pScene);
+	//bool Frame(float, float, float, float, float, float);
+	bool UpdateFrame(float frameTime, class Scene* pScene, int fps);
+
+	// NEW - UI
+	bool InitializeUI(int screenWidth, int screenHeight);
+	bool UpdateRenderCounts(ID3D11DeviceContext*, int, int, int);
+	bool UpdateFpsString(ID3D11DeviceContext*, int);
+	bool UpdatePositionStrings(ID3D11DeviceContext*, float, float, float, float, float, float);
+	void RenderText();
+	unique_ptr<TextClass> _Text; //@CUSTOM - now have multiple text classes holding different info
+	unique_ptr<FontClass> _Font1;
+	
+	unique_ptr<TextClass> _FpsString, _VideoStrings;
+	vector<unique_ptr<TextClass>> _RenderCountStrings;
+	vector<unique_ptr<TextClass>> _PositionStrings;
+	int _previousFps;
+	int _previousPosition[6];
+	float textureTranslation = 0.f;
+	// NEW - UI
 
 private:
 	bool RenderSceneToTexture();
@@ -197,7 +215,9 @@ private:
 	
 /////////// GLOBAL EFFECTS /////////////
 	SceneEffects _globalEffects;
-
+	float _lightPositionX = 1.f;
+	float _lightPositionZ = 1.f;
+	float _lightPosIncrement = -0.05f;
 // OLD
 	//D3DClass* m_D3D;
 	//CameraClass* m_Camera;

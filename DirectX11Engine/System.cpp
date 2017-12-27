@@ -44,8 +44,8 @@ bool System::Initialize()
 	_Graphics.reset(new GraphicsClass);
 	if (!_Graphics)	return false;
 
-	//result = _Graphics->Initialize(screenWidth, screenHeight, _hwnd, _Scene.get());
-	result = _Graphics->Initialize(screenWidth, screenHeight, _hwnd);
+	result = _Graphics->Initialize(screenWidth, screenHeight, _hwnd, _Scene.get());
+	//result = _Graphics->Initialize(screenWidth, screenHeight, _hwnd);
 	CHECK(result, "graphics");
 
 	_Timer.reset(new TimerClass);
@@ -73,10 +73,10 @@ bool System::Tick()
 
 	_Scene->Tick(_Timer->GetTime(), _Input.get());
 
-//	_Graphics->UpdateFrame(_Timer->GetTime(), _Scene.get(), _UI->_Fps->GetFps());
-	XMFLOAT3 camPos = _Scene->GetCamera()->GetPosition();
-	XMFLOAT3 camRot = _Scene->GetCamera()->GetOrientation();
-	_Graphics->Frame(camPos.x, camPos.y, camPos.z, camRot.x, camRot.y, camRot.z);
+	_Graphics->UpdateFrame(_Timer->GetTime(), _Scene.get(), _UI->_Fps->GetFps());
+	//XMFLOAT3 camPos = _Scene->GetCamera()->GetPosition();
+	//XMFLOAT3 camRot = _Scene->GetCamera()->GetOrientation();
+	//_Graphics->Frame(camPos.x, camPos.y, camPos.z, camRot.x, camRot.y, camRot.z);
 
 	_UI->Tick();
 
