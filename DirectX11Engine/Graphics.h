@@ -1,3 +1,4 @@
+#pragma region LATEST CODE NOT WORKING
 //#pragma once
 //
 //////////////////////////////////////////////////////////////////////////////////
@@ -126,46 +127,49 @@
 //	const int NUM_LIGHTS = 4;
 //};
 
-#pragma region UNIT_TESTING
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-///////////// SHADOW TESTING /////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+#pragma endregion
 
+#pragma region REBUILD
+#pragma once
 
-////////////////////////////////////////////////////////////////////////////////
-// Filename: graphicsclass.h
-////////////////////////////////////////////////////////////////////////////////
-#ifndef _GRAPHICSCLASS_H_
-#define _GRAPHICSCLASS_H_
+// NEW INCLUDES
+#include "GfxUtil.h"
+#include "GlobalIncludes.h"
 
-
-///////////////////////
-// MY CLASS INCLUDES //
-///////////////////////
 #include "d3dclass.h"
-#include "cameraclass.h"
-#include "modelclass.h"
-//#include "lightclass.h"
-#include "lightclassALT.h"
+#include "camera.h"
+#include "lightclass.h"
+#include "model.h"
+
+//#include "Actor.h"
+//#include "Scene.h"
+
+//#include "rendertextureclass.h"
+//#include "shadermanagerclass.h"
+
+//#include "textclass.h"
+//#include "frustumclass.h"
+
+
+// OLD INCLUDES
+//#include "d3dclass.h"
+//#include "cameraclass.h"
+//#include "lightclassALT.h"
+//#include "modelclass.h"
+
 #include "rendertextureclass.h"
-//#include "depthshaderclass.h"
 #include "depthshaderclassALT.h"
 #include "shadowshaderclass.h"
-
 
 /////////////
 // GLOBALS //
 /////////////
-const bool FULL_SCREEN = true;
+const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 100.0f;
 const float SCREEN_NEAR = 1.0f;
 const int SHADOWMAP_WIDTH = 1024;
 const int SHADOWMAP_HEIGHT = 1024;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
@@ -186,17 +190,96 @@ private:
 	bool Render();
 
 private:
-	D3DClass* m_D3D;
-	CameraClass* m_Camera;
-	ModelClass *m_CubeModel, *m_GroundModel, *m_SphereModel;
-	lightclassALT* m_Light;
+//NEW
+	unique_ptr<D3DClass> _D3D;
+	unique_ptr<Camera> _Camera;
+	unique_ptr<LightClass> _Light;
+	unique_ptr<Model> _CubeModel, _SphereModel, _GroundModel;	
+
+// OLD
+	//D3DClass* m_D3D;
+	//CameraClass* m_Camera;
+	//lightclassALT* m_Light;
+	//ModelClass *m_CubeModel, *m_GroundModel, *m_SphereModel;
+
 	RenderTextureClass* m_RenderTexture;
-	//DepthShaderClass* m_DepthShader;
 	depthShaderClassALT* m_DepthShader;
 	ShadowShaderClass* m_ShadowShader;
 };
+#pragma endregion
 
-#endif
 
+#pragma region UNIT_TESTING
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+/////////////// SHADOW TESTING /////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+//
+//
+//////////////////////////////////////////////////////////////////////////////////
+//// Filename: graphicsclass.h
+//////////////////////////////////////////////////////////////////////////////////
+//#ifndef _GRAPHICSCLASS_H_
+//#define _GRAPHICSCLASS_H_
+//
+//
+/////////////////////////
+//// MY CLASS INCLUDES //
+/////////////////////////
+//#include "d3dclass.h"
+//#include "cameraclass.h"
+//#include "modelclass.h"
+////#include "lightclass.h"
+//#include "lightclassALT.h"
+//#include "rendertextureclass.h"
+////#include "depthshaderclass.h"
+//#include "depthshaderclassALT.h"
+//#include "shadowshaderclass.h"
+//
+//
+///////////////
+//// GLOBALS //
+///////////////
+//const bool FULL_SCREEN = true;
+//const bool VSYNC_ENABLED = true;
+//const float SCREEN_DEPTH = 100.0f;
+//const float SCREEN_NEAR = 1.0f;
+//const int SHADOWMAP_WIDTH = 1024;
+//const int SHADOWMAP_HEIGHT = 1024;
+//
+//
+//////////////////////////////////////////////////////////////////////////////////
+//// Class name: GraphicsClass
+//////////////////////////////////////////////////////////////////////////////////
+//class GraphicsClass
+//{
+//public:
+//	GraphicsClass();
+//	GraphicsClass(const GraphicsClass&);
+//	~GraphicsClass();
+//
+//	bool Initialize(int, int, HWND);
+//	void Shutdown();
+//	bool Frame(float, float, float, float, float, float);
+//
+//private:
+//	bool RenderSceneToTexture();
+//	bool Render();
+//
+//private:
+//	D3DClass* m_D3D;
+//	CameraClass* m_Camera;
+//	ModelClass *m_CubeModel, *m_GroundModel, *m_SphereModel;
+//	lightclassALT* m_Light;
+//	RenderTextureClass* m_RenderTexture;
+//	//DepthShaderClass* m_DepthShader;
+//	depthShaderClassALT* m_DepthShader;
+//	ShadowShaderClass* m_ShadowShader;
+//};
+//
+//#endif
+//
 
 #pragma endregion
