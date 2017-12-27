@@ -137,28 +137,26 @@
 #include "GlobalIncludes.h"
 
 #include "d3dclass.h"
+#include "shadermanagerclass.h"
+
 #include "camera.h"
 #include "lightclass.h"
 #include "model.h"
+#include "rendertextureclass.h"
 
 //#include "Actor.h"
 //#include "Scene.h"
 
-//#include "rendertextureclass.h"
-//#include "shadermanagerclass.h"
-
 //#include "textclass.h"
 //#include "frustumclass.h"
-
 
 // OLD INCLUDES
 //#include "d3dclass.h"
 //#include "cameraclass.h"
 //#include "lightclassALT.h"
 //#include "modelclass.h"
-
-#include "rendertextureclass.h"
-#include "depthshaderclassALT.h"
+//#include "depthshaderclassALT.h"
+//#include "rendertextureclass.h"
 #include "shadowshaderclass.h"
 
 /////////////
@@ -182,7 +180,7 @@ public:
 	~GraphicsClass();
 
 	bool Initialize(int, int, HWND);
-	void Shutdown();
+	//void Shutdown();
 	bool Frame(float, float, float, float, float, float);
 
 private:
@@ -192,9 +190,14 @@ private:
 private:
 //NEW
 	unique_ptr<D3DClass> _D3D;
+	unique_ptr<ShaderManagerClass> _ShaderManager;
 	unique_ptr<Camera> _Camera;
 	unique_ptr<LightClass> _Light;
 	unique_ptr<Model> _CubeModel, _SphereModel, _GroundModel;	
+	unique_ptr<RenderTextureClass> _RenderTexture;
+	
+/////////// GLOBAL EFFECTS /////////////
+	SceneEffects _globalEffects;
 
 // OLD
 	//D3DClass* m_D3D;
@@ -202,8 +205,8 @@ private:
 	//lightclassALT* m_Light;
 	//ModelClass *m_CubeModel, *m_GroundModel, *m_SphereModel;
 
-	RenderTextureClass* m_RenderTexture;
-	depthShaderClassALT* m_DepthShader;
+	//depthShaderClassALT* m_DepthShader;
+	//RenderTextureClass* m_RenderTexture;
 	ShadowShaderClass* m_ShadowShader;
 };
 #pragma endregion

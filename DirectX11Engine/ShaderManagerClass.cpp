@@ -139,7 +139,7 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 			lights, 
 			cameraPos, light->GetSpecularColor(), light->GetSpecularPower(), effects.fogStart, effects.fogEnd, material->translation, material->transparency);
 		if (!result) return false;
-		_LightShader->RenderShader(device, indexCount);
+		//_LightShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::EREFLECTION:
@@ -173,7 +173,6 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 	case EShaderType::EDEPTH:
 		result = _DepthShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix);
 		if (!result) return false;
-		//_DepthShader->RenderShader(device, indexCount);
 		break;
 
 	default:
