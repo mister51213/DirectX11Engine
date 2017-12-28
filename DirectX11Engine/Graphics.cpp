@@ -1121,7 +1121,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	// INIT MODELS ~ LOOP METHOD ~ //// INIT MODELS ~ LOOP METHOD ~ //
 
 	vector<string> texNames = { "wall01.dds", "ice.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
-	vector<string> meshNames = { "cube2.txt", "sphere.txt", "plane01.txt", "sphere.txt"};
+	vector<string> meshNames = { "cube2.txt", "cube2.txt", "plane01.txt", "cube2.txt", "cube2.txt", "plane01.txt", "sphere.txt"};
 	vector<string> modelNames = { "cube", "sphere", "ground", "sphere2"};
 
 	int i = 0;

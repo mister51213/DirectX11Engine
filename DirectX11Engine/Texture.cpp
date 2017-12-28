@@ -20,22 +20,17 @@ TextureClass::TextureClass(){}
 TextureClass::TextureClass(const TextureClass& other){}
 TextureClass::~TextureClass(){}
 
-//@TODO - DONT USE YET! something not working - not initializing all the files in the array for some reason
-bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, /*vector<char*>*/vector<string> filenames)
+bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<string> filenames)
 {
 	for (int i = 0; i < filenames.size(); ++i)
 	{
-		//@TEMP - convert to c-string here
-		char * cpath = new char[filenames[i].size()];
+		char* cpath = new char[filenames[i].size() + 1];
 		strcpy(cpath, filenames[i].c_str());
-		
-		//filenames[i].copy(fileName, filenames[i].length());
-		//@TEMP - convert to c-string here
-		
+
 		_textureViews.push_back(Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>());
-		InitializeTexture(device, deviceContext, /*filenames[i]*/cpath, i);
-		
-		//delete[] cpath;
+		InitializeTexture(device, deviceContext, cpath, i);
+
+		delete[] cpath;		
 	}
 	return true;
 }
@@ -43,7 +38,7 @@ bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* de
 bool TextureClass::InitializeTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename, int i)
 {
 	string extension = PathFindExtension(filename);
-	
+
 	if (extension == ".tga")
 	{
 		unsigned char* ptr1;	_targaData.push_back(ptr1);
@@ -61,15 +56,6 @@ bool TextureClass::InitializeTexture(ID3D11Device* device, ID3D11DeviceContext* 
 			return false;
 		}
 
-		//@REFERENCE
-		//	HRESULT __cdecl CreateDDSTextureFromFile(
-		//		_In_ ID3D11Device* d3dDevice,
-		//		_In_opt_ ID3D11DeviceContext* d3dContext,
-		//		_In_z_ const wchar_t* szFileName,
-		//		_Outptr_opt_ ID3D11Resource** texture,
-		//		_Outptr_opt_ ID3D11ShaderResourceView** textureView,
-		//		_In_ size_t maxsize = 0,
-		//		_Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr);
 	}
 	else
 	{
@@ -84,6 +70,16 @@ bool TextureClass::InitializeTexture(ID3D11Device* device, ID3D11DeviceContext* 
 
 	return true;
 }
+
+//@REFERENCE
+//	HRESULT __cdecl CreateDDSTextureFromFile(
+//		_In_ ID3D11Device* d3dDevice,
+//		_In_opt_ ID3D11DeviceContext* d3dContext,
+//		_In_z_ const wchar_t* szFileName,
+//		_Outptr_opt_ ID3D11Resource** texture,
+//		_Outptr_opt_ ID3D11ShaderResourceView** textureView,
+//		_In_ size_t maxsize = 0,
+//		_Out_opt_ DDS_ALPHA_MODE* alphaMode = nullptr);
 
 bool TextureClass::InitializeTexTga(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename, unsigned char** targaData, ID3D11Texture2D** pTexture, ID3D11ShaderResourceView** pTexView)
 {
