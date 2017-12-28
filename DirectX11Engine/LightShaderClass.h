@@ -27,8 +27,10 @@ private:
 		XMMATRIX world;
 		XMMATRIX view;
 		XMMATRIX projection;
-		XMMATRIX lightView;
-		XMMATRIX lightProjection;
+		//XMMATRIX lightView;
+		//XMMATRIX lightProjection;
+		XMMATRIX lightView[2];
+		XMMATRIX lightProjection[2];
 	};
 
 	struct CameraBufferType
@@ -40,6 +42,7 @@ private:
 	{
 		XMFLOAT4 ambientColor;
 		XMFLOAT4 diffuseColor;
+		XMFLOAT4 diffuseColor2;
 		XMFLOAT3 lightDirection;
 		float specularPower; // placed the specular power by the light direction to form a 4 float slot instead of using padding so that the structure could be kept in multiples of 16 bytes
 		XMFLOAT4 specularColor;
@@ -56,8 +59,13 @@ private:
 	};
 	struct LightShadowBufferType
 	{
-		XMFLOAT3 lightShadowPos;
-		float padding;
+		//XMFLOAT3 lightShadowPos;
+		//float padding;
+		XMFLOAT3 lightShadowPos1;
+		float padding1;
+		
+		XMFLOAT3 lightShadowPos2;
+		float padding2;
 	};
 	struct FogBufferType
 	{
@@ -86,9 +94,10 @@ public:
 	~LightShaderClass();
 
 	bool Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix,
-		XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix, 
-		ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
-		LightClass* shadowLight,
+		/*XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix, */
+		XMMATRIX lightViewMatrix[], XMMATRIX lightProjectionMatrix[],
+		ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT4 diffuseColor2,
+		/*LightClass* shadowLight,*/LightClass* shadowLight[],
 		LightClass* lights[],
 		XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, float translation, float transparency);
 
@@ -97,9 +106,11 @@ public:
 private:
 	bool InitializeShader(ID3D11Device*, HWND, char*, char*);
 
-	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix,
-		ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor,
-		LightClass* shadowLight,
+	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, 
+		/*XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix,*/
+		XMMATRIX lightViewMatrix[], XMMATRIX lightProjectionMatrix[],
+		ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT4 diffuseColor2,
+		/*LightClass* shadowLight,*/LightClass* shadowLight[],
 		LightClass* lights[],
 		XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, float texTranslation, float transparency);
 

@@ -24,7 +24,7 @@ public:
 	
 	inline Actor* GetCamera() const { return _Camera.get(); }
 
-	int _numActors = 4;
+	int _numActors = 3;
 
 	unique_ptr<Actor> _Camera;
 	//vector<unique_ptr<Actor>> _Actors;

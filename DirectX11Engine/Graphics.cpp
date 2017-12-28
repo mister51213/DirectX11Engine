@@ -1126,13 +1126,12 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	{
 		it->second->InstantiateModel(new Model);
 
-		vector<string> texArray(7, "../DirectX11Engine/data/" + texNames[i]);
+		vector<string> texArray(8, "../DirectX11Engine/data/" + texNames[i]);
 		CHECK(it->second->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/" + meshNames[i],
 			texArray, EShaderType::ELIGHT_SPECULAR), modelNames[i]);
 
 		++i;
 	}
-	// INIT MODELS //// INIT MODELS //// INIT MODELS //// INIT MODELS //
 
 #pragma region NON-LOOP MODELS WORKING
 	//_CubeModel.reset(new Model);
@@ -1165,19 +1164,25 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 
 #pragma endregion
 
-	// LIGHTING //
+	// LIGHT 1 //
 	_Light.reset(new LightClass);
-	if (!_Light)
-	{
-		return false;
-	}
+	if (!_Light)return false;
 
 	_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
 	_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_Light->SetLookAt(0.0f, 0.0f, 0.0f);
 	_Light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
 
-	// RENDER TEXTURES //
+	// LIGHT 2 //
+	_Light2.reset(new LightClass);
+	if (!_Light)return false;
+
+	_Light2->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
+	_Light2->SetDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f);
+	_Light2->SetLookAt(0.0f, 0.0f, 0.0f);
+	_Light2->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+
+	// RENDER TEXTURE 1
 	_RenderTexture.reset(new RenderTextureClass);
 	if (!_RenderTexture)
 	{
@@ -1186,6 +1191,16 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	
 	CHECK(_RenderTexture->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR), "render to texture");
 
+	// RENDER TEXTURE 2
+	_RenderTexture2.reset(new RenderTextureClass);
+	if (!_RenderTexture)
+	{
+		return false;
+	}
+
+	CHECK(_RenderTexture2->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR), "render to texture");
+
+	// UI
 	InitializeUI(screenWidth, screenHeight);
 	
 	return true;
@@ -1208,7 +1223,7 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 	_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
 	_Camera->SetRotation(camRot.x, camRot.y, camRot.z);
 
-	// 3. Update Lights @TODO: Encapsulate lights in scene again!
+	// 3. Update 1st light @TODO: Encapsulate lights in scene again!
 	if (_lightPositionX > 1.0f)
 	{
 		_lightPositionX = -1.f;
@@ -1221,6 +1236,8 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 	_lightPositionZ += _lightPosIncrement;
 	_Light->SetPosition(cos(_lightPositionX)*5.f, 8.0f, sin(_lightPositionZ)*5.f);
 
+	_Light2->SetPosition(-5.f, 8.0f, 5.f);
+	
 	// 4. Update UI
 	UpdateFpsString(_D3D->GetDeviceContext(), fps);
 	UpdatePositionStrings(_D3D->GetDeviceContext(), camPos.x, camPos.y, camPos.z, camRot.x, camRot.y, camRot.z);
@@ -1238,6 +1255,7 @@ bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 	float posX, posY, posZ;
 	bool result;
 
+	/////////////// SHADOW 1 //////////////////
 	_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext());
 	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -1245,7 +1263,31 @@ bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 	lightViewMatrix = _Light->GetViewMatrix();
 	lightProjectionMatrix = _Light->GetProjectionMatrix();
 
-	/////////////// TODO: Use Actor positions //////////////////
+	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+	{
+		if (it->second->GetModel())
+		{
+			// Reset the world matrix.
+			_D3D->GetWorldMatrix(worldMatrix);
+			worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(it->second->GetPosition().x, it->second->GetPosition().y, it->second->GetPosition().z));
+
+			it->second->GetModel()->LoadVertices(_D3D->GetDeviceContext());
+			result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+			if (!result)
+			{
+				return false;
+			}
+		}
+	}
+
+	/////////////// SHADOW 2 //////////////////
+	_RenderTexture2->SetRenderTarget(_D3D->GetDeviceContext());
+	_RenderTexture2->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
+
+	_Light2->GenerateViewMatrix();
+	lightViewMatrix = _Light2->GetViewMatrix();
+	lightProjectionMatrix = _Light2->GetProjectionMatrix();
+
 	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 	{
 		if (it->second->GetModel())
@@ -1317,7 +1359,8 @@ bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 bool GraphicsClass::Render(Scene* pScene)
 {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, translateMatrix;
-	XMMATRIX lightViewMatrix, lightProjectionMatrix;
+	//XMMATRIX lightViewMatrix, lightProjectionMatrix;
+	XMMATRIX lightViewMatrix[2], lightProjectionMatrix[2];
 	bool result;
 	float posX, posY, posZ;
 
@@ -1332,15 +1375,24 @@ bool GraphicsClass::Render(Scene* pScene)
 	// Generate the view matrix based on the camera's position.
 	_Camera->UpdateViewPoint();
 	_Light->GenerateViewMatrix();
+	_Light2->GenerateViewMatrix();
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	_Camera->GetViewMatrix(viewMatrix);
-	//_D3D->GetWorldMatrix(worldMatrix);
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
 	// Get the light's view and projection matrices from the light object.
-	lightViewMatrix = _Light->GetViewMatrix();
-	lightProjectionMatrix = _Light->GetProjectionMatrix();
+
+	//lightViewMatrix = _Light->GetViewMatrix();
+	//lightProjectionMatrix = _Light->GetProjectionMatrix();
+
+	lightViewMatrix[0] = _Light->GetViewMatrix();
+	lightViewMatrix[1] = _Light2->GetViewMatrix();
+
+	lightProjectionMatrix[0] = _Light->GetProjectionMatrix();
+	lightProjectionMatrix[1] = _Light2->GetProjectionMatrix();
+
+	LightClass* shadowLights[2] = { _Light.get() , _Light2.get() };
 
 	/////////////////////////////////////////////////////////////////
 	////////////////// RENDER ACTUAL SCENE - LOOP IMPLEMENTATION ////
@@ -1355,12 +1407,25 @@ bool GraphicsClass::Render(Scene* pScene)
 
 			worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(it->second->GetPosition().x, it->second->GetPosition().y, it->second->GetPosition().z));
 			it->second->GetModel()->LoadVertices(_D3D->GetDeviceContext());
+
+			// Set rendered shadows into material resource arrays to be available to gfx pipeline
 			it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTexture->GetShaderResourceView();
+			it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[7] = _RenderTexture2->GetShaderResourceView();
+
+			//_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			//	lightViewMatrix, lightProjectionMatrix,
+			//	it->second->GetModel()->GetMaterial()->GetResourceArray(),
+			//	_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Light.get(), lights,
+			//	_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(),
+			//	_globalEffects.fogStart, _globalEffects.fogEnd,
+			//	it->second->GetModel()->GetMaterial()->translation, it->second->GetModel()->GetMaterial()->transparency);
 
 			_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 				lightViewMatrix, lightProjectionMatrix,
 				it->second->GetModel()->GetMaterial()->GetResourceArray(),
-				_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Light.get(), lights,
+				_Light->GetDirection(), _Light->GetAmbientColor(), 
+				_Light->GetDiffuseColor(), _Light2->GetDiffuseColor(),
+				shadowLights, lights,
 				_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(),
 				_globalEffects.fogStart, _globalEffects.fogEnd,
 				it->second->GetModel()->GetMaterial()->translation, it->second->GetModel()->GetMaterial()->transparency);

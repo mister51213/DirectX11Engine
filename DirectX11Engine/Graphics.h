@@ -210,8 +210,10 @@ private:
 	unique_ptr<ShaderManagerClass> _ShaderManager;
 	unique_ptr<Camera> _Camera;
 	unique_ptr<LightClass> _Light;
+	unique_ptr<LightClass> _Light2;
 	unique_ptr<Model> _CubeModel, _SphereModel, _GroundModel;	
 	unique_ptr<RenderTextureClass> _RenderTexture;
+	unique_ptr<RenderTextureClass> _RenderTexture2;
 	
 /////////// GLOBAL EFFECTS /////////////
 	SceneEffects _globalEffects;
