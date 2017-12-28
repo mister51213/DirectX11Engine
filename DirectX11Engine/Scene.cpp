@@ -17,31 +17,43 @@ bool Scene::Initialize()
 	_Camera->InitializeMovement(false);
 	_Camera->GetMovementComponent()->SetPosition(XMFLOAT3(0.f,5.f,-12.f));
 
+	//for (int i = 0; i < _numActors; ++i)
+	//{
+	//	_Actors.push_back(unique_ptr<Actor>());
+	//	_Actors[i].reset(new Actor);
+	//	_Actors[i]->InitializeMovement("Actor" + to_string(i + 1), true);
+	//}
+
+	/////// MAP VERSION //////////////
 	for (int i = 0; i < _numActors; ++i)
 	{
-		_Actors.push_back(unique_ptr<Actor>());
-		_Actors[i].reset(new Actor);
-		_Actors[i]->InitializeMovement(true);
+		unique_ptr<Actor> pActor = std::make_unique<Actor>("Actor"+ to_string(i + 1));
+		pActor->InitializeMovement(true); 
+		//_Actors.insert(std::pair<string, unique_ptr<Actor>>(pActor->Name, std::move(pActor)));
+		//_Actors.insert({ pActor->Name, std::move(pActor) });
+		_Actors.emplace(pActor->Name, std::move(pActor));
 	}
+
+
 
 	///// WATER DEMO SETUP //////
 	// Overwrite the last 4 actors in the array with custom appearance (initialization by hand)
-	int indexToStopAt = _Actors.size() - 4;
-	for (int i = _Actors.size() - 1; i >= indexToStopAt; --i)
-	{
-		_Actors[i]->bCustomAppearance = true;
-	}
+	//int indexToStopAt = _Actors.size() - 4;
+	//for (int i = _Actors.size() - 1; i >= indexToStopAt; --i)
+	//{
+	//	_Actors[i]->bCustomAppearance = true;
+	//}
 
-	_Actors[_Actors.size() - 4]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 1.0f, 0.0f));
-	_Actors[_Actors.size() - 3]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 6.0f, 8.0f));
-	_Actors[_Actors.size() - 2]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.0f, 0.0f));
-	_Actors[_Actors.size() - 1]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.75, 0.0f));
+	//_Actors[_Actors.size() - 4]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 1.0f, 0.0f));
+	//_Actors[_Actors.size() - 3]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 6.0f, 8.0f));
+	//_Actors[_Actors.size() - 2]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.0f, 0.0f));
+	//_Actors[_Actors.size() - 1]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.75, 0.0f));
 
 	///// INIT LIGHTS //////
 	for (int i = 0; i < NUM_LIGHTS; ++i)
 	{
 		_LightActors.push_back(unique_ptr<Actor>());
-		_LightActors[i].reset(new Actor);
+		_LightActors[i].reset(new Actor("Actor" + to_string(i + 1)));
 		_LightActors[i]->InitializeMovement(true);
 	}
 
@@ -98,17 +110,3 @@ void Scene::ProcessInput(float deltaTime, Input* pInput)
 
 void Scene::UpdateActors(float deltaTime)
 {}
-
-Actor ** Scene::GetActors() const //@CLEANUP - probably shouldnt use this
-{
-	vector<Actor*> actors;
-
-	for (auto& actor : _Actors)
-	{
-		actors.push_back(actor.get());
-	}
-
-	return actors.data();
-}
-
-

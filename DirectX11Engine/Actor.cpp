@@ -3,6 +3,15 @@
 
 
 Actor::Actor()
+	:
+	Name("Actor")
+{
+	_MovementComp.reset(new MovementComponent);
+}
+
+Actor::Actor(const string& name)
+	:
+	Name(name)
 {
 	_MovementComp.reset(new MovementComponent);
 }
@@ -16,8 +25,7 @@ bool Actor::InitializeMovement(bool visible)
 	return true;
 }
 
-XMFLOAT3 Actor::
-GetPosition() const
+XMFLOAT3 Actor::GetPosition() const
 {
 	if (_MovementComp)
 	{

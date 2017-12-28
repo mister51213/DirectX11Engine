@@ -1077,8 +1077,6 @@
 
 #pragma endregion
 
-
-
 #pragma endregion
 
 #pragma region REBUILD FROM WORKING CODE
@@ -1187,11 +1185,19 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 {
 	// 1. Animate Materials @TODO - initialize models in initialize function
-	for (auto& actor : pScene->_Actors)
+	//for (auto& actor : pScene->_Actors)
+	//{
+	//	if (actor->GetModel())
+	//	{
+	//		actor->GetModel()->GetMaterial()->Animate();
+	//	}
+	//}
+
+	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 	{
-		if (actor->GetModel())
+		if (it->second->GetModel())
 		{
-			actor->GetModel()->GetMaterial()->Animate();
+			it->second->GetModel()->GetMaterial()->Animate();
 		}
 	}
 
@@ -1214,7 +1220,7 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 	_lightPositionZ += _lightPosIncrement;
 	_Light->SetPosition(cos(_lightPositionX)*5.f, 8.0f, sin(_lightPositionZ)*5.f);
 
-	// 4. Update UI // @TODO: reintegrate
+	// 4. Update UI
 	UpdateFpsString(_D3D->GetDeviceContext(), fps);
 	UpdatePositionStrings(_D3D->GetDeviceContext(), camPos.x, camPos.y, camPos.z, camRot.x, camRot.y, camRot.z);
 
@@ -1294,25 +1300,19 @@ bool GraphicsClass::Render()
 	bool result;
 	float posX, posY, posZ;
 
-	// First render the scene to a texture.
 	result = RenderSceneToTexture();
 	if (!result)
 	{
 		return false;
 	}
 
-	// Clear the buffers to begin the scene.
 	_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Generate the view matrix based on the camera's position.
-	//m_Camera->Render();
 	_Camera->UpdateViewPoint();
-
-	// Generate the light view matrix based on the light's position.
 	_Light->GenerateViewMatrix();
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
-	//m_Camera->GetViewMatrix(viewMatrix);
 	_Camera->GetViewMatrix(viewMatrix);
 	_D3D->GetWorldMatrix(worldMatrix);
 	_D3D->GetProjectionMatrix(projectionMatrix);
@@ -1320,29 +1320,10 @@ bool GraphicsClass::Render()
 	// Get the light's view and projection matrices from the light object.
 	lightViewMatrix = _Light->GetViewMatrix();
 	lightProjectionMatrix = _Light->GetProjectionMatrix();
-	//_Light->GetViewMatrix(lightViewMatrix);
-	//_Light->GetProjectionMatrix(lightProjectionMatrix);
 
-	// Setup the translation matrix for the cube model.
-	//m_CubeModel->GetPosition(posX, posY, posZ);
-	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(posX, posY, posZ));
 	XMFLOAT3 cPos = _CubeModel->GetPosition();
 	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(cPos.x, cPos.y, cPos.z));
 	_CubeModel->LoadVertices(_D3D->GetDeviceContext());
-
-	// Put the cube model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	//m_CubeModel->Render(_D3D->GetDeviceContext());
-	//result = m_ShadowShader->Render(
-	//	_D3D->GetDeviceContext(), m_CubeModel->GetIndexCount(),
-	//	worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
-	//	lightProjectionMatrix, m_CubeModel->GetTexture(), m_RenderTexture->GetShaderResourceView(), _Light->GetPosition(),
-	//	_Light->GetAmbientColor(), _Light->GetDiffuseColor());
-
-	//result = m_ShadowShader->Render(
-	//	_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, 
-	//	lightViewMatrix, lightProjectionMatrix, 
-	//	_CubeModel->GetMaterial()->GetResourceArray()[0], _RenderTexture->GetShaderResourceView(), _Light->GetPosition(),
-	//	_Light->GetAmbientColor(), _Light->GetDiffuseColor());
 
 	//REBUILT IMPLEMENTATION
 	LightClass* lights[4] = {new LightClass, new LightClass, new LightClass, new LightClass};
@@ -1363,22 +1344,10 @@ bool GraphicsClass::Render()
 	// Reset the world matrix.
 	_D3D->GetWorldMatrix(worldMatrix);
 
-	// Setup the translation matrix for the sphere model.
-	//m_SphereModel->GetPosition(posX, posY, posZ);
-	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(posX, posY, posZ));
 	XMFLOAT3 sPos = _SphereModel->GetPosition();
 	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(sPos.x, sPos.y, sPos.z));
 	_SphereModel->LoadVertices(_D3D->GetDeviceContext());
-	
-	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	//m_SphereModel->Render(_D3D->GetDeviceContext());
-	//result = m_ShadowShader->Render(_D3D->GetDeviceContext(), m_SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
-	//	lightProjectionMatrix, m_SphereModel->GetTexture(), m_RenderTexture->GetShaderResourceView(), _Light->GetPosition(),
-	//	_Light->GetAmbientColor(), _Light->GetDiffuseColor());
 
-	//result = m_ShadowShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
-	//	lightProjectionMatrix, _SphereModel->GetMaterial()->GetResourceArray()[0], _RenderTexture->GetShaderResourceView(), _Light->GetPosition(),
-	//	_Light->GetAmbientColor(), _Light->GetDiffuseColor());
 
 	_SphereModel->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTexture->GetShaderResourceView();
 
@@ -1398,30 +1367,9 @@ bool GraphicsClass::Render()
 	// Reset the world matrix.
 	_D3D->GetWorldMatrix(worldMatrix);
 
-	// Setup the translation matrix for the ground model.
-	//m_GroundModel->GetPosition(posX, posY, posZ);
-	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(posX, posY, posZ));
 	XMFLOAT3 gPos = _GroundModel->GetPosition();
 	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(gPos.x, gPos.y, gPos.z));
 	_GroundModel->LoadVertices(_D3D->GetDeviceContext());
-	
-	// Render the ground model using the shadow shader.
-	//m_GroundModel->Render(_D3D->GetDeviceContext());
-	//result = m_ShadowShader->Render(
-	//	_D3D->GetDeviceContext(),
-	//	m_GroundModel->GetIndexCount(),
-	//	worldMatrix, viewMatrix, projectionMatrix,
-	//	lightViewMatrix, lightProjectionMatrix,
-	//	m_GroundModel->GetTexture(), m_RenderTexture->GetShaderResourceView(), _Light->GetPosition(),
-	//	_Light->GetAmbientColor(), _Light->GetDiffuseColor());
-	
-	//result = m_ShadowShader->Render(
-	//	_D3D->GetDeviceContext(),
-	//	_GroundModel->GetIndexCount(),
-	//	worldMatrix, viewMatrix, projectionMatrix,
-	//	lightViewMatrix, lightProjectionMatrix,
-	//	_GroundModel->GetMaterial()->GetResourceArray()[0], _RenderTexture->GetShaderResourceView(), _Light->GetPosition(),
-	//	_Light->GetAmbientColor(), _Light->GetDiffuseColor());
 	
 	//REBUILT IMPLEMENTATION
 	_GroundModel->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTexture->GetShaderResourceView();

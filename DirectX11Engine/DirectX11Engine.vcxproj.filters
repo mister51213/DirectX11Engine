@@ -40,6 +40,12 @@
     <Filter Include="BULLET">
       <UniqueIdentifier>{d4b99a7c-5c44-4989-844a-658f568e9d9a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Deprecated">
+      <UniqueIdentifier>{c44997be-e32e-484a-a448-c6af36b47de6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utilities">
+      <UniqueIdentifier>{a16c463b-626a-4b06-a800-edb25db65756}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FontShaderClass.cpp">
@@ -69,49 +75,10 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Tier2</Filter>
     </ClCompile>
-    <ClCompile Include="CpuClass.cpp">
-      <Filter>Source Files\Tier2</Filter>
-    </ClCompile>
-    <ClCompile Include="D3DClass.cpp">
-      <Filter>Source Files\Tier2</Filter>
-    </ClCompile>
-    <ClCompile Include="DebugWindowClass.cpp">
-      <Filter>Source Files\Tier2</Filter>
-    </ClCompile>
     <ClCompile Include="FontClass.cpp">
       <Filter>Source Files\Tier2</Filter>
     </ClCompile>
-    <ClCompile Include="FpsClass.cpp">
-      <Filter>Source Files\Tier2</Filter>
-    </ClCompile>
     <ClCompile Include="FrustumClass.cpp">
-      <Filter>Source Files\Tier2</Filter>
-    </ClCompile>
-    <ClCompile Include="LightClass.cpp">
-      <Filter>Source Files\Tier2</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
-      <Filter>Source Files\Tier2</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelListClass.cpp">
-      <Filter>Source Files\Tier2</Filter>
-    </ClCompile>
-    <ClCompile Include="Position.cpp">
-      <Filter>Source Files\Tier2</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderTextureClass.cpp">
-      <Filter>Source Files\Tier2</Filter>
-    </ClCompile>
-    <ClCompile Include="System.cpp">
-      <Filter>Source Files\Tier2</Filter>
-    </ClCompile>
-    <ClCompile Include="TextClass.cpp">
-      <Filter>Source Files\Tier2</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files\Tier2</Filter>
-    </ClCompile>
-    <ClCompile Include="TimerClass.cpp">
       <Filter>Source Files\Tier2</Filter>
     </ClCompile>
     <ClCompile Include="Graphics.cpp">
@@ -549,35 +516,74 @@
     <ClCompile Include="Physics.cpp">
       <Filter>Source Files\Tier1</Filter>
     </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>Source Files\Tier1</Filter>
-    </ClCompile>
-    <ClCompile Include="Actor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GfxUtil.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ModelClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="shadowshaderclass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="lightclassALT.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="textureClassALT.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="DepthShaderClass.cpp">
       <Filter>Source Files\Shaders</Filter>
     </ClCompile>
+    <ClCompile Include="CameraClass.cpp">
+      <Filter>Source Files\Deprecated</Filter>
+    </ClCompile>
     <ClCompile Include="depthShaderClassALT.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Deprecated</Filter>
+    </ClCompile>
+    <ClCompile Include="lightclassALT.cpp">
+      <Filter>Source Files\Deprecated</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelClass.cpp">
+      <Filter>Source Files\Deprecated</Filter>
+    </ClCompile>
+    <ClCompile Include="shadowshaderclass.cpp">
+      <Filter>Source Files\Deprecated</Filter>
+    </ClCompile>
+    <ClCompile Include="textureClassALT.cpp">
+      <Filter>Source Files\Deprecated</Filter>
+    </ClCompile>
+    <ClCompile Include="GfxUtil.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="CpuClass.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelListClass.cpp">
+      <Filter>Source Files\Deprecated</Filter>
+    </ClCompile>
+    <ClCompile Include="TimerClass.cpp">
+      <Filter>Source Files\Tier1</Filter>
+    </ClCompile>
+    <ClCompile Include="System.cpp">
+      <Filter>Source Files\Tier1</Filter>
+    </ClCompile>
+    <ClCompile Include="D3DClass.cpp">
+      <Filter>Source Files\Tier2</Filter>
+    </ClCompile>
+    <ClCompile Include="DebugWindowClass.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="FpsClass.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Source Files\Tier1</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Tier2</Filter>
+    </ClCompile>
+    <ClCompile Include="Actor.cpp">
+      <Filter>Source Files\Tier2</Filter>
+    </ClCompile>
+    <ClCompile Include="LightClass.cpp">
+      <Filter>Source Files\Tier2</Filter>
+    </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>Source Files\Tier2</Filter>
+    </ClCompile>
+    <ClCompile Include="Position.cpp">
+      <Filter>Source Files\Tier2</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTextureClass.cpp">
+      <Filter>Source Files\Tier2</Filter>
+    </ClCompile>
+    <ClCompile Include="TextClass.cpp">
+      <Filter>Source Files\Tier2</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

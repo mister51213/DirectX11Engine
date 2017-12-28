@@ -3,6 +3,7 @@
 #include "GfxUtil.h"
 #include "Position.h" 
 #include "Model.h"
+#include <string>
 
 using namespace GfxUtil;
 
@@ -10,6 +11,7 @@ class Actor
 {
 public:
 	Actor();
+	Actor::Actor(const string& name);
 
 	bool InitializeMovement(bool visible);
 
@@ -30,7 +32,7 @@ public:
 	inline Model* GetModel() const { return _Model.get(); }
 
 
-
+	string Name;
 	bool bCustomAppearance = false;
 	bool bVisible = true;
 
