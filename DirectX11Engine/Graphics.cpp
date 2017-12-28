@@ -1168,7 +1168,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	_Light.reset(new LightClass);
 	if (!_Light)return false;
 
-	_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
+	//_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
+	_Light->SetAmbientColor(0,0,0, 1.0f);
 	_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_Light->SetLookAt(0.0f, 0.0f, 0.0f);
 	_Light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
@@ -1178,7 +1179,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	if (!_Light)return false;
 
 	_Light2->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-	_Light2->SetDiffuseColor(1.0f, 0.0f, 0.0f, 1.0f);
+	_Light2->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_Light2->SetLookAt(0.0f, 0.0f, 0.0f);
 	_Light2->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
 
@@ -1236,7 +1237,8 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 	_lightPositionZ += _lightPosIncrement;
 	_Light->SetPosition(cos(_lightPositionX)*5.f, 8.0f, sin(_lightPositionZ)*5.f);
 
-	_Light2->SetPosition(-5.f, 8.0f, 5.f);
+	//_Light->SetPosition(5.f, 8.0f, -5.f);
+	_Light2->SetPosition(-5.f, 8.0f, -5.f);
 	
 	// 4. Update UI
 	UpdateFpsString(_D3D->GetDeviceContext(), fps);
@@ -1397,7 +1399,7 @@ bool GraphicsClass::Render(Scene* pScene)
 	/////////////////////////////////////////////////////////////////
 	////////////////// RENDER ACTUAL SCENE - LOOP IMPLEMENTATION ////
 	/////////////////////////////////////////////////////////////////
-	LightClass* lights[4] = { new LightClass, new LightClass, new LightClass, new LightClass };
+	//LightClass* lights[4] = { new LightClass, new LightClass, new LightClass, new LightClass };
 
 	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 	{
@@ -1425,7 +1427,7 @@ bool GraphicsClass::Render(Scene* pScene)
 				it->second->GetModel()->GetMaterial()->GetResourceArray(),
 				_Light->GetDirection(), _Light->GetAmbientColor(), 
 				_Light->GetDiffuseColor(), _Light2->GetDiffuseColor(),
-				shadowLights, lights,
+				shadowLights, /*lights,*/
 				_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(),
 				_globalEffects.fogStart, _globalEffects.fogEnd,
 				it->second->GetModel()->GetMaterial()->translation, it->second->GetModel()->GetMaterial()->transparency);

@@ -17,15 +17,8 @@ bool Scene::Initialize()
 	_Camera->InitializeMovement(false);
 	_Camera->GetMovementComponent()->SetPosition(XMFLOAT3(0.f,5.f,-12.f));
 
-	//for (int i = 0; i < _numActors; ++i)
-	//{
-	//	_Actors.push_back(unique_ptr<Actor>());
-	//	_Actors[i].reset(new Actor);
-	//	_Actors[i]->InitializeMovement("Actor" + to_string(i + 1), true);
-	//}
-
 	/////// MAP VERSION //////////////
-	vector<XMFLOAT3> positions = { XMFLOAT3(-2.0f, 1.f, 0.0f), XMFLOAT3(2.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.f, 2.0f) };
+	vector<XMFLOAT3> positions = { XMFLOAT3(-2.0f, 1.f, 0.0f), XMFLOAT3(2.0f, 1.f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.f, 2.0f) };
 
 	for (int i = 0; i < _numActors; ++i)
 	{

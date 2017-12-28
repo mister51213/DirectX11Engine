@@ -98,7 +98,7 @@ public:
 		XMMATRIX lightViewMatrix[], XMMATRIX lightProjectionMatrix[],
 		ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT4 diffuseColor2,
 		/*LightClass* shadowLight,*/LightClass* shadowLight[],
-		LightClass* lights[],
+		/*LightClass* lights[],*/
 		XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, float translation, float transparency);
 
 	virtual void RenderShader(ID3D11DeviceContext* deviceContext, int indexCount) override;
@@ -111,7 +111,7 @@ private:
 		XMMATRIX lightViewMatrix[], XMMATRIX lightProjectionMatrix[],
 		ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT4 diffuseColor2,
 		/*LightClass* shadowLight,*/LightClass* shadowLight[],
-		LightClass* lights[],
+		/*LightClass* lights[],*/
 		XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, float texTranslation, float transparency);
 
 private:

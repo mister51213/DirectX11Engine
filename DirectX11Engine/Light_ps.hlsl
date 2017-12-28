@@ -92,7 +92,8 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 
 	// Set the bias value for fixing the floating point precision issues.
-	bias = 0.001f;
+	//bias = 0.001f;
+	bias = 0.0001f;
 
 	// Set the default output color to the ambient light value for all pixels.
     color = ambientColor;
@@ -125,7 +126,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 		    if(lightIntensity > 0.0f)
 			{
 				// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-				color += (diffuseColor * lightIntensity);
+				color += (diffuseColor * lightIntensity*.7f);
 
 				// Saturate the final light color.
 				//color = saturate(color);
@@ -155,7 +156,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
             if(lightIntensity > 0.0f)
             {
-                color += (diffuseColor2 * lightIntensity);
+                color += (diffuseColor2 * lightIntensity *.7f);
             }
         }
     }
@@ -171,6 +172,9 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
     return color;
 }
+
+
+
 
 //////////////////////////////////////////////////////////////////////////////////
 //// Pixel Shader
