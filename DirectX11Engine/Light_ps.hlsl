@@ -249,11 +249,6 @@ struct PixelInputType
 //    return color;
 //}
 
-
-
-
-
-
 // TEST CODE //
 float4 LightPixelShader(PixelInputType input) : SV_TARGET
 {
