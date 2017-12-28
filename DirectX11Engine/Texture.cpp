@@ -26,14 +26,16 @@ bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* de
 	for (int i = 0; i < filenames.size(); ++i)
 	{
 		//@TEMP - convert to c-string here
-		char* fileName;
-		size_t len = filenames[i].copy(fileName, filenames[i].length());
-		fileName[len] = '\0';
+		char * cpath = new char[filenames[i].size()];
+		strcpy(cpath, filenames[i].c_str());
+		
+		//filenames[i].copy(fileName, filenames[i].length());
 		//@TEMP - convert to c-string here
-
-
+		
 		_textureViews.push_back(Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>());
-		InitializeTexture(device, deviceContext, /*filenames[i]*/fileName, i);
+		InitializeTexture(device, deviceContext, /*filenames[i]*/cpath, i);
+		
+		//delete[] cpath;
 	}
 	return true;
 }
