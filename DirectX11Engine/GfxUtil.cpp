@@ -6,7 +6,7 @@ GfxUtil::Material::Material()
 		texArraySize = 1;
 	}
 
-bool GfxUtil::Material::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, EShaderType inShaderType, vector<char*> fileNames)
+bool GfxUtil::Material::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, EShaderType inShaderType, /*vector<char*>*/vector<string> fileNames)
 {
 	texArraySize = fileNames.size();
 

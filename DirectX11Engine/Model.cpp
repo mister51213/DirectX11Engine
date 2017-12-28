@@ -12,7 +12,7 @@ Model::Model()
 Model::Model(const Model& other)
 {}
 
-bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, vector<char*> texFileNames, EShaderType shaderType)
+bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, string modelFilename, vector<string> texFileNames, /*char* modelFilename, vector<char*> texFileNames, */EShaderType shaderType)
 {
 	bool result;
 
@@ -339,7 +339,7 @@ void Model::CalculateNormal(VectorType tangent, VectorType binormal, VectorType&
 	return;
 }
 
-bool Model::LoadModel(char* filename)
+bool Model::LoadModel(/*char**/string filename)
 {
 	ifstream fin;
 	char input;

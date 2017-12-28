@@ -183,7 +183,7 @@ public:
 	//bool Frame(float, float, float, float, float, float);
 	bool UpdateFrame(float frameTime, class Scene* pScene, int fps);
 
-	// NEW - UI
+#pragma region UI
 	bool InitializeUI(int screenWidth, int screenHeight);
 	bool UpdateRenderCounts(ID3D11DeviceContext*, int, int, int);
 	bool UpdateFpsString(ID3D11DeviceContext*, int);
@@ -198,11 +198,11 @@ public:
 	int _previousFps;
 	int _previousPosition[6];
 	float textureTranslation = 0.f;
-	// NEW - UI
+#pragma endregion
 
 private:
-	bool RenderSceneToTexture();
-	bool Render();
+	bool RenderSceneToTexture(Scene* pScene);
+	bool Render(Scene* pScene);
 
 private:
 //NEW
@@ -217,7 +217,7 @@ private:
 	SceneEffects _globalEffects;
 	float _lightPositionX = 1.f;
 	float _lightPositionZ = 1.f;
-	float _lightPosIncrement = -0.05f;
+	float _lightPosIncrement = -0.008f;
 // OLD
 	//D3DClass* m_D3D;
 	//CameraClass* m_Camera;

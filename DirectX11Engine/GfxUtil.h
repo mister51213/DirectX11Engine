@@ -165,7 +165,7 @@ namespace GfxUtil
 	public:
 		Material();
 
-		bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, EShaderType inShaderType, vector<char*> fileNames);
+		bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, EShaderType inShaderType, /*vector<char*>*/vector<string> fileNames);
 
 		TextureClass* GetTextureObject();
 		ID3D11ShaderResourceView** GetResourceArray();

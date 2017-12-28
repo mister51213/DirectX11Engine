@@ -27,7 +27,8 @@ public:
 		return _MovementComp.get();
 	}
 
-	inline void SetModel(Model* model){_Model.reset(model);}
+	//inline void InstantiateModel(Model* model) { _Model.reset(model); }
+	//inline void SetModel(unique_ptr<Model> model){_Model = model;}
 
 	inline Model* GetModel() const { return _Model.get(); }
 

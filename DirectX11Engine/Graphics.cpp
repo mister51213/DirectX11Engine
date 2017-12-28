@@ -1111,52 +1111,79 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	_ShaderManager->Initialize(_D3D->GetDevice(), hwnd);
 
 	_Camera.reset(new Camera);
-	if (!_Camera)
-	{
-		return false;
-	}
+	if (!_Camera)return false;
 
-	//_Camera->SetPosition(0.0f, 0.0f, -10.0f);
-	XMFLOAT3 camPos = pScene->GetCamera()->GetPosition();
-	_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
+	_Camera->SetPosition(pScene->GetCamera()->GetPosition().x, pScene->GetCamera()->GetPosition().y, pScene->GetCamera()->GetPosition().z);
 	_Camera->UpdateViewPoint();
 
+	// INIT MODELS ~ LOOP METHOD ~ //// INIT MODELS ~ LOOP METHOD ~ //
+	// INIT MODELS ~ LOOP METHOD ~ //// INIT MODELS ~ LOOP METHOD ~ //
+	// INIT MODELS ~ LOOP METHOD ~ //// INIT MODELS ~ LOOP METHOD ~ //
 
-	_CubeModel.reset(new Model);
-	if (!_CubeModel)
-	{
-		return false;
-	}
+	int i = 0;
+	vector<string> texNames = { "wall01.dds", "ice.dds" , "metal001.dds"};
+	vector<string> meshNames = { "cube2.txt", "sphere.txt", "plane01.txt"};
+	vector<string> modelNames = {"cube", "sphere", "ground"};
+	//@TODO: USE SCENE ACTOR POSITIONS FOR THIS!
+	vector<XMFLOAT3> positions = { XMFLOAT3(-2.0f, 1.f, 0.0f), XMFLOAT3(2.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f)};
 
-	vector<char*> cubeTex(7, "../DirectX11Engine/data/wall01.dds");
-	CHECK(_CubeModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/cube2.txt",
-		cubeTex, EShaderType::ELIGHT_SPECULAR), "cube model");
+	//map<string, unique_ptr<Actor>> actors = pScene->_Actors;
+	//for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+	//{
+	//	//it->second->InstantiateModel(new Model);
 
-	_CubeModel->SetPosition(XMFLOAT3(-2.0f, 1.f, 0.0f));
+	//	vector<string> texArray(7, "../DirectX11Engine/data/" + texNames[i]);
+	//	CHECK(it->second->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/" + meshNames[i],
+	//		texArray, EShaderType::ELIGHT_SPECULAR), modelNames[i]);
 
-	_SphereModel.reset(new Model);
-	if (!_SphereModel)
-	{
-		return false;
-	}
+	//	it->second->GetModel()->SetPosition(positions[i]);
 
-	vector<char*> spTex(7, "../DirectX11Engine/data/ice.dds");
-	CHECK(_SphereModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/sphere.txt",
-		cubeTex, EShaderType::ELIGHT_SPECULAR), "sphere model");
+	//	++i;
+	//}
 
-	_SphereModel->SetPosition(XMFLOAT3(2.0f, 1.0f, 0.0f));
+	// INIT MODELS //// INIT MODELS //// INIT MODELS //// INIT MODELS //
+	// INIT MODELS //// INIT MODELS //// INIT MODELS //// INIT MODELS //
+	// INIT MODELS //// INIT MODELS //// INIT MODELS //// INIT MODELS //
 
-	_GroundModel.reset(new Model);
-	if (!_GroundModel)
-	{
-		return false;
-	}
+	//_CubeModel.reset(new Model);
+	//if (!_CubeModel)
+	//{
+	//	return false;
+	//}
 
-	vector<char*>gTex(7, "../DirectX11Engine/data/metal001.dds");
-	CHECK(_GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt",
-		gTex, EShaderType::ELIGHT_SPECULAR), "ground model");
+	//vector<char*> cubeTex(7, "../DirectX11Engine/data/wall01.dds");
+	//CHECK(_CubeModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/cube2.txt",
+	//	cubeTex, EShaderType::ELIGHT_SPECULAR), "cube model");
 
-	_GroundModel->SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
+	//_CubeModel->SetPosition(XMFLOAT3(-2.0f, 1.f, 0.0f));
+
+	//_SphereModel.reset(new Model);
+	//if (!_SphereModel)
+	//{
+	//	return false;
+	//}
+
+	//vector<char*> spTex(7, "../DirectX11Engine/data/ice.dds");
+	//CHECK(_SphereModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/sphere.txt",
+	//	cubeTex, EShaderType::ELIGHT_SPECULAR), "sphere model");
+
+	//_SphereModel->SetPosition(XMFLOAT3(2.0f, 1.0f, 0.0f));
+
+	//_GroundModel.reset(new Model);
+	//if (!_GroundModel)
+	//{
+	//	return false;
+	//}
+
+	//vector<char*>gTex(7, "../DirectX11Engine/data/metal001.dds");
+	//CHECK(_GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt",
+	//	gTex, EShaderType::ELIGHT_SPECULAR), "ground model");
+
+	//_GroundModel->SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
+
+	// INIT MODELS //// INIT MODELS //// INIT MODELS //// INIT MODELS //
+	// INIT MODELS //// INIT MODELS //// INIT MODELS //// INIT MODELS //
+	// INIT MODELS //// INIT MODELS //// INIT MODELS //// INIT MODELS //
 
 	_Light.reset(new LightClass);
 	if (!_Light)
@@ -1185,21 +1212,13 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 {
 	// 1. Animate Materials @TODO - initialize models in initialize function
-	//for (auto& actor : pScene->_Actors)
+	//for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 	//{
-	//	if (actor->GetModel())
+	//	if (it->second->GetModel())
 	//	{
-	//		actor->GetModel()->GetMaterial()->Animate();
+	//		it->second->GetModel()->GetMaterial()->Animate();
 	//	}
 	//}
-
-	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
-	{
-		if (it->second->GetModel())
-		{
-			it->second->GetModel()->GetMaterial()->Animate();
-		}
-	}
 
 	// 2. Update Camera
 	XMFLOAT3 camPos = pScene->GetCamera()->GetPosition();
@@ -1225,13 +1244,13 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 	UpdatePositionStrings(_D3D->GetDeviceContext(), camPos.x, camPos.y, camPos.z, camRot.x, camRot.y, camRot.z);
 
 	// 5. Draw the Actual frame
-	Render();
+	Render(pScene);
 
 	return true;
 }
 
 
-bool GraphicsClass::RenderSceneToTexture()
+bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 {
 	XMMATRIX worldMatrix, lightViewMatrix, lightProjectionMatrix, translateMatrix;
 	float posX, posY, posZ;
@@ -1241,48 +1260,69 @@ bool GraphicsClass::RenderSceneToTexture()
 	_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
 
 	_Light->GenerateViewMatrix();
-
-	// Reset the world matrix.
-	_D3D->GetWorldMatrix(worldMatrix);
-
 	lightViewMatrix = _Light->GetViewMatrix();
 	lightProjectionMatrix = _Light->GetProjectionMatrix();
 
-	XMFLOAT3 cPos = _CubeModel->GetPosition();
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(cPos.x, cPos.y,cPos.z));
+	/////////////// TODO: Use Actor positions //////////////////
+	//map<string, unique_ptr<Actor>> actors = pScene->_Actors;
+	//for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+	//{
+	//	if (it->second->GetModel())
+	//	{
+	//		// Reset the world matrix.
+	//		_D3D->GetWorldMatrix(worldMatrix);
+	//		worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(it->second->GetPosition().x, it->second->GetPosition().y, it->second->GetPosition().z));
 
-	_CubeModel->LoadVertices(_D3D->GetDeviceContext());
-	result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-	if (!result)
-	{
-		return false;
-	}
+	//		it->second->GetModel()->LoadVertices(_D3D->GetDeviceContext());
+	//		result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+	//		if (!result)
+	//		{
+	//			return false;
+	//		}
+	//	}
+	//}
 
-	// Reset the world matrix.
-	_D3D->GetWorldMatrix(worldMatrix);
+#pragma region OLD WORKING
+	//// Reset the world matrix.
+	//_D3D->GetWorldMatrix(worldMatrix);
 
-	XMFLOAT3 sPos = _SphereModel->GetPosition();
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(sPos.x, sPos.y, sPos.z));
+	//XMFLOAT3 cPos = _CubeModel->GetPosition();
+	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(cPos.x, cPos.y,cPos.z));
 
-	_SphereModel->LoadVertices(_D3D->GetDeviceContext());
-	result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-	if (!result)
-	{
-		return false;
-	}
+	//_CubeModel->LoadVertices(_D3D->GetDeviceContext());
+	//result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
-	// Reset the world matrix.
-	_D3D->GetWorldMatrix(worldMatrix);
+	//// Reset the world matrix.
+	//_D3D->GetWorldMatrix(worldMatrix);
 
-	XMFLOAT3 gPos = _GroundModel->GetPosition();
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(gPos.x, gPos.y, gPos.z));
+	//XMFLOAT3 sPos = _SphereModel->GetPosition();
+	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(sPos.x, sPos.y, sPos.z));
 
-	_GroundModel->LoadVertices(_D3D->GetDeviceContext());
-	result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-	if (!result)
-	{
-		return false;
-	}
+	//_SphereModel->LoadVertices(_D3D->GetDeviceContext());
+	//result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+	//if (!result)
+	//{
+	//	return false;
+	//}
+
+	//// Reset the world matrix.
+	//_D3D->GetWorldMatrix(worldMatrix);
+
+	//XMFLOAT3 gPos = _GroundModel->GetPosition();
+	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(gPos.x, gPos.y, gPos.z));
+
+	//_GroundModel->LoadVertices(_D3D->GetDeviceContext());
+	//result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+	//if (!result)
+	//{
+	//	return false;
+	//}
+
+#pragma endregion
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
 	_D3D->SetBackBufferRenderTarget();
@@ -1293,14 +1333,14 @@ bool GraphicsClass::RenderSceneToTexture()
 	return true;
 }
 
-bool GraphicsClass::Render()
+bool GraphicsClass::Render(Scene* pScene)
 {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, translateMatrix;
 	XMMATRIX lightViewMatrix, lightProjectionMatrix;
 	bool result;
 	float posX, posY, posZ;
 
-	result = RenderSceneToTexture();
+	result = RenderSceneToTexture(pScene);
 	if (!result)
 	{
 		return false;
@@ -1314,78 +1354,112 @@ bool GraphicsClass::Render()
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	_Camera->GetViewMatrix(viewMatrix);
-	_D3D->GetWorldMatrix(worldMatrix);
+	//_D3D->GetWorldMatrix(worldMatrix);
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
 	// Get the light's view and projection matrices from the light object.
 	lightViewMatrix = _Light->GetViewMatrix();
 	lightProjectionMatrix = _Light->GetProjectionMatrix();
 
-	XMFLOAT3 cPos = _CubeModel->GetPosition();
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(cPos.x, cPos.y, cPos.z));
-	_CubeModel->LoadVertices(_D3D->GetDeviceContext());
+	/////////////////////////////////////////////////////////////////
+	////////////////// RENDER ACTUAL SCENE //////////////////////////
+	/////////////////////////////////////////////////////////////////
+	LightClass* lights[4] = { new LightClass, new LightClass, new LightClass, new LightClass };
+
+	//map<string, unique_ptr<Actor>> actors = pScene->_Actors;
+	//for (map<string, unique_ptr<Actor>>::const_iterator it = actors.begin(); it != actors.end(); ++it)
+	//{
+	//	if (it->second->GetModel())
+	//	{
+	//		_D3D->GetWorldMatrix(worldMatrix);
+	//		worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(it->second->GetPosition().x, it->second->GetPosition().y, it->second->GetPosition().z));
+
+	//		it->second->GetModel()->LoadVertices(_D3D->GetDeviceContext());
+	//		result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+	//		
+	//		_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	//			lightViewMatrix, lightProjectionMatrix,
+	//			it->second->GetModel()->GetMaterial()->GetResourceArray(),
+	//			_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Light.get(), lights,
+	//			_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(),
+	//			_globalEffects.fogStart, _globalEffects.fogEnd,
+	//			it->second->GetModel()->GetMaterial()->translation, it->second->GetModel()->GetMaterial()->transparency);
+
+	//		if (!result)
+	//		{
+	//			return false;
+	//		}
+	//	}
+	//}
+
+
+	////REBUILT IMPLEMENTATION
+	//LightClass* lights[4] = {new LightClass, new LightClass, new LightClass, new LightClass};
+
+	//XMFLOAT3 cPos = _CubeModel->GetPosition();
+	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(cPos.x, cPos.y, cPos.z));
+	//_CubeModel->LoadVertices(_D3D->GetDeviceContext());
+
+	//_CubeModel->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTexture->GetShaderResourceView();
+
+	//_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	//	lightViewMatrix, lightProjectionMatrix,
+	//	_CubeModel->GetMaterial()->GetResourceArray(), 
+	//	_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Light.get(), lights,
+	//	_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), 
+	//	_globalEffects.fogStart, _globalEffects.fogEnd,
+	//	_CubeModel->GetMaterial()->translation, _CubeModel->GetMaterial()->transparency);
+	//if (!result)
+	//{
+	//	return false;
+	//}
+
+	//// Reset the world matrix.
+	//_D3D->GetWorldMatrix(worldMatrix);
+
+	//XMFLOAT3 sPos = _SphereModel->GetPosition();
+	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(sPos.x, sPos.y, sPos.z));
+	//_SphereModel->LoadVertices(_D3D->GetDeviceContext());
+
+
+	//_SphereModel->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTexture->GetShaderResourceView();
+
+	//_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	//	lightViewMatrix, lightProjectionMatrix,
+	//	_SphereModel->GetMaterial()->GetResourceArray(),
+	//	_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Light.get(), lights,
+	//	_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(),
+	//	_globalEffects.fogStart, _globalEffects.fogEnd,
+	//	_SphereModel->GetMaterial()->translation, _SphereModel->GetMaterial()->transparency);
+
+	//if (!result)
+	//{
+	//	return false;
+	//}
+
+	//// Reset the world matrix.
+	//_D3D->GetWorldMatrix(worldMatrix);
+
+	//XMFLOAT3 gPos = _GroundModel->GetPosition();
+	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(gPos.x, gPos.y, gPos.z));
+	//_GroundModel->LoadVertices(_D3D->GetDeviceContext());
+	//
+	//_GroundModel->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTexture->GetShaderResourceView();
+
+	//_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	//	lightViewMatrix, lightProjectionMatrix,
+	//	_GroundModel->GetMaterial()->GetResourceArray(),
+	//	_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Light.get(), lights,
+	//	_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(),
+	//	_globalEffects.fogStart, _globalEffects.fogEnd,
+	//	_GroundModel->GetMaterial()->translation, _GroundModel->GetMaterial()->transparency);
+
+	//if (!result)
+	//{
+	//	return false;
+	//}
 
 	//REBUILT IMPLEMENTATION
-	LightClass* lights[4] = {new LightClass, new LightClass, new LightClass, new LightClass};
-	_CubeModel->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTexture->GetShaderResourceView();
-
-	_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		lightViewMatrix, lightProjectionMatrix,
-		_CubeModel->GetMaterial()->GetResourceArray(), 
-		_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Light.get(), lights,
-		_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), 
-		_globalEffects.fogStart, _globalEffects.fogEnd,
-		_CubeModel->GetMaterial()->translation, _CubeModel->GetMaterial()->transparency);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Reset the world matrix.
-	_D3D->GetWorldMatrix(worldMatrix);
-
-	XMFLOAT3 sPos = _SphereModel->GetPosition();
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(sPos.x, sPos.y, sPos.z));
-	_SphereModel->LoadVertices(_D3D->GetDeviceContext());
-
-
-	_SphereModel->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTexture->GetShaderResourceView();
-
-	_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		lightViewMatrix, lightProjectionMatrix,
-		_SphereModel->GetMaterial()->GetResourceArray(),
-		_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Light.get(), lights,
-		_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(),
-		_globalEffects.fogStart, _globalEffects.fogEnd,
-		_SphereModel->GetMaterial()->translation, _SphereModel->GetMaterial()->transparency);
-
-	if (!result)
-	{
-		return false;
-	}
-
-	// Reset the world matrix.
-	_D3D->GetWorldMatrix(worldMatrix);
-
-	XMFLOAT3 gPos = _GroundModel->GetPosition();
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(gPos.x, gPos.y, gPos.z));
-	_GroundModel->LoadVertices(_D3D->GetDeviceContext());
-	
-	//REBUILT IMPLEMENTATION
-	_GroundModel->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTexture->GetShaderResourceView();
-
-	_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		lightViewMatrix, lightProjectionMatrix,
-		_GroundModel->GetMaterial()->GetResourceArray(),
-		_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Light.get(), lights,
-		_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(),
-		_globalEffects.fogStart, _globalEffects.fogEnd,
-		_GroundModel->GetMaterial()->translation, _GroundModel->GetMaterial()->transparency);
-
-	if (!result)
-	{
-		return false;
-	}
 
 	////////////////////////////////////////
 	// UI //// UI //// UI //// UI //// UI //

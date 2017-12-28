@@ -130,10 +130,8 @@ bool FontClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 		return false;
 	}
 
-	// Initialize the texture object.
-
-
-	vector<char*> filenames{ filename };
+	//vector<char*> filenames{ filename };
+	vector<string> filenames{ filename };
 	result = _Texture->InitializeArray(device, deviceContext, filenames);
 
 	if (!result)

@@ -29,9 +29,10 @@ bool Scene::Initialize()
 	{
 		unique_ptr<Actor> pActor = std::make_unique<Actor>("Actor"+ to_string(i + 1));
 		pActor->InitializeMovement(true); 
+		_Actors.emplace(pActor->Name, std::move(pActor));
+
 		//_Actors.insert(std::pair<string, unique_ptr<Actor>>(pActor->Name, std::move(pActor)));
 		//_Actors.insert({ pActor->Name, std::move(pActor) });
-		_Actors.emplace(pActor->Name, std::move(pActor));
 	}
 
 

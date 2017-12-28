@@ -67,7 +67,7 @@ public:
 	Model(const Model&);
 	//~Model();
 
-	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* modelFilename, vector<char*> fileNames, EShaderType shaderType);
+	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, string modelFilename, vector<string> texFileNames,/* char* modelFilename, vector<char*> fileNames,*/ EShaderType shaderType);
 
 	/** Needed by the shader to draw this model */
 	int GetIndexCount();
@@ -76,7 +76,7 @@ public:
 	void SetMaterial(Material* mat);
 	ID3D11ShaderResourceView** GetTextureArray(); // TODO: replace w material
 
-	bool LoadModel(char*);
+	bool LoadModel(string /*char**/);
 	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
 	void LoadVertices(ID3D11DeviceContext* deviceContext);
 

@@ -33,7 +33,7 @@ public:
 	~TextureClass();
 
 	bool InitializeTexture(ID3D11Device * device, ID3D11DeviceContext * deviceContext, char * filename, int i);
-	bool InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> filenames);
+	bool InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, /*vector<char*>*/vector<string> filenames);
 	bool InitializeTexTga(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename, unsigned char** targaData, ID3D11Texture2D** pTexture, ID3D11ShaderResourceView** pTexView);
 	
 	ID3D11ShaderResourceView** GetTextureArray();

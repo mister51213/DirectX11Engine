@@ -21,12 +21,19 @@ TextureClass::TextureClass(const TextureClass& other){}
 TextureClass::~TextureClass(){}
 
 //@TODO - DONT USE YET! something not working - not initializing all the files in the array for some reason
-bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<char*> filenames)
+bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, /*vector<char*>*/vector<string> filenames)
 {
 	for (int i = 0; i < filenames.size(); ++i)
 	{
+		//@TEMP - convert to c-string here
+		char* fileName;
+		size_t len = filenames[i].copy(fileName, filenames[i].length());
+		fileName[len] = '\0';
+		//@TEMP - convert to c-string here
+
+
 		_textureViews.push_back(Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>());
-		InitializeTexture(device, deviceContext, filenames[i], i);
+		InitializeTexture(device, deviceContext, /*filenames[i]*/fileName, i);
 	}
 	return true;
 }
