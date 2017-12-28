@@ -25,17 +25,19 @@ bool Scene::Initialize()
 	//}
 
 	/////// MAP VERSION //////////////
+	vector<XMFLOAT3> positions = { XMFLOAT3(-2.0f, 1.f, 0.0f), XMFLOAT3(2.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.f, 2.0f) };
+
 	for (int i = 0; i < _numActors; ++i)
 	{
 		unique_ptr<Actor> pActor = std::make_unique<Actor>("Actor"+ to_string(i + 1));
 		pActor->InitializeMovement(true); 
+		pActor->SetPosition(positions[i]);
+		
 		_Actors.emplace(pActor->Name, std::move(pActor));
-
 		//_Actors.insert(std::pair<string, unique_ptr<Actor>>(pActor->Name, std::move(pActor)));
 		//_Actors.insert({ pActor->Name, std::move(pActor) });
 	}
-
-
+	
 
 	///// WATER DEMO SETUP //////
 	// Overwrite the last 4 actors in the array with custom appearance (initialization by hand)

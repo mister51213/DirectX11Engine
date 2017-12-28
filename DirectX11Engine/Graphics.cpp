@@ -1120,13 +1120,11 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	// INIT MODELS ~ LOOP METHOD ~ //// INIT MODELS ~ LOOP METHOD ~ //
 	// INIT MODELS ~ LOOP METHOD ~ //// INIT MODELS ~ LOOP METHOD ~ //
 
-	int i = 0;
 	vector<string> texNames = { "wall01.dds", "ice.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
 	vector<string> meshNames = { "cube2.txt", "sphere.txt", "plane01.txt", "sphere.txt"};
 	vector<string> modelNames = { "cube", "sphere", "ground", "sphere2"};
-	//@TODO: USE SCENE ACTOR POSITIONS FOR THIS!
-		vector<XMFLOAT3> positions = { XMFLOAT3(-2.0f, 1.f, 0.0f), XMFLOAT3(2.0f, 1.0f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.f, 2.0f)};
 
+	int i = 0;
 	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 	{
 		it->second->InstantiateModel(new Model);
@@ -1134,8 +1132,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		vector<string> texArray(7, "../DirectX11Engine/data/" + texNames[i]);
 		CHECK(it->second->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/" + meshNames[i],
 			texArray, EShaderType::ELIGHT_SPECULAR), modelNames[i]);
-
-		it->second->GetModel()->SetPosition(positions[i]);
 
 		++i;
 	}
@@ -1269,7 +1265,7 @@ bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 		{
 			// Reset the world matrix.
 			_D3D->GetWorldMatrix(worldMatrix);
-			worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(it->second->GetModel()->GetPosition().x, it->second->GetModel()->GetPosition().y, it->second->GetModel()->GetPosition().z));
+			worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(it->second->GetPosition().x, it->second->GetPosition().y, it->second->GetPosition().z));
 
 			it->second->GetModel()->LoadVertices(_D3D->GetDeviceContext());
 			result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
@@ -1370,7 +1366,7 @@ bool GraphicsClass::Render(Scene* pScene)
 		{
 			_D3D->GetWorldMatrix(worldMatrix);
 
-			worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(it->second->GetModel()->GetPosition().x, it->second->GetModel()->GetPosition().y, it->second->GetModel()->GetPosition().z));
+			worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(it->second->GetPosition().x, it->second->GetPosition().y, it->second->GetPosition().z));
 			it->second->GetModel()->LoadVertices(_D3D->GetDeviceContext());
 			it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTexture->GetShaderResourceView();
 
