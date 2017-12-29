@@ -40,9 +40,9 @@ private:
 	struct LightBufferType
 	{
 		XMFLOAT4 ambientColor;
-		XMFLOAT4 diffuseColor;
-		XMFLOAT4 diffuseColor2;
-		XMFLOAT4 diffuseColor3;
+		//XMFLOAT4 diffuseColor;
+		//XMFLOAT4 diffuseColor2;
+		//XMFLOAT4 diffuseColor3;
 		XMFLOAT3 lightDirection;
 		float specularPower; // placed the specular power by the light direction to form a 4 float slot instead of using padding so that the structure could be kept in multiples of 16 bytes
 		XMFLOAT4 specularColor;
@@ -60,16 +60,14 @@ private:
 	};
 	struct LightShadowBufferType
 	{
-		//XMFLOAT3 lightShadowPos;
-		//float padding;
-		XMFLOAT3 lightShadowPos1;
-		float padding1;
-		
-		XMFLOAT3 lightShadowPos2;
-		float padding2;
+		//XMFLOAT3 lightShadowPos1;
+		//float padding1;
+		//
+		//XMFLOAT3 lightShadowPos2;
+		//float padding2;
 
-		XMFLOAT3 lightShadowPos3;
-		float padding3;
+		//XMFLOAT3 lightShadowPos3;
+		//float padding3;
 
 			XMFLOAT4 lightShadowPositions[NUM_LIGHTS];
 	};
@@ -79,10 +77,6 @@ private:
 		float fogEnd;
 		float padding1, padding2;
 	};
-	//struct ClipPlaneBufferType
-	//{
-	//	XMFLOAT4 clipPlane;
-	//};
 	struct TranslateBufferType
 	{
 		float translation;

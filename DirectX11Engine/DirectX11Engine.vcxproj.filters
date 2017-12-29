@@ -1404,4 +1404,12 @@
       <Filter>HLSL Files</Filter>
     </None>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="NMap_vs.hlsl">
+      <Filter>HLSL Files</Filter>
+    </FxCompile>
+    <FxCompile Include="NMap_ps.hlsl">
+      <Filter>HLSL Files</Filter>
+    </FxCompile>
+  </ItemGroup>
 </Project>

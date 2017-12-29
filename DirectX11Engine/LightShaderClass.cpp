@@ -159,7 +159,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	////////////////// LIGHT SHADOW - VS BUFFER 3 ///////////////////////	@SHADOWING
 	bufferNumber++;
 	//LightShadowBufferType tempShadowBuff = { XMFLOAT3(shadowLight->GetPosition().x, shadowLight->GetPosition().y, shadowLight->GetPosition().z) };
-	LightShadowBufferType tempShadowBuff = { shadowLight[0]->GetPosition(), 0.f, shadowLight[1]->GetPosition(), 0.f, shadowLight[2]->GetPosition(), 0.f,
+	LightShadowBufferType tempShadowBuff = { /*shadowLight[0]->GetPosition(), 0.f, shadowLight[1]->GetPosition(), 0.f, shadowLight[2]->GetPosition(), 0.f,*/
 		XMFLOAT4(shadowLight[0]->GetPosition().x, shadowLight[0]->GetPosition().y, shadowLight[0]->GetPosition().z,0),
 		XMFLOAT4(shadowLight[1]->GetPosition().x, shadowLight[1]->GetPosition().y, shadowLight[1]->GetPosition().z,0),
 		XMFLOAT4(shadowLight[2]->GetPosition().x, shadowLight[2]->GetPosition().y, shadowLight[2]->GetPosition().z,0)};
@@ -178,7 +178,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	
 	///////////////////////// LIGHT INIT - PS BUFFER 0 //////////////////////
 	bufferNumber = 0;
-	LightBufferType tempLightBuff = {ambientColor,diffuseColor,diffuseColor2, diffuseColor2,lightDirection,specularPower,specularColor,
+	LightBufferType tempLightBuff = {ambientColor,/*diffuseColor,diffuseColor2, diffuseColor2,*/lightDirection,specularPower,specularColor,
 		diffuseColor, diffuseColor2, diffuseColor2 }; // init array here
 	MapBuffer(tempLightBuff, _psBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, _psBuffers[bufferNumber].GetAddressOf());

@@ -15,8 +15,6 @@
 // GLOBALS //
 /////////////
 // texture resource that will be used for rendering the texture on the model
-//Texture2D shaderTexture;
-//Texture2D shaderTextures[8];
 Texture2D shaderTextures[9];
 // allows modifying how pixels are written to the polygon face, for example choosing which to draw. 
 SamplerState SampleType;
@@ -34,9 +32,9 @@ SamplerState SampleTypeWrap  : register(s1);
 cbuffer LightBuffer:register(b0) //@TODO: register w same number as in class
 {
     float4 ambientColor;
-    float4 diffuseColor;
-	float4 diffuseColor2;
-	float4 diffuseColor3;
+ //   float4 diffuseColor;
+	//float4 diffuseColor2;
+	//float4 diffuseColor3;
     float3 lightDirection;
     float specularPower;
     float4 specularColor;
@@ -75,14 +73,14 @@ struct PixelInputType
     float3 lightPos2 : TEXCOORD3;
     float3 lightPos3 : TEXCOORD4;
     float3 lightPos4 : TEXCOORD5;
-	float4 lightViewPosition : TEXCOORD6;
-    float3 lightShadowPos : TEXCOORD7;
-	float4 lightViewPosition2 : TEXCOORD8;
-    float3 lightShadowPos2 : TEXCOORD9;
-	float4 lightViewPosition3 : TEXCOORD10;
-    float3 lightShadowPos3 : TEXCOORD11;
-    float4 lightViewPositions[3] : TEXCOORD12;
-    float3 lightShadowPositions[3] : TEXCOORD15;
+	//float4 lightViewPosition : TEXCOORD6;
+ //   float3 lightShadowPos : TEXCOORD7;
+	//float4 lightViewPosition2 : TEXCOORD8;
+ //   float3 lightShadowPos2 : TEXCOORD9;
+	//float4 lightViewPosition3 : TEXCOORD10;
+ //   float3 lightShadowPos3 : TEXCOORD11;
+    float4 lightViewPositions[3] : TEXCOORD6;
+    float3 lightShadowPositions[3] : TEXCOORD9;
 	float fogFactor : FOG;
 };
 
