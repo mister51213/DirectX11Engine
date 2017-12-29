@@ -19,12 +19,12 @@ public:
 	XMFLOAT3 GetPosition()const;
 	XMFLOAT3 GetOrientation()const;
 
-	XMFLOAT3 GetLookat() const;
+	XMFLOAT3 GetLookAt() const;
 
 	void SetPosition(const XMFLOAT3& pos);
 	void SetOrientation(const XMFLOAT3& or);
 
-	void SetLookat(const XMFLOAT3 & lookat);
+	void SetLookAt(const XMFLOAT3 & lookat);
 
 	inline MovementComponent* GetMovementComponent()
 	{

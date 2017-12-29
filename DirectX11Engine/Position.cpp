@@ -55,7 +55,7 @@ XMFLOAT3 MovementComponent::GetPosition() const
 	return _position;
 }
 
-XMFLOAT3 MovementComponent::GetLookat() const
+XMFLOAT3 MovementComponent::GetLookAt() const
 {
 	return _lookat;
 }
@@ -71,7 +71,7 @@ void MovementComponent::SetOrientation(const XMFLOAT3& newOrientation)
 	return;
 }
 
-void MovementComponent::SetLookat(const XMFLOAT3 & newLookat)
+void MovementComponent::SetLookAt(const XMFLOAT3 & newLookat)
 {
 	_lookat = newLookat;
 }

@@ -31,7 +31,7 @@ public:
 	map<string, unique_ptr<Actor>> _Actors;
 	
 	//unique_ptr<LightClass> _Light, _Light2;
-	vector<unique_ptr<LightClass>>_Lights;
+	//vector<unique_ptr<LightClass>>_Lights;
 	vector<unique_ptr<Actor>> _LightActors;
 
 	/////////// Light Animation /////////////

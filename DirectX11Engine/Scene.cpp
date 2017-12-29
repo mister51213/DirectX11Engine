@@ -45,10 +45,12 @@ bool Scene::Initialize()
 		_LightActors.push_back(unique_ptr<Actor>());
 		_LightActors[i].reset(new Actor("Light" + to_string(i + 1)));
 		_LightActors[i]->InitializeMovement(true);
-		_LightActors[i]->SetLookAt(0.0f, 0.0f, 0.0f);
+		_LightActors[i]->SetLookAt(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	}
 	
-	_Lights[1]->SetPosition(-5.f, 8.0f, -5.f);
+	//_Lights[1]->SetPosition(-5.f, 8.0f, -5.f);
+	_LightActors[0]->SetPosition(XMFLOAT3 (5.f, 8.0f, -5.f));
+	_LightActors[1]->SetPosition(XMFLOAT3(-5.f, 8.0f, -5.f));
 
 	///// WATER DEMO SETUP //////
 	// Overwrite the last 4 actors in the array with custom appearance (initialization by hand)
@@ -73,7 +75,6 @@ void Scene::Tick(float deltaTime, Input* pInput)
 	UpdateActors(deltaTime);
 
 	// Update Lights
-	// 3. Update 1st light @TODO: Encapsulate lights in scene again!
 	if (_lightPositionX > 1.0f)
 	{
 		_lightPositionX = -1.f;
@@ -84,7 +85,8 @@ void Scene::Tick(float deltaTime, Input* pInput)
 	}
 	_lightPositionX += _lightPosIncrement;
 	_lightPositionZ += _lightPosIncrement;
-	_Lights[0]->SetPosition(cos(_lightPositionX)*5.f, 8.0f, sin(_lightPositionZ)*5.f);
+	//_Lights[0]->SetPosition(cos(_lightPositionX)*5.f, 8.0f, sin(_lightPositionZ)*5.f);
+	_LightActors[0]->SetPosition(XMFLOAT3(cos(_lightPositionX)*5.f, 8.0f, sin(_lightPositionZ)*5.f));
 }
 
 void Scene::ProcessInput(float deltaTime, Input* pInput)

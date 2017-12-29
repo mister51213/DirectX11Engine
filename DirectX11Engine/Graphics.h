@@ -203,7 +203,7 @@ private:
 	vector<unique_ptr<RenderTextureClass>> _RenderTextures;
 	
 	//unique_ptr<LightClass> _Light, _Light2;
-
+	vector<unique_ptr<LightClass>>_Lights;
 // OLD
 	//D3DClass* m_D3D;
 	//CameraClass* m_Camera;
