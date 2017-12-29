@@ -6,7 +6,8 @@
 /////////////
 // GLOBALS //
 /////////////
-const int NUM_LIGHTS = 4;
+//const int NUM_LIGHTS = 4;
+const int NUM_LIGHTS = 3;
 
 //////////////
 // INCLUDES //
@@ -27,12 +28,8 @@ private:
 		XMMATRIX world;
 		XMMATRIX view;
 		XMMATRIX projection;
-		//XMMATRIX lightView;
-		//XMMATRIX lightProjection;
-		//XMMATRIX lightView[2];
-		//XMMATRIX lightProjection[2];
-		XMMATRIX lightView[3];
-		XMMATRIX lightProjection[3];
+		XMMATRIX lightView[NUM_LIGHTS];
+		XMMATRIX lightProjection[NUM_LIGHTS];
 	};
 
 	struct CameraBufferType
@@ -49,6 +46,7 @@ private:
 		XMFLOAT3 lightDirection;
 		float specularPower; // placed the specular power by the light direction to form a 4 float slot instead of using padding so that the structure could be kept in multiples of 16 bytes
 		XMFLOAT4 specularColor;
+			XMFLOAT4 diffuseCols[NUM_LIGHTS];
 	};
 
 	struct LightColorBufferType
@@ -72,6 +70,8 @@ private:
 
 		XMFLOAT3 lightShadowPos3;
 		float padding3;
+
+			XMFLOAT4 lightShadowPositions[NUM_LIGHTS];
 	};
 	struct FogBufferType
 	{

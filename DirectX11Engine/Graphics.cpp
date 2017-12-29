@@ -1159,8 +1159,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 
 		_Lights[i]->SetAmbientColor(XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f));
 		_Lights[i]->SetDiffuseColor(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
-		_Lights[i]->SetLookAt(pScene->_LightActors[i]->GetLookAt());// .x, pScene->_LightActors[i]->GetLookAt().y, pScene->_LightActors[i]->GetLookAt().z);
-		_Lights[i]->SetPosition(pScene->_LightActors[i]->GetPosition());// .x, pScene->_LightActors[i]->GetPosition().y, pScene->_LightActors[i]->GetPosition().z);
+		_Lights[i]->SetLookAt(pScene->_LightActors[i]->GetLookAt());
+		_Lights[i]->SetPosition(pScene->_LightActors[i]->GetPosition());
 		_Lights[i]->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
 	}
 
@@ -1191,8 +1191,8 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 	int i = 0;
 	for (auto& light : _Lights)
 	{
-		light->SetPosition(pScene->_LightActors[i]->GetPosition());// .x, pScene->_LightActors[i]->GetPosition().y, pScene->_LightActors[i]->GetPosition().z);
-		light->SetLookAt(pScene->_LightActors[i]->GetLookAt());// .x, pScene->_LightActors[i]->GetLookAt().y, pScene->_LightActors[i]->GetLookAt().z);
+		light->SetPosition(pScene->_LightActors[i]->GetPosition());
+		light->SetLookAt(pScene->_LightActors[i]->GetLookAt());
 		++i;
 	}
 	
