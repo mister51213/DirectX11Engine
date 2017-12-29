@@ -81,12 +81,8 @@ struct PixelInputType
 	float3 tangent : TANGENT;
     float3 binormal : BINORMAL;
 	float3 viewDirection : TEXCOORD1;
-	//float3 lightPos1 : TEXCOORD2;
- //   float3 lightPos2 : TEXCOORD3;
- //   float3 lightPos3 : TEXCOORD4;
- //   float3 lightPos4 : TEXCOORD5;
     float4 lightViewPositions[NUM_LIGHTS] : TEXCOORD6;
-    float3 lightShadowPositions[NUM_LIGHTS] : TEXCOORD9;
+    float3 lightPositions[NUM_LIGHTS] : TEXCOORD9;
 	float fogFactor : FOG; 
 };
 
@@ -151,11 +147,14 @@ PixelInputType LightVertexShader(VertexInputType input)
 	//... SHADOWING ... ////... SHADOWING ... ////... SHADOWING ... ////... SHADOWING ... ////... SHADOWING ... //
 	for(int i = 0; i< NUM_LIGHTS; ++i)
 	{
-		//// Calculate the position of the vertice as viewed by the light sources.
+		// Calculate the position of the vertice as viewed by the light sources.
 		output.lightViewPositions[i] = mul(input.position, worldMatrix);
 		output.lightViewPositions[i] = mul(output.lightViewPositions[i], lightViewMatrix[i]);
 		output.lightViewPositions[i] = mul(output.lightViewPositions[i], lightProjectionMatrix[i]);
-		output.lightShadowPositions[i] = normalize(c_lightShadowPos[i].xyz - worldPosition.xyz);
+		//output.lightPositions[i] = normalize(c_lightShadowPos[i].xyz - worldPosition.xyz);
+
+		// Calculate the world offset of the light from the vertex
+		output.lightPositions[i] = c_lightShadowPos[i].xyz - worldPosition.xyz;
 	}
 
 	return output;

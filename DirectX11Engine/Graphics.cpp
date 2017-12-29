@@ -1288,7 +1288,8 @@ bool GraphicsClass::Render(Scene* pScene)
 			worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(it->second->GetPosition().x, it->second->GetPosition().y, it->second->GetPosition().z));
 			it->second->GetModel()->LoadVertices(_D3D->GetDeviceContext());
 
-			_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			_ShaderManager->_LightShader->Render(
+				_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 				lightViewMatrix, lightProjectionMatrix,
 				it->second->GetModel()->GetMaterial()->GetResourceArray(),
 				_Lights[0]->GetDirection(), _Lights[0]->GetAmbientColor(),

@@ -83,7 +83,6 @@ public:
 
 	virtual void RenderShader(ID3D11DeviceContext* deviceContext, int indexCount) override;
 
-private:
 	bool InitializeShader(ID3D11Device*, HWND, char*, char*);
 
 	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, 

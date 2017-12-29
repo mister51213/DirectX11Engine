@@ -131,14 +131,14 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 		break;
 
 	case EShaderType::ELIGHT_SPECULAR:
-		//result = _LightShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
-		//	light->GetViewMatrix(), 
-		//	light->GetProjectionMatrix(),
-		//	material->GetResourceArray(), light->GetDirection(), light->GetAmbientColor(), light->GetDiffuseColor(), 
-		//	light,
-		//	lights, 
-		//	cameraPos, light->GetSpecularColor(), light->GetSpecularPower(), effects.fogStart, effects.fogEnd, material->translation, material->transparency);
-		if (!result) return false;
+		//@TODO - not passing in right values - need to REWORK ShaderManagerClass::Render() params to do so!
+/*		result = _LightShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
+			&light->GetViewMatrix(), 
+			&light->GetProjectionMatrix(),
+			material->GetResourceArray(), light->GetDirection(), light->GetAmbientColor(), light->GetDiffuseColor(), light->GetDiffuseColor(),
+			lights, 
+			cameraPos, light->GetSpecularColor(), light->GetSpecularPower(), effects.fogStart, effects.fogEnd, material->translation, material->transparency);
+	*/	if (!result) return false;
 		//_LightShader->RenderShader(device, indexCount);
 		break;
 
