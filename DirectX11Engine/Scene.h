@@ -30,9 +30,9 @@ public:
 	unique_ptr<Actor> _Camera;
 	map<string, unique_ptr<Actor>> _Actors;
 	
-	//vector<unique_ptr<Actor>> _LightActors;
 	//unique_ptr<LightClass> _Light, _Light2;
 	vector<unique_ptr<LightClass>>_Lights;
+	vector<unique_ptr<Actor>> _LightActors;
 
 	/////////// Light Animation /////////////
 	float _lightPositionX = 1.f;

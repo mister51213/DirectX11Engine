@@ -30,7 +30,7 @@ public:
 
 	XMFLOAT4 GetAmbientColor() const;
 	XMFLOAT4 GetDiffuseColor() const;
-	//XMFLOAT4 GetPosition() const;
+
 	XMFLOAT3 GetPosition() const;
 	XMFLOAT3 GetDirection() const;
 	XMFLOAT4 GetSpecularColor() const;

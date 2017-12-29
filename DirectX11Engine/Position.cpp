@@ -15,11 +15,11 @@ MovementComponent::MovementComponent()
 	_fwdIncrement(0.f),
 	_backIncrement(0.f),
 	_leftIncrement(0.f),
-	_rightIncrement(0.f)
-{
-	_orientation = XMFLOAT3(0.f, 0.f, 0.f);
-	_position = XMFLOAT3(0.f, 0.f, 0.f);
-}
+	_rightIncrement(0.f),
+	_orientation(XMFLOAT3(0.f, 0.f, 0.f)),
+	_position(XMFLOAT3(0.f, 0.f, 0.f)),
+	_lookat(XMFLOAT3(0.f, 0.f, 0.f))
+{}
 
 MovementComponent::MovementComponent(const MovementComponent& other)
 {
@@ -55,6 +55,11 @@ XMFLOAT3 MovementComponent::GetPosition() const
 	return _position;
 }
 
+XMFLOAT3 MovementComponent::GetLookat() const
+{
+	return _lookat;
+}
+
 void MovementComponent::SetPosition(const XMFLOAT3 & pos)
 {
 	_position = pos;
@@ -64,6 +69,11 @@ void MovementComponent::SetOrientation(const XMFLOAT3& newOrientation)
 {
 	_orientation = newOrientation;
 	return;
+}
+
+void MovementComponent::SetLookat(const XMFLOAT3 & newLookat)
+{
+	_lookat = newLookat;
 }
 
 void MovementComponent::TurnLeft(bool keydown)

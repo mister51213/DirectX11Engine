@@ -49,6 +49,18 @@ XMFLOAT3 Actor::GetOrientation() const
 	}
 }
 
+XMFLOAT3 Actor::GetLookat() const
+{
+	if (_MovementComp)
+	{
+		return _MovementComp->GetLookat();
+	}
+	else
+	{
+		return XMFLOAT3();
+	}
+}
+
 void Actor::SetPosition(const XMFLOAT3 & pos)
 {
 	if (_MovementComp)
@@ -62,5 +74,13 @@ void Actor::SetOrientation(const XMFLOAT3 & or )
 	if (_MovementComp)
 	{
 		_MovementComp->SetOrientation(or);
+	}
+}
+
+void Actor::SetLookat(const XMFLOAT3 & lookat)
+{
+	if (_MovementComp)
+	{
+		_MovementComp->SetLookat(lookat);
 	}
 }

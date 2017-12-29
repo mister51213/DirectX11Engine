@@ -18,7 +18,7 @@ bool Scene::Initialize()
 	_Camera->InitializeMovement(false);
 	_Camera->GetMovementComponent()->SetPosition(XMFLOAT3(0.f,5.f,-12.f));
 
-	/////// MAP VERSION //////////////
+	/////// INIT ACTORS //////////////
 	vector<XMFLOAT3> positions = { XMFLOAT3(-2.0f, 1.f, 0.0f), XMFLOAT3(2.0f, 1.f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.f, 2.0f) };
 
 	for (int i = 0; i < _numActors; ++i)
@@ -28,53 +28,27 @@ bool Scene::Initialize()
 		pActor->SetPosition(positions[i]);
 		
 		_Actors.emplace(pActor->Name, std::move(pActor));
-		//_Actors.insert(std::pair<string, unique_ptr<Actor>>(pActor->Name, std::move(pActor)));
-		//_Actors.insert({ pActor->Name, std::move(pActor) });
 	}
 	
 	///// INIT LIGHTS //////
 	for (int i = 0; i < NUM_LIGHTS; ++i)
 	{
-		_Lights.push_back(unique_ptr<LightClass>());
-		_Lights[i].reset(new LightClass);
-		if (!_Lights[i])return false;
+		//_Lights.push_back(unique_ptr<LightClass>());
+		//_Lights[i].reset(new LightClass);
+		//if (!_Lights[i])return false;
 
-		_Lights[i]->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-		_Lights[i]->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-		_Lights[i]->SetLookAt(0.0f, 0.0f, 0.0f);
-		_Lights[i]->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+		//_Lights[i]->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
+		//_Lights[i]->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+		//_Lights[i]->SetLookAt(0.0f, 0.0f, 0.0f);
+		//_Lights[i]->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+
+		_LightActors.push_back(unique_ptr<Actor>());
+		_LightActors[i].reset(new Actor("Light" + to_string(i + 1)));
+		_LightActors[i]->InitializeMovement(true);
+		_LightActors[i]->SetLookAt(0.0f, 0.0f, 0.0f);
 	}
 	
 	_Lights[1]->SetPosition(-5.f, 8.0f, -5.f);
-	//_Light.reset(new LightClass);
-	//if (!_Light)return false;
-
-	////_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-	//_Light->SetAmbientColor(0, 0, 0, 1.0f);
-	//_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	//_Light->SetLookAt(0.0f, 0.0f, 0.0f);
-	//_Light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
-
-	//// LIGHT 2 //
-	//_Light2.reset(new LightClass);
-	//if (!_Light)return false;
-
-	//_Light2->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-	//_Light2->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	//_Light2->SetLookAt(0.0f, 0.0f, 0.0f);
-	//_Light2->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
-
-	//for (int i = 0; i < NUM_LIGHTS; ++i)
-	//{
-	//	_LightActors.push_back(unique_ptr<Actor>());
-	//	_LightActors[i].reset(new Actor("Actor" + to_string(i + 1)));
-	//	_LightActors[i]->InitializeMovement(true);
-	//}
-
-	//_LightActors[0]->SetPosition(XMFLOAT3(-3.0f, 1.0f, 3.0f));
-	//_LightActors[1]->SetPosition(XMFLOAT3(3.0f, 1.0f, 3.0f));
-	//_LightActors[2]->SetPosition(XMFLOAT3(-3.0f, 1.0f, -3.0f));
-	//_LightActors[3]->SetPosition(XMFLOAT3(3.0f, 1.0f, -3.0f));
 
 	///// WATER DEMO SETUP //////
 	// Overwrite the last 4 actors in the array with custom appearance (initialization by hand)
