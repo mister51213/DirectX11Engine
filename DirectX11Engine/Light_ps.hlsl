@@ -15,7 +15,8 @@
 /////////////
 // texture resource that will be used for rendering the texture on the model
 //Texture2D shaderTexture;
-Texture2D shaderTextures[8];
+//Texture2D shaderTextures[8];
+Texture2D shaderTextures[9];
 // allows modifying how pixels are written to the polygon face, for example choosing which to draw. 
 SamplerState SampleType;
 
@@ -34,6 +35,7 @@ cbuffer LightBuffer:register(b0) //@TODO: register w same number as in class
     float4 ambientColor;
     float4 diffuseColor;
 	float4 diffuseColor2;
+	float4 diffuseColor3;
     float3 lightDirection;
     float specularPower;
     float4 specularColor;
@@ -75,6 +77,8 @@ struct PixelInputType
     float3 lightShadowPos : TEXCOORD7;
 	float4 lightViewPosition2 : TEXCOORD8;
     float3 lightShadowPos2 : TEXCOORD9;
+	float4 lightViewPosition3 : TEXCOORD10;
+    float3 lightShadowPos3 : TEXCOORD11;
 	float fogFactor : FOG;
 };
 
@@ -126,7 +130,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 		    if(lightIntensity > 0.0f)
 			{
 				// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-				color += (diffuseColor * lightIntensity*.7f);
+				color += (diffuseColor * lightIntensity*.3f);
 
 				// Saturate the final light color.
 				//color = saturate(color);
@@ -156,10 +160,41 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
             if(lightIntensity > 0.0f)
             {
-                color += (diffuseColor2 * lightIntensity *.7f);
+                color += (diffuseColor2 * lightIntensity *.3f);
             }
         }
     }
+
+	////////////////// THIRD LIGHT /////////////////////////////////
+    projectTexCoord.x =  input.lightViewPosition3.x / input.lightViewPosition3.w / 2.0f + 0.5f;
+    projectTexCoord.y = -input.lightViewPosition3.y / input.lightViewPosition3.w / 2.0f + 0.5f;
+
+    if((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
+    {
+        //depthValue = depthMapTexture2.Sample(SampleTypeClamp, projectTexCoord).r;
+        depthValue = shaderTextures[8].Sample(SampleTypeClamp, projectTexCoord).r;
+
+        lightDepthValue = input.lightViewPosition3.z / input.lightViewPosition3.w;
+		
+		// Subtract the bias from the lightDepthValue.
+        lightDepthValue = lightDepthValue - bias;
+
+		// Compare the depth of the shadow map value and the depth of the light to determine whether to shadow or to light this pixel.
+		// If the light is in front of the object then light the pixel, if not then shadow this pixel since an object (occluder) is casting a shadow on it.
+        if(lightDepthValue < depthValue)
+        {
+            lightIntensity = saturate(dot(input.normal, input.lightShadowPos3));
+
+            if(lightIntensity > 0.0f)
+            {
+                color += (diffuseColor3 * lightIntensity*.3f);
+            }
+        }
+    }
+
+
+
+
 
     // Saturate the final light color.
     color = saturate(color);

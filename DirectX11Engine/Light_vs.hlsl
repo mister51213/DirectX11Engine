@@ -28,8 +28,10 @@ cbuffer MatrixBuffer:register(b0)
 	matrix projectionMatrix;
 	//matrix lightViewMatrix;
  //   matrix lightProjectionMatrix;
- 	matrix lightViewMatrix[2];
-    matrix lightProjectionMatrix[2];
+ 	//matrix lightViewMatrix[2];
+  //  matrix lightProjectionMatrix[2];
+   	matrix lightViewMatrix[3];
+    matrix lightProjectionMatrix[3];
 };
 
 // pass in position of camera for reflection
@@ -52,6 +54,8 @@ cbuffer LightShadowBuffer:register(b3)
     float padding1;
 	float3 c_lightShadowPos2;
 	float padding2;
+	float3 c_lightShadowPos3;
+	float padding3;
 };
 
 cbuffer FogBuffer:register(b4)
@@ -95,6 +99,8 @@ struct PixelInputType
     float3 lightShadowPos : TEXCOORD7;
 	float4 lightViewPosition2 : TEXCOORD8;
     float3 lightShadowPos2 : TEXCOORD9;
+	float4 lightViewPosition3 : TEXCOORD10;
+    float3 lightShadowPos3 : TEXCOORD11;
 	float fogFactor : FOG; 
 };
 
@@ -172,12 +178,18 @@ PixelInputType LightVertexShader(VertexInputType input)
     output.lightViewPosition2 = mul(input.position, worldMatrix);
     output.lightViewPosition2 = mul(output.lightViewPosition2, lightViewMatrix[1]);
     output.lightViewPosition2 = mul(output.lightViewPosition2, lightProjectionMatrix[1]);
+
+	// Calculate the position of the vertice as viewed by the second light source.
+	output.lightViewPosition3 = mul(input.position, worldMatrix);
+    output.lightViewPosition3 = mul(output.lightViewPosition3, lightViewMatrix[2]);
+    output.lightViewPosition3 = mul(output.lightViewPosition3, lightProjectionMatrix[2]);
 	
 	 // Determine the light position based on the position of the light and the position of the vertex in the world.
     //output.lightShadowPos = normalize(c_lightShadowPos.xyz - worldPosition.xyz);
     //output.lightShadowPos2 = normalize(lightPosition2.xyz - worldPosition.xyz);
 	output.lightShadowPos = normalize(c_lightShadowPos1.xyz - worldPosition.xyz);
     output.lightShadowPos2 = normalize(c_lightShadowPos2.xyz - worldPosition.xyz);
+    output.lightShadowPos3 = normalize(c_lightShadowPos3.xyz - worldPosition.xyz);
 
 	return output;
 }

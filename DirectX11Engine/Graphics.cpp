@@ -1337,7 +1337,7 @@ bool GraphicsClass::Render(Scene* pScene)
 
 			it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTextures[0]->GetShaderResourceView();
 			it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[7] = _RenderTextures[1]->GetShaderResourceView();
-			it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[8] = _RenderTextures[1]->GetShaderResourceView();
+			it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[8] = _RenderTextures[2]->GetShaderResourceView();
 
 			_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 				lightViewMatrix, lightProjectionMatrix,
