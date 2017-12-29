@@ -33,22 +33,12 @@ bool Scene::Initialize()
 	///// INIT LIGHTS //////
 	for (int i = 0; i < NUM_LIGHTS; ++i)
 	{
-		//_Lights.push_back(unique_ptr<LightClass>());
-		//_Lights[i].reset(new LightClass);
-		//if (!_Lights[i])return false;
-
-		//_Lights[i]->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-		//_Lights[i]->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-		//_Lights[i]->SetLookAt(0.0f, 0.0f, 0.0f);
-		//_Lights[i]->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
-
 		_LightActors.push_back(unique_ptr<Actor>());
 		_LightActors[i].reset(new Actor("Light" + to_string(i + 1)));
 		_LightActors[i]->InitializeMovement(true);
 		_LightActors[i]->SetLookAt(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	}
 	
-	//_Lights[1]->SetPosition(-5.f, 8.0f, -5.f);
 	_LightActors[0]->SetPosition(XMFLOAT3 (5.f, 8.0f, -5.f));
 	_LightActors[1]->SetPosition(XMFLOAT3(-5.f, 8.0f, -5.f));
 
@@ -85,8 +75,8 @@ void Scene::Tick(float deltaTime, Input* pInput)
 	}
 	_lightPositionX += _lightPosIncrement;
 	_lightPositionZ += _lightPosIncrement;
-	//_Lights[0]->SetPosition(cos(_lightPositionX)*5.f, 8.0f, sin(_lightPositionZ)*5.f);
 	_LightActors[0]->SetPosition(XMFLOAT3(cos(_lightPositionX)*5.f, 8.0f, sin(_lightPositionZ)*5.f));
+	_LightActors[1]->SetPosition(XMFLOAT3(_lightPositionX, 8.0f, _lightPositionZ));
 }
 
 void Scene::ProcessInput(float deltaTime, Input* pInput)
@@ -111,18 +101,15 @@ void Scene::ProcessInput(float deltaTime, Input* pInput)
 	_Camera->GetMovementComponent()->MoveLeft(pInput->IsKeyDown(DIK_A));
 	_Camera->GetMovementComponent()->MoveRight(pInput->IsKeyDown(DIK_D));
 
-
 	////////// MOVE LIGHTS (TEST) ////////////
 	//for (int i = 0; i < NUM_LIGHTS; ++i)
 	//{
 	//	_LightActors[i]->GetMovementComponent()->SetFrameTime(deltaTime);
 	//}
-
 	//_LightActors[0]->GetMovementComponent()->MoveForward(pInput->IsKeyDown(DIK_UP));
 	//_LightActors[0]->GetMovementComponent()->MoveBack(pInput->IsKeyDown(DIK_DOWN));
 	//_LightActors[0]->GetMovementComponent()->MoveLeft(pInput->IsKeyDown(DIK_LEFT));
 	//_LightActors[0]->GetMovementComponent()->MoveRight(pInput->IsKeyDown(DIK_RIGHT));
-
 }
 
 void Scene::UpdateActors(float deltaTime)

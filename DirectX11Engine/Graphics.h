@@ -199,7 +199,6 @@ private:
 	unique_ptr<ShaderManagerClass> _ShaderManager;
 	unique_ptr<Camera> _Camera;
 	unique_ptr<Model> _CubeModel, _SphereModel, _GroundModel;	
-	//unique_ptr<RenderTextureClass> _RenderTexture, _RenderTexture2;
 	vector<unique_ptr<RenderTextureClass>> _RenderTextures;
 	
 	//unique_ptr<LightClass> _Light, _Light2;

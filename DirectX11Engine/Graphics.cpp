@@ -1231,7 +1231,7 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 	_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
 	_Camera->SetRotation(camRot.x, camRot.y, camRot.z);
 
-	//// 3. Update lights
+	// 3. Update lights
 	int i = 0;
 	for (auto& light : _Lights)
 	{
@@ -1239,21 +1239,6 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 		light->SetLookAt(pScene->_LightActors[i]->GetLookAt().x, pScene->_LightActors[i]->GetLookAt().y, pScene->_LightActors[i]->GetLookAt().z);
 		++i;
 	}
-
-	//if (_lightPositionX > 1.0f)
-	//{
-	//	_lightPositionX = -1.f;
-	//}
-	//if (_lightPositionZ > 1.0f)
-	//{
-	//	_lightPositionZ = -1.f;
-	//}
-	//_lightPositionX += _lightPosIncrement;
-	//_lightPositionZ += _lightPosIncrement;
-	//_Light->SetPosition(cos(_lightPositionX)*5.f, 8.0f, sin(_lightPositionZ)*5.f);
-
-	////_Light->SetPosition(5.f, 8.0f, -5.f);
-	//_Light2->SetPosition(-5.f, 8.0f, -5.f);
 	
 	// 4. Update UI
 	UpdateFpsString(_D3D->GetDeviceContext(), fps);
@@ -1299,57 +1284,6 @@ bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 			}
 		}
 	}
-
-
-	/////////////// SHADOW 1 //////////////////
-	//_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext());
-	//_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
-
-	//pScene->_Light->GenerateViewMatrix();
-	//lightViewMatrix = pScene->_Light->GetViewMatrix();
-	//lightProjectionMatrix = pScene->_Light->GetProjectionMatrix();
-
-	//for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
-	//{
-	//	if (it->second->GetModel())
-	//	{
-	//		// Reset the world matrix.
-	//		_D3D->GetWorldMatrix(worldMatrix);
-	//		worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(it->second->GetPosition().x, it->second->GetPosition().y, it->second->GetPosition().z));
-
-	//		it->second->GetModel()->LoadVertices(_D3D->GetDeviceContext());
-	//		result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-	//		if (!result)
-	//		{
-	//			return false;
-	//		}
-	//	}
-	//}
-
-	///////////////// SHADOW 2 //////////////////
-	//_RenderTexture2->SetRenderTarget(_D3D->GetDeviceContext());
-	//_RenderTexture2->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
-
-	//pScene->_Light2->GenerateViewMatrix();
-	//lightViewMatrix = pScene->_Light2->GetViewMatrix();
-	//lightProjectionMatrix = pScene->_Light2->GetProjectionMatrix();
-
-	//for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
-	//{
-	//	if (it->second->GetModel())
-	//	{
-	//		// Reset the world matrix.
-	//		_D3D->GetWorldMatrix(worldMatrix);
-	//		worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(it->second->GetPosition().x, it->second->GetPosition().y, it->second->GetPosition().z));
-
-	//		it->second->GetModel()->LoadVertices(_D3D->GetDeviceContext());
-	//		result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-	//		if (!result)
-	//		{
-	//			return false;
-	//		}
-	//	}
-	//}
 
 #pragma region OLD WORKING
 	//// Reset the world matrix.
@@ -1405,53 +1339,33 @@ bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 bool GraphicsClass::Render(Scene* pScene)
 {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, translateMatrix;
-	//XMMATRIX lightViewMatrix, lightProjectionMatrix;
 	XMMATRIX lightViewMatrix[2], lightProjectionMatrix[2];
-	bool result;
 	float posX, posY, posZ;
 
-	result = RenderSceneToTexture(pScene);
-	if (!result)
-	{
-		return false;
-	}
+	RenderSceneToTexture(pScene);
 
 	_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Generate the view matrix based on the camera's position.
 	_Camera->UpdateViewPoint();
-	//pScene->_Light->GenerateViewMatrix();
-	//pScene->_Light2->GenerateViewMatrix();
-	/*pScene->*/_Lights[0]->GenerateViewMatrix();
-	/*pScene->*/_Lights[1]->GenerateViewMatrix();
+	_Lights[0]->GenerateViewMatrix();
+	_Lights[1]->GenerateViewMatrix();
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	_Camera->GetViewMatrix(viewMatrix);
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
-	// Get the light's view and projection matrices from the light object.
+	lightViewMatrix[0] = _Lights[0]->GetViewMatrix();
+	lightViewMatrix[1] = _Lights[1]->GetViewMatrix();
 
-	//lightViewMatrix = _Light->GetViewMatrix();
-	//lightProjectionMatrix = _Light->GetProjectionMatrix();
+	lightProjectionMatrix[0] = _Lights[0]->GetProjectionMatrix();
+	lightProjectionMatrix[1] = _Lights[1]->GetProjectionMatrix();
 
-	//lightViewMatrix[0] = pScene->_Light->GetViewMatrix();
-	//lightViewMatrix[1] = pScene->_Light2->GetViewMatrix();
-	lightViewMatrix[0] = /*pScene->*/_Lights[0]->GetViewMatrix();
-	lightViewMatrix[1] = /*pScene->*/_Lights[1]->GetViewMatrix();
-
-	//lightProjectionMatrix[0] = pScene->_Light->GetProjectionMatrix();
-	//lightProjectionMatrix[1] = pScene->_Light2->GetProjectionMatrix();
-	lightProjectionMatrix[0] = /*pScene->*/_Lights[0]->GetProjectionMatrix();
-	lightProjectionMatrix[1] = /*pScene->*/_Lights[1]->GetProjectionMatrix();
-
-	//LightClass* shadowLights[2] = { pScene->_Light.get(), pScene->_Light2.get() };
-	LightClass* shadowLights[2] = { /*pScene->*/_Lights[0].get() , /*pScene->*/_Lights[1].get() };
+	LightClass* shadowLights[2] = { _Lights[0].get() , _Lights[1].get() };
 
 	/////////////////////////////////////////////////////////////////
 	////////////////// RENDER ACTUAL SCENE - LOOP IMPLEMENTATION ////
 	/////////////////////////////////////////////////////////////////
-	//LightClass* lights[4] = { new LightClass, new LightClass, new LightClass, new LightClass };
-
 	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 	{
 		if (it->second->GetModel())
@@ -1461,102 +1375,21 @@ bool GraphicsClass::Render(Scene* pScene)
 			worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(it->second->GetPosition().x, it->second->GetPosition().y, it->second->GetPosition().z));
 			it->second->GetModel()->LoadVertices(_D3D->GetDeviceContext());
 
-			// Set rendered shadows into material resource arrays to be available to gfx pipeline
-			//it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTexture->GetShaderResourceView();
-			//it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[7] = _RenderTexture2->GetShaderResourceView();
 			it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTextures[0]->GetShaderResourceView();
 			it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[7] = _RenderTextures[1]->GetShaderResourceView();
-
-			//_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-			//	lightViewMatrix, lightProjectionMatrix,
-			//	it->second->GetModel()->GetMaterial()->GetResourceArray(),
-			//	_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Light.get(), lights,
-			//	_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(),
-			//	_globalEffects.fogStart, _globalEffects.fogEnd,
-			//	it->second->GetModel()->GetMaterial()->translation, it->second->GetModel()->GetMaterial()->transparency);
-
-			//_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-			//	lightViewMatrix, lightProjectionMatrix,
-			//	it->second->GetModel()->GetMaterial()->GetResourceArray(),
-			//	pScene->_Light->GetDirection(), pScene->_Light->GetAmbientColor(),
-			//	pScene->_Light->GetDiffuseColor(), pScene->_Light2->GetDiffuseColor(),
-			//	shadowLights, /*lights,*/
-			//	_Camera->GetPosition(), pScene->_Light->GetSpecularColor(), pScene->_Light->GetSpecularPower(),
-			//	_globalEffects.fogStart, _globalEffects.fogEnd,
-			//	it->second->GetModel()->GetMaterial()->translation, it->second->GetModel()->GetMaterial()->transparency);
 
 			_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 				lightViewMatrix, lightProjectionMatrix,
 				it->second->GetModel()->GetMaterial()->GetResourceArray(),
-				/*pScene->*/_Lights[0]->GetDirection(), /*pScene->*/_Lights[0]->GetAmbientColor(),
-				/*pScene->*/_Lights[0]->GetDiffuseColor(), /*pScene->*/_Lights[1]->GetDiffuseColor(),
-				shadowLights, /*lights,*/
-				_Camera->GetPosition(), /*pScene->*/_Lights[0]->GetSpecularColor(), /*pScene->*/_Lights[0]->GetSpecularPower(),
+				_Lights[0]->GetDirection(), _Lights[0]->GetAmbientColor(),
+				_Lights[0]->GetDiffuseColor(), _Lights[1]->GetDiffuseColor(),
+				shadowLights, 
+				_Camera->GetPosition(), _Lights[0]->GetSpecularColor(), _Lights[0]->GetSpecularPower(),
 				_globalEffects.fogStart, _globalEffects.fogEnd,
 				it->second->GetModel()->GetMaterial()->translation, it->second->GetModel()->GetMaterial()->transparency);
-
-			if (!result)
-			{
-				return false;
-			}
 		}
 	}
 	
-#pragma region INDIVIDUAL MODELS - WORKING
-	////REBUILT IMPLEMENTATION
-	//LightClass* lights[4] = {new LightClass, new LightClass, new LightClass, new LightClass};
-	//XMFLOAT3 cPos = _CubeModel->GetPosition();
-	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(cPos.x, cPos.y, cPos.z));
-	//_CubeModel->LoadVertices(_D3D->GetDeviceContext());
-	//_CubeModel->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTexture->GetShaderResourceView();
-	//_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-	//	lightViewMatrix, lightProjectionMatrix,
-	//	_CubeModel->GetMaterial()->GetResourceArray(), 
-	//	_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Light.get(), lights,
-	//	_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(), 
-	//	_globalEffects.fogStart, _globalEffects.fogEnd,
-	//	_CubeModel->GetMaterial()->translation, _CubeModel->GetMaterial()->transparency);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-	//// Reset the world matrix.
-	//_D3D->GetWorldMatrix(worldMatrix);
-	//XMFLOAT3 sPos = _SphereModel->GetPosition();
-	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(sPos.x, sPos.y, sPos.z));
-	//_SphereModel->LoadVertices(_D3D->GetDeviceContext());
-	//_SphereModel->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTexture->GetShaderResourceView();
-	//_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-	//	lightViewMatrix, lightProjectionMatrix,
-	//	_SphereModel->GetMaterial()->GetResourceArray(),
-	//	_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Light.get(), lights,
-	//	_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(),
-	//	_globalEffects.fogStart, _globalEffects.fogEnd,
-	//	_SphereModel->GetMaterial()->translation, _SphereModel->GetMaterial()->transparency);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-	//// Reset the world matrix.
-	//_D3D->GetWorldMatrix(worldMatrix);
-	//XMFLOAT3 gPos = _GroundModel->GetPosition();
-	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(gPos.x, gPos.y, gPos.z));
-	//_GroundModel->LoadVertices(_D3D->GetDeviceContext());
-	//_GroundModel->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTexture->GetShaderResourceView();
-	//_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-	//	lightViewMatrix, lightProjectionMatrix,
-	//	_GroundModel->GetMaterial()->GetResourceArray(),
-	//	_Light->GetDirection(), _Light->GetAmbientColor(), _Light->GetDiffuseColor(), _Light.get(), lights,
-	//	_Camera->GetPosition(), _Light->GetSpecularColor(), _Light->GetSpecularPower(),
-	//	_globalEffects.fogStart, _globalEffects.fogEnd,
-	//	_GroundModel->GetMaterial()->translation, _GroundModel->GetMaterial()->transparency);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-#pragma endregion
-
 	////////////////////////////////////////
 	// UI //// UI //// UI //// UI //// UI //
 	////////////////////////////////////////
