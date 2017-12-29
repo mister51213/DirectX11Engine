@@ -159,16 +159,6 @@
 //#include "rendertextureclass.h"
 //#include "shadowshaderclass.h"
 
-/////////////
-// GLOBALS //
-/////////////
-const bool FULL_SCREEN = false;
-const bool VSYNC_ENABLED = true;
-const float SCREEN_DEPTH = 100.0f;
-const float SCREEN_NEAR = 1.0f;
-const int SHADOWMAP_WIDTH = 1024;
-const int SHADOWMAP_HEIGHT = 1024;
-
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
 ////////////////////////////////////////////////////////////////////////////////
@@ -208,15 +198,12 @@ private:
 	unique_ptr<D3DClass> _D3D;
 	unique_ptr<ShaderManagerClass> _ShaderManager;
 	unique_ptr<Camera> _Camera;
-	unique_ptr<LightClass> _Light, _Light2;
 	unique_ptr<Model> _CubeModel, _SphereModel, _GroundModel;	
-	unique_ptr<RenderTextureClass> _RenderTexture, _RenderTexture2;
+	//unique_ptr<RenderTextureClass> _RenderTexture, _RenderTexture2;
+	vector<unique_ptr<RenderTextureClass>> _RenderTextures;
 	
-/////////// GLOBAL EFFECTS /////////////
-	SceneEffects _globalEffects;
-	float _lightPositionX = 1.f;
-	float _lightPositionZ = 1.f;
-	float _lightPosIncrement = -0.008f;
+	//unique_ptr<LightClass> _Light, _Light2;
+
 // OLD
 	//D3DClass* m_D3D;
 	//CameraClass* m_Camera;
@@ -226,6 +213,11 @@ private:
 	//depthShaderClassALT* m_DepthShader;
 	//RenderTextureClass* m_RenderTexture;
 	//ShadowShaderClass* m_ShadowShader;
+
+	/////////// GLOBAL EFFECTS /////////////
+	SceneEffects _globalEffects;
+
+	const int NUM_RENDER_TEXTURES = 2;
 };
 #pragma endregion
 

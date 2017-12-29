@@ -1,5 +1,6 @@
 #include "Scene.h"
 #include "Input.h"
+#include "Graphics.h"
 #include <DirectXMath.h>
 
 using namespace DirectX;
@@ -31,6 +32,49 @@ bool Scene::Initialize()
 		//_Actors.insert({ pActor->Name, std::move(pActor) });
 	}
 	
+	///// INIT LIGHTS //////
+	for (int i = 0; i < NUM_LIGHTS; ++i)
+	{
+		_Lights.push_back(unique_ptr<LightClass>());
+		_Lights[i].reset(new LightClass);
+		if (!_Lights[i])return false;
+
+		_Lights[i]->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
+		_Lights[i]->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+		_Lights[i]->SetLookAt(0.0f, 0.0f, 0.0f);
+		_Lights[i]->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+	}
+	
+	_Lights[1]->SetPosition(-5.f, 8.0f, -5.f);
+	//_Light.reset(new LightClass);
+	//if (!_Light)return false;
+
+	////_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
+	//_Light->SetAmbientColor(0, 0, 0, 1.0f);
+	//_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	//_Light->SetLookAt(0.0f, 0.0f, 0.0f);
+	//_Light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+
+	//// LIGHT 2 //
+	//_Light2.reset(new LightClass);
+	//if (!_Light)return false;
+
+	//_Light2->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
+	//_Light2->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	//_Light2->SetLookAt(0.0f, 0.0f, 0.0f);
+	//_Light2->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+
+	//for (int i = 0; i < NUM_LIGHTS; ++i)
+	//{
+	//	_LightActors.push_back(unique_ptr<Actor>());
+	//	_LightActors[i].reset(new Actor("Actor" + to_string(i + 1)));
+	//	_LightActors[i]->InitializeMovement(true);
+	//}
+
+	//_LightActors[0]->SetPosition(XMFLOAT3(-3.0f, 1.0f, 3.0f));
+	//_LightActors[1]->SetPosition(XMFLOAT3(3.0f, 1.0f, 3.0f));
+	//_LightActors[2]->SetPosition(XMFLOAT3(-3.0f, 1.0f, -3.0f));
+	//_LightActors[3]->SetPosition(XMFLOAT3(3.0f, 1.0f, -3.0f));
 
 	///// WATER DEMO SETUP //////
 	// Overwrite the last 4 actors in the array with custom appearance (initialization by hand)
@@ -40,23 +84,10 @@ bool Scene::Initialize()
 	//	_Actors[i]->bCustomAppearance = true;
 	//}
 
-	//_Actors[_Actors.size() - 4]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 1.0f, 0.0f));
-	//_Actors[_Actors.size() - 3]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 6.0f, 8.0f));
-	//_Actors[_Actors.size() - 2]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.0f, 0.0f));
-	//_Actors[_Actors.size() - 1]->GetMovementComponent()->SetPosition(XMFLOAT3(0.0f, 2.75, 0.0f));
-
-	///// INIT LIGHTS //////
-	for (int i = 0; i < NUM_LIGHTS; ++i)
-	{
-		_LightActors.push_back(unique_ptr<Actor>());
-		_LightActors[i].reset(new Actor("Actor" + to_string(i + 1)));
-		_LightActors[i]->InitializeMovement(true);
-	}
-
-	_LightActors[0]->GetMovementComponent()->SetPosition(XMFLOAT3(-3.0f, 1.0f, 3.0f));
-	_LightActors[1]->GetMovementComponent()->SetPosition(XMFLOAT3(3.0f, 1.0f, 3.0f));
-	_LightActors[2]->GetMovementComponent()->SetPosition(XMFLOAT3(-3.0f, 1.0f, -3.0f));
-	_LightActors[3]->GetMovementComponent()->SetPosition(XMFLOAT3(3.0f, 1.0f, -3.0f));
+	//_Actors[_Actors.size() - 4]->SetPosition(XMFLOAT3(0.0f, 1.0f, 0.0f));
+	//_Actors[_Actors.size() - 3]->SetPosition(XMFLOAT3(0.0f, 6.0f, 8.0f));
+	//_Actors[_Actors.size() - 2]->SetPosition(XMFLOAT3(0.0f, 2.0f, 0.0f));
+	//_Actors[_Actors.size() - 1]->SetPosition(XMFLOAT3(0.0f, 2.75, 0.0f));
 
 	return true;
 }
@@ -66,6 +97,20 @@ void Scene::Tick(float deltaTime, Input* pInput)
 	ProcessInput(deltaTime, pInput);
 
 	UpdateActors(deltaTime);
+
+	// Update Lights
+	// 3. Update 1st light @TODO: Encapsulate lights in scene again!
+	if (_lightPositionX > 1.0f)
+	{
+		_lightPositionX = -1.f;
+	}
+	if (_lightPositionZ > 1.0f)
+	{
+		_lightPositionZ = -1.f;
+	}
+	_lightPositionX += _lightPosIncrement;
+	_lightPositionZ += _lightPosIncrement;
+	_Lights[0]->SetPosition(cos(_lightPositionX)*5.f, 8.0f, sin(_lightPositionZ)*5.f);
 }
 
 void Scene::ProcessInput(float deltaTime, Input* pInput)
@@ -92,15 +137,15 @@ void Scene::ProcessInput(float deltaTime, Input* pInput)
 
 
 	////////// MOVE LIGHTS (TEST) ////////////
-	for (int i = 0; i < NUM_LIGHTS; ++i)
-	{
-		_LightActors[i]->GetMovementComponent()->SetFrameTime(deltaTime);
-	}
+	//for (int i = 0; i < NUM_LIGHTS; ++i)
+	//{
+	//	_LightActors[i]->GetMovementComponent()->SetFrameTime(deltaTime);
+	//}
 
-	_LightActors[0]->GetMovementComponent()->MoveForward(pInput->IsKeyDown(DIK_UP));
-	_LightActors[0]->GetMovementComponent()->MoveBack(pInput->IsKeyDown(DIK_DOWN));
-	_LightActors[0]->GetMovementComponent()->MoveLeft(pInput->IsKeyDown(DIK_LEFT));
-	_LightActors[0]->GetMovementComponent()->MoveRight(pInput->IsKeyDown(DIK_RIGHT));
+	//_LightActors[0]->GetMovementComponent()->MoveForward(pInput->IsKeyDown(DIK_UP));
+	//_LightActors[0]->GetMovementComponent()->MoveBack(pInput->IsKeyDown(DIK_DOWN));
+	//_LightActors[0]->GetMovementComponent()->MoveLeft(pInput->IsKeyDown(DIK_LEFT));
+	//_LightActors[0]->GetMovementComponent()->MoveRight(pInput->IsKeyDown(DIK_RIGHT));
 
 }
 

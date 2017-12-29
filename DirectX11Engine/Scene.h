@@ -9,6 +9,7 @@
 #include "Actor.h"
 #include "Position.h" 
 #include "LightClass.h"
+#include "GlobalIncludes.h"
 
 using namespace std;
 
@@ -27,11 +28,17 @@ public:
 	int _numActors = 3;
 
 	unique_ptr<Actor> _Camera;
-	//vector<unique_ptr<Actor>> _Actors;
 	map<string, unique_ptr<Actor>> _Actors;
 	
-	vector<unique_ptr<Actor>> _LightActors;
+	//vector<unique_ptr<Actor>> _LightActors;
+	//unique_ptr<LightClass> _Light, _Light2;
+	vector<unique_ptr<LightClass>>_Lights;
 
-	const int NUM_LIGHTS = 4;
+	/////////// Light Animation /////////////
+	float _lightPositionX = 1.f;
+	float _lightPositionZ = 1.f;
+	float _lightPosIncrement = -0.008f;
+
+	const int NUM_LIGHTS = 2;
 };
 
