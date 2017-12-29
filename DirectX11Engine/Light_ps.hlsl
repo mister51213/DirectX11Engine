@@ -32,28 +32,25 @@ SamplerState SampleTypeWrap  : register(s1);
 cbuffer LightBuffer:register(b0) //@TODO: register w same number as in class
 {
     float4 ambientColor;
- //   float4 diffuseColor;
-	//float4 diffuseColor2;
-	//float4 diffuseColor3;
     float3 lightDirection;
     float specularPower;
     float4 specularColor;
 	float4 diffuseCols[NUM_LIGHTS];
 };
 
-cbuffer LightColorBuffer:register(b1)
-{
-    float4 diffuseColors[NUM_LIGHTS]; //TODO: add direction here
-};
+//cbuffer LightColorBuffer:register(b1)
+//{
+//    float4 diffuseColors[NUM_LIGHTS]; //TODO: add direction here
+//};
 
 // value set here will be between 0 and 1.
-cbuffer TranslationBuffer:register(b2) //@TODO: register w same number as in class
+cbuffer TranslationBuffer:register(b1) //was 2
 {
     float textureTranslation; //@NOTE = hlsl automatically pads floats for you
 };
 
 // for alpha blending textures
-cbuffer TransparentBuffer:register(b3)
+cbuffer TransparentBuffer:register(b2) // was 3
 {
     float blendAmount;
 };
@@ -69,18 +66,12 @@ struct PixelInputType
 	float3 tangent : TANGENT;
     float3 binormal : BINORMAL;
     float3 viewDirection : TEXCOORD1;
-	float3 lightPos1 : TEXCOORD2;
-    float3 lightPos2 : TEXCOORD3;
-    float3 lightPos3 : TEXCOORD4;
-    float3 lightPos4 : TEXCOORD5;
-	//float4 lightViewPosition : TEXCOORD6;
- //   float3 lightShadowPos : TEXCOORD7;
-	//float4 lightViewPosition2 : TEXCOORD8;
- //   float3 lightShadowPos2 : TEXCOORD9;
-	//float4 lightViewPosition3 : TEXCOORD10;
- //   float3 lightShadowPos3 : TEXCOORD11;
-    float4 lightViewPositions[3] : TEXCOORD6;
-    float3 lightShadowPositions[3] : TEXCOORD9;
+	//float3 lightPos1 : TEXCOORD2;
+ //   float3 lightPos2 : TEXCOORD3;
+ //   float3 lightPos3 : TEXCOORD4;
+ //   float3 lightPos4 : TEXCOORD5;
+    float4 lightViewPositions[NUM_LIGHTS] : TEXCOORD6;
+    float3 lightShadowPositions[NUM_LIGHTS] : TEXCOORD9;
 	float fogFactor : FOG;
 };
 
