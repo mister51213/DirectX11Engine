@@ -29,7 +29,7 @@ using namespace GfxUtil;
 class Model
 {
 private:
-// this typedef must match the layout in the ColorShaderClass 
+	// this typedef must match the layout in the ColorShaderClass 
 	struct VertexType
 	{
 		XMFLOAT3 position;
@@ -74,7 +74,9 @@ public:
 
 	Material* GetMaterial();
 	void SetMaterial(Material* mat);
-	ID3D11ShaderResourceView** GetTextureArray(); // TODO: replace w material
+	//ID3D11ShaderResourceView** GetTextureArray(); // TODO: replace w material
+
+	void SetResourceView(const int index, ID3D11ShaderResourceView* view);
 
 	bool LoadModel(string /*char**/);
 	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */

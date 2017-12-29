@@ -63,12 +63,12 @@ int Model::GetIndexCount()
 	return _indexCount;
 }
 
-ID3D11ShaderResourceView** Model::GetTextureArray()
-{
-	//return _TextureArray->GetTextureArray();
-
-	return _material->GetResourceArray();
-}
+//ID3D11ShaderResourceView** Model::GetTextureArray()
+//{
+//	//return _TextureArray->GetTextureArray();
+//
+//	return _material->GetResourceArray();
+//}
 
 bool Model::InitializeBuffers(ID3D11Device* device)
 {
@@ -337,6 +337,14 @@ void Model::CalculateNormal(VectorType tangent, VectorType binormal, VectorType&
 	normal.z = normal.z / length;
 
 	return;
+}
+
+void Model::SetResourceView(const int index, ID3D11ShaderResourceView * view)
+{
+	if (_material)
+	{
+		_material->GetTextureObject()->GetTextureArray()[index] = view;
+	}
 }
 
 bool Model::LoadModel(/*char**/string filename)

@@ -1097,26 +1097,37 @@ GraphicsClass::~GraphicsClass()
 
 bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* pScene)
 {
-	bool result;
-	
+	// D3D CLASS //
 	_D3D.reset(new D3DClass);
-	if (!_D3D)
-	{
-		return false;
-	}
+	if (!_D3D) return false;
 
 	CHECK(_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR), "Direct3D");
 
+	// SHADERS //
 	_ShaderManager.reset(new ShaderManagerClass);
 	_ShaderManager->Initialize(_D3D->GetDevice(), hwnd);
 
+	// CAMERA //
 	_Camera.reset(new Camera);
 	if (!_Camera)return false;
 
 	_Camera->SetPosition(pScene->GetCamera()->GetPosition().x, pScene->GetCamera()->GetPosition().y, pScene->GetCamera()->GetPosition().z);
 	_Camera->UpdateViewPoint();
+	 
+	// RENDER TEXTURES //
+	for (int i = 0; i< NUM_RENDER_TEXTURES; ++i)
+	{
+		_RenderTextures.push_back(unique_ptr<RenderTextureClass>());
+		_RenderTextures[i].reset(new RenderTextureClass);
+		if (!_RenderTextures[i])
+		{
+			return false;
+		}
 
-	// MODELS ~ LOOP METHOD ~ //
+		CHECK(_RenderTextures[i]->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR), "render to texture");
+	}
+
+	// MODELS //
 	vector<string> texNames = { "fire2.tga", "ice.dds", "metal001.dds", "wall01.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
 	vector<string> meshNames = { "sphere.txt", "cube2.txt", "plane01.txt", "cube2.txt", "cube2.txt", "plane01.txt", "sphere.txt"};
 	vector<string> modelNames = { "cube", "sphere", "ground", "sphere2"};
@@ -1130,82 +1141,27 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		CHECK(it->second->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/" + meshNames[i],
 			texArray, EShaderType::ELIGHT_SPECULAR), modelNames[i]);
 
+		// Store the render texture in the texture view array of each model to make it accessible to the graphics pipeline
+		for (int idx = 0; idx < _RenderTextures.size(); ++idx)
+		{
+			it->second->GetModel()->SetResourceView(6+idx, _RenderTextures[idx]->GetShaderResourceView());
+		}
+
 		++i;
 	}
 
-#pragma region NON-LOOP MODELS WORKING
-	//_CubeModel.reset(new Model);
-	//if (!_CubeModel)
-	//{
-	//	return false;
-	//}
-	//vector<char*> cubeTex(7, "../DirectX11Engine/data/wall01.dds");
-	//CHECK(_CubeModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/cube2.txt",
-	//	cubeTex, EShaderType::ELIGHT_SPECULAR), "cube model");
-	//_CubeModel->SetPosition(XMFLOAT3(-2.0f, 1.f, 0.0f));
-	//_SphereModel.reset(new Model);
-	//if (!_SphereModel)
-	//{
-	//	return false;
-	//}
-	//vector<char*> spTex(7, "../DirectX11Engine/data/ice.dds");
-	//CHECK(_SphereModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/sphere.txt",
-	//	cubeTex, EShaderType::ELIGHT_SPECULAR), "sphere model");
-	//_SphereModel->SetPosition(XMFLOAT3(2.0f, 1.0f, 0.0f));
-	//_GroundModel.reset(new Model);
-	//if (!_GroundModel)
-	//{
-	//	return false;
-	//}
-	//vector<char*>gTex(7, "../DirectX11Engine/data/metal001.dds");
-	//CHECK(_GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt",
-	//	gTex, EShaderType::ELIGHT_SPECULAR), "ground model");
-	//_GroundModel->SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
-
-#pragma endregion
-
-	// INIT LIGHTS // LOOP METHOD //
+	// INIT LIGHTS //
 	for (int i = 0; i < pScene->_LightActors.size(); ++i)
 	{
 		_Lights.push_back(unique_ptr<LightClass>());
 		_Lights[i].reset(new LightClass);
 		if (!_Lights[i])return false;
 
-		_Lights[i]->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-		_Lights[i]->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-		_Lights[i]->SetLookAt(pScene->_LightActors[i]->GetLookAt().x, pScene->_LightActors[i]->GetLookAt().y, pScene->_LightActors[i]->GetLookAt().z);
-		_Lights[i]->SetPosition(pScene->_LightActors[i]->GetPosition().x, pScene->_LightActors[i]->GetPosition().y, pScene->_LightActors[i]->GetPosition().z);
+		_Lights[i]->SetAmbientColor(XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f));
+		_Lights[i]->SetDiffuseColor(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+		_Lights[i]->SetLookAt(pScene->_LightActors[i]->GetLookAt());// .x, pScene->_LightActors[i]->GetLookAt().y, pScene->_LightActors[i]->GetLookAt().z);
+		_Lights[i]->SetPosition(pScene->_LightActors[i]->GetPosition());// .x, pScene->_LightActors[i]->GetPosition().y, pScene->_LightActors[i]->GetPosition().z);
 		_Lights[i]->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
-	}
-
-
-	// LIGHT 1 //
-	//_Light.reset(new LightClass);
-	//if (!_Light)return false;
-	////_Light->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-	//_Light->SetAmbientColor(0,0,0, 1.0f);
-	//_Light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	//_Light->SetLookAt(0.0f, 0.0f, 0.0f);
-	//_Light->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
-	//// LIGHT 2 //
-	//_Light2.reset(new LightClass);
-	//if (!_Light)return false;
-	//_Light2->SetAmbientColor(0.15f, 0.15f, 0.15f, 1.0f);
-	//_Light2->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	//_Light2->SetLookAt(0.0f, 0.0f, 0.0f);
-	//_Light2->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
-
-	// RENDER TEXTURES
-	for (int i = 0; i< NUM_RENDER_TEXTURES; ++i)
-	{
-		_RenderTextures.push_back(unique_ptr<RenderTextureClass>());
-		_RenderTextures[i].reset(new RenderTextureClass);
-		if (!_RenderTextures[i])
-		{
-			return false;
-		}
-
-		CHECK(_RenderTextures[i]->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR), "render to texture");
 	}
 
 	// UI
@@ -1235,8 +1191,8 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 	int i = 0;
 	for (auto& light : _Lights)
 	{
-		light->SetPosition(pScene->_LightActors[i]->GetPosition().x, pScene->_LightActors[i]->GetPosition().y, pScene->_LightActors[i]->GetPosition().z);
-		light->SetLookAt(pScene->_LightActors[i]->GetLookAt().x, pScene->_LightActors[i]->GetLookAt().y, pScene->_LightActors[i]->GetLookAt().z);
+		light->SetPosition(pScene->_LightActors[i]->GetPosition());// .x, pScene->_LightActors[i]->GetPosition().y, pScene->_LightActors[i]->GetPosition().z);
+		light->SetLookAt(pScene->_LightActors[i]->GetLookAt());// .x, pScene->_LightActors[i]->GetLookAt().y, pScene->_LightActors[i]->GetLookAt().z);
 		++i;
 	}
 	
@@ -1266,6 +1222,7 @@ bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 		lightViewMatrix = _Lights[i]->GetViewMatrix();
 		lightProjectionMatrix = _Lights[i]->GetProjectionMatrix();
 
+		// Draw all actors in scene to this render texture
 		for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 		{
 			if (it->second->GetModel())
@@ -1275,11 +1232,7 @@ bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 				worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(it->second->GetPosition().x, it->second->GetPosition().y, it->second->GetPosition().z));
 
 				it->second->GetModel()->LoadVertices(_D3D->GetDeviceContext());
-				result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-				if (!result)
-				{
-					return false;
-				}
+				_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 			}
 		}
 	}
@@ -1334,10 +1287,6 @@ bool GraphicsClass::Render(Scene* pScene)
 
 			worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(it->second->GetPosition().x, it->second->GetPosition().y, it->second->GetPosition().z));
 			it->second->GetModel()->LoadVertices(_D3D->GetDeviceContext());
-
-			it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTextures[0]->GetShaderResourceView();
-			it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[7] = _RenderTextures[1]->GetShaderResourceView();
-			it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[8] = _RenderTextures[2]->GetShaderResourceView();
 
 			_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 				lightViewMatrix, lightProjectionMatrix,

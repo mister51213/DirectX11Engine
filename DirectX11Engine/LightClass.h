@@ -20,13 +20,13 @@ public:
 	LightClass(const LightClass&);
 	~LightClass();
 
-	void SetAmbientColor(float, float, float, float);
-	void SetDiffuseColor(float, float, float, float);
-	void SetPosition(float x, float y, float z);
-	void SetDirection(float, float, float);
-	void SetSpecularColor(float, float, float, float);
+	void SetAmbientColor(const XMFLOAT4&/*float, float, float, float*/);
+	void SetDiffuseColor(const XMFLOAT4&/*float, float, float, float*/);
+	void SetPosition(const XMFLOAT3&/*float x, float y, float z*/);
+	void SetDirection(const XMFLOAT3&/*float, float, float*/);
+	void SetSpecularColor(const XMFLOAT4&/*float, float, float, float*/);
 	void SetSpecularPower(float);
-	void SetLookAt(float, float, float);
+	void SetLookAt(const XMFLOAT3&/*float, float, float*/);
 
 	XMFLOAT4 GetAmbientColor() const;
 	XMFLOAT4 GetDiffuseColor() const;
