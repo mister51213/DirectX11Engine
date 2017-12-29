@@ -174,16 +174,16 @@ void MovementComponent::MoveInDirection(bool keydown, float& increment, float x,
 {
 	if (keydown)
 	{
-		increment += _frameTime * _moveSpeed;
+		increment +=/* _frameTime*/ _moveSpeed;
 
-		if (increment > (_frameTime * _maxSpeed))
+		if (increment > (/*_frameTime **/ _maxSpeed))
 		{
-			increment = _frameTime * _maxSpeed;
+			increment = /*_frameTime **/ _maxSpeed;
 		}
 	}
 	else
 	{
-		increment -= _frameTime * _brakeSpeed;
+		increment -=/* _frameTime*/0.16f * _brakeSpeed;
 
 		if (increment < 0.0f)
 		{

@@ -39,6 +39,6 @@ public:
 	float _lightPositionZ = 1.f;
 	float _lightPosIncrement = -0.008f;
 
-	const int NUM_LIGHTS = 2;
+	const int NUM_LIGHTS = 3;
 };
 

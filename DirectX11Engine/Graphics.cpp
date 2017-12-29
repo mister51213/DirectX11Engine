@@ -1117,7 +1117,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	_Camera->UpdateViewPoint();
 
 	// MODELS ~ LOOP METHOD ~ //
-	vector<string> texNames = { "fire2.tga", "ice.dds", "metal001.dds", "wall01.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
+	vector<string> texNames = { "fire2.tga", "ice.dds", "metal001.dds", "wall01.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
 	vector<string> meshNames = { "sphere.txt", "cube2.txt", "plane01.txt", "cube2.txt", "cube2.txt", "plane01.txt", "sphere.txt"};
 	vector<string> modelNames = { "cube", "sphere", "ground", "sphere2"};
 
@@ -1126,7 +1126,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	{
 		it->second->InstantiateModel(new Model);
 
-		vector<string> texArray(8, "../DirectX11Engine/data/" + texNames[i]);
+		vector<string> texArray(9, "../DirectX11Engine/data/" + texNames[i]);
 		CHECK(it->second->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/" + meshNames[i],
 			texArray, EShaderType::ELIGHT_SPECULAR), modelNames[i]);
 
@@ -1257,15 +1257,14 @@ bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 	float posX, posY, posZ;
 	bool result;
 
-	///////////// LOOP //////////////////
 	for (int i = 0; i < _RenderTextures.size(); ++i)
 	{
 		_RenderTextures[i]->SetRenderTarget(_D3D->GetDeviceContext());
 		_RenderTextures[i]->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
 
-		/*pScene->*/_Lights[i]->GenerateViewMatrix();
-		lightViewMatrix = /*pScene->*/_Lights[i]->GetViewMatrix();
-		lightProjectionMatrix = /*pScene->*/_Lights[i]->GetProjectionMatrix();
+		_Lights[i]->GenerateViewMatrix();
+		lightViewMatrix = _Lights[i]->GetViewMatrix();
+		lightProjectionMatrix = _Lights[i]->GetProjectionMatrix();
 
 		for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 		{
@@ -1285,52 +1284,8 @@ bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 		}
 	}
 
-#pragma region OLD WORKING
-	//// Reset the world matrix.
-	//_D3D->GetWorldMatrix(worldMatrix);
-
-	//XMFLOAT3 cPos = _CubeModel->GetPosition();
-	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(cPos.x, cPos.y,cPos.z));
-
-	//_CubeModel->LoadVertices(_D3D->GetDeviceContext());
-	//result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	//// Reset the world matrix.
-	//_D3D->GetWorldMatrix(worldMatrix);
-
-	//XMFLOAT3 sPos = _SphereModel->GetPosition();
-	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(sPos.x, sPos.y, sPos.z));
-
-	//_SphereModel->LoadVertices(_D3D->GetDeviceContext());
-	//result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-	//// Reset the world matrix.
-	//_D3D->GetWorldMatrix(worldMatrix);
-
-	//XMFLOAT3 gPos = _GroundModel->GetPosition();
-	//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(gPos.x, gPos.y, gPos.z));
-
-	//_GroundModel->LoadVertices(_D3D->GetDeviceContext());
-	//result = _ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-	//if (!result)
-	//{
-	//	return false;
-	//}
-
-#pragma endregion
-
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
 	_D3D->SetBackBufferRenderTarget();
-
-	// Reset the viewport back to the original.
 	_D3D->ResetViewport();
 
 	return true;
@@ -1339,29 +1294,34 @@ bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 bool GraphicsClass::Render(Scene* pScene)
 {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, translateMatrix;
-	XMMATRIX lightViewMatrix[2], lightProjectionMatrix[2];
+	//XMMATRIX lightViewMatrix[2], lightProjectionMatrix[2];
+	XMMATRIX lightViewMatrix[3], lightProjectionMatrix[3];
 	float posX, posY, posZ;
 
 	RenderSceneToTexture(pScene);
 
 	_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
 
-	// Generate the view matrix based on the camera's position.
-	_Camera->UpdateViewPoint();
-	_Lights[0]->GenerateViewMatrix();
-	_Lights[1]->GenerateViewMatrix();
-
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	_Camera->GetViewMatrix(viewMatrix);
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
+	// Generate the view matrix based on the camera's position.
+	_Camera->UpdateViewPoint();
+	_Lights[0]->GenerateViewMatrix();
+	_Lights[1]->GenerateViewMatrix();
+	_Lights[2]->GenerateViewMatrix();
+
 	lightViewMatrix[0] = _Lights[0]->GetViewMatrix();
 	lightViewMatrix[1] = _Lights[1]->GetViewMatrix();
+	lightViewMatrix[2] = _Lights[2]->GetViewMatrix();
 
 	lightProjectionMatrix[0] = _Lights[0]->GetProjectionMatrix();
 	lightProjectionMatrix[1] = _Lights[1]->GetProjectionMatrix();
+	lightProjectionMatrix[2] = _Lights[2]->GetProjectionMatrix();
 
-	LightClass* shadowLights[2] = { _Lights[0].get() , _Lights[1].get() };
+	//LightClass* shadowLights[] = { _Lights[0].get(), _Lights[1].get()};
+	LightClass* shadowLights[3] = { _Lights[0].get() , _Lights[1].get(), _Lights[2].get() };
 
 	/////////////////////////////////////////////////////////////////
 	////////////////// RENDER ACTUAL SCENE - LOOP IMPLEMENTATION ////
@@ -1377,6 +1337,7 @@ bool GraphicsClass::Render(Scene* pScene)
 
 			it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _RenderTextures[0]->GetShaderResourceView();
 			it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[7] = _RenderTextures[1]->GetShaderResourceView();
+			it->second->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[8] = _RenderTextures[1]->GetShaderResourceView();
 
 			_ShaderManager->_LightShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 				lightViewMatrix, lightProjectionMatrix,

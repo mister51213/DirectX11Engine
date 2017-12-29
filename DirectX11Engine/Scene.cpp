@@ -41,6 +41,7 @@ bool Scene::Initialize()
 	
 	_LightActors[0]->SetPosition(XMFLOAT3 (5.f, 8.0f, -5.f));
 	_LightActors[1]->SetPosition(XMFLOAT3(-5.f, 8.0f, -5.f));
+	_LightActors[2]->SetPosition(XMFLOAT3(5.f, 8.0f, 5.f));
 
 	///// WATER DEMO SETUP //////
 	// Overwrite the last 4 actors in the array with custom appearance (initialization by hand)

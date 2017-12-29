@@ -131,7 +131,6 @@
 #pragma region REBUILD
 #pragma once
 
-// NEW INCLUDES
 #include "GfxUtil.h"
 #include "GlobalIncludes.h"
 
@@ -145,19 +144,7 @@
 #include "rendertextureclass.h"
 
 #include "textclass.h"
-
-//#include "Actor.h" // @TODO use indexed map
-
 //#include "frustumclass.h"
-
-// OLD INCLUDES
-//#include "d3dclass.h"
-//#include "cameraclass.h"
-//#include "lightclassALT.h"
-//#include "modelclass.h"
-//#include "depthshaderclassALT.h"
-//#include "rendertextureclass.h"
-//#include "shadowshaderclass.h"
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
@@ -194,29 +181,18 @@ private:
 	bool Render(Scene* pScene);
 
 private:
-//NEW
 	unique_ptr<D3DClass> _D3D;
 	unique_ptr<ShaderManagerClass> _ShaderManager;
 	unique_ptr<Camera> _Camera;
 	unique_ptr<Model> _CubeModel, _SphereModel, _GroundModel;	
 	vector<unique_ptr<RenderTextureClass>> _RenderTextures;
 	
-	//unique_ptr<LightClass> _Light, _Light2;
 	vector<unique_ptr<LightClass>>_Lights;
-// OLD
-	//D3DClass* m_D3D;
-	//CameraClass* m_Camera;
-	//lightclassALT* m_Light;
-	//ModelClass *m_CubeModel, *m_GroundModel, *m_SphereModel;
-
-	//depthShaderClassALT* m_DepthShader;
-	//RenderTextureClass* m_RenderTexture;
-	//ShadowShaderClass* m_ShadowShader;
 
 	/////////// GLOBAL EFFECTS /////////////
 	SceneEffects _globalEffects;
 
-	const int NUM_RENDER_TEXTURES = 2;
+	const int NUM_RENDER_TEXTURES = 3;
 };
 #pragma endregion
 

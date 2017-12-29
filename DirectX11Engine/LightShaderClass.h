@@ -29,8 +29,10 @@ private:
 		XMMATRIX projection;
 		//XMMATRIX lightView;
 		//XMMATRIX lightProjection;
-		XMMATRIX lightView[2];
-		XMMATRIX lightProjection[2];
+		//XMMATRIX lightView[2];
+		//XMMATRIX lightProjection[2];
+		XMMATRIX lightView[3];
+		XMMATRIX lightProjection[3];
 	};
 
 	struct CameraBufferType
@@ -43,6 +45,7 @@ private:
 		XMFLOAT4 ambientColor;
 		XMFLOAT4 diffuseColor;
 		XMFLOAT4 diffuseColor2;
+		XMFLOAT4 diffuseColor3;
 		XMFLOAT3 lightDirection;
 		float specularPower; // placed the specular power by the light direction to form a 4 float slot instead of using padding so that the structure could be kept in multiples of 16 bytes
 		XMFLOAT4 specularColor;
@@ -66,6 +69,9 @@ private:
 		
 		XMFLOAT3 lightShadowPos2;
 		float padding2;
+
+		XMFLOAT3 lightShadowPos3;
+		float padding3;
 	};
 	struct FogBufferType
 	{
