@@ -95,4 +95,5 @@ private:
 	// Total number of buffers including parent matrix buffer
 	const int _numBufferDescs = 6;
 	ComPtr <ID3D11SamplerState> _sampleStateClamp;
+	ComPtr <ID3D11SamplerState> _sampleStateComp;
 };

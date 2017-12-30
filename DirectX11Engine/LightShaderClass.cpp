@@ -53,8 +53,9 @@ void LightShaderClass::RenderShader(ID3D11DeviceContext * deviceContext, int ind
 	// The new clamp sampler state is set in the pixel shader here.
 
 	// Set the sampler states in the pixel shader.
-	deviceContext->PSSetSamplers(1, 1, _sampleState.GetAddressOf());
 	deviceContext->PSSetSamplers(0, 1, _sampleStateClamp.GetAddressOf());
+	deviceContext->PSSetSamplers(1, 1, _sampleState.GetAddressOf());
+	deviceContext->PSSetSamplers(2, 1, _sampleStateComp.GetAddressOf());
 
 	// Render the triangle.
 	deviceContext->DrawIndexed(indexCount, 0, 0);
@@ -90,18 +91,20 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	result = device->CreateSamplerState(&MakeSamplerDesc(D3D11_TEXTURE_ADDRESS_CLAMP), &_sampleStateClamp);
 	CHECK(SUCCEEDED(result), "sampler state");
 
+	D3D11_SAMPLER_DESC comparisonDesc = MakeSamplerDesc(D3D11_TEXTURE_ADDRESS_CLAMP);
+	comparisonDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+	comparisonDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+	result = device->CreateSamplerState(&comparisonDesc, &_sampleStateComp);
+	CHECK(SUCCEEDED(result), "sampler state");
 
 	// VS Buffers
 	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<CameraBufferType>(device));
-	//_vsBuffers.emplace_back(MakeConstantBuffer<LightPositionBufferType>(device));
-	_vsBuffers.emplace_back(MakeConstantBuffer<LightShadowBufferType>(device)); // NEW SHADOW BUFFER
-	//_vsBuffers.emplace_back(MakeConstantBuffer<ClipPlaneBufferType>(device));
+	_vsBuffers.emplace_back(MakeConstantBuffer<LightShadowBufferType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<FogBufferType>(device));
 
 	// PS Buffers
 	_psBuffers.emplace_back(MakeConstantBuffer<LightBufferType>(device));
-	//_psBuffers.emplace_back(MakeConstantBuffer<LightColorBufferType>(device));
 	_psBuffers.emplace_back(MakeConstantBuffer<TranslateBufferType>(device));
 	_psBuffers.emplace_back(MakeConstantBuffer<TransparentBufferType>(device));
 
