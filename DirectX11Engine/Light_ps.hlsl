@@ -97,10 +97,6 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	{
 		// Sample the shadow map depth value from the depth texture using the sampler at the projected texture coordinate location.
 		depthValue = shaderTextures[6 + i].Sample(SampleTypeClamp, projectTexCoord).r;
-		// get the soft shadow edge
-		float lightVisibility = shaderTextures[6 + i].SampleCmp(SampleTypeComp, projectTexCoord*0.999, .8f, -8 ).r;
-		float lightVisibility2 = shaderTextures[6 + i].SampleCmp(SampleTypeComp, projectTexCoord*1.001, .8f, -2 ).r;
-		float lightVisibility3 = shaderTextures[6 + i].SampleCmp(SampleTypeComp, projectTexCoord*1.002, .8f, 5 ).r;
 
 		// Calculate the depth of the light.
 		lightDepthValue = input.lightViewPositions[i].z / input.lightViewPositions[i].w;
@@ -108,13 +104,15 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 		// Subtract the bias from the lightDepthValue.
 		lightDepthValue = lightDepthValue - bias;
 
+		float lightVisibility = shaderTextures[6 + i].SampleCmp(SampleTypeComp, projectTexCoord, lightDepthValue );
+
 		// Compare the depth of the shadow map value and the depth of the light to determine whether to shadow or to light this pixel.
 		// If the light is in front of the object then light the pixel, if not then shadow this pixel since an object (occluder) is casting a shadow on it.
 			if(lightDepthValue < depthValue)
 			{
 				// Calculate the amount of light on this pixel.
 				//lightIntensity = saturate(dot(input.normal, input.lightPositions[i]));
-				lightIntensity = saturate(dot(input.normal, normalize(input.lightPositions[i])))/**lightVisibility*lightVisibility2*lightVisibility3*/;
+				lightIntensity = saturate(dot(input.normal, normalize(input.lightPositions[i])))*lightVisibility;
 
 				if(lightIntensity > 0.0f)
 				{
