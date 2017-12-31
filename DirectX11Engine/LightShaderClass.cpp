@@ -100,7 +100,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	// VS Buffers
 	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<CameraBufferType>(device));
-	_vsBuffers.emplace_back(MakeConstantBuffer<LightShadowBufferType>(device));
+	//_vsBuffers.emplace_back(MakeConstantBuffer<LightShadowBufferType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<FogBufferType>(device));
 
 	// PS Buffers
@@ -129,10 +129,23 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
 	unsigned int bufferNumber = 0;
-	MatrixBufferType tempMatBuff = { 
+
+	// make temp list of transposed light matrices @CAUTION - need to define copy constructor here_????
+	LightBufferType_VS tempLightsVS[NUM_LIGHTS] = { *shadowLight[0]->GetLightBufferVS(), *shadowLight[1]->GetLightBufferVS(), *shadowLight[2]->GetLightBufferVS() };
+	
+	tempLightsVS[0].viewMatrix = XMMatrixTranspose(tempLightsVS[0].viewMatrix);
+	tempLightsVS[1].viewMatrix = XMMatrixTranspose(tempLightsVS[1].viewMatrix);
+	tempLightsVS[2].viewMatrix = XMMatrixTranspose(tempLightsVS[2].viewMatrix);
+	
+	tempLightsVS[0].projectionMatrix = XMMatrixTranspose(tempLightsVS[0].projectionMatrix);
+	tempLightsVS[1].projectionMatrix = XMMatrixTranspose(tempLightsVS[1].projectionMatrix);
+	tempLightsVS[2].projectionMatrix = XMMatrixTranspose(tempLightsVS[2].projectionMatrix);
+
+	MatrixBufferType tempMatBuff = {
 		XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix),
-		XMMatrixTranspose(lightViewMatrix[0]), XMMatrixTranspose(lightViewMatrix[1]), XMMatrixTranspose(lightViewMatrix[2]),					 // @SHADOWING
-		XMMatrixTranspose(lightProjectionMatrix[0]), XMMatrixTranspose(lightProjectionMatrix[1]), XMMatrixTranspose(lightProjectionMatrix[2]) }; // @SHADOWING
+		tempLightsVS[0], tempLightsVS[1] , tempLightsVS[2] };//,
+		//XMMatrixTranspose(lightViewMatrix[0]), XMMatrixTranspose(lightViewMatrix[1]), XMMatrixTranspose(lightViewMatrix[2]),					 // @SHADOWING
+		//XMMatrixTranspose(lightProjectionMatrix[0]), XMMatrixTranspose(lightProjectionMatrix[1]), XMMatrixTranspose(lightProjectionMatrix[2]) }; // @SHADOWING
 	MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
@@ -143,13 +156,13 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1,_vsBuffers[bufferNumber].GetAddressOf());
 
 	////////////////// LIGHT SHADOW - VS BUFFER 2 ///////////////////////	@SHADOWING
-	bufferNumber++;
-	LightShadowBufferType tempShadowBuff = {
-		XMFLOAT4(shadowLight[0]->GetPosition().x, shadowLight[0]->GetPosition().y, shadowLight[0]->GetPosition().z,0),
-		XMFLOAT4(shadowLight[1]->GetPosition().x, shadowLight[1]->GetPosition().y, shadowLight[1]->GetPosition().z,0),
-		XMFLOAT4(shadowLight[2]->GetPosition().x, shadowLight[2]->GetPosition().y, shadowLight[2]->GetPosition().z,0)};
-	MapBuffer(tempShadowBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
+	//bufferNumber++;
+	//LightShadowBufferType tempShadowBuff = {
+	//	XMFLOAT4(shadowLight[0]->GetPosition().x, shadowLight[0]->GetPosition().y, shadowLight[0]->GetPosition().z,0),
+	//	XMFLOAT4(shadowLight[1]->GetPosition().x, shadowLight[1]->GetPosition().y, shadowLight[1]->GetPosition().z,0),
+	//	XMFLOAT4(shadowLight[2]->GetPosition().x, shadowLight[2]->GetPosition().y, shadowLight[2]->GetPosition().z,0)};
+	//MapBuffer(tempShadowBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
+	//deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
 	/////////// FOG INIT - VS BUFFER 3 /////////////////////////// @TODO: is the data packed correctly???
 	bufferNumber++;

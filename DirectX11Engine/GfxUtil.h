@@ -60,6 +60,14 @@ namespace GfxUtil
 			position = XMFLOAT3(0,0,0);
 			padding = 0;
 		}
+
+		LightBufferType_VS(const LightBufferType_VS& otherBuff)
+		{
+
+			viewMatrix = otherBuff.viewMatrix;
+			projectionMatrix = otherBuff.projectionMatrix;
+			position = otherBuff.position;
+		}
 	};
 
 	// PS CBUFFER TYPES

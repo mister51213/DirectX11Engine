@@ -27,8 +27,9 @@ private:
 		XMMATRIX world;
 		XMMATRIX view;
 		XMMATRIX projection;
-		XMMATRIX lightView[NUM_LIGHTS];
-		XMMATRIX lightProjection[NUM_LIGHTS];
+		//XMMATRIX lightView[NUM_LIGHTS];
+		//XMMATRIX lightProjection[NUM_LIGHTS];
+		LightBufferType_VS lights[NUM_LIGHTS];
 	};
 
 	struct CameraBufferType
@@ -37,10 +38,10 @@ private:
 		float padding;
 	};
 
-	struct LightShadowBufferType
-	{
-		XMFLOAT4 lightShadowPositions[NUM_LIGHTS];
-	};
+	//struct LightShadowBufferType
+	//{
+	//	XMFLOAT4 lightShadowPositions[NUM_LIGHTS];
+	//};
 
 	struct FogBufferType
 	{
@@ -93,7 +94,7 @@ public:
 
 private:
 	// Total number of buffers including parent matrix buffer
-	const int _numBufferDescs = 6;
+	const int _numBufferDescs = 5;
 	ComPtr <ID3D11SamplerState> _sampleStateClamp;
 	ComPtr <ID3D11SamplerState> _sampleStateComp;
 };

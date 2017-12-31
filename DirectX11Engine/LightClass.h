@@ -20,7 +20,9 @@ public:
 	LightClass(const LightClass&);
 	~LightClass();
 
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//~~~~ Info stored in VS Buffers ~~~~
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void GenerateViewMatrix();
 	void GenerateProjectionMatrix(float screenDepth, float screenNear);
 	void SetPosition(const XMFLOAT3&pos);
@@ -31,7 +33,11 @@ public:
 
 	XMFLOAT3 GetPosition() const;
 
+	LightBufferType_VS* GetLightBufferVS() const;
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//~~~~ Info stored in PS Buffers ~~~~
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void SetDirection(const XMFLOAT3& dir);
 	//{ _direction = dir; };
 
@@ -45,7 +51,7 @@ public:
 	//{ _diffuseColor = rgba; };
 
 	XMFLOAT3 GetDirection() const;
-		//{ return _direction; };
+	//{ return _direction; };
 
 	float GetSpecularPower() const;
 	//{ return _specularPower; };
@@ -56,7 +62,11 @@ public:
 	XMFLOAT4 GetDiffuseColor() const;
 	//{ return _diffuseColor; };
 
+	LightBufferType_PS* GetLightBufferPS() const;
+
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//~~~ To encapsulate later!!!!
+	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void SetAmbientColor(const XMFLOAT4& rgba);
 	//{ _ambientColor = rgba; };
 
@@ -79,6 +89,6 @@ private:
 	XMFLOAT4 _ambientColor;// @TODO - stuff into light buffer instead
 	XMFLOAT3 _lookAt;// @TODO - stuff into light buffer instead
 
-	LightBufferType_VS* _lightBufferVS;
+	unique_ptr<LightBufferType_VS> _lightBufferVS;
 	unique_ptr<LightBufferType_PS> _lightBufferPS;
 };

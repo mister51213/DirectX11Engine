@@ -17,8 +17,8 @@
 /////////////
 struct LightTemplate_VS
 {
-   	matrix lightViewMat;
-    matrix lightProjMat;
+   	matrix lightViewMatrix;
+    matrix lightProjMatrix;
 	float4 lightPosition;
 };
 
@@ -33,9 +33,9 @@ cbuffer MatrixBuffer:register(b0)
 	matrix worldMatrix;
 	matrix viewMatrix;
 	matrix projectionMatrix;
-   	matrix lightViewMatrix[NUM_LIGHTS]; // @TODO - REMOVE 
-    matrix lightProjectionMatrix[NUM_LIGHTS]; // @TODO - REMOVE
-	// REPLACE w LightTemplate_VS cb_lights[NUM_LIGHTS];
+   //	matrix lightViewMatrix[NUM_LIGHTS]; // @TODO - REMOVE 
+   // matrix lightProjectionMatrix[NUM_LIGHTS]; // @TODO - REMOVE
+	LightTemplate_VS cb_lights[NUM_LIGHTS];
 };
 
 // pass in position of camera for reflection
@@ -45,12 +45,13 @@ cbuffer CameraBuffer:register(b1)
     float padding;
 };
 
-cbuffer LightShadowBuffer:register(b2) // @TODO: REMOVE
-{
-	float4 c_lightShadowPos[NUM_LIGHTS];
-};
+//cbuffer LightShadowBuffer:register(b2) // @TODO: REMOVE
+//{
+//	float4 c_lightShadowPos[NUM_LIGHTS];
+//};
 
-cbuffer FogBuffer:register(b3) // @TODO: -> b2
+//cbuffer FogBuffer:register(b3) // @TODO: -> b2
+cbuffer FogBuffer:register(b2) // @TODO: -> b2
 {
     float fogStart;
     float fogEnd;
@@ -149,14 +150,24 @@ PixelInputType LightVertexShader(VertexInputType input)
 	//... SHADOWING ... ////... SHADOWING ... ////... SHADOWING ... ////... SHADOWING ... ////... SHADOWING ... //
 	for(int i = 0; i< NUM_LIGHTS; ++i)
 	{
+		//// Calculate the position of the vertice as viewed by the light sources.
+		//output.lightViewPositions[i] = mul(input.position, worldMatrix);
+		//output.lightViewPositions[i] = mul(output.lightViewPositions[i], lightViewMatrix[i]);
+		//output.lightViewPositions[i] = mul(output.lightViewPositions[i], lightProjectionMatrix[i]);
+		////output.lightPositions[i] = normalize(c_lightShadowPos[i].xyz - worldPosition.xyz);
+
+		//// Calculate the world offset of the light from the vertex
+		//output.lightPositions[i] = c_lightShadowPos[i].xyz - worldPosition.xyz;
+
+		// NEW ALL IN ONE LIGHT BUFFER METHOD
 		// Calculate the position of the vertice as viewed by the light sources.
 		output.lightViewPositions[i] = mul(input.position, worldMatrix);
-		output.lightViewPositions[i] = mul(output.lightViewPositions[i], lightViewMatrix[i]);
-		output.lightViewPositions[i] = mul(output.lightViewPositions[i], lightProjectionMatrix[i]);
+		output.lightViewPositions[i] = mul(output.lightViewPositions[i], cb_lights[i].lightViewMatrix);
+		output.lightViewPositions[i] = mul(output.lightViewPositions[i], cb_lights[i].lightProjMatrix);
 		//output.lightPositions[i] = normalize(c_lightShadowPos[i].xyz - worldPosition.xyz);
 
 		// Calculate the world offset of the light from the vertex
-		output.lightPositions[i] = c_lightShadowPos[i].xyz - worldPosition.xyz;
+		output.lightPositions[i] = cb_lights[i].lightPosition - worldPosition.xyz;
 	}
 
 	return output;
