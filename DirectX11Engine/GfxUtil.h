@@ -48,9 +48,18 @@ namespace GfxUtil
 	// VS CBUFFER TYPES
 	struct LightBufferType_VS
 	{
-		XMMATRIX lightViewMatrix;
-		XMMATRIX lightProjMatrix;
-		XMFLOAT4 lightPosition;
+		XMMATRIX viewMatrix;
+		XMMATRIX projectionMatrix;
+		XMFLOAT3 position;
+		float padding;
+
+		LightBufferType_VS()
+		{
+			viewMatrix = XMMatrixIdentity();
+			projectionMatrix = XMMatrixIdentity();
+			position = XMFLOAT3(0,0,0);
+			padding = 0;
+		}
 	};
 
 	// PS CBUFFER TYPES
