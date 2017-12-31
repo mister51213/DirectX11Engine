@@ -31,10 +31,8 @@ struct LightTemplate_PS
 {
 	int type;
 	float3 padding;
-
 	float4 diffuseColor;
     float3 lightDirection; //(lookat?) //@TODO pass from VS BUFFER?
-
     float specularPower;
     float4 specularColor;
 };
@@ -42,37 +40,35 @@ struct LightTemplate_PS
 //////////////////////
 // CONSTANT BUFFERS //
 //////////////////////
-//cbuffer SceneLightBuffer:register(b0)
-//{
-//	int cb_lightCount;
-//	float3 cb_padding;
-
-//	float4 cb_ambientColor;
-
-//	LightTemplate_PS cb_lights[NUM_LIGHTS];
-//}
-
-//////////////////////
-// CONSTANT BUFFERS //
-//////////////////////
-cbuffer LightBuffer:register(b0) //@TODO: register w same number as in class
+cbuffer SceneLightBuffer:register(b0)
 {
-		float4 ambientColor; // global
+	int cb_lightCount;
+	float3 cb_padding;
+	float4 cb_ambientColor;
+	LightTemplate_PS cb_lights[NUM_LIGHTS];
+}
 
-    float3 lightDirection; 
-    float specularPower;
-    float4 specularColor;
-	float4 diffuseCols[NUM_LIGHTS];
-};
+//////////////////////
+// CONSTANT BUFFERS //
+//////////////////////
+//cbuffer LightBuffer:register(b0) //@TODO: register w same number as in class
+//{
+//		float4 ambientColor; // global
+
+//    float3 lightDirection; 
+//    float specularPower;
+//    float4 specularColor;
+//	float4 diffuseCols[NUM_LIGHTS];
+//};
 
 // value set here will be between 0 and 1.
-cbuffer TranslationBuffer:register(b1) //was 2
+cbuffer TranslationBuffer:register(b1)
 {
     float textureTranslation; //@NOTE = hlsl automatically pads floats for you
 };
 
 // for alpha blending textures
-cbuffer TransparentBuffer:register(b2) // was 3
+cbuffer TransparentBuffer:register(b2)
 {
     float blendAmount;
 };
@@ -109,7 +105,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	bias = 0.0001f;
 
 	// Set the default output color to the ambient light value for all pixels.
-    color = /*float4(0.15f,0.15f,0.15f,0.f);*/ambientColor;
+    color = /*float4(0.15f,0.15f,0.15f,0.f);*/ cb_ambientColor;//ambientColor;
 
 	////////////////////////////////////////////
 	//////////////// LIGHT LOOP ////////////////
@@ -144,7 +140,8 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 				if(lightIntensity > 0.0f)
 				{
 					// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-					color += (diffuseCols[i] * lightIntensity * 0.25f);
+					//color += (diffuseCols[i] * lightIntensity * 0.25f);
+					color += (cb_lights[i].diffuseColor * lightIntensity * 0.25f);
 				}
 			}
 			//else // shadow falloff here

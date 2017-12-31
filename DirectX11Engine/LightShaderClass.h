@@ -29,7 +29,7 @@ private:
 		XMMATRIX projection;
 		//XMMATRIX lightView[NUM_LIGHTS];
 		//XMMATRIX lightProjection[NUM_LIGHTS];
-		LightBufferType_VS lights[NUM_LIGHTS];
+		LightDataTemplate_VS lights[NUM_LIGHTS];
 	};
 
 	struct CameraBufferType
@@ -51,13 +51,21 @@ private:
 	};
 
 	///////////////////////// PS BUFFER TYPES //////////////////////////
-	struct LightBufferType
+	//struct LightBufferType
+	//{
+	//	XMFLOAT4 ambientColor;
+	//	XMFLOAT3 lightDirection;
+	//	float specularPower; // placed the specular power by the light direction to form a 4 float slot instead of using padding so that the structure could be kept in multiples of 16 bytes
+	//	XMFLOAT4 specularColor;
+	//	XMFLOAT4 diffuseCols[NUM_LIGHTS];
+	//};
+
+	struct SceneLightBufferType
 	{
+		int lightCount;
+		XMFLOAT3 padding;
 		XMFLOAT4 ambientColor;
-		XMFLOAT3 lightDirection;
-		float specularPower; // placed the specular power by the light direction to form a 4 float slot instead of using padding so that the structure could be kept in multiples of 16 bytes
-		XMFLOAT4 specularColor;
-		XMFLOAT4 diffuseCols[NUM_LIGHTS];
+		LightDataTemplate_PS lights[NUM_LIGHTS];
 	};
 
 	struct TranslateBufferType
@@ -87,10 +95,10 @@ public:
 	bool InitializeShader(ID3D11Device*, HWND, char*, char*);
 
 	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, 
-		XMMATRIX lightViewMatrix[], XMMATRIX lightProjectionMatrix[],
-		ID3D11ShaderResourceView** textureArray, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT4 diffuseColor2,
+		/*XMMATRIX lightViewMatrix[], XMMATRIX lightProjectionMatrix[],*/
+		ID3D11ShaderResourceView** textureArray, /*XMFLOAT3 lightDirection, */XMFLOAT4 ambientColor, /*XMFLOAT4 diffuseColor, XMFLOAT4 diffuseColor2,*/
 		LightClass* shadowLight[],
-		XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, float texTranslation, float transparency);
+		XMFLOAT3 cameraPosition, /*XMFLOAT4 specularColor, float specularPower, */float fogStart, float fogEnd, float texTranslation, float transparency);
 
 private:
 	// Total number of buffers including parent matrix buffer

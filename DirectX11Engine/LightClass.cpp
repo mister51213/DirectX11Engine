@@ -5,8 +5,8 @@
 
 LightClass::LightClass()
 {
-	_lightBufferVS.reset(new LightBufferType_VS);
-	_lightBufferPS.reset(new LightBufferType_PS);
+	_lightBufferVS.reset(new LightDataTemplate_VS);
+	_lightBufferPS.reset(new LightDataTemplate_PS);
 }
 
 LightClass::LightClass(const LightClass& other)
@@ -52,7 +52,7 @@ XMFLOAT3 LightClass::GetPosition() const
 	return _lightBufferVS->position;
 }
 
-LightBufferType_VS * LightClass::GetLightBufferVS() const
+LightDataTemplate_VS * LightClass::GetLightBufferVS() const
 {
 	return _lightBufferVS.get();
 }
@@ -91,7 +91,7 @@ XMFLOAT4 LightClass::GetDiffuseColor() const
 	return _lightBufferPS->diffuseColor;
 }
 
-LightBufferType_PS * LightClass::GetLightBufferPS() const
+LightDataTemplate_PS * LightClass::GetLightBufferPS() const
 {
 	return _lightBufferPS.get();
 }

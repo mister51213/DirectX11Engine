@@ -46,14 +46,14 @@ namespace GfxUtil
 
 	// GPU PIPELINE RELATED //
 	// VS CBUFFER TYPES
-	struct LightBufferType_VS
+	struct LightDataTemplate_VS
 	{
 		XMMATRIX viewMatrix;
 		XMMATRIX projectionMatrix;
 		XMFLOAT3 position;
 		float padding;
 
-		LightBufferType_VS()
+		LightDataTemplate_VS()
 		{
 			viewMatrix = XMMatrixIdentity();
 			projectionMatrix = XMMatrixIdentity();
@@ -61,7 +61,7 @@ namespace GfxUtil
 			padding = 0;
 		}
 
-		LightBufferType_VS(const LightBufferType_VS& otherBuff)
+		LightDataTemplate_VS(const LightDataTemplate_VS& otherBuff)
 		{
 
 			viewMatrix = otherBuff.viewMatrix;
@@ -71,27 +71,34 @@ namespace GfxUtil
 	};
 
 	// PS CBUFFER TYPES
-	struct LightBufferType_PS
+	struct LightDataTemplate_PS
 	{
 		int type;
 		XMFLOAT3 padding;
-
 		XMFLOAT4 diffuseColor;
 		XMFLOAT3 direction; //(lookat?) //@TODO pass from VS BUFFER?
-
 		float specularPower;
 		XMFLOAT4 specularColor;
 
-		LightBufferType_PS()
+		LightDataTemplate_PS()
 		{
 			int type = 0;
 			XMFLOAT3 padding = XMFLOAT3();
 
 			XMFLOAT4 diffuseColor = XMFLOAT4();
-			XMFLOAT3 direction = XMFLOAT3();; //(lookat?) //@TODO pass from VS BUFFER?
+			XMFLOAT3 direction = XMFLOAT3(); //(lookat?) //@TODO pass from VS BUFFER?
 
 			float specularPower = 0;
 			XMFLOAT4 specularColor = XMFLOAT4();
+		}
+
+		LightDataTemplate_PS(const LightDataTemplate_PS& otherBuff)
+		{
+			type = otherBuff.type;
+			diffuseColor = otherBuff.diffuseColor;
+			direction = otherBuff.direction;
+			specularPower = otherBuff.specularPower;
+			specularColor = otherBuff.specularColor;
 		}
 	};
 

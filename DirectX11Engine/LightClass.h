@@ -33,7 +33,7 @@ public:
 
 	XMFLOAT3 GetPosition() const;
 
-	LightBufferType_VS* GetLightBufferVS() const;
+	LightDataTemplate_VS* GetLightBufferVS() const;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//~~~~ Info stored in PS Buffers ~~~~
@@ -62,7 +62,7 @@ public:
 	XMFLOAT4 GetDiffuseColor() const;
 	//{ return _diffuseColor; };
 
-	LightBufferType_PS* GetLightBufferPS() const;
+	LightDataTemplate_PS* GetLightBufferPS() const;
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//~~~ To encapsulate later!!!!
@@ -89,6 +89,6 @@ private:
 	XMFLOAT4 _ambientColor;// @TODO - stuff into light buffer instead
 	XMFLOAT3 _lookAt;// @TODO - stuff into light buffer instead
 
-	unique_ptr<LightBufferType_VS> _lightBufferVS;
-	unique_ptr<LightBufferType_PS> _lightBufferPS;
+	unique_ptr<LightDataTemplate_VS> _lightBufferVS;
+	unique_ptr<LightDataTemplate_PS> _lightBufferPS;
 };

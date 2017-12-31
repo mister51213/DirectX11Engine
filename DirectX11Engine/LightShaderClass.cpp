@@ -25,11 +25,11 @@ bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount
 {
 	// Set the shader parameters that it will use for rendering.
 	bool result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, 
-		lightViewMatrix, lightProjectionMatrix,
-		textureArray, lightDirection, ambientColor, diffuseColor, diffuseColor2,
+		/*lightViewMatrix, lightProjectionMatrix,*/
+		textureArray, /*lightDirection, */ambientColor, /*diffuseColor, diffuseColor2,*/
 		shadowLight,
 		/*lights, */
-		cameraPosition, specularColor, specularPower, fogStart, fogEnd, translation, transparency);
+		cameraPosition,/* specularColor, specularPower, */fogStart, fogEnd, translation, transparency);
 	if (!result)
 	{
 		return false;
@@ -104,19 +104,20 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	_vsBuffers.emplace_back(MakeConstantBuffer<FogBufferType>(device));
 
 	// PS Buffers
-	_psBuffers.emplace_back(MakeConstantBuffer<LightBufferType>(device));
+	//_psBuffers.emplace_back(MakeConstantBuffer<LightBufferType>(device));
+	_psBuffers.emplace_back(MakeConstantBuffer<SceneLightBufferType>(device));
 	_psBuffers.emplace_back(MakeConstantBuffer<TranslateBufferType>(device));
 	_psBuffers.emplace_back(MakeConstantBuffer<TransparentBufferType>(device));
 
 	return true;
 }
 
-bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, 
-	XMMATRIX lightViewMatrix[], XMMATRIX lightProjectionMatrix[], ID3D11ShaderResourceView** textureArray, 
-	XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, 
-	XMFLOAT4 diffuseColor, XMFLOAT4 diffuseColor2,
+bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
+	/*XMMATRIX lightViewMatrix[], XMMATRIX lightProjectionMatrix[], */ID3D11ShaderResourceView** textureArray,
+	/*XMFLOAT3 lightDirection, */XMFLOAT4 ambientColor,
+	/*XMFLOAT4 diffuseColor, XMFLOAT4 diffuseColor2,*/
 	LightClass* shadowLight[],
-	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, float translation, float transparency)
+	XMFLOAT3 cameraPosition,/* XMFLOAT4 specularColor, float specularPower, */float fogStart, float fogEnd, float translation, float transparency)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
@@ -131,19 +132,19 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	unsigned int bufferNumber = 0;
 
 	// make temp list of transposed light matrices @CAUTION - need to define copy constructor here_????
-	LightBufferType_VS tempLightsVS[NUM_LIGHTS] = { *shadowLight[0]->GetLightBufferVS(), *shadowLight[1]->GetLightBufferVS(), *shadowLight[2]->GetLightBufferVS() };
-	
+	LightDataTemplate_VS tempLightsVS[NUM_LIGHTS] = { *shadowLight[0]->GetLightBufferVS(), *shadowLight[1]->GetLightBufferVS(), *shadowLight[2]->GetLightBufferVS() };
+
 	tempLightsVS[0].viewMatrix = XMMatrixTranspose(tempLightsVS[0].viewMatrix);
 	tempLightsVS[1].viewMatrix = XMMatrixTranspose(tempLightsVS[1].viewMatrix);
 	tempLightsVS[2].viewMatrix = XMMatrixTranspose(tempLightsVS[2].viewMatrix);
-	
+
 	tempLightsVS[0].projectionMatrix = XMMatrixTranspose(tempLightsVS[0].projectionMatrix);
 	tempLightsVS[1].projectionMatrix = XMMatrixTranspose(tempLightsVS[1].projectionMatrix);
 	tempLightsVS[2].projectionMatrix = XMMatrixTranspose(tempLightsVS[2].projectionMatrix);
 
 	MatrixBufferType tempMatBuff = {
 		XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix),
-		tempLightsVS[0], tempLightsVS[1] , tempLightsVS[2] };//,
+		tempLightsVS[0], tempLightsVS[1], tempLightsVS[2] };//,
 		//XMMatrixTranspose(lightViewMatrix[0]), XMMatrixTranspose(lightViewMatrix[1]), XMMatrixTranspose(lightViewMatrix[2]),					 // @SHADOWING
 		//XMMatrixTranspose(lightProjectionMatrix[0]), XMMatrixTranspose(lightProjectionMatrix[1]), XMMatrixTranspose(lightProjectionMatrix[2]) }; // @SHADOWING
 	MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
@@ -151,9 +152,9 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	///////////////////// CAM INIT - VS BUFFER 1 //////////////////////////////////
 	bufferNumber++;
-	CameraBufferType tempCamBuff = {cameraPosition, 0.f};
+	CameraBufferType tempCamBuff = { cameraPosition, 0.f };
 	MapBuffer(tempCamBuff, _vsBuffers[1].Get(), deviceContext);
-	deviceContext->VSSetConstantBuffers(bufferNumber, 1,_vsBuffers[bufferNumber].GetAddressOf());
+	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
 	////////////////// LIGHT SHADOW - VS BUFFER 2 ///////////////////////	@SHADOWING
 	//bufferNumber++;
@@ -173,12 +174,19 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	/////////////////////////////////////////////////////////////
 	/////////////////////// PS BUFFERS //////////////////////////
 	/////////////////////////////////////////////////////////////
-	
+
 	///////////////////////// LIGHT INIT - PS BUFFER 0 //////////////////////
 	bufferNumber = 0;
-	LightBufferType tempLightBuff = {
-		ambientColor, lightDirection,specularPower,specularColor,
-		diffuseColor, diffuseColor2, diffuseColor2 }; // init array here
+	//LightBufferType tempLightBuff = {
+	//	ambientColor, lightDirection,specularPower,specularColor,
+	//	diffuseColor, diffuseColor2, diffuseColor2 }; // init array here
+	LightDataTemplate_PS tempLightsPS[NUM_LIGHTS] = {
+		*shadowLight[0]->GetLightBufferPS(), *shadowLight[1]->GetLightBufferPS(), *shadowLight[2]->GetLightBufferPS()};
+
+	SceneLightBufferType tempLightBuff = 
+		{ NUM_LIGHTS, XMFLOAT3(), ambientColor, 
+			tempLightsPS[0], tempLightsPS[1], tempLightsPS[2] };
+
 	MapBuffer(tempLightBuff, _psBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, _psBuffers[bufferNumber].GetAddressOf());
 	
