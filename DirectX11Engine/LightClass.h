@@ -25,25 +25,26 @@ public:
 	void GenerateProjectionMatrix(float screenDepth, float screenNear);
 	inline void SetPosition(const XMFLOAT3&pos){_position = pos;}
 
-	XMMATRIX GetViewMatrix() const;
-	XMMATRIX GetProjectionMatrix() const;
-	XMFLOAT3 GetPosition() const;
+	inline XMMATRIX GetViewMatrix() const { return _viewMatrix; }
+	inline XMMATRIX GetProjectionMatrix() const{ return _projectionMatrix; }
+	inline XMFLOAT3 GetPosition() const{ return _position; }
 
 	//~~~~ Info stored in PS Buffers ~~~~
-	void SetDirection(const XMFLOAT3&);
-	void SetSpecularPower(float);
-	void SetSpecularColor(const XMFLOAT4&);
-	void SetDiffuseColor(const XMFLOAT4&);
+	inline void SetDirection(const XMFLOAT3& dir) { _direction = dir; };
+	inline void SetSpecularPower(float power) { _specularPower = power; };
+	inline void SetSpecularColor(const XMFLOAT4& rgba) { _specularColor = rgba; };
+	inline void SetDiffuseColor(const XMFLOAT4& rgba) { _diffuseColor = rgba; };
 
-	XMFLOAT3 GetDirection() const;
-	float GetSpecularPower() const;
-	XMFLOAT4 GetSpecularColor() const;
-	XMFLOAT4 GetDiffuseColor() const;
+	inline XMFLOAT3 GetDirection() const { return _direction; };
+	inline float GetSpecularPower() const { return _specularPower; };
+	inline XMFLOAT4 GetSpecularColor() const { return _specularColor; };
+	inline XMFLOAT4 GetDiffuseColor() const { return _diffuseColor; };
 
 	//~~~ To encapsulate later!!!!
-	void SetAmbientColor(const XMFLOAT4&);
-	XMFLOAT4 GetAmbientColor() const;
-	void SetLookAt(const XMFLOAT3&);
+	inline void SetAmbientColor(const XMFLOAT4& rgba) { _ambientColor = rgba; };
+	inline void SetLookAt(const XMFLOAT3& lookAt) { _lookAt = lookAt; };
+
+	inline XMFLOAT4 GetAmbientColor() const { return _ambientColor; };
 
 private:
 	XMFLOAT4 _ambientColor;// @TODO - stuff into light buffer instead
