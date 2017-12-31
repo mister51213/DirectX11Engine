@@ -48,7 +48,7 @@
 //	InitializeUI(screenWidth, screenHeight);
 //	
 //	// Initialize global effects
-//	_globalEffects = SceneEffects();
+//	_sceneEffects = SceneEffects();
 //
 //	return true;
 //}
@@ -592,7 +592,7 @@
 //	////////// WATER REFRACTION ///////////
 //	//XMMATRIX viewMatrix, projectionMatrix;
 //	//// Setup a clipping plane based on the height of the water to clip everything above it.
-//	//_globalEffects.clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, surfaceHeight);
+//	//_sceneEffects.clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, surfaceHeight);
 //	//// Set the render target to be the refraction render to texture.
 //	//_RefractionTexture->SetRenderTarget(_D3D->GetDeviceContext(), _D3D->GetDepthStencilView());
 //	//// Clear the refraction render to texture.
@@ -608,12 +608,12 @@
 //	//// Put the bath model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 //	//_BathModel->LoadVertices(_D3D->GetDeviceContext());
 //	//bool result = _ShaderManager->Render(_D3D->GetDeviceContext(), _BathModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-//	//	_BathModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+//	//	_BathModel->GetMaterial(), _Light.get(), _LightData.data(), _sceneEffects);
 //	//if (!result)
 //	//{
 //	//	return false;
 //	//}
-//	//_globalEffects.clipPlane = XMFLOAT4(0, 0, 0,0);
+//	//_sceneEffects.clipPlane = XMFLOAT4(0, 0, 0,0);
 //
 //	/////////////////////////////////////
 //	/////////// SHADOW MAPPING //////////
@@ -699,7 +699,7 @@
 //	//_WallModel->LoadVertices(_D3D->GetDeviceContext());
 //
 //	//bool result = _ShaderManager->Render(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, reflectionViewMatrix, projectionMatrix,
-//	//	_WallModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+//	//	_WallModel->GetMaterial(), _Light.get(), _LightData.data(), _sceneEffects);
 //	//if (!result)
 //	//{
 //	//	return false;
@@ -745,7 +745,7 @@
 //	////		_D3D->EnableAlphaBlending();
 //
 //	////	bool result = _ShaderManager->Render(_D3D->GetDeviceContext(), (*sceneActors)[i]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-//	////		(*sceneActors)[i]->GetModel()->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0,0,0), _Camera->GetReflectionViewMatrix());
+//	////		(*sceneActors)[i]->GetModel()->GetMaterial(), _Light.get(), _LightData.data(), _sceneEffects, XMFLOAT3(0,0,0), _Camera->GetReflectionViewMatrix());
 //	////	if (!result) return false;
 //
 //	////	if ((*sceneActors)[i]->GetModel()->GetMaterial()->transparency != 0.f)
@@ -761,7 +761,7 @@
 //	////(*sceneActors)[0]->GetModel()->LoadVertices(_D3D->GetDeviceContext());
 //
 //	////_ShaderManager->Render(_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-//	////	_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix());
+//	////	_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _sceneEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix());
 //
 //	//// TESTING SHADOWS // - WORKING
 //
@@ -781,11 +781,11 @@
 //	//	
 //	//_ShaderManager->Render(_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(), 
 //	//	worldMatrix, viewMatrix, projectionMatrix,
-//	//	_CubeModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+//	//	_CubeModel->GetMaterial(), _Light.get(), _LightData.data(), _sceneEffects);
 //	////_ShaderManager->_LightShader->Render(
 //	////	_D3D->GetDeviceContext(), _CubeModel->GetIndexCount(),
 //	////	worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
-//	////	_CubeModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+//	////	_CubeModel->GetMaterial(), _Light.get(), _LightData.data(), _sceneEffects);
 //	//
 //	//// SPHERE
 //	//_D3D->GetWorldMatrix(worldMatrix);
@@ -794,11 +794,11 @@
 //	//_SphereModel->LoadVertices(_D3D->GetDeviceContext());
 //	//
 //	//_ShaderManager->Render(_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-//	//	_SphereModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+//	//	_SphereModel->GetMaterial(), _Light.get(), _LightData.data(), _sceneEffects);
 //	////_ShaderManager->_LightShader->Render(
 //	////	_D3D->GetDeviceContext(), _SphereModel->GetIndexCount(), 
 //	////	worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
-//	////	_SphereModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+//	////	_SphereModel->GetMaterial(), _Light.get(), _LightData.data(), _sceneEffects);
 //
 //	//// GROUND
 //	//_D3D->GetWorldMatrix(worldMatrix);
@@ -809,11 +809,11 @@
 //	//_ShadowGround->GetMaterial()->GetTextureObject()->GetTextureArray()[6] = _ShadowMap->GetShaderResourceView();
 //
 //	//_ShaderManager->Render(_D3D->GetDeviceContext(), _ShadowGround->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-//	//	_ShadowGround->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+//	//	_ShadowGround->GetMaterial(), _Light.get(), _LightData.data(), _sceneEffects);
 //	////_ShaderManager->_LightShader->Render(
 //	////	_D3D->GetDeviceContext(), _GroundModel->GetIndexCount(), 
 //	////	worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, lightProjectionMatrix,
-//	////	_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects);
+//	////	_GroundModel->GetMaterial(), _Light.get(), _LightData.data(), _sceneEffects);
 //
 //
 //#pragma region MULTIMODELS
@@ -1157,7 +1157,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		_Lights[i].reset(new LightClass);
 		if (!_Lights[i])return false;
 
-		_Lights[i]->SetAmbientColor(XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f));
+		//_Lights[i]->SetAmbientColor(XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f));
 		_Lights[i]->SetDiffuseColor(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 		_Lights[i]->SetLookAt(pScene->_LightActors[i]->GetLookAt());
 		_Lights[i]->SetPosition(pScene->_LightActors[i]->GetPosition());
@@ -1260,6 +1260,9 @@ bool GraphicsClass::Render(Scene* pScene)
 
 	// Generate the view matrix based on the camera's position.
 	_Camera->UpdateViewPoint();
+
+	//@TODO //@TODO //@TODO //@TODO //@TODO
+	// AWAY WITH THIS MADNESS! ~ properly loop / hold in the right containers
 	_Lights[0]->GenerateViewMatrix();
 	_Lights[1]->GenerateViewMatrix();
 	_Lights[2]->GenerateViewMatrix();
@@ -1272,6 +1275,8 @@ bool GraphicsClass::Render(Scene* pScene)
 	lightProjectionMatrix[1] = _Lights[1]->GetProjectionMatrix();
 	lightProjectionMatrix[2] = _Lights[2]->GetProjectionMatrix();
 
+	//@TODO //@TODO //@TODO //@TODO //@TODO
+	// AWAY WITH THIS MADNESS! ~ properly loop / hold in the right containers
 	//LightClass* shadowLights[] = { _Lights[0].get(), _Lights[1].get()};
 	LightClass* shadowLights[3] = { _Lights[0].get() , _Lights[1].get(), _Lights[2].get() };
 
@@ -1289,13 +1294,9 @@ bool GraphicsClass::Render(Scene* pScene)
 
 			_ShaderManager->_LightShader->Render(
 				_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-				lightViewMatrix, lightProjectionMatrix,
 				it->second->GetModel()->GetMaterial()->GetResourceArray(),
-				_Lights[0]->GetDirection(), _Lights[0]->GetAmbientColor(),
-				_Lights[0]->GetDiffuseColor(), _Lights[1]->GetDiffuseColor(),
-				shadowLights, 
-				_Camera->GetPosition(), _Lights[0]->GetSpecularColor(), _Lights[0]->GetSpecularPower(),
-				_globalEffects.fogStart, _globalEffects.fogEnd,
+				/*_Lights[0]->GetAmbientColor(),*/	_sceneEffects.ambientColor,
+				shadowLights, _Camera->GetPosition(),_sceneEffects.fogStart, _sceneEffects.fogEnd,
 				it->second->GetModel()->GetMaterial()->translation, it->second->GetModel()->GetMaterial()->transparency);
 		}
 	}

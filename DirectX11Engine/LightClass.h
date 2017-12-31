@@ -73,7 +73,7 @@ public:
 	void SetLookAt(const XMFLOAT3& lookAt);
 	//{ _lookAt = lookAt; };
 
-	XMFLOAT4 GetAmbientColor() const;
+	//XMFLOAT4 GetAmbientColor() const;
 	//{ return _ambientColor; };
 
 private:

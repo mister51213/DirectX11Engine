@@ -14,22 +14,12 @@ LightShaderClass::~LightShaderClass()
 {}
 
 bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix, 
-	/*XMMATRIX lightViewMatrix, XMMATRIX lightProjectionMatrix, */
-	XMMATRIX lightViewMatrix[], XMMATRIX lightProjectionMatrix[],
-	ID3D11ShaderResourceView** textureArray, 
-	XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, 
-	XMFLOAT4 diffuseColor, XMFLOAT4 diffuseColor2,
-	/*LightClass* shadowLight, */LightClass* shadowLight[], 
-	/*LightClass* lights[],*/
-	XMFLOAT3 cameraPosition, XMFLOAT4 specularColor, float specularPower, float fogStart, float fogEnd, float translation, float transparency)
+	ID3D11ShaderResourceView** textureArray, XMFLOAT4 ambientColor, LightClass* shadowLight[], 
+	XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency)
 {
 	// Set the shader parameters that it will use for rendering.
 	bool result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, 
-		/*lightViewMatrix, lightProjectionMatrix,*/
-		textureArray, /*lightDirection, */ambientColor, /*diffuseColor, diffuseColor2,*/
-		shadowLight,
-		/*lights, */
-		cameraPosition,/* specularColor, specularPower, */fogStart, fogEnd, translation, transparency);
+		textureArray, ambientColor, shadowLight, cameraPosition, fogStart, fogEnd, translation, transparency);
 	if (!result)
 	{
 		return false;
@@ -100,11 +90,9 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	// VS Buffers
 	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<CameraBufferType>(device));
-	//_vsBuffers.emplace_back(MakeConstantBuffer<LightShadowBufferType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<FogBufferType>(device));
 
 	// PS Buffers
-	//_psBuffers.emplace_back(MakeConstantBuffer<LightBufferType>(device));
 	_psBuffers.emplace_back(MakeConstantBuffer<SceneLightBufferType>(device));
 	_psBuffers.emplace_back(MakeConstantBuffer<TranslateBufferType>(device));
 	_psBuffers.emplace_back(MakeConstantBuffer<TransparentBufferType>(device));
@@ -113,11 +101,8 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 }
 
 bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
-	/*XMMATRIX lightViewMatrix[], XMMATRIX lightProjectionMatrix[], */ID3D11ShaderResourceView** textureArray,
-	/*XMFLOAT3 lightDirection, */XMFLOAT4 ambientColor,
-	/*XMFLOAT4 diffuseColor, XMFLOAT4 diffuseColor2,*/
-	LightClass* shadowLight[],
-	XMFLOAT3 cameraPosition,/* XMFLOAT4 specularColor, float specularPower, */float fogStart, float fogEnd, float translation, float transparency)
+	ID3D11ShaderResourceView** textureArray, XMFLOAT4 ambientColor,	LightClass* shadowLight[],
+	XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
@@ -144,9 +129,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	MatrixBufferType tempMatBuff = {
 		XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix),
-		tempLightsVS[0], tempLightsVS[1], tempLightsVS[2] };//,
-		//XMMatrixTranspose(lightViewMatrix[0]), XMMatrixTranspose(lightViewMatrix[1]), XMMatrixTranspose(lightViewMatrix[2]),					 // @SHADOWING
-		//XMMatrixTranspose(lightProjectionMatrix[0]), XMMatrixTranspose(lightProjectionMatrix[1]), XMMatrixTranspose(lightProjectionMatrix[2]) }; // @SHADOWING
+		tempLightsVS[0], tempLightsVS[1], tempLightsVS[2] };
 	MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
@@ -156,16 +139,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	MapBuffer(tempCamBuff, _vsBuffers[1].Get(), deviceContext);
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
-	////////////////// LIGHT SHADOW - VS BUFFER 2 ///////////////////////	@SHADOWING
-	//bufferNumber++;
-	//LightShadowBufferType tempShadowBuff = {
-	//	XMFLOAT4(shadowLight[0]->GetPosition().x, shadowLight[0]->GetPosition().y, shadowLight[0]->GetPosition().z,0),
-	//	XMFLOAT4(shadowLight[1]->GetPosition().x, shadowLight[1]->GetPosition().y, shadowLight[1]->GetPosition().z,0),
-	//	XMFLOAT4(shadowLight[2]->GetPosition().x, shadowLight[2]->GetPosition().y, shadowLight[2]->GetPosition().z,0)};
-	//MapBuffer(tempShadowBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
-	//deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
-
-	/////////// FOG INIT - VS BUFFER 3 /////////////////////////// @TODO: is the data packed correctly???
+	/////////// FOG INIT - VS BUFFER 2 /////////////////////////// @TODO: is the data packed correctly???
 	bufferNumber++;
 	FogBufferType tempFogBuff = { fogStart, fogEnd, 0.f, 0.f };
 	MapBuffer(tempFogBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
@@ -177,15 +151,12 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	///////////////////////// LIGHT INIT - PS BUFFER 0 //////////////////////
 	bufferNumber = 0;
-	//LightBufferType tempLightBuff = {
-	//	ambientColor, lightDirection,specularPower,specularColor,
-	//	diffuseColor, diffuseColor2, diffuseColor2 }; // init array here
+
 	LightDataTemplate_PS tempLightsPS[NUM_LIGHTS] = {
 		*shadowLight[0]->GetLightBufferPS(), *shadowLight[1]->GetLightBufferPS(), *shadowLight[2]->GetLightBufferPS()};
 
 	SceneLightBufferType tempLightBuff = 
-		{ NUM_LIGHTS, XMFLOAT3(), ambientColor, 
-			tempLightsPS[0], tempLightsPS[1], tempLightsPS[2] };
+		{ ambientColor, tempLightsPS[0], tempLightsPS[1], tempLightsPS[2] };
 
 	MapBuffer(tempLightBuff, _psBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, _psBuffers[bufferNumber].GetAddressOf());

@@ -115,8 +115,8 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 }
 
 // @TODO the params at teh end need to be encapsulated
-bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, Material * material, LightClass * light, 
-	LightClass* lights[], SceneEffects effects, XMFLOAT3 cameraPos, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView * reflectionTexture, ID3D11ShaderResourceView * refractionTexture, ID3D11ShaderResourceView * normalTexture)
+bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, Material * material,
+	LightClass* lights[], SceneEffects& effects, XMFLOAT3 cameraPos, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView * reflectionTexture, ID3D11ShaderResourceView * refractionTexture/*, ID3D11ShaderResourceView * normalTexture*/)
 {
 	//@TODO: GO THROUGH EVERY SINGLE FUCKING CALL IN GRAPHICS.CPP AND MAKE SURE THEY MATCH WITH THE CALLS BELOW
 	// (may have passed in wrong textures in water or reflection shader)
@@ -151,7 +151,7 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 
 	case EShaderType::EREFRACTION:
 		result = _RefractionShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
-			material->GetResourceArray()[0], light->GetDirection(), light->GetAmbientColor(), light->GetDiffuseColor(), effects.clipPlane);
+			material->GetResourceArray()[0], lights[0]->GetDirection(), effects.ambientColor, lights[0]->GetDiffuseColor(), effects.clipPlane);
 		if (!result) return false;
 		//_RefractionShader->RenderShader(device, indexCount);
 		break;

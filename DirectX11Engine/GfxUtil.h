@@ -206,12 +206,14 @@ namespace GfxUtil
 
 	struct SceneEffects
 	{
+		XMFLOAT4 ambientColor = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
+		XMFLOAT4 clipPlane = XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f);
 		float fogStart = 0.f;
 		float fogEnd = 0.f;
-		XMFLOAT4 clipPlane = XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f);
 
 		SceneEffects()
 		{
+			ambientColor = XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f);
 			clipPlane = XMFLOAT4(0.0f, 0.f, 0.0f, 0.0f);
 			fogStart = 0.f;
 			fogEnd = 3.f;

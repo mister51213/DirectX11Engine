@@ -8,7 +8,6 @@
 /////////////
 // DEFINES //
 /////////////
-//#define NUM_LIGHTS 4
 #define NUM_LIGHTS 3
 
 /////////////
@@ -42,8 +41,8 @@ struct LightTemplate_PS
 //////////////////////
 cbuffer SceneLightBuffer:register(b0)
 {
-	int cb_lightCount;
-	float3 cb_padding;
+	//int cb_lightCount;
+	//float3 cb_padding;
 	float4 cb_ambientColor;
 	LightTemplate_PS cb_lights[NUM_LIGHTS];
 }
@@ -51,16 +50,6 @@ cbuffer SceneLightBuffer:register(b0)
 //////////////////////
 // CONSTANT BUFFERS //
 //////////////////////
-//cbuffer LightBuffer:register(b0) //@TODO: register w same number as in class
-//{
-//		float4 ambientColor; // global
-
-//    float3 lightDirection; 
-//    float specularPower;
-//    float4 specularColor;
-//	float4 diffuseCols[NUM_LIGHTS];
-//};
-
 // value set here will be between 0 and 1.
 cbuffer TranslationBuffer:register(b1)
 {
@@ -101,11 +90,10 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 
 	// Set the bias value for fixing the floating point precision issues.
-	//bias = 0.001f;
-	bias = 0.0001f;
+	bias = 0.001f;
 
 	// Set the default output color to the ambient light value for all pixels.
-    color = /*float4(0.15f,0.15f,0.15f,0.f);*/ cb_ambientColor;//ambientColor;
+    color = cb_ambientColor;
 
 	////////////////////////////////////////////
 	//////////////// LIGHT LOOP ////////////////

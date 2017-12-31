@@ -120,7 +120,7 @@ void LightClass::SetLookAt(const XMFLOAT3& lookAt/*float x, float y, float z*/)
 	_lookAt = lookAt;
 }
 
-XMFLOAT4 LightClass::GetAmbientColor() const 
-{
-	return _ambientColor;
-}
+//XMFLOAT4 LightClass::GetAmbientColor() const 
+//{
+//	return _ambientColor;
+//}

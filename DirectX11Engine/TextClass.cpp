@@ -335,7 +335,7 @@ void TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, /*class FontS
 	//result = pFontShader->Render(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, /**_Font->GetTexture(),*/ fontTexture, m_pixelColor);
 	result = pShaderManager->RenderFontShader(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, m_pixelColor); //@TODO: implement generic function
 	//result = pShaderManager->Render(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, 
-	//	(*sceneActors)[i]->GetModel()->GetMaterial(), _Light.get(), _LightData.data(), _globalEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix(), m_pixelColor);
+	//	(*sceneActors)[i]->GetModel()->GetMaterial(), _Light.get(), _LightData.data(), _sceneEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix(), m_pixelColor);
 	if (!result)
 	{
 		false;

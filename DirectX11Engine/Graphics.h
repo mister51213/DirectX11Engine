@@ -120,7 +120,7 @@
 //	unique_ptr<depthShaderClassALT> _DepthShader;
 //
 //	/////////// GLOBAL EFFECTS /////////////
-//	SceneEffects _globalEffects;
+//	SceneEffects _sceneEffects;
 //
 //	////////// GLOBAL LIGHTS ///////////
 //	const int NUM_LIGHTS = 4;
@@ -190,7 +190,7 @@ private:
 	vector<unique_ptr<LightClass>>_Lights;
 
 	/////////// GLOBAL EFFECTS /////////////
-	SceneEffects _globalEffects;
+	SceneEffects _sceneEffects;
 
 	const int NUM_RENDER_TEXTURES = 3;
 };
