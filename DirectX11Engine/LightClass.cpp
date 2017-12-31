@@ -6,6 +6,7 @@
 LightClass::LightClass()
 {
 	_lightBufferVS = new LightBufferType_VS;
+	_lightBufferPS.reset(new LightBufferType_PS);
 	//_lightBufferVS = LightBufferType_VS();
 	//_lightBufferPS = LightBufferType_PS();
 }
@@ -29,7 +30,6 @@ void LightClass::GenerateViewMatrix()
 {
 	XMFLOAT3 up(0, 1, 0);
 	_lightBufferVS->viewMatrix = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&_lightBufferVS->position), XMLoadFloat3(&_lookAt), XMLoadFloat3(&up)); // TEST
-
 	//_viewMatrix = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&_position), XMLoadFloat3(&_lookAt), XMLoadFloat3(&up));
 }
 
@@ -64,61 +64,66 @@ return _lightBufferVS->position;
 //~~~~ Info stored in PS Buffers ~~~~
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-//void LightClass::SetDirection(const XMFLOAT3& dir/*float x, float y, float z*/)
-//{
-//	_direction = dir;
-//}
+void LightClass::SetDirection(const XMFLOAT3& dir)
+{
+	//_direction = dir;
+	_lightBufferPS->direction = dir;
+}
 
-//void LightClass::SetSpecularColor(const XMFLOAT4& rgba/*float red, float green, float blue, float alpha*/)
-//{
-//	_specularColor = rgba;
-//}
-//
-//void LightClass::SetSpecularPower(float power)
-//{
-//	_specularPower = power;
-//}
+void LightClass::SetSpecularPower(float power)
+{
+	//_specularPower = power;
+	_lightBufferPS->specularPower = power;
+}
 
-//void LightClass::SetDiffuseColor(const XMFLOAT4& rgba/*float red, float green, float blue, float alpha*/)
-//{
-//	_diffuseColor = rgba;// XMFLOAT4(red, green, blue, alpha);
-//}
+void LightClass::SetSpecularColor(const XMFLOAT4& rgba/*float red, float green, float blue, float alpha*/)
+{
+	//_specularColor = rgba;
+	_lightBufferPS->specularColor = rgba;
+}
 
-//XMFLOAT3 LightClass::GetDirection() const
-//{
-//	return _direction;
-//}
 
-//XMFLOAT4 LightClass::GetDiffuseColor() const
-//{
-//	return _diffuseColor;
-//}
+void LightClass::SetDiffuseColor(const XMFLOAT4& rgba/*float red, float green, float blue, float alpha*/)
+{
+	//_diffuseColor = rgba;// XMFLOAT4(red, green, blue, alpha);
+	_lightBufferPS->diffuseColor = rgba;
+}
 
-//XMFLOAT4 LightClass::GetSpecularColor() const
-//{
-//	return _specularColor;
-//}
+XMFLOAT3 LightClass::GetDirection() const
+{
+	return _lightBufferPS->direction;
+}
 
-//float LightClass::GetSpecularPower() const
-//{
-//	return _specularPower;
-//}
+XMFLOAT4 LightClass::GetDiffuseColor() const
+{
+	return _lightBufferPS->diffuseColor;
+}
+
+XMFLOAT4 LightClass::GetSpecularColor() const
+{
+	return _lightBufferPS->specularColor;
+}
+
+float LightClass::GetSpecularPower() const
+{
+	return _lightBufferPS->specularPower;
+}
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~ To encapsulate later!!!!
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-//void LightClass::SetAmbientColor(const XMFLOAT4& rgba/*float red, float green, float blue, float alpha*/)
-//{
-//	_ambientColor = rgba;//XMFLOAT4(red, green, blue, alpha);
-//}
+void LightClass::SetAmbientColor(const XMFLOAT4& rgba/*float red, float green, float blue, float alpha*/)
+{
+	_ambientColor = rgba;//XMFLOAT4(red, green, blue, alpha);
+}
 
-//void LightClass::SetLookAt(const XMFLOAT3& lookAt/*float x, float y, float z*/)
-//{
-//	_lookAt = lookAt;
-//}
+void LightClass::SetLookAt(const XMFLOAT3& lookAt/*float x, float y, float z*/)
+{
+	_lookAt = lookAt;
+}
 
-//XMFLOAT4 LightClass::GetAmbientColor() const 
-//{
-//	return _ambientColor;
-//}
+XMFLOAT4 LightClass::GetAmbientColor() const 
+{
+	return _ambientColor;
+}

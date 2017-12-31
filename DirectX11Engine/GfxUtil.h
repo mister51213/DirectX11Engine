@@ -69,10 +69,22 @@ namespace GfxUtil
 		XMFLOAT3 padding;
 
 		XMFLOAT4 diffuseColor;
-		XMFLOAT3 lightDirection; //(lookat?) //@TODO pass from VS BUFFER?
+		XMFLOAT3 direction; //(lookat?) //@TODO pass from VS BUFFER?
 
 		float specularPower;
 		XMFLOAT4 specularColor;
+
+		LightBufferType_PS()
+		{
+			int type = 0;
+			XMFLOAT3 padding = XMFLOAT3();
+
+			XMFLOAT4 diffuseColor = XMFLOAT4();
+			XMFLOAT3 direction = XMFLOAT3();; //(lookat?) //@TODO pass from VS BUFFER?
+
+			float specularPower = 0;
+			XMFLOAT4 specularColor = XMFLOAT4();
+		}
 	};
 
 	template<class BufferType>
