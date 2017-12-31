@@ -15,20 +15,27 @@
 /////////////
 // GLOBALS //
 /////////////
-/*
-* These global variables can be modified externally from the C++ code.
-* Generally they should be put in buffer object types called "cbuffer" for single global variable. 
-*/
+struct LightTemplate_VS
+{
+   	matrix lightViewMat;
+    matrix lightProjMat;
+	float4 lightPosition;
+};
+
 //////////////////////
 // CONSTANT BUFFERS //
 //////////////////////
 cbuffer MatrixBuffer:register(b0)
 {
+	//int cb_lightCount;
+	//float3 cb_padding;
+
 	matrix worldMatrix;
 	matrix viewMatrix;
 	matrix projectionMatrix;
-   	matrix lightViewMatrix[3];
-    matrix lightProjectionMatrix[3];
+   	matrix lightViewMatrix[NUM_LIGHTS]; // @TODO - REMOVE 
+    matrix lightProjectionMatrix[NUM_LIGHTS]; // @TODO - REMOVE
+	// REPLACE w LightTemplate_VS cb_lights[NUM_LIGHTS];
 };
 
 // pass in position of camera for reflection
@@ -38,17 +45,12 @@ cbuffer CameraBuffer:register(b1)
     float padding;
 };
 
-//cbuffer LightPositionBuffer:register(b2)
-//{
-//    float4 lightPosition[NUM_LIGHTS];
-//};
-
-cbuffer LightShadowBuffer:register(b2) // was 3
+cbuffer LightShadowBuffer:register(b2) // @TODO: REMOVE
 {
-	float4 c_lightShadowPos[NUM_LIGHTS]; // 0 for padding
+	float4 c_lightShadowPos[NUM_LIGHTS];
 };
 
-cbuffer FogBuffer:register(b3) // was 4
+cbuffer FogBuffer:register(b3) // @TODO: -> b2
 {
     float fogStart;
     float fogEnd;

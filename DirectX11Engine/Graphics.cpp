@@ -1128,7 +1128,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	}
 
 	// MODELS //
-	vector<string> texNames = { "fire2.tga", "ice.dds", "metal001.dds", "wall01.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
+	vector<string> texNames = { "fire2.tga", "ice.dds", "fire2.tga", "wall01.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
 	vector<string> meshNames = { "sphere.txt", "cube2.txt", "plane01.txt", "cube2.txt", "cube2.txt", "plane01.txt", "sphere.txt"};
 	vector<string> modelNames = { "cube", "sphere", "ground", "sphere2"};
 
@@ -1247,7 +1247,6 @@ bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 bool GraphicsClass::Render(Scene* pScene)
 {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, translateMatrix;
-	//XMMATRIX lightViewMatrix[2], lightProjectionMatrix[2];
 	XMMATRIX lightViewMatrix[3], lightProjectionMatrix[3];
 	float posX, posY, posZ;
 

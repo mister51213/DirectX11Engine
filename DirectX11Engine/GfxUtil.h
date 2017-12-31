@@ -23,6 +23,7 @@ using namespace std;
 
 namespace GfxUtil
 {
+	// TEXT RELATED
 	static wchar_t* charToWChar(const char* text)
 	{
 		const size_t size = strlen(text) +1;
@@ -41,6 +42,56 @@ namespace GfxUtil
 		wcscat_s(wcstring, L" (wchar_t *)");
 
 		return wcstring;
+	}
+
+	// GPU PIPELINE RELATED //
+	// VS CBUFFER TYPES
+	struct LightBufferType_VS
+	{
+		XMMATRIX lightViewMatrix;
+		XMMATRIX lightProjMatrix;
+		XMFLOAT4 lightPosition;
+	};
+
+	// PS CBUFFER TYPES
+	struct LightBufferType_PS
+	{
+		int type;
+		XMFLOAT3 padding;
+
+		XMFLOAT4 diffuseColor;
+		XMFLOAT3 lightDirection; //(lookat?) //@TODO pass from VS BUFFER?
+
+		float specularPower;
+		XMFLOAT4 specularColor;
+	};
+
+	template<class BufferType>
+	static Microsoft::WRL::ComPtr<ID3D11Buffer> MakeConstantBuffer(ID3D11Device* device)
+	{
+		D3D11_BUFFER_DESC desc{};
+		desc.Usage = D3D11_USAGE_DYNAMIC;
+		desc.ByteWidth = sizeof(BufferType);
+		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		desc.MiscFlags = 0;
+		desc.StructureByteStride = 0;
+
+		Microsoft::WRL::ComPtr<ID3D11Buffer> buffer;
+		HRESULT result = device->CreateBuffer(&desc, nullptr, &buffer);
+		CHECK(SUCCEEDED(result), "Failed to create constant buffer.");
+
+		return buffer;
+	}
+
+	template<class BufferType>
+	static void MapBuffer(const BufferType& inData, ID3D11Buffer* pBuffer, ID3D11DeviceContext* deviceContext)
+	{
+		D3D11_MAPPED_SUBRESOURCE mappedResource;
+		HRESULT result = deviceContext->Map(pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+		CHECK(SUCCEEDED(result), "cbuffer");
+		memcpy(mappedResource.pData, &inData, sizeof(BufferType));
+		deviceContext->Unmap(pBuffer, 0);
 	}
 
 	static D3D11_INPUT_ELEMENT_DESC MakeInputElementDesc(LPCSTR name, DXGI_FORMAT format, UINT offset = D3D11_APPEND_ALIGNED_ELEMENT)
@@ -79,7 +130,6 @@ namespace GfxUtil
 		return desc;
 	}
 
-	//@TODO - behaves really weird, must fix!
 	static Microsoft::WRL::ComPtr<ID3D11SamplerState> MakeSamplerState(ID3D11Device* device)
 	{
 		D3D11_SAMPLER_DESC desc;
@@ -105,35 +155,7 @@ namespace GfxUtil
 		return sampler;
 	}
 
-
-	template<class BufferType>
-	static Microsoft::WRL::ComPtr<ID3D11Buffer> MakeConstantBuffer(ID3D11Device* device)
-	{
-		D3D11_BUFFER_DESC desc{};
-		desc.Usage = D3D11_USAGE_DYNAMIC;
-		desc.ByteWidth = sizeof(BufferType);
-		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		desc.MiscFlags = 0;
-		desc.StructureByteStride = 0;
-
-		Microsoft::WRL::ComPtr<ID3D11Buffer> buffer;
-		HRESULT result = device->CreateBuffer(&desc, nullptr, &buffer);
-		CHECK(SUCCEEDED(result), "Failed to create constant buffer.");
-
-		return buffer;
-	}
-
-	template<class BufferType>
-	static void MapBuffer(const BufferType& inData, ID3D11Buffer* pBuffer, ID3D11DeviceContext* deviceContext)
-	{
-		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		HRESULT result = deviceContext->Map(pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		CHECK(SUCCEEDED(result), "cbuffer");
-		memcpy(mappedResource.pData, &inData, sizeof(BufferType));
-		deviceContext->Unmap(pBuffer, 0);
-	}
-
+	// CPU SIDE GFX RELATED
 	enum EShaderType
 	{
 		ETEXTURE = 0,

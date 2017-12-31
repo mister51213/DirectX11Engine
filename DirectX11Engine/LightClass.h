@@ -43,16 +43,18 @@ public:
 	XMMATRIX GetProjectionMatrix() const;
 
 private:
-	XMFLOAT4 _ambientColor;
-	XMFLOAT4 _diffuseColor;
-	XMFLOAT3 _direction;
-	//XMFLOAT4 _position;
+	XMFLOAT4 _ambientColor;// @TODO - stuff into light buffer instead
+	XMFLOAT4 _diffuseColor;// @TODO - stuff into light buffer instead
+	XMFLOAT3 _direction;// @TODO - stuff into light buffer instead
 
-	XMFLOAT3 _position;
-	XMFLOAT4 _specularColor;
-	float _specularPower;
+	XMFLOAT3 _position;// @TODO - stuff into light buffer instead
+	XMFLOAT4 _specularColor;// @TODO - stuff into light buffer instead
+	float _specularPower;// @TODO - stuff into light buffer instead
 
-	XMFLOAT3 _lookAt;
-	XMMATRIX _viewMatrix;
-	XMMATRIX _projectionMatrix;
+	XMFLOAT3 _lookAt;// @TODO - stuff into light buffer instead
+	XMMATRIX _viewMatrix; // @TODO - stuff into light buffer instead
+	XMMATRIX _projectionMatrix;// @TODO - stuff into light buffer instead
+
+	LightBufferType_VS _lightBufferVS;
+	LightBufferType_PS _lightBufferPS;
 };

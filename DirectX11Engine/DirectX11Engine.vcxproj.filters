@@ -16,12 +16,6 @@
     <Filter Include="Header Files\Utilities">
       <UniqueIdentifier>{ec5d199e-ce31-4d18-8541-6bfc735b9b89}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Shaders">
-      <UniqueIdentifier>{b07e6c23-7ae4-4cf7-b952-952ca8225b07}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Shaders">
-      <UniqueIdentifier>{4430a54b-1eb0-489b-a461-733153231cba}</UniqueIdentifier>
-    </Filter>
     <Filter Include="HLSL Files">
       <UniqueIdentifier>{657fbe75-46a3-4c50-aa2c-afe1df7d0ba9}</UniqueIdentifier>
     </Filter>
@@ -46,31 +40,37 @@
     <Filter Include="Source Files\Utilities">
       <UniqueIdentifier>{a16c463b-626a-4b06-a800-edb25db65756}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Tier2\Shaders">
+      <UniqueIdentifier>{4430a54b-1eb0-489b-a461-733153231cba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tier2\Shaders">
+      <UniqueIdentifier>{b07e6c23-7ae4-4cf7-b952-952ca8225b07}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FontShaderClass.cpp">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Tier2\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="LightShaderClass.cpp">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Tier2\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="TextureShaderClass.cpp">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Tier2\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="ShaderClass.cpp">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Tier2\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="ShaderManagerClass.cpp">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Tier2\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="ReflectionShaderClass.cpp">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Tier2\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="WaterShaderClass.cpp">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Tier2\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="RefractionShaderClass.cpp">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Tier2\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Tier2</Filter>
@@ -517,7 +517,7 @@
       <Filter>Source Files\Tier1</Filter>
     </ClCompile>
     <ClCompile Include="DepthShaderClass.cpp">
-      <Filter>Source Files\Shaders</Filter>
+      <Filter>Source Files\Tier2\Shaders</Filter>
     </ClCompile>
     <ClCompile Include="CameraClass.cpp">
       <Filter>Source Files\Deprecated</Filter>
@@ -591,28 +591,28 @@
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="LightShaderClass.h">
-      <Filter>Header Files\Shaders</Filter>
+      <Filter>Header Files\Tier2\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="FontShaderClass.h">
-      <Filter>Header Files\Shaders</Filter>
+      <Filter>Header Files\Tier2\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="TextureShaderClass.h">
-      <Filter>Header Files\Shaders</Filter>
+      <Filter>Header Files\Tier2\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="ShaderClass.h">
-      <Filter>Header Files\Shaders</Filter>
+      <Filter>Header Files\Tier2\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="ShaderManagerClass.h">
-      <Filter>Header Files\Shaders</Filter>
+      <Filter>Header Files\Tier2\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="WaterShaderClass.h">
-      <Filter>Header Files\Shaders</Filter>
+      <Filter>Header Files\Tier2\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="ReflectionShaderClass.h">
-      <Filter>Header Files\Shaders</Filter>
+      <Filter>Header Files\Tier2\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="RefractionShaderClass.h">
-      <Filter>Header Files\Shaders</Filter>
+      <Filter>Header Files\Tier2\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Tier2</Filter>
@@ -1341,7 +1341,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DepthShaderClass.h">
-      <Filter>Header Files\Shaders</Filter>
+      <Filter>Header Files\Tier2\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="depthShaderClassALT.h">
       <Filter>Header Files</Filter>

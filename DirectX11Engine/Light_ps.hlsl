@@ -26,13 +26,40 @@ SamplerState SampleTypeClamp : register(s0);
 SamplerState SampleTypeWrap  : register(s1);
 SamplerComparisonState SampleTypeComp  : register(s2);
 
+// This structure is used to describe the lights properties
+struct LightTemplate_PS
+{
+	int type;
+	float3 padding;
+
+	float4 diffuseColor;
+    float3 lightDirection; //(lookat?) //@TODO pass from VS BUFFER?
+
+    float specularPower;
+    float4 specularColor;
+};
+
+//////////////////////
+// CONSTANT BUFFERS //
+//////////////////////
+//cbuffer SceneLightBuffer:register(b0)
+//{
+//	int cb_lightCount;
+//	float3 cb_padding;
+
+//	float4 cb_ambientColor;
+
+//	LightTemplate_PS cb_lights[NUM_LIGHTS];
+//}
+
 //////////////////////
 // CONSTANT BUFFERS //
 //////////////////////
 cbuffer LightBuffer:register(b0) //@TODO: register w same number as in class
 {
-    float4 ambientColor;
-    float3 lightDirection;
+		float4 ambientColor; // global
+
+    float3 lightDirection; 
     float specularPower;
     float4 specularColor;
 	float4 diffuseCols[NUM_LIGHTS];
@@ -112,7 +139,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 			{
 				// Calculate the amount of light on this pixel.
 				//lightIntensity = saturate(dot(input.normal, input.lightPositions[i]));
-				lightIntensity = saturate(dot(input.normal, normalize(input.lightPositions[i])))*lightVisibility;
+				lightIntensity = saturate(dot(input.normal, normalize(input.lightPositions[i])));//*lightVisibility;
 
 				if(lightIntensity > 0.0f)
 				{
