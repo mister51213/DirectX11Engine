@@ -42,32 +42,18 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	_vsync_enabled = vsync;
 
 	// Create a DirectX graphics interface factory.
-	result = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	//result = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory);
+	ThrowHResultIf(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory));
 
 	// Use the factory to create an adapter for the primary graphics interface (video card).
-	result = factory->EnumAdapters(0, &adapter);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	//result = factory->EnumAdapters(0, &adapter);
+	ThrowHResultIf(factory->EnumAdapters(0, &adapter));
 
 	// Enumerate the primary adapter output (monitor).
-	result = adapter->EnumOutputs(0, &adapterOutput);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(adapter->EnumOutputs(0, &adapterOutput));
 
 	// Get the number of modes that fit the DXGI_FORMAT_R8G8B8A8_UNORM display format for the adapter output (monitor).
-	result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, NULL));
 
 	// Create a list to hold all the possible display modes for this monitor/video card combination.
 	displayModeList = new DXGI_MODE_DESC[numModes];
@@ -77,11 +63,7 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	}
 
 	// Now fill the display mode list structures.
-	result = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList));
 
 	// Now go through all the display modes and find the one that matches the screen width and height.
 	// When a match is found store the numerator and denominator of the refresh rate for that monitor.
@@ -98,11 +80,7 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	}
 
 	// Get the adapter (video card) description.
-	result = adapter->GetDesc(&adapterDesc);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(adapter->GetDesc(&adapterDesc));
 
 	// Store the dedicated video card memory in megabytes.
 	_videoCardMemory = (int)(adapterDesc.DedicatedVideoMemory / 1024 / 1024);
@@ -189,26 +167,14 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	featureLevel = D3D_FEATURE_LEVEL_11_0;
 
 	// Create the swap chain, Direct3D device, and Direct3D device context.
-	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &featureLevel, 1,
-		D3D11_SDK_VERSION, &swapChainDesc, &_swapChain, &_device, NULL, &_deviceContext);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &featureLevel, 1,
+		D3D11_SDK_VERSION, &swapChainDesc, &_swapChain, &_device, NULL, &_deviceContext));
 
 	// Get the pointer to the back buffer.
-	result = _swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBufferPtr);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBufferPtr));
 
 	// Create the render target view with the back buffer pointer.
-	result = _device->CreateRenderTargetView(backBufferPtr, NULL, &_renderTargetView);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_device->CreateRenderTargetView(backBufferPtr, NULL, &_renderTargetView));
 
 	// Release pointer to the back buffer as we no longer need it.
 	backBufferPtr->Release();
@@ -231,11 +197,7 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	depthBufferDesc.MiscFlags = 0;
 
 	// Create the texture for the depth buffer using the filled out description.
-	result = _device->CreateTexture2D(&depthBufferDesc, NULL, &_depthStencilBuffer);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_device->CreateTexture2D(&depthBufferDesc, NULL, &_depthStencilBuffer));
 
 	// Initialize the description of the stencil state.
 	ZeroMemory(&depthStencilDesc, sizeof(depthStencilDesc));
@@ -262,11 +224,7 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	depthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 	// Create the depth stencil state.
-	result = _device->CreateDepthStencilState(&depthStencilDesc, &_depthStencilState);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_device->CreateDepthStencilState(&depthStencilDesc, &_depthStencilState));
 
 	// Set the depth stencil state.
 	_deviceContext->OMSetDepthStencilState(_depthStencilState.Get(), 1);
@@ -280,11 +238,7 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	depthStencilViewDesc.Texture2D.MipSlice = 0;
 
 	// Create the depth stencil view.
-	result = _device->CreateDepthStencilView(_depthStencilBuffer.Get(), &depthStencilViewDesc, &_depthStencilView);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_device->CreateDepthStencilView(_depthStencilBuffer.Get(), &depthStencilViewDesc, &_depthStencilView));
 
 	// Bind the render target view and depth stencil buffer to the output render pipeline.
 	_deviceContext->OMSetRenderTargets(1, _renderTargetView.GetAddressOf(), _depthStencilView.Get());
@@ -302,11 +256,7 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	rasterDesc.SlopeScaledDepthBias = 0.0f;
 
 	// Create the rasterizer state from the description we just filled out.
-	result = _device->CreateRasterizerState(&rasterDesc, &_rasterState);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_device->CreateRasterizerState(&rasterDesc, &_rasterState));
 
 	// Now set the rasterizer state.
 	_deviceContext->RSSetState(_rasterState.Get());
@@ -315,11 +265,7 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	rasterDesc.CullMode = D3D11_CULL_NONE;
 
 	// Create the no culling rasterizer state.
-	result = _device->CreateRasterizerState(&rasterDesc, &_rasterStateNoCulling);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_device->CreateRasterizerState(&rasterDesc, &_rasterStateNoCulling));
 
 	// Setup a raster description which enables wire frame rendering.
 	rasterDesc.AntialiasedLineEnable = false;
@@ -334,11 +280,7 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	rasterDesc.SlopeScaledDepthBias = 0.0f;
 
 	// Create the wire frame rasterizer state.
-	result = _device->CreateRasterizerState(&rasterDesc, &_rasterStateWireframe);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_device->CreateRasterizerState(&rasterDesc, &_rasterStateWireframe));
 
 	// Setup the viewport for rendering.
 	_viewport.Width = (float)screenWidth;
@@ -349,7 +291,6 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	_viewport.TopLeftY = 0.0f;
 
 	// Create the viewport.
-	//_deviceContext->RSSetViewports(1, &viewport);
 	_deviceContext->RSSetViewports(1, &_viewport);
 
 	// Setup the projection matrix.
@@ -383,11 +324,7 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	depthDisabledStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
 	// Create the state using the device.
-	result = _device->CreateDepthStencilState(&depthDisabledStencilDesc, &_depthDisabledStencilState);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_device->CreateDepthStencilState(&depthDisabledStencilDesc, &_depthDisabledStencilState));
 
 	// Clear the blend state description.
 	ZeroMemory(&blendStateDescription, sizeof(D3D11_BLEND_DESC));
@@ -417,22 +354,14 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
 
 	// Create the blend state using the description.
-	result = _device->CreateBlendState(&blendStateDescription, &_alphaEnableBlendingState);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_device->CreateBlendState(&blendStateDescription, &_alphaEnableBlendingState));
 
 	// Modify the description to create an alpha disabled blend state description.
 	blendStateDescription.RenderTarget[0].BlendEnable = false;
 	blendStateDescription.AlphaToCoverageEnable = false;
 
 	// Create the blend state using the description.
-	result = _device->CreateBlendState(&blendStateDescription, &_alphaDisableBlendingState);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_device->CreateBlendState(&blendStateDescription, &_alphaDisableBlendingState));
 
 	// Create a blend state description for the alpha-to-coverage blending mode.
 	blendStateDescription.AlphaToCoverageEnable = true;
@@ -447,11 +376,8 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	blendStateDescription.RenderTarget[0].RenderTargetWriteMask = 0x0f;
 
 	// Create the blend state using the description.
-	result = _device->CreateBlendState(&blendStateDescription, &_alphaEnableBlendingState2);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_device->CreateBlendState(&blendStateDescription, &_alphaEnableBlendingState2));
+
 	return true;
 }
 

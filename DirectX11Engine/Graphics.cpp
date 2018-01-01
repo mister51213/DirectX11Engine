@@ -355,11 +355,7 @@ bool GraphicsClass::UpdateFpsString(ID3D11DeviceContext* deviceContext, int fps)
 	// @TODO: Set material values here
 
 	// Update the sentence vertex buffer with the new string information.
-	result = _FpsString->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 50, red, green, blue);
-	if (!result)
-	{
-		return false;
-	}
+	_FpsString->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 50, red, green, blue);
 
 	return true;
 }
@@ -382,12 +378,7 @@ bool GraphicsClass::UpdatePositionStrings(ID3D11DeviceContext* deviceContext, fl
 		_itoa_s(posRot[i], tempString, 10);
 		strcpy_s(finalString, labels[i]);
 		strcat_s(finalString, tempString);
-		result = _PositionStrings[i]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 100 + offset, 1.0f, 1.0f, 1.0f);
-		if (FAILED(result))
-		{
-			throw std::runtime_error("Could not update sentence number " + to_string(i) + " - line " + std::to_string(__LINE__));
-			return false;
-		}
+		_PositionStrings[i]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 100 + offset, 1.0f, 1.0f, 1.0f);
 
 		offset += 20;
 	}

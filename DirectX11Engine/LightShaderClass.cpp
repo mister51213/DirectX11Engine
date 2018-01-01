@@ -18,12 +18,8 @@ bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount
 	XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency)
 {
 	// Set the shader parameters that it will use for rendering.
-	bool result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, 
+	SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, 
 		textureArray, ambientColor, shadowLight, cameraPosition, fogStart, fogEnd, translation, transparency);
-	if (!result)
-	{
-		return false;
-	}
 
 	// Now render the prepared buffers with the shader.
 	RenderShader(deviceContext, indexCount);
@@ -74,24 +70,17 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	
 	D3D11_INPUT_ELEMENT_DESC polygonLayout2[2]; // invalid argument for testing purposes
 	ThrowHResultIf(device->CreateInputLayout(polygonLayout/*polygonLayout2*/, numElements, _vertexShaderBuffer->GetBufferPointer(), _vertexShaderBuffer->GetBufferSize(), &_layout));
-	//CHECK(SUCCEEDED(device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(), _vertexShaderBuffer->GetBufferSize(), &_layout), "input layout");
 	
 	// Create the texture wrap sampler state.
 	ThrowHResultIf(device->CreateSamplerState(&MakeSamplerDesc(), &_sampleState));
-	//HRESULT result = device->CreateSamplerState(&MakeSamplerDesc(), &_sampleState);
-	//CHECK(SUCCEEDED(result), "sampler state");
 
 	// Create the texture clamp sampler state.
 	ThrowHResultIf(device->CreateSamplerState(&MakeSamplerDesc(D3D11_TEXTURE_ADDRESS_CLAMP), &_sampleStateClamp));
-	//result = device->CreateSamplerState(&MakeSamplerDesc(D3D11_TEXTURE_ADDRESS_CLAMP), &_sampleStateClamp);
-	//CHECK(SUCCEEDED(result), "sampler state");
 
 	D3D11_SAMPLER_DESC comparisonDesc = MakeSamplerDesc(D3D11_TEXTURE_ADDRESS_CLAMP);
 	comparisonDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
 	comparisonDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
 	ThrowHResultIf(device->CreateSamplerState(&comparisonDesc, &_sampleStateComp));
-	//result = device->CreateSamplerState(&comparisonDesc, &_sampleStateComp);
-	//CHECK(SUCCEEDED(result), "sampler state");
 
 	// VS Buffers
 	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));

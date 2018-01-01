@@ -115,8 +115,6 @@ namespace GfxUtil
 
 		Microsoft::WRL::ComPtr<ID3D11Buffer> buffer;
 		ThrowHResultIf(device->CreateBuffer(&desc, nullptr, &buffer));
-		//HRESULT result = device->CreateBuffer(&desc, nullptr, &buffer);
-		//CHECK(SUCCEEDED(result), "Failed to create constant buffer.");
 
 		return buffer;
 	}
@@ -126,8 +124,6 @@ namespace GfxUtil
 	{
 		D3D11_MAPPED_SUBRESOURCE mappedResource;
 		ThrowHResultIf(deviceContext->Map(pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource));
-		//HRESULT result = deviceContext->Map(pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		//CHECK(SUCCEEDED(result), "cbuffer");
 		memcpy(mappedResource.pData, &inData, sizeof(BufferType));
 		deviceContext->Unmap(pBuffer, 0);
 	}
@@ -188,8 +184,6 @@ namespace GfxUtil
 
 		Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler;
 		ThrowHResultIf(device->CreateSamplerState(&desc, &sampler));
-		//HRESULT result = device->CreateSamplerState(&desc, &sampler);
-		//CHECK(SUCCEEDED(result), "Failed to create sampler state.");
 
 		return sampler;
 	}

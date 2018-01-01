@@ -20,15 +20,7 @@ bool ShaderClass::Initialize(ID3D11Device * device, HWND hwnd, char * vsFilename
 	bool result;
 
 	// Initialize the vertex and pixel shaders.
-	result = InitializeShader(
-		device,
-		hwnd,
-		vsFilename,
-		psFilename);
-	if (!result)
-	{
-		return false;
-	}
+	InitializeShader(device,hwnd,vsFilename,psFilename);
 
 	return true;
 }
@@ -82,20 +74,10 @@ bool ShaderClass::CompileShaders(ID3D11Device * device, HWND hwnd, char* vsFilen
 	}
 
 	// Create the vertex shader from the buffer.
-	result = device->CreateVertexShader(_vertexShaderBuffer->GetBufferPointer(), _vertexShaderBuffer->GetBufferSize(), NULL,
-		&_vertexShader);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(device->CreateVertexShader(_vertexShaderBuffer->GetBufferPointer(), _vertexShaderBuffer->GetBufferSize(), NULL, &_vertexShader));
 
 	// Create the vertex shader from the buffer.
-	result = device->CreatePixelShader(_pixelShaderBuffer->GetBufferPointer(), _pixelShaderBuffer->GetBufferSize(), NULL,
-		&_pixelShader);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(device->CreatePixelShader(_pixelShaderBuffer->GetBufferPointer(), _pixelShaderBuffer->GetBufferSize(), NULL,	&_pixelShader));
 
 	return true;
 }
