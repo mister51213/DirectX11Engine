@@ -56,12 +56,13 @@ void LightShaderClass::RenderShader(ID3D11DeviceContext * deviceContext, int ind
 bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* vsFilename, char* psFilename)
 {
 	ID3D10Blob* errorMessage = 0;
-	D3D11_INPUT_ELEMENT_DESC polygonLayout[5];
 	
 	CompileShaders(device, hwnd, vsFilename, psFilename, "LightVertexShader", "LightPixelShader", errorMessage);
 
-	// VERTEX SHADER LAYOUT DESCRIPTION SETUP // //@NOTE - D3D11_APPEND_ALIGNED_ELEMENT is default offset value!
+	// VERTEX SHADER LAYOUT DESCRIPTION SETUP // 
+	//@NOTE - D3D11_APPEND_ALIGNED_ELEMENT is default offset value!
 	// This setup needs to match the VertexType stucture in the ModelClass and in the shader.
+	D3D11_INPUT_ELEMENT_DESC polygonLayout[5];
 	polygonLayout[0] = MakeInputElementDesc("POSITION", DXGI_FORMAT_R32G32B32_FLOAT, 0);
 	polygonLayout[1] = MakeInputElementDesc("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
 	polygonLayout[2] = MakeInputElementDesc("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT);
@@ -70,11 +71,13 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 
 	// Create the vertex input layout.
 	unsigned int numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
-	HRESULT result = device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(), _vertexShaderBuffer->GetBufferSize(), &_layout);
-	CHECK(SUCCEEDED(result), "input layout");
-
+	
+	D3D11_INPUT_ELEMENT_DESC polygonLayout2[2]; // invalid argument for testing purposes
+	ThrowHResultIf(device->CreateInputLayout(polygonLayout/*polygonLayout2*/, numElements, _vertexShaderBuffer->GetBufferPointer(), _vertexShaderBuffer->GetBufferSize(), &_layout));
+	//CHECK(SUCCEEDED(device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(), _vertexShaderBuffer->GetBufferSize(), &_layout), "input layout");
+	
 	// Create the texture wrap sampler state.
-	result = device->CreateSamplerState(&MakeSamplerDesc(), &_sampleState);
+	HRESULT result = device->CreateSamplerState(&MakeSamplerDesc(), &_sampleState);
 	CHECK(SUCCEEDED(result), "sampler state");
 
 	// Create the texture clamp sampler state.

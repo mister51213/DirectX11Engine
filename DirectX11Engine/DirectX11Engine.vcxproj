@@ -303,6 +303,7 @@
     <ClCompile Include="FpsClass.cpp" />
     <ClCompile Include="FrustumClass.cpp" />
     <ClCompile Include="GfxUtil.cpp" />
+    <ClCompile Include="GlobalIncludes.cpp" />
     <ClCompile Include="LightClass.cpp" />
     <ClCompile Include="lightclassALT.cpp" />
     <ClCompile Include="LightShaderClass.cpp" />

@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Utilities">
-      <UniqueIdentifier>{ec5d199e-ce31-4d18-8541-6bfc735b9b89}</UniqueIdentifier>
-    </Filter>
     <Filter Include="HLSL Files">
       <UniqueIdentifier>{657fbe75-46a3-4c50-aa2c-afe1df7d0ba9}</UniqueIdentifier>
     </Filter>
@@ -43,11 +40,14 @@
     <Filter Include="Source Files\Tier2\Shaders">
       <UniqueIdentifier>{4430a54b-1eb0-489b-a461-733153231cba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Tier2\Shaders">
-      <UniqueIdentifier>{b07e6c23-7ae4-4cf7-b952-952ca8225b07}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Deprecated">
       <UniqueIdentifier>{998611fc-7201-42e9-910f-d0f8be8aee06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tier1\Utilities">
+      <UniqueIdentifier>{ec5d199e-ce31-4d18-8541-6bfc735b9b89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Tier1\Shaders">
+      <UniqueIdentifier>{b07e6c23-7ae4-4cf7-b952-952ca8225b07}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -588,34 +588,37 @@
     <ClCompile Include="D3DClass.cpp">
       <Filter>Source Files\Tier1</Filter>
     </ClCompile>
+    <ClCompile Include="GlobalIncludes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VectorMath.h">
-      <Filter>Header Files\Utilities</Filter>
+      <Filter>Header Files\Tier1\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="LightShaderClass.h">
-      <Filter>Header Files\Tier2\Shaders</Filter>
+      <Filter>Header Files\Tier1\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="FontShaderClass.h">
-      <Filter>Header Files\Tier2\Shaders</Filter>
+      <Filter>Header Files\Tier1\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="TextureShaderClass.h">
-      <Filter>Header Files\Tier2\Shaders</Filter>
+      <Filter>Header Files\Tier1\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="ShaderClass.h">
-      <Filter>Header Files\Tier2\Shaders</Filter>
+      <Filter>Header Files\Tier1\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="ShaderManagerClass.h">
-      <Filter>Header Files\Tier2\Shaders</Filter>
+      <Filter>Header Files\Tier1\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="WaterShaderClass.h">
-      <Filter>Header Files\Tier2\Shaders</Filter>
+      <Filter>Header Files\Tier1\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="ReflectionShaderClass.h">
-      <Filter>Header Files\Tier2\Shaders</Filter>
+      <Filter>Header Files\Tier1\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="RefractionShaderClass.h">
-      <Filter>Header Files\Tier2\Shaders</Filter>
+      <Filter>Header Files\Tier1\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Tier2</Filter>
@@ -654,7 +657,7 @@
       <Filter>Header Files\Tier2</Filter>
     </ClInclude>
     <ClInclude Include="GfxUtil.h">
-      <Filter>Header Files\Utilities</Filter>
+      <Filter>Header Files\Tier1\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Graphics.h">
       <Filter>Header Files\Tier1</Filter>
@@ -1317,7 +1320,7 @@
       <Filter>Header Files\Tier1</Filter>
     </ClInclude>
     <ClInclude Include="DepthShaderClass.h">
-      <Filter>Header Files\Tier2\Shaders</Filter>
+      <Filter>Header Files\Tier1\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="D3DClass.h">
       <Filter>Header Files\Tier1</Filter>
@@ -1344,7 +1347,7 @@
       <Filter>Header Files\Deprecated</Filter>
     </ClInclude>
     <ClInclude Include="GlobalIncludes.h">
-      <Filter>Header Files\Utilities</Filter>
+      <Filter>Header Files\Tier1\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="ModelListClass.h">
       <Filter>Header Files\Deprecated</Filter>
