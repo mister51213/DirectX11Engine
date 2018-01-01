@@ -16,7 +16,9 @@
 //////////////
 #include <d3d11.h>
 #include <directxmath.h>
+#include <wrl/client.h>
 using namespace DirectX;
+using namespace Microsoft::WRL;
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,7 +32,7 @@ public:
 	~D3DClass();
 
 	bool Initialize(int, int, bool, HWND, bool, float, float);
-	void Shutdown();
+	//void Shutdown();
 
 	void BeginScene(float, float, float, float);
 	void EndScene();
@@ -63,27 +65,47 @@ public:
 	void SetBackBufferRenderTarget();
 	void ResetViewport();
 private:
-	bool m_vsync_enabled;
-	int m_videoCardMemory;
-	char m_videoCardDescription[128];
-	IDXGISwapChain* m_swapChain;
-	ID3D11Device* m_device;
-	ID3D11DeviceContext* m_deviceContext;
-	ID3D11RenderTargetView* m_renderTargetView;
-	ID3D11Texture2D* m_depthStencilBuffer;
-	ID3D11DepthStencilState* m_depthStencilState;
-	ID3D11DepthStencilView* m_depthStencilView;
-	ID3D11RasterizerState* m_rasterState;
-	ID3D11RasterizerState* m_rasterStateNoCulling;
-	ID3D11RasterizerState* m_rasterStateWireframe;
-	XMMATRIX m_projectionMatrix;
-	XMMATRIX m_worldMatrix;
-	XMMATRIX m_orthoMatrix;
-	ID3D11DepthStencilState* m_depthDisabledStencilState;
-	ID3D11BlendState* m_alphaEnableBlendingState;
-	ID3D11BlendState* m_alphaDisableBlendingState;
-	ID3D11BlendState* m_alphaEnableBlendingState2;
-	D3D11_VIEWPORT m_viewport;
+	bool _vsync_enabled;
+	int _videoCardMemory;
+	char _videoCardDescription[128];
+	//IDXGISwapChain* m_swapChain;
+	//ID3D11Device* m_device;
+	//ID3D11DeviceContext* m_deviceContext;
+	//ID3D11RenderTargetView* m_renderTargetView;
+	//ID3D11Texture2D* m_depthStencilBuffer;
+	//ID3D11DepthStencilState* m_depthStencilState;
+	//ID3D11DepthStencilView* m_depthStencilView;
+	//ID3D11RasterizerState* m_rasterState;
+	//ID3D11RasterizerState* m_rasterStateNoCulling;
+	//ID3D11RasterizerState* m_rasterStateWireframe;
+	//XMMATRIX m_projectionMatrix;
+	//XMMATRIX m_worldMatrix;
+	//XMMATRIX m_orthoMatrix;
+	//ID3D11DepthStencilState* m_depthDisabledStencilState;
+	//ID3D11BlendState* m_alphaEnableBlendingState;
+	//ID3D11BlendState* m_alphaDisableBlendingState;
+	//ID3D11BlendState* m_alphaEnableBlendingState2;
+	//D3D11_VIEWPORT m_viewport;
+
+	ComPtr<IDXGISwapChain> _swapChain;
+	ComPtr<ID3D11Device> _device;
+	ComPtr<ID3D11DeviceContext> _deviceContext;
+	ComPtr<ID3D11RenderTargetView> _renderTargetView;
+	ComPtr<ID3D11Texture2D> _depthStencilBuffer;
+	ComPtr<ID3D11DepthStencilState> _depthStencilState;
+	ComPtr<ID3D11DepthStencilView> _depthStencilView;
+	ComPtr<ID3D11RasterizerState> _rasterState;
+	ComPtr<ID3D11RasterizerState> _rasterStateNoCulling;
+	ComPtr<ID3D11RasterizerState> _rasterStateWireframe;
+	ComPtr<ID3D11DepthStencilState> _depthDisabledStencilState;
+	ComPtr<ID3D11BlendState> _alphaEnableBlendingState;
+	ComPtr<ID3D11BlendState> _alphaDisableBlendingState;
+	ComPtr<ID3D11BlendState> _alphaEnableBlendingState2;
+	
+	D3D11_VIEWPORT _viewport;
+	XMMATRIX _projectionMatrix;
+	XMMATRIX _worldMatrix;
+	XMMATRIX _orthoMatrix;
 };
 
 

@@ -46,6 +46,9 @@
     <Filter Include="Header Files\Tier2\Shaders">
       <UniqueIdentifier>{b07e6c23-7ae4-4cf7-b952-952ca8225b07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Deprecated">
+      <UniqueIdentifier>{998611fc-7201-42e9-910f-d0f8be8aee06}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FontShaderClass.cpp">
@@ -552,9 +555,6 @@
     <ClCompile Include="System.cpp">
       <Filter>Source Files\Tier1</Filter>
     </ClCompile>
-    <ClCompile Include="D3DClass.cpp">
-      <Filter>Source Files\Tier2</Filter>
-    </ClCompile>
     <ClCompile Include="DebugWindowClass.cpp">
       <Filter>Source Files\Utilities</Filter>
     </ClCompile>
@@ -584,6 +584,9 @@
     </ClCompile>
     <ClCompile Include="TextClass.cpp">
       <Filter>Source Files\Tier2</Filter>
+    </ClCompile>
+    <ClCompile Include="D3DClass.cpp">
+      <Filter>Source Files\Tier1</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -618,9 +621,6 @@
       <Filter>Header Files\Tier2</Filter>
     </ClInclude>
     <ClInclude Include="CpuClass.h">
-      <Filter>Header Files\Tier2</Filter>
-    </ClInclude>
-    <ClInclude Include="D3DClass.h">
       <Filter>Header Files\Tier2</Filter>
     </ClInclude>
     <ClInclude Include="DebugWindowClass.h">
@@ -1316,35 +1316,38 @@
     <ClInclude Include="Scene.h">
       <Filter>Header Files\Tier1</Filter>
     </ClInclude>
-    <ClInclude Include="Actor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GlobalIncludes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TimerClass.h">
       <Filter>Header Files\Tier1</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ModelClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="shadowshaderclass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="lightclassALT.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="textureClassALT.h">
-      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DepthShaderClass.h">
       <Filter>Header Files\Tier2\Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="D3DClass.h">
+      <Filter>Header Files\Tier1</Filter>
+    </ClInclude>
+    <ClInclude Include="Actor.h">
+      <Filter>Header Files\Tier2</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraClass.h">
+      <Filter>Header Files\Deprecated</Filter>
+    </ClInclude>
     <ClInclude Include="depthShaderClassALT.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Deprecated</Filter>
+    </ClInclude>
+    <ClInclude Include="lightclassALT.h">
+      <Filter>Header Files\Deprecated</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelClass.h">
+      <Filter>Header Files\Deprecated</Filter>
+    </ClInclude>
+    <ClInclude Include="shadowshaderclass.h">
+      <Filter>Header Files\Deprecated</Filter>
+    </ClInclude>
+    <ClInclude Include="textureClassALT.h">
+      <Filter>Header Files\Deprecated</Filter>
+    </ClInclude>
+    <ClInclude Include="GlobalIncludes.h">
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
