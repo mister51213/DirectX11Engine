@@ -6,20 +6,20 @@
 
 #include <Windows.h>
 #define _XM_NO_INTRINSICS_ 
-#include <directxmath.h>
-#include <stdlib.h>
+//#include <directxmath.h>
+//#include <stdlib.h>
 #include <d3d11.h>
 #include <vector>
 #include <string>
 #include "Texture.h"
 #include "GlobalIncludes.h"
-#include <memory>
-#include <wrl/client.h>
+//#include <memory>
+//#include <wrl/client.h>
 
-using namespace Microsoft::WRL;
+//using namespace Microsoft::WRL;
 
-using namespace DirectX;
-using namespace std;
+//using namespace DirectX;
+//using namespace std;
 
 namespace GfxUtil
 {

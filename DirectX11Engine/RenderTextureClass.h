@@ -17,8 +17,8 @@
 #include <wrl/client.h>
 #include "GlobalIncludes.h"
 
-using namespace DirectX;
-using namespace Microsoft::WRL;
+//using namespace DirectX;
+//using namespace Microsoft::WRL;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: RenderTextureClass

@@ -591,6 +591,9 @@
     <ClCompile Include="GlobalIncludes.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ShaderCompiler.cpp">
+      <Filter>Source Files\Tier2\Shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VectorMath.h">
@@ -1351,6 +1354,9 @@
     </ClInclude>
     <ClInclude Include="ModelListClass.h">
       <Filter>Header Files\Deprecated</Filter>
+    </ClInclude>
+    <ClInclude Include="ShaderCompiler.h">
+      <Filter>Header Files\Tier1\Shaders</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

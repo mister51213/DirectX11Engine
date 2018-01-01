@@ -315,6 +315,7 @@
     <ClCompile Include="RefractionShaderClass.cpp" />
     <ClCompile Include="RenderTextureClass.cpp" />
     <ClCompile Include="ShaderClass.cpp" />
+    <ClCompile Include="ShaderCompiler.cpp" />
     <ClCompile Include="ShaderManagerClass.cpp" />
     <ClCompile Include="shadowshaderclass.cpp" />
     <ClCompile Include="TextClass.cpp" />
@@ -570,6 +571,7 @@
     <ClInclude Include="RefractionShaderClass.h" />
     <ClInclude Include="RenderTextureClass.h" />
     <ClInclude Include="ShaderClass.h" />
+    <ClInclude Include="ShaderCompiler.h" />
     <ClInclude Include="ShaderManagerClass.h" />
     <ClInclude Include="shadowshaderclass.h" />
     <ClInclude Include="TextClass.h" />
