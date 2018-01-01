@@ -13,7 +13,9 @@
 //////////////
 #include <dinput.h>
 #include <cstdint>
+#include <wrl/client.h>
 
+using namespace Microsoft::WRL;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: Input
@@ -42,9 +44,9 @@ private:
 	bool ReadMouse();
 	void ProcessInput();
 
-	IDirectInput8* _directInput;
-	IDirectInputDevice8* _keyboard;
-	IDirectInputDevice8* _mouse;
+	ComPtr<IDirectInput8> _directInput;
+	ComPtr<IDirectInputDevice8> _keyboard;
+	ComPtr<IDirectInputDevice8> _mouse;
 
 	unsigned char _keyboardState[256];
 	DIMOUSESTATE _mouseState;

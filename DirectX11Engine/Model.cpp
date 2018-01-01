@@ -12,7 +12,7 @@ Model::Model()
 Model::Model(const Model& other)
 {}
 
-bool Model::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, string modelFilename, vector<string> texFileNames, /*char* modelFilename, vector<char*> texFileNames, */EShaderType shaderType)
+bool Model::Initialize(ID3D11Device* const device, ID3D11DeviceContext* const deviceContext, const string modelFilename, vector<string> texFileNames, const EShaderType shaderType)
 {
 	bool result;
 
@@ -53,7 +53,7 @@ Material* Model::GetMaterial()
 	return _material.get();
 }
 
-void Model::SetMaterial(Material* mat)
+void Model::SetMaterial(Material* const mat)
 {
 	_material.reset(mat);
 }
@@ -70,7 +70,7 @@ int Model::GetIndexCount()
 //	return _material->GetResourceArray();
 //}
 
-bool Model::InitializeBuffers(ID3D11Device* device)
+bool Model::InitializeBuffers(ID3D11Device* const device)
 {
 	VertexType* vertices;
 	unsigned long* indices;
@@ -154,7 +154,7 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 	return true;
 }
 
-void Model::LoadVertices(ID3D11DeviceContext* deviceContext)
+void Model::LoadVertices(ID3D11DeviceContext* const deviceContext)
 {
 	unsigned int stride;
 	unsigned int offset;
@@ -347,7 +347,7 @@ void Model::SetResourceView(const int index, ID3D11ShaderResourceView * view)
 	}
 }
 
-bool Model::LoadModel(/*char**/string filename)
+bool Model::LoadModel(const string filename)
 {
 	ifstream fin;
 	char input;

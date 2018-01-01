@@ -67,20 +67,21 @@ public:
 	Model(const Model&);
 	//~Model();
 
-	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, string modelFilename, vector<string> texFileNames,/* char* modelFilename, vector<char*> fileNames,*/ EShaderType shaderType);
+	bool Initialize(ID3D11Device* const device, ID3D11DeviceContext* const deviceContext, const string modelFilename, vector<string> texFileNames, const EShaderType shaderType);
 
 	/** Needed by the shader to draw this model */
 	int GetIndexCount();
 
 	Material* GetMaterial();
-	void SetMaterial(Material* mat);
+	void SetMaterial(Material* const mat);
 	//ID3D11ShaderResourceView** GetTextureArray(); // TODO: replace w material
 
-	void SetResourceView(const int index, ID3D11ShaderResourceView* view);
+	void SetResourceView(const int index, ID3D11ShaderResourceView* const view);
 
-	bool LoadModel(string /*char**/);
+	bool LoadModel(const string name);
+
 	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
-	void LoadVertices(ID3D11DeviceContext* deviceContext);
+	void LoadVertices(ID3D11DeviceContext* const deviceContext);
 
 	inline XMFLOAT3 GetPosition() const
 	{
@@ -104,8 +105,9 @@ public:
 
 
 private:
-	bool InitializeBuffers(ID3D11Device* device);
-	//functions for calculating the tangent and binormal vectors for the model.
+	bool InitializeBuffers(ID3D11Device* const device);
+
+	// Functions for calculating the tangent and binormal vectors for the model.
 	void CalculateModelVectors();
 	void CalculateTangentBinormal(TempVertexType, TempVertexType, TempVertexType, VectorType&, VectorType&);
 	void CalculateNormal(VectorType, VectorType, VectorType&);

@@ -8,7 +8,10 @@
 //////////////
 #include "fontclass.h"
 #include "ShaderManagerClass.h"
-//#include "fontshaderclass.h"
+#include "ShaderManagerClass.h"
+#include <wrl/client.h>
+
+using namespace Microsoft::WRL;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: TextClass
@@ -28,21 +31,18 @@ public:
 	~TextClass();
 
 	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, int, int, int, bool, FontClass*, char*, int, int, float, float, float);
-	void Shutdown();
-	void Render(ID3D11DeviceContext*, /*FontShaderClass* pFontShader*/ShaderManagerClass* pShaderManager, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*);
+	void Render(ID3D11DeviceContext*, ShaderManagerClass* pShaderManager, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*);
 
 	bool UpdateSentence(ID3D11DeviceContext*, FontClass*, char*, int, int, float, float, float);
 
 private:
 	bool InitializeSentence(ID3D11Device*, ID3D11DeviceContext*, FontClass*, char*, int, int, float, float, float);
-	void RenderSentence(ID3D11DeviceContext*, /*class FontShaderClass* pFontShader, */ShaderManagerClass* shaderManager, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*);
+	void RenderSentence(ID3D11DeviceContext*, ShaderManagerClass* shaderManager, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*);
 
 private:
-	//FontShaderClass* _FontShader;
-	ShaderManagerClass* _ShaderManager;
+	unique_ptr<ShaderManagerClass> _ShaderManager;
 
-	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer, *m_vertexBuffer2, *m_indexBuffer2;
+	ComPtr<ID3D11Buffer> m_vertexBuffer, m_indexBuffer, m_vertexBuffer2, m_indexBuffer2;
 	int m_screenWidth, m_screenHeight, m_maxLength, m_vertexCount, m_indexCount;
-	//bool m_shadow;
 	XMFLOAT4 m_pixelColor;
 };

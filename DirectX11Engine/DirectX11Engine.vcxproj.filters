@@ -641,9 +641,6 @@
     <ClInclude Include="Model.h">
       <Filter>Header Files\Tier2</Filter>
     </ClInclude>
-    <ClInclude Include="ModelListClass.h">
-      <Filter>Header Files\Tier2</Filter>
-    </ClInclude>
     <ClInclude Include="Position.h">
       <Filter>Header Files\Tier2</Filter>
     </ClInclude>
@@ -1348,6 +1345,9 @@
     </ClInclude>
     <ClInclude Include="GlobalIncludes.h">
       <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelListClass.h">
+      <Filter>Header Files\Deprecated</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

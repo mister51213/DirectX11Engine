@@ -101,24 +101,14 @@ void Input::Shutdown()
 	if (_mouse)
 	{
 		_mouse->Unacquire();
-		_mouse->Release();
-		_mouse = 0;
 	}
 
 	// Release the keyboard.
 	if (_keyboard)
 	{
 		_keyboard->Unacquire();
-		_keyboard->Release();
-		_keyboard = 0;
 	}
 
-	// Release the main interface to direct input.
-	if (_directInput)
-	{
-		_directInput->Release();
-		_directInput = 0;
-	}
 
 	return;
 }

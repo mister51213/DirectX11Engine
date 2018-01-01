@@ -10,14 +10,12 @@
 #include <directxmath.h>
 #include <fstream>
 #include <vector>
-using namespace DirectX;
-using namespace std;
-
-///////////////////////
-// MY CLASS INCLUDES //
-///////////////////////
+#include <wrl/client.h>
 #include "texture.h"
 
+using namespace DirectX;
+using namespace std;
+using namespace Microsoft::WRL;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: FontClass
@@ -44,7 +42,6 @@ public:
 
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fontFilename, char* textureFilename,
 	float fontHeight, int spaceSize);
-	void Shutdown();
 
 	ID3D11ShaderResourceView* GetTexture();
 	void BuildVertexArray(void*, char*, float, float);
@@ -53,13 +50,11 @@ public:
 
 private:
 	bool LoadFontData(char*);
-	void ReleaseFontData();
 	bool LoadTexture(ID3D11Device*, ID3D11DeviceContext*, char*);
-	void ReleaseTexture();
 
 private:
-	FontType* _Font;
-	TextureClass* _Texture;
+	unique_ptr<FontType[]> _Font;
+	unique_ptr<TextureClass> _Texture;
 	float _fontHeight;
 	int _spaceSize;
 };

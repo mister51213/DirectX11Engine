@@ -5,35 +5,17 @@
 
 
 D3DClass::D3DClass()
-{
-	//_swapChain = 0;
-	//_device = 0;
-	//_deviceContext = 0;
-	//_renderTargetView = 0;
-	//_depthStencilBuffer = 0;
-	//_depthStencilState = 0;
-	//_depthStencilView = 0;
-	//_rasterState = 0;
-	//_rasterStateNoCulling = 0;
-	//_rasterStateWireframe = 0;
-	//_depthDisabledStencilState = 0;
-	//_alphaEnableBlendingState = 0;
-	//_alphaDisableBlendingState = 0;
-	//_alphaEnableBlendingState2 = 0;
-}
-
+{}
 
 D3DClass::D3DClass(const D3DClass& other)
 {
 }
 
-
 D3DClass::~D3DClass()
 {
 }
 
-
-bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hwnd, bool fullscreen, float screenDepth, float screenNear)
+bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const bool vsync, const HWND hwnd, const bool fullscreen, const float screenDepth, const float screenNear)
 {
 	HRESULT result;
 	IDXGIFactory* factory;
@@ -51,7 +33,6 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc;
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
 	D3D11_RASTERIZER_DESC rasterDesc;
-	//D3D11_VIEWPORT viewport;
 	float fieldOfView, screenAspect;
 	D3D11_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
 	D3D11_BLEND_DESC blendStateDescription;
@@ -360,12 +341,6 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	}
 
 	// Setup the viewport for rendering.
-	//viewport.Width = (float)screenWidth;
-	//viewport.Height = (float)screenHeight;
-	//viewport.MinDepth = 0.0f;
-	//viewport.MaxDepth = 1.0f;
-	//viewport.TopLeftX = 0.0f;
-	//viewport.TopLeftY = 0.0f;
 	_viewport.Width = (float)screenWidth;
 	_viewport.Height = (float)screenHeight;
 	_viewport.MinDepth = 0.0f;
@@ -480,103 +455,7 @@ bool D3DClass::Initialize(int screenWidth, int screenHeight, bool vsync, HWND hw
 	return true;
 }
 
-
-//void D3DClass::Shutdown()
-//{
-//	// Before shutting down set to windowed mode or when you release the swap chain it will throw an exception.
-//	if (_swapChain)
-//	{
-//		_swapChain->SetFullscreenState(false, NULL);
-//	}
-//
-//	if (_alphaEnableBlendingState2)
-//	{
-//		_alphaEnableBlendingState2->Release();
-//		_alphaEnableBlendingState2 = 0;
-//	}
-//
-//	if (_alphaDisableBlendingState)
-//	{
-//		_alphaDisableBlendingState->Release();
-//		_alphaDisableBlendingState = 0;
-//	}
-//
-//	if (_alphaEnableBlendingState)
-//	{
-//		_alphaEnableBlendingState->Release();
-//		_alphaEnableBlendingState = 0;
-//	}
-//
-//	if (_depthDisabledStencilState)
-//	{
-//		_depthDisabledStencilState->Release();
-//		_depthDisabledStencilState = 0;
-//	}
-//
-//	if (_rasterStateWireframe)
-//	{
-//		_rasterStateWireframe->Release();
-//		_rasterStateWireframe = 0;
-//	}
-//
-//	if (_rasterStateNoCulling)
-//	{
-//		_rasterStateNoCulling->Release();
-//		_rasterStateNoCulling = 0;
-//	}
-//
-//	if (_rasterState)
-//	{
-//		_rasterState->Release();
-//		_rasterState = 0;
-//	}
-//
-//	if (_depthStencilView)
-//	{
-//		_depthStencilView->Release();
-//		_depthStencilView = 0;
-//	}
-//
-//	if (_depthStencilState)
-//	{
-//		_depthStencilState->Release();
-//		_depthStencilState = 0;
-//	}
-//
-//	if (_depthStencilBuffer)
-//	{
-//		_depthStencilBuffer->Release();
-//		_depthStencilBuffer = 0;
-//	}
-//
-//	if (_renderTargetView)
-//	{
-//		_renderTargetView->Release();
-//		_renderTargetView = 0;
-//	}
-//
-//	if (_deviceContext)
-//	{
-//		_deviceContext->Release();
-//		_deviceContext = 0;
-//	}
-//
-//	if (_device)
-//	{
-//		_device->Release();
-//		_device = 0;
-//	}
-//
-//	if (_swapChain)
-//	{
-//		_swapChain->Release();
-//		_swapChain = 0;
-//	}
-//
-//	return;
-//}
-
-void D3DClass::BeginScene(float red, float green, float blue, float alpha)
+void D3DClass::BeginScene(const float red, const float green, const float blue, const float alpha)
 {
 	float color[4];
 
@@ -648,7 +527,7 @@ void D3DClass::GetOrthoMatrix(XMMATRIX& orthoMatrix)
 }
 
 
-void D3DClass::GetVideoCardInfo(char* cardName, int& memory)
+void D3DClass::GetVideoCardInfo(char* const cardName, int& memory)
 {
 	strcpy_s(cardName, 128, _videoCardDescription);
 	memory = _videoCardMemory;
@@ -759,7 +638,6 @@ void D3DClass::DisableWireframe()
 	return;
 }
 
-//@CUSTOM
 ID3D11DepthStencilView* D3DClass::GetDepthStencilView()
 {
 	return _depthStencilView.Get();

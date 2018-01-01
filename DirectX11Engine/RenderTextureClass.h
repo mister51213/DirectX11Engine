@@ -14,8 +14,10 @@
 //////////////
 #include <d3d11.h>
 #include <DirectXMath.h>
+#include <wrl/client.h>
 
 using namespace DirectX;
+using namespace Microsoft::WRL;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: RenderTextureClass
@@ -27,31 +29,31 @@ public:
 	RenderTextureClass(const RenderTextureClass&);
 	~RenderTextureClass();
 
-	bool Initialize(ID3D11Device* device, int textureWidth, int textureHeight, float screenDepth, float screenNear);
-	void Shutdown();
+	bool Initialize(ID3D11Device* const device, const int textureWidth, const int textureHeight, const float screenDepth, const float screenNear);
 
-	void SetRenderTarget(ID3D11DeviceContext*/*, ID3D11DepthStencilView**/);
-	void ClearRenderTarget(ID3D11DeviceContext* deviceContext/*, ID3D11DepthStencilView* depthStencilView*/,
-		float red, float green, float blue, float alpha);
+	void SetRenderTarget(ID3D11DeviceContext* const deviceContext);
+	void ClearRenderTarget(ID3D11DeviceContext* const deviceContext,
+		const float red, const float green, const float blue, const float alpha);
 	ID3D11ShaderResourceView* GetShaderResourceView();
 	
 	void GetProjectionMatrix(XMMATRIX&);
 	void GetOrthoMatrix(XMMATRIX&);
 
 private:
-	ID3D11Texture2D* _renderTargetTexture;
-	ID3D11RenderTargetView* _renderTargetView;
-	ID3D11ShaderResourceView* _shaderResourceView;
+	ComPtr<ID3D11Texture2D> _renderTargetTexture;
+	ComPtr<ID3D11RenderTargetView> _renderTargetView;
+	ComPtr<ID3D11ShaderResourceView> _shaderResourceView;
 
 	//////// Shadowing ///////////////
-	ID3D11Texture2D* _depthStencilBuffer;
-	ID3D11DepthStencilView* _depthStencilView;
+	ComPtr<ID3D11Texture2D> _depthStencilBuffer;
+	ComPtr<ID3D11DepthStencilView> _depthStencilView;
+
 	D3D11_VIEWPORT _viewport;
 	XMMATRIX _projectionMatrix;
 	XMMATRIX _orthoMatrix;
 };
 
-#pragma region WORKING VERSION
+#pragma region LEGACY VERSION
 //
 //////////////////////////////////////////////////////////////////////////////////
 //// Filename: rendertextureclass.h

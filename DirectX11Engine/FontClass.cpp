@@ -5,11 +5,10 @@
 #include "fontclass.h"
 
 FontClass::FontClass()
-	:
-_Font(0),
-_Texture(0)
-{
-}
+//	:
+//_Font(0),
+//_Texture(0)
+{}
 
 FontClass::FontClass(const FontClass& other)
 {
@@ -48,17 +47,6 @@ bool FontClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	return true;
 }
 
-void FontClass::Shutdown()
-{
-	// Release the font texture.
-	ReleaseTexture();
-
-	// Release the font data.
-	ReleaseFontData();
-
-	return;
-}
-
 bool FontClass::LoadFontData(char* filename)
 {
 	ifstream fin;
@@ -66,7 +54,7 @@ bool FontClass::LoadFontData(char* filename)
 	char temp;
 
 	// Create the font spacing buffer.
-	_Font = new FontType[95];
+	_Font.reset(new FontType[95]);
 	if (!_Font)
 	{
 		return false;
@@ -93,9 +81,9 @@ bool FontClass::LoadFontData(char* filename)
 			fin.get(temp);
 		}
 
-		fin >> _Font[i].left;
-		fin >> _Font[i].right;
-		fin >> _Font[i].size;
+		fin >> _Font.get()[i].left;
+		fin >> _Font.get()[i].right;
+		fin >> _Font.get()[i].size;
 	}
 
 	// Close the file.
@@ -105,26 +93,14 @@ bool FontClass::LoadFontData(char* filename)
 }
 
 
-void FontClass::ReleaseFontData()
-{
-	// Release the font data array.
-	if (_Font)
-	{
-		delete[] _Font;
-		_Font = 0;
-	}
-
-	return;
-}
-
-
 bool FontClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* filename)
 {
 	bool result;
 
 
 	// Create the texture object.
-	_Texture = new TextureClass;
+	//_Texture = new TextureClass;
+	_Texture.reset(new TextureClass);
 	if (!_Texture)
 	{
 		return false;
@@ -142,23 +118,8 @@ bool FontClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	return true;
 }
 
-
-void FontClass::ReleaseTexture()
-{
-	// Release the texture object.
-	if (_Texture)
-	{
-		delete _Texture;
-		_Texture = 0;
-	}
-
-	return;
-}
-
-
 ID3D11ShaderResourceView* FontClass::GetTexture()
 {
-	//return m_Texture->GetTexture();
 	ID3D11ShaderResourceView** views = _Texture->GetTextureArray();
 	return views[0];
 }
@@ -193,32 +154,32 @@ void FontClass::BuildVertexArray(void* vertices, char* sentence, float drawX, fl
 		{
 			// First triangle in quad.
 			vertexPtr[index].position = XMFLOAT3(drawX, drawY, 0.0f);  // Top left.
-			vertexPtr[index].texture = XMFLOAT2(_Font[letter].left, 0.0f);
+			vertexPtr[index].texture = XMFLOAT2(_Font.get()[letter].left, 0.0f);
 			index++;
 
-			vertexPtr[index].position = XMFLOAT3((drawX + _Font[letter].size), (drawY - _fontHeight), 0.0f);  // Bottom right.
-			vertexPtr[index].texture = XMFLOAT2(_Font[letter].right, 1.0f);
+			vertexPtr[index].position = XMFLOAT3((drawX + _Font.get()[letter].size), (drawY - _fontHeight), 0.0f);  // Bottom right.
+			vertexPtr[index].texture = XMFLOAT2(_Font.get()[letter].right, 1.0f);
 			index++;
 
 			vertexPtr[index].position = XMFLOAT3(drawX, (drawY - _fontHeight), 0.0f);  // Bottom left.
-			vertexPtr[index].texture = XMFLOAT2(_Font[letter].left, 1.0f);
+			vertexPtr[index].texture = XMFLOAT2(_Font.get()[letter].left, 1.0f);
 			index++;
 
 			// Second triangle in quad.
 			vertexPtr[index].position = XMFLOAT3(drawX, drawY, 0.0f);  // Top left.
-			vertexPtr[index].texture = XMFLOAT2(_Font[letter].left, 0.0f);
+			vertexPtr[index].texture = XMFLOAT2(_Font.get()[letter].left, 0.0f);
 			index++;
 
-			vertexPtr[index].position = XMFLOAT3(drawX + _Font[letter].size, drawY, 0.0f);  // Top right.
-			vertexPtr[index].texture = XMFLOAT2(_Font[letter].right, 0.0f);
+			vertexPtr[index].position = XMFLOAT3(drawX + _Font.get()[letter].size, drawY, 0.0f);  // Top right.
+			vertexPtr[index].texture = XMFLOAT2(_Font.get()[letter].right, 0.0f);
 			index++;
 
-			vertexPtr[index].position = XMFLOAT3((drawX + _Font[letter].size), (drawY - _fontHeight), 0.0f);  // Bottom right.
-			vertexPtr[index].texture = XMFLOAT2(_Font[letter].right, 1.0f);
+			vertexPtr[index].position = XMFLOAT3((drawX + _Font.get()[letter].size), (drawY - _fontHeight), 0.0f);  // Bottom right.
+			vertexPtr[index].texture = XMFLOAT2(_Font.get()[letter].right, 1.0f);
 			index++;
 
 			// Update the x location for drawing by the size of the letter and one pixel.
-			drawX = drawX + _Font[letter].size + 1.0f;
+			drawX = drawX + _Font.get()[letter].size + 1.0f;
 		}
 	}
 
@@ -245,7 +206,7 @@ int FontClass::GetSentencePixelLength(char* sentence)
 		}
 		else
 		{
-			pixelLength += (_Font[letter].size + 1);
+			pixelLength += (_Font.get()[letter].size + 1);
 		}
 	}
 
