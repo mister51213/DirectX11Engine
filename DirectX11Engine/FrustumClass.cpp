@@ -1,17 +1,14 @@
 #include "FrustumClass.h"
 
 FrustumClass::FrustumClass()
-{
-}
+{}
 
 FrustumClass::FrustumClass(const FrustumClass& other)
-{
-}
+{}
 
 FrustumClass::~FrustumClass()
-{
-}
-// @STUDY https://matt77hias.github.io/blog/culling/2017/08/24/creating-a-view-frustum.html
+{}
+
 void FrustumClass::ConstructFrustum(float screenDepth, XMMATRIX projectionMatrix, XMMATRIX viewMatrix)
 {
 	float zMinimum, r;
@@ -73,19 +70,10 @@ void FrustumClass::ConstructFrustum(float screenDepth, XMMATRIX projectionMatrix
 	_planes[5].z = tempMat._34 + tempMat._32;
 	_planes[5].w = tempMat._44 + tempMat._42;
 	XMStoreFloat4(&_planes[5], XMPlaneNormalize(XMLoadFloat4(&_planes[5])));
-
-	return;
 }
-
-//https://github.com/matt77hias/MAGE/tree/master/MAGE/MAGE/src/math
-//https://github.com/matt77hias/MAGE/blob/master/MAGE/MAGE/src/math/view_frustum.cpp
-//https://github.com/turanszkij/WickedEngine/blob/master/WickedEngine/wiFrustum.h
 
 bool FrustumClass::CheckPoint(float x, float y, float z)
 {
-	// @STUDY - you only need 3 floats for the normal, and 1 for the distance from origin to express a plane
-	// http://mathinsight.org/distance_point_plane
-
 	// Check if the point is inside all six planes of the view frustum.
 	for (int i = 0; i<6; i++)
 	{
@@ -97,8 +85,8 @@ bool FrustumClass::CheckPoint(float x, float y, float z)
 
 	return true;
 }
-//CheckCube checks if any of the eight corner points of the cube are inside the viewing frustum.It only requires as input the center point of the cube and the radius, it uses those to calculate the 8 corner points of the cube.It then checks if any one of the corner points are inside all 6 planes of the viewing frustum.If it does find a point inside all six planes of the viewing frustum it returns true, otherwise it returns false.
 
+//CheckCube checks if any of the eight corner points of the cube are inside the viewing frustum.It only requires as input the center point of the cube and the radius, it uses those to calculate the 8 corner points of the cube.It then checks if any one of the corner points are inside all 6 planes of the viewing frustum.If it does find a point inside all six planes of the viewing frustum it returns true, otherwise it returns false.
 bool FrustumClass::CheckCube(float xCenter, float yCenter, float zCenter, float radius)
 {	
 	// Check if any one point of the cube is in the view frustum.

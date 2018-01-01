@@ -37,7 +37,6 @@ bool MovementComponent::Initialize()
 void MovementComponent::SetFrameTime(float time)
 {
 	_frameTime = time;
-	return;
 }
 
 float MovementComponent::GetFrameTime(float)
@@ -68,7 +67,6 @@ void MovementComponent::SetPosition(const XMFLOAT3 & pos)
 void MovementComponent::SetOrientation(const XMFLOAT3& newOrientation)
 {
 	_orientation = newOrientation;
-	return;
 }
 
 void MovementComponent::SetLookAt(const XMFLOAT3 & newLookat)
@@ -98,14 +96,11 @@ void MovementComponent::TurnLeft(bool keydown)
 		}
 	}
 
-	//@CUSTOM
 	_orientation.y -= _leftTurnSpeed;
 	if (_orientation.y < 0.0f)
 	{
 		_orientation.y += 360.0f;
 	}
-
-	return;
 }
 
 void MovementComponent::TurnRight(bool keydown)
@@ -130,14 +125,11 @@ void MovementComponent::TurnRight(bool keydown)
 		}
 	}
 
-	//@CUSTOM
 	_orientation.y += _rightTurnSpeed;
 	if (_orientation.y  > 360.0f)
 	{
 		_orientation.y -= 360.0f;
 	}
-
-	return;
 }
 
 void MovementComponent::SetMouseLocation(int X, int Y)

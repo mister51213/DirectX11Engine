@@ -6,6 +6,7 @@
 //////////////
 // INCLUDES //
 //////////////
+#include "GlobalIncludes.h"
 #include <d3d11.h>
 #include <stdio.h>
 #include <wrl/client.h>

@@ -49,21 +49,13 @@ bool FontShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* vs
 	numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 
 	// Create the vertex input layout.
-	result = device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(),
-		_vertexShaderBuffer->GetBufferSize(), &_layout);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(),
+		_vertexShaderBuffer->GetBufferSize(), &_layout));
 
 	D3D11_SAMPLER_DESC samplerDesc = MakeSamplerDesc();
 
 	// Create the texture sampler state.
-	result = device->CreateSamplerState(&samplerDesc, &_sampleState);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(device->CreateSamplerState(&samplerDesc, &_sampleState));
 
 	// VS Buffers
 	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));

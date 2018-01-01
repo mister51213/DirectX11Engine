@@ -75,8 +75,6 @@ bool System::Tick()
 void System::Shutdown()
 {
 	ShutdownWindows();
-
-	return;
 }
 
 void System::Run()
@@ -120,9 +118,7 @@ void System::Run()
 			done = true;
 		}
 	}
-	
-	return;
-}
+	}
 
 LRESULT CALLBACK System::MessageHandler(HWND hwnd, UINT umsg, WPARAM wparam, LPARAM lparam)
 {
@@ -205,8 +201,6 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 
 	// Hide the mouse cursor.
 	ShowCursor(false);
-
-	return;
 }
 
 void System::ShutdownWindows()
@@ -230,8 +224,6 @@ void System::ShutdownWindows()
 
 	// Release the pointer to this class.
 	ApplicationHandle = NULL;
-
-	return;
 }
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)

@@ -5,9 +5,6 @@
 #include "fontclass.h"
 
 FontClass::FontClass()
-//	:
-//_Font(0),
-//_Texture(0)
 {}
 
 FontClass::FontClass(const FontClass& other)
@@ -34,14 +31,14 @@ bool FontClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 	result = LoadFontData(fontFilename);
 	if (!result)
 	{
-		return false;
+		ThrowRuntime("Failed to load font data.");
 	}
 
 	// Load the texture that has the font characters on it.
 	result = LoadTexture(device, deviceContext, textureFilename);
 	if (!result)
 	{
-		return false;
+		ThrowRuntime("Failed to load texture.");
 	}
 
 	return true;
@@ -64,7 +61,7 @@ bool FontClass::LoadFontData(char* filename)
 	fin.open(filename);
 	if (fin.fail())
 	{
-		return false;
+		ThrowRuntime("Failed to open file " + string(filename));
 	}
 
 	// Read in the 95 used ascii characters for text.
@@ -97,9 +94,7 @@ bool FontClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 {
 	bool result;
 
-
 	// Create the texture object.
-	//_Texture = new TextureClass;
 	_Texture.reset(new TextureClass);
 	if (!_Texture)
 	{
@@ -108,12 +103,7 @@ bool FontClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 
 	//vector<char*> filenames{ filename };
 	vector<string> filenames{ filename };
-	result = _Texture->InitializeArray(device, deviceContext, filenames);
-
-	if (!result)
-	{
-		return false;
-	}
+	_Texture->InitializeArray(device, deviceContext, filenames);
 
 	return true;
 }
@@ -124,12 +114,10 @@ ID3D11ShaderResourceView* FontClass::GetTexture()
 	return views[0];
 }
 
-
 void FontClass::BuildVertexArray(void* vertices, char* sentence, float drawX, float drawY)
 {
 	VertexType* vertexPtr;
 	int numLetters, index, i, letter;
-
 
 	// Coerce the input vertices into a VertexType structure.
 	vertexPtr = (VertexType*)vertices;
@@ -182,8 +170,6 @@ void FontClass::BuildVertexArray(void* vertices, char* sentence, float drawX, fl
 			drawX = drawX + _Font.get()[letter].size + 1.0f;
 		}
 	}
-
-	return;
 }
 
 

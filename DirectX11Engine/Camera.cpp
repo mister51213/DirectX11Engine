@@ -31,7 +31,6 @@ void Camera::SetPosition(float x, float y, float z)
 	_positionX = x;
 	_positionY = y;
 	_positionZ = z;
-	return;
 }
 
 void Camera::MoveInDirection(XMFLOAT3 displacement)
@@ -68,7 +67,6 @@ void Camera::SetRotation(float x, float y, float z)
 	_rotationX = x;
 	_rotationY = y;
 	_rotationZ = z;
-	return;
 }
 
 void Camera::RotateInDirection(const XMFLOAT3& offset)
@@ -141,20 +139,16 @@ void Camera::UpdateViewPoint()
 	if(_bFirstRenderPass)
 	m_baseViewMatrix = _viewMatrix;
 	_bFirstRenderPass = false;
-
-	return;
 }
 
 void Camera::GetViewMatrix(XMMATRIX& viewMatrix)
 {
 	viewMatrix = _viewMatrix;
-	return;
 }
 
 void Camera::GetBaseViewMatrix(XMMATRIX& viewMatrix)
 {
 	viewMatrix = m_baseViewMatrix;
-	return;
 }
 
 void Camera::RenderReflection(float height)
@@ -184,8 +178,6 @@ void Camera::RenderReflection(float height)
 
 	// Create the view matrix from the three vectors.
 	_reflectionViewMatrix = XMMatrixLookAtLH(XMLoadFloat3(&position), XMLoadFloat3(&lookAt), XMLoadFloat3(&up));
-	
-	return;
 }
 
 XMMATRIX Camera::GetReflectionViewMatrix()

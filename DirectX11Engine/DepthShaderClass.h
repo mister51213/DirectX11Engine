@@ -21,10 +21,4 @@ public:
 private:
 	bool InitializeShader(ID3D11Device*, HWND, char*, char*);
 	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX);
-
-private:
-	//ID3D11VertexShader* m_vertexShader;
-	//ID3D11PixelShader* m_pixelShader;
-	//ID3D11InputLayout* m_layout;
-	//ID3D11Buffer* m_matrixBuffer;
 };

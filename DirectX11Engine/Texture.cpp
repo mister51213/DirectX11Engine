@@ -111,11 +111,7 @@ bool TextureClass::InitializeTexTga(ID3D11Device* device, ID3D11DeviceContext* d
 	textureDesc.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
 	// Create the empty texture.
-	hResult = device->CreateTexture2D(&textureDesc, NULL, pTexture);
-	if (FAILED(hResult))
-	{
-		return false;
-	}
+	ThrowHResultIf(device->CreateTexture2D(&textureDesc, NULL, pTexture));
 
 	// Set the row pitch of the targa image data.
 	rowPitch = (width * 4) * sizeof(unsigned char);
@@ -129,11 +125,7 @@ bool TextureClass::InitializeTexTga(ID3D11Device* device, ID3D11DeviceContext* d
 	srvDesc.Texture2D.MipLevels = -1;
 
 	// Create the 1st shader resource view for the texture.
-	hResult = device->CreateShaderResourceView(*pTexture, &srvDesc, pTexView);
-	if (FAILED(hResult))
-	{
-		return false;
-	}
+	ThrowHResultIf(device->CreateShaderResourceView(*pTexture, &srvDesc, pTexView));
 
 	// Generate mipmaps for this texture.
 	deviceContext->GenerateMips(*pTexView);
@@ -175,20 +167,22 @@ unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, 
 	// Open the targa file for reading in binary.
 	if (!filename)
 	{
+		ThrowRuntime("Invalid filename.");
+
 		return nullptr;
 	}
 
 	error = fopen_s(&filePtr, filename, "rb");
 	if (error != 0)
 	{
-		return false;
+		ThrowRuntime("Could not open file. Error number " + to_string(error));
 	}
 
 	// Read in the file header.
 	count = (unsigned int)fread(&targaFileHeader, sizeof(TargaHeader), 1, filePtr);
 	if (count != 1)
 	{
-		return false;
+		ThrowRuntime("Could not read in file header.");
 	}
 
 	// Get the important information from the header.
@@ -199,7 +193,7 @@ unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, 
 	// Check that it is 32 bit and not 24 bit.
 	if (bpp != 32)
 	{
-		return false;
+		ThrowRuntime("Image must be 32 bit.");
 	}
 
 	// Calculate the size of the 32 bit image data.
@@ -216,14 +210,14 @@ unsigned char* TextureClass::LoadTarga(char* filename, int& height, int& width, 
 	count = (unsigned int)fread(targaImage, 1, imageSize, filePtr);
 	if (count != imageSize)
 	{
-		return false;
+		ThrowRuntime("Count does not match image size.");
 	}
 
 	// Close the file.
 	error = fclose(filePtr);
 	if (error != 0)
 	{
-		return false;
+		ThrowRuntime("Could not close file. Error number " + to_string(error));
 	}
 
 	// Allocate memory for the targa destination data.

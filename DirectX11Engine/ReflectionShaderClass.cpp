@@ -11,14 +11,8 @@ ReflectionShaderClass::~ReflectionShaderClass()
 
 bool ReflectionShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, ID3D11ShaderResourceView * texture, ID3D11ShaderResourceView * reflectionTexture, XMMATRIX reflectionMatrix)
 {
-	bool result;
-	
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture, reflectionTexture, reflectionMatrix);
-	if (!result)
-	{
-		return false;
-	}
+	SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture, reflectionTexture, reflectionMatrix);
 
 	// Now render the prepared buffers with the shader.
 	RenderShader(deviceContext, indexCount);
@@ -38,19 +32,11 @@ bool ReflectionShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, c
 		
 	// Create the vertex input layout.
 	unsigned int numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
-	result = device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(),
-		_vertexShaderBuffer->GetBufferSize(), &_layout);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(),
+		_vertexShaderBuffer->GetBufferSize(), &_layout));
 
 	// Create the texture sampler state.
-	result = device->CreateSamplerState(&MakeSamplerDesc(), &_sampleState);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(device->CreateSamplerState(&MakeSamplerDesc(), &_sampleState));
 
 	// VS Buffers
 	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));

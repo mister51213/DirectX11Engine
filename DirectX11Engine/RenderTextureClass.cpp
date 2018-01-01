@@ -38,11 +38,7 @@ bool RenderTextureClass::Initialize(ID3D11Device* const device, const int textur
 	textureDesc.MiscFlags = 0;
 
 	// Create the render target texture.
-	result = device->CreateTexture2D(&textureDesc, NULL, &_renderTargetTexture);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(device->CreateTexture2D(&textureDesc, NULL, &_renderTargetTexture));
 
 	// Setup the description of the render target view.
 	renderTargetViewDesc.Format = textureDesc.Format;
@@ -50,11 +46,7 @@ bool RenderTextureClass::Initialize(ID3D11Device* const device, const int textur
 	renderTargetViewDesc.Texture2D.MipSlice = 0;
 
 	// Create the render target view.
-	result = device->CreateRenderTargetView(_renderTargetTexture.Get(), &renderTargetViewDesc, &_renderTargetView);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(device->CreateRenderTargetView(_renderTargetTexture.Get(), &renderTargetViewDesc, &_renderTargetView));
 
 	// Setup the description of the shader resource view.
 	shaderResourceViewDesc.Format = textureDesc.Format;
@@ -63,11 +55,7 @@ bool RenderTextureClass::Initialize(ID3D11Device* const device, const int textur
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
 	// Create the shader resource view.
-	result = device->CreateShaderResourceView(_renderTargetTexture.Get(), &shaderResourceViewDesc, &_shaderResourceView);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(device->CreateShaderResourceView(_renderTargetTexture.Get(), &shaderResourceViewDesc, &_shaderResourceView));
 
 	//////////////////////////////////////////////////////////////////////////////////////
 	//////////////////// Shadows //////////////////////////////////////////
@@ -90,11 +78,7 @@ bool RenderTextureClass::Initialize(ID3D11Device* const device, const int textur
 	depthBufferDesc.MiscFlags = 0;
 
 	// Create the texture for the depth buffer using the filled out description.
-	result = device->CreateTexture2D(&depthBufferDesc, NULL, &_depthStencilBuffer);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(device->CreateTexture2D(&depthBufferDesc, NULL, &_depthStencilBuffer));
 
 	// Initailze the depth stencil view description.
 	ZeroMemory(&depthStencilViewDesc, sizeof(depthStencilViewDesc));
@@ -105,11 +89,7 @@ bool RenderTextureClass::Initialize(ID3D11Device* const device, const int textur
 	depthStencilViewDesc.Texture2D.MipSlice = 0;
 
 	// Create the depth stencil view.
-	result = device->CreateDepthStencilView(_depthStencilBuffer.Get(), &depthStencilViewDesc, &_depthStencilView);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(device->CreateDepthStencilView(_depthStencilBuffer.Get(), &depthStencilViewDesc, &_depthStencilView));
 
 	// Setup the viewport for rendering.
 	_viewport.Width = (float)textureWidth;
@@ -139,8 +119,6 @@ void RenderTextureClass::SetRenderTarget(ID3D11DeviceContext* deviceContext)
 
 	// Set the viewport.
 	deviceContext->RSSetViewports(1, &_viewport);
-
-	return;
 }
 
 //Same as D3DClass::BeginScene - should be called each frame before rendering to this render target view.
@@ -160,10 +138,7 @@ void RenderTextureClass::ClearRenderTarget(ID3D11DeviceContext* const deviceCont
 	deviceContext->ClearRenderTargetView(_renderTargetView.Get(), color);
 
 	// Clear the depth buffer.
-	//deviceContext->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-	return;
 }
 
 ID3D11ShaderResourceView* RenderTextureClass::GetShaderResourceView()
@@ -174,13 +149,11 @@ ID3D11ShaderResourceView* RenderTextureClass::GetShaderResourceView()
 void RenderTextureClass::GetProjectionMatrix(XMMATRIX& projectionMatrix)
 {
 	projectionMatrix = _projectionMatrix;
-	return;
 }
 
 void RenderTextureClass::GetOrthoMatrix(XMMATRIX& orthoMatrix)
 {
 	orthoMatrix = _orthoMatrix;
-	return;
 }
 
 #pragma region LEGACY VERSION

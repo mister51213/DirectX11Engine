@@ -102,7 +102,7 @@ void Scene::ProcessInput(float deltaTime, Input* pInput)
 	_Camera->GetMovementComponent()->MoveLeft(pInput->IsKeyDown(DIK_A));
 	_Camera->GetMovementComponent()->MoveRight(pInput->IsKeyDown(DIK_D));
 
-	////////// MOVE LIGHTS (TEST) ////////////
+	////////// MOVE LIGHTS (@TEST) ////////////
 	//for (int i = 0; i < NUM_LIGHTS; ++i)
 	//{
 	//	_LightActors[i]->GetMovementComponent()->SetFrameTime(deltaTime);

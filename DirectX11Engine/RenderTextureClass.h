@@ -15,6 +15,7 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <wrl/client.h>
+#include "GlobalIncludes.h"
 
 using namespace DirectX;
 using namespace Microsoft::WRL;

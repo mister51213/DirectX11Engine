@@ -14,6 +14,7 @@
 #include <dinput.h>
 #include <cstdint>
 #include <wrl/client.h>
+#include "GlobalIncludes.h"
 
 using namespace Microsoft::WRL;
 

@@ -44,8 +44,6 @@ void TimerClass::Tick()
 	_frameTime = timeDifference / _ticksPerMs;
 
 	_startTime = currentTime;
-
-	return;
 }
 
 float TimerClass::GetTime()

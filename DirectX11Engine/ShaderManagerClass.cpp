@@ -82,6 +82,10 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	_WaterShader.reset(new WaterShaderClass);
+	if (!_WaterShader)
+	{
+		return false;
+	}
 
 	result = _WaterShader->Initialize(device, hwnd, "../DirectX11Engine/WaterShader_vs.hlsl", "../DirectX11Engine/WaterShader_ps.hlsl");
 	if (!result)
@@ -92,6 +96,10 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	_RefractionShader.reset(new RefractionShaderClass);
+	if (!_RefractionShader)
+	{
+		return false;
+	}
 
 	result = _RefractionShader->Initialize(device, hwnd, "../DirectX11Engine/Refraction_vs.hlsl", "../DirectX11Engine/Refraction_ps.hlsl");
 	if (!result)
@@ -102,6 +110,10 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	_DepthShader.reset(new DepthShaderClass);
+	if (!_DepthShader)
+	{
+		return false;
+	}
 
 	result = _DepthShader->Initialize(device, hwnd, "../DirectX11Engine/depth.vs", "../DirectX11Engine/depth.ps");
 	if (!result)
@@ -118,8 +130,6 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, Material * material,
 	LightClass* lights[], SceneEffects& effects, XMFLOAT3 cameraPos, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView * reflectionTexture, ID3D11ShaderResourceView * refractionTexture/*, ID3D11ShaderResourceView * normalTexture*/)
 {
-	//@TODO: GO THROUGH EVERY SINGLE FUCKING CALL IN GRAPHICS.CPP AND MAKE SURE THEY MATCH WITH THE CALLS BELOW
-	// (may have passed in wrong textures in water or reflection shader)
 	bool result;
 
 	switch (material->shaderType)
@@ -131,14 +141,15 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 		break;
 
 	case EShaderType::ELIGHT_SPECULAR:
+		ThrowRuntime("UNDER CONSTRUCTION! ~ this switch case not yet working; currently calling _LightShader->Render() directly from Graphics.cpp!");
 		//@TODO - not passing in right values - need to REWORK ShaderManagerClass::Render() params to do so!
-/*		result = _LightShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
+		/*result = _LightShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
 			&light->GetViewMatrix(), 
 			&light->GetProjectionMatrix(),
 			material->GetResourceArray(), light->GetDirection(), light->GetAmbientColor(), light->GetDiffuseColor(), light->GetDiffuseColor(),
 			lights, 
-			cameraPos, light->GetSpecularColor(), light->GetSpecularPower(), effects.fogStart, effects.fogEnd, material->translation, material->transparency);
-	*/	if (!result) return false;
+			cameraPos, light->GetSpecularColor(), light->GetSpecularPower(), effects.fogStart, effects.fogEnd, material->translation, material->transparency);*/	
+		if (!result) return false;
 		//_LightShader->RenderShader(device, indexCount);
 		break;
 
@@ -195,13 +206,9 @@ FontShaderClass * ShaderManagerClass::GetFontShader()
 bool ShaderManagerClass::RenderFontShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT4 pixelColor)
 {
-	bool result;
-
-	// Render the model using the bump map shader. // @TODO: also make inheritance hierarchy for SHADER CLASSES
-	result = _FontShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, pixelColor);
-	if (!result)
+	if (!_FontShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, pixelColor))
 	{
-		return false;
+		ThrowRuntime("Could not initialize the font shader object.");
 	}
 
 	return true;

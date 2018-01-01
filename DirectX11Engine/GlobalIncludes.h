@@ -8,19 +8,15 @@
 #include <stdlib.h>
 #include <string>
 #include <memory>
-
-// UPDATED ERROR CHECKING
 #include <sstream>
 #include <wrl/client.h>
 #include <directxmath.h>
 #include <d3d11.h>
 #include "comdef.h"
 
-using namespace DirectX;
-using Microsoft::WRL::ComPtr;
 using namespace std;
-
-//#define CHECK(cond, msg)if (!(cond)){throw std::runtime_error( "Could not initialize the " + std::string((msg)) + " object. - line " + std::to_string( __LINE__ ) );}
+using Microsoft::WRL::ComPtr;
+using namespace DirectX;
 
 /////////////
 // GLOBALS //
@@ -31,12 +27,6 @@ const float SCREEN_DEPTH = 100.0f;
 const float SCREEN_NEAR = 1.0f;
 const int SHADOWMAP_WIDTH = 1024;
 const int SHADOWMAP_HEIGHT = 1024;
-
-//#define CHECK_HRESULT(cond, msg)if (cond < S_OK){throw std::runtime_error( "Could not initialize the " + std::string((msg)) + " object. - line " + std::to_string( __LINE__ ) );}
-
-//////////////////////////
-// UPDATED ERROR CHECKING
-//////////////////////////
 
 class RuntimeException
 {
@@ -88,6 +78,7 @@ public:
 			"\nShader error message: \n" + ShaderErrorMsg)
 	{}
 };
+
 class MissingShaderException :public RuntimeException
 {
 public:
@@ -96,6 +87,7 @@ public:
 		RuntimeException("Missing Shader File " + ShaderFilename)
 	{}
 };
+
 class HResultException : public RuntimeException
 {
 public:

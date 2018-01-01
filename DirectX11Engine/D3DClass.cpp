@@ -42,11 +42,9 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	_vsync_enabled = vsync;
 
 	// Create a DirectX graphics interface factory.
-	//result = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory);
 	ThrowHResultIf(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory));
 
 	// Use the factory to create an adapter for the primary graphics interface (video card).
-	//result = factory->EnumAdapters(0, &adapter);
 	ThrowHResultIf(factory->EnumAdapters(0, &adapter));
 
 	// Enumerate the primary adapter output (monitor).
@@ -89,7 +87,7 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	error = wcstombs_s(&stringLength, _videoCardDescription, 128, adapterDesc.Description, 128);
 	if (error != 0)
 	{
-		return false;
+		ThrowRuntime("Failed to store video card name.");
 	}
 
 	// Release the display mode list.
@@ -397,8 +395,6 @@ void D3DClass::BeginScene(const float red, const float green, const float blue, 
 
 	// Clear the depth buffer.
 	_deviceContext->ClearDepthStencilView(_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-	return;
 }
 
 
@@ -415,8 +411,6 @@ void D3DClass::EndScene()
 		// Present as fast as possible.
 		_swapChain->Present(0, 0);
 	}
-
-	return;
 }
 
 
@@ -435,21 +429,18 @@ ID3D11DeviceContext* D3DClass::GetDeviceContext()
 void D3DClass::GetProjectionMatrix(XMMATRIX& projectionMatrix)
 {
 	projectionMatrix = _projectionMatrix;
-	return;
 }
 
 
 void D3DClass::GetWorldMatrix(XMMATRIX& worldMatrix)
 {
 	worldMatrix = _worldMatrix;
-	return;
 }
 
 
 void D3DClass::GetOrthoMatrix(XMMATRIX& orthoMatrix)
 {
 	orthoMatrix = _orthoMatrix;
-	return;
 }
 
 
@@ -457,21 +448,18 @@ void D3DClass::GetVideoCardInfo(char* const cardName, int& memory)
 {
 	strcpy_s(cardName, 128, _videoCardDescription);
 	memory = _videoCardMemory;
-	return;
 }
 
 
 void D3DClass::TurnZBufferOn()
 {
 	_deviceContext->OMSetDepthStencilState(_depthStencilState.Get(), 1);
-	return;
 }
 
 
 void D3DClass::TurnZBufferOff()
 {
 	_deviceContext->OMSetDepthStencilState(_depthDisabledStencilState.Get(), 1);
-	return;
 }
 
 
@@ -488,8 +476,6 @@ void D3DClass::EnableAlphaBlending()
 
 	// Turn on the alpha blending.
 	_deviceContext->OMSetBlendState(_alphaEnableBlendingState.Get(), blendFactor, 0xffffffff);
-
-	return;
 }
 
 
@@ -506,8 +492,6 @@ void D3DClass::DisableAlphaBlending()
 
 	// Turn off the alpha blending.
 	_deviceContext->OMSetBlendState(_alphaDisableBlendingState.Get(), blendFactor, 0xffffffff);
-
-	return;
 }
 
 
@@ -515,8 +499,6 @@ void D3DClass::TurnOnCulling()
 {
 	// Set the culling rasterizer state.
 	_deviceContext->RSSetState(_rasterState.Get());
-
-	return;
 }
 
 
@@ -524,8 +506,6 @@ void D3DClass::TurnOffCulling()
 {
 	// Set the no back face culling rasterizer state.
 	_deviceContext->RSSetState(_rasterStateNoCulling.Get());
-
-	return;
 }
 
 
@@ -542,8 +522,6 @@ void D3DClass::EnableAlphaToCoverageBlending()
 
 	// Turn on the alpha blending.
 	_deviceContext->OMSetBlendState(_alphaEnableBlendingState2.Get(), blendFactor, 0xffffffff);
-
-	return;
 }
 
 
@@ -551,8 +529,6 @@ void D3DClass::EnableWireframe()
 {
 	// Set the wire frame rasterizer state.
 	_deviceContext->RSSetState(_rasterStateWireframe.Get());
-
-	return;
 }
 
 
@@ -560,8 +536,6 @@ void D3DClass::DisableWireframe()
 {
 	// Set the solid fill rasterizer state.
 	_deviceContext->RSSetState(_rasterState.Get());
-
-	return;
 }
 
 ID3D11DepthStencilView* D3DClass::GetDepthStencilView()
@@ -573,16 +547,12 @@ void D3DClass::SetBackBufferRenderTarget()
 {
 	// Bind the render target view and depth stencil buffer to the output render pipeline.
 	_deviceContext->OMSetRenderTargets(1, _renderTargetView.GetAddressOf(),_depthStencilView.Get());
-
-	return;
 }
 
 void D3DClass::ResetViewport()
 {
 	// Set the viewport.
 	_deviceContext->RSSetViewports(1, &_viewport);
-
-	return;
 }
 
 
@@ -1002,8 +972,6 @@ void D3DClass::ResetViewport()
 //		_swapChain->Release();
 //		_swapChain = 0;
 //	}
-//
-//	return;
 //}
 //
 //

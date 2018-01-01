@@ -39,8 +39,6 @@ void CpuClass::Initialize()
 	_lastSampleTime = GetTickCount();
 
 	_cpuUsage = 0;
-
-	return;
 }
 
 void CpuClass::Shutdown()
@@ -49,8 +47,6 @@ void CpuClass::Shutdown()
 	{
 		PdhCloseQuery(_queryHandle);
 	}
-
-	return;
 }
 
 void CpuClass::Frame()
@@ -70,8 +66,6 @@ void CpuClass::Frame()
 			_cpuUsage = value.longValue;
 		}
 	}
-
-	return;
 }
 
 int CpuClass::GetCpuPercentage()

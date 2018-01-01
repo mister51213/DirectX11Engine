@@ -15,11 +15,7 @@ bool WaterShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCoun
 	bool result;
 
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, textureArray, waterTranslation, reflectRefractScale);
-	if (!result)
-	{
-		return false;
-	}
+	SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, textureArray, waterTranslation, reflectRefractScale);
 
 	// Now render the prepared buffers with the shader.
 	RenderShader(deviceContext, indexCount);
@@ -45,23 +41,14 @@ bool WaterShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 
 	// Create the vertex input layout.
-	result = device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(),
-		_vertexShaderBuffer->GetBufferSize(), &_layout);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(),
+		_vertexShaderBuffer->GetBufferSize(), &_layout));
 
 	// Create a texture sampler state description.
 	D3D11_SAMPLER_DESC samplerDesc = MakeSamplerDesc();
+
 	// Create the texture sampler state.
-	result = device->CreateSamplerState(&samplerDesc, &_sampleState);
-	if (FAILED(result))
-	{
-		return false;
-	}
-	//@TODO  - NOT WORKING!
-	//ComPtr<ID3D11SamplerState> sampler = MakeSamplerState(device);
+	ThrowHResultIf(device->CreateSamplerState(&samplerDesc, &_sampleState));
 	
 	// VS Buffers
 	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
@@ -69,7 +56,6 @@ bool WaterShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 
 	// PS Buffers
 	_psBuffers.emplace_back(MakeConstantBuffer<WaterBufferType>(device));
-
 
 	return true;
 }

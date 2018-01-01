@@ -14,24 +14,14 @@ Model::Model(const Model& other)
 
 bool Model::Initialize(ID3D11Device* const device, ID3D11DeviceContext* const deviceContext, const string modelFilename, vector<string> texFileNames, const EShaderType shaderType)
 {
-	bool result;
-
 	// Load in the model data
-	result = LoadModel(modelFilename);
-	if (!result)
-	{
-		return false;
-	}
+	LoadModel(modelFilename);
 
 	// Calculate the normal, tangent, and binormal vectors for the model.
 	CalculateModelVectors();
 
 	// Initialize the vertex and index buffers.
-	result = InitializeBuffers(device);
-	if (!result)
-	{
-		return false;
-	}
+	InitializeBuffers(device);
 
 	// Loads the textures in the material. Material now holds pointer to texture class
 	_material.reset(new Material);
@@ -62,13 +52,6 @@ int Model::GetIndexCount()
 {
 	return _indexCount;
 }
-
-//ID3D11ShaderResourceView** Model::GetTextureArray()
-//{
-//	//return _TextureArray->GetTextureArray();
-//
-//	return _material->GetResourceArray();
-//}
 
 bool Model::InitializeBuffers(ID3D11Device* const device)
 {
@@ -118,11 +101,7 @@ bool Model::InitializeBuffers(ID3D11Device* const device)
 	vertexData.SysMemSlicePitch = 0;
 
 	// Now create the vertex buffer.
-	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &_vertexBuffer);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(device->CreateBuffer(&vertexBufferDesc, &vertexData, &_vertexBuffer));
 
 	// Set up the description of the static index buffer.
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -138,11 +117,7 @@ bool Model::InitializeBuffers(ID3D11Device* const device)
 	indexData.SysMemSlicePitch = 0;
 
 	// Create the index buffer.
-	result = device->CreateBuffer(&indexBufferDesc, &indexData, _indexBuffer.GetAddressOf());
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(device->CreateBuffer(&indexBufferDesc, &indexData, _indexBuffer.GetAddressOf()));
 
 	// Release the arrays now that the vertex and index buffers have been created and loaded.
 	delete[] vertices;
@@ -171,8 +146,6 @@ void Model::LoadVertices(ID3D11DeviceContext* const deviceContext)
 
 	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	return;
 }
 
 void Model::CalculateModelVectors()
@@ -258,8 +231,6 @@ void Model::CalculateModelVectors()
 		_model.get()[index - 3].by = binormal.y;
 		_model.get()[index - 3].bz = binormal.z;
 	}
-
-	return;
 }
 
 void Model::CalculateTangentBinormal(TempVertexType vertex1, TempVertexType vertex2, TempVertexType vertex3,
@@ -314,8 +285,6 @@ void Model::CalculateTangentBinormal(TempVertexType vertex1, TempVertexType vert
 	binormal.x = binormal.x / length;
 	binormal.y = binormal.y / length;
 	binormal.z = binormal.z / length;
-
-	return;
 }
 
 void Model::CalculateNormal(VectorType tangent, VectorType binormal, VectorType& normal)
@@ -335,8 +304,6 @@ void Model::CalculateNormal(VectorType tangent, VectorType binormal, VectorType&
 	normal.x = normal.x / length;
 	normal.y = normal.y / length;
 	normal.z = normal.z / length;
-
-	return;
 }
 
 void Model::SetResourceView(const int index, ID3D11ShaderResourceView * view)
@@ -359,7 +326,7 @@ bool Model::LoadModel(const string filename)
 	// If it could not open the file then exit.
 	if (fin.fail())
 	{
-		return false;
+		ThrowRuntime("Could not open " + filename + ".");
 	}
 
 	// Read up to the value of vertex count.
@@ -376,11 +343,10 @@ bool Model::LoadModel(const string filename)
 	_indexCount = _vertexCount;
 
 	// Create the model using the vertex count that was read in.
-	//_model = new ModelType[_vertexCount];
 	_model.reset(new ModelType[_vertexCount]);
 	if (!_model)
 	{
-		return false;
+		ThrowRuntime("Could not create the model - " + filename);
 	}
 
 	// Read up to the beginning of the data.

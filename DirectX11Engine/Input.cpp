@@ -4,10 +4,6 @@
 #include "Input.h"
 
 Input::Input()
-	:
-	_directInput(0),
-	_keyboard(0),
-	_mouse(0)
 {}
 
 Input::Input(const Input& other)
@@ -29,68 +25,32 @@ bool Input::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int scre
 	_mouseY = 0;
 
 	// Initialize the main direct input interface.
-	result = DirectInput8Create(hinstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&_directInput, NULL);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(DirectInput8Create(hinstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&_directInput, NULL));
 	
 	// Initialize the direct input interface for the keyboard.
-	result = _directInput->CreateDevice(GUID_SysKeyboard, &_keyboard, NULL);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_directInput->CreateDevice(GUID_SysKeyboard, &_keyboard, NULL));
 
 	// Set the data format.  In this case since it is a keyboard we can use the predefined data format.
-	result = _keyboard->SetDataFormat(&c_dfDIKeyboard);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_keyboard->SetDataFormat(&c_dfDIKeyboard));
 
 	// Set the cooperative level of the keyboard to not share with other programs.
-	result = _keyboard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_EXCLUSIVE);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_keyboard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_EXCLUSIVE));
 
 	// Now acquire the keyboard.
-	result = _keyboard->Acquire();
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_keyboard->Acquire());
 	
 	// Initialize the direct input interface for the mouse.
-	result = _directInput->CreateDevice(GUID_SysMouse, &_mouse, NULL);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_directInput->CreateDevice(GUID_SysMouse, &_mouse, NULL));
 
 	// Set the data format for the mouse using the pre-defined mouse data format.
-	result = _mouse->SetDataFormat(&c_dfDIMouse);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_mouse->SetDataFormat(&c_dfDIMouse));
 
 	//@SETTINGS
 	// Set the cooperative level of the mouse to share with other programs.
-	result = _mouse->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_EXCLUSIVE /*DISCL_NONEXCLUSIVE*/);
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_mouse->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_EXCLUSIVE /*DISCL_NONEXCLUSIVE*/));
 
 	// Acquire the mouse.
-	result = _mouse->Acquire();
-	if (FAILED(result))
-	{
-		return false;
-	}
+	ThrowHResultIf(_mouse->Acquire());
 
 	return true;
 }
@@ -108,15 +68,11 @@ void Input::Shutdown()
 	{
 		_keyboard->Unacquire();
 	}
-
-
-	return;
 }
 
 bool Input::Tick()
 {
 	bool result;
-
 
 	// Read the current state of the keyboard.
 	result = ReadKeyboard();
@@ -165,7 +121,6 @@ bool Input::ReadMouse()
 {
 	HRESULT result;
 
-
 	// Read the mouse device.
 	result = _mouse->GetDeviceState(sizeof(DIMOUSESTATE), (LPVOID)&_mouseState);
 	if (FAILED(result))
@@ -203,7 +158,7 @@ void Input::ProcessInput()
 
 bool Input::IsEscapePressed()
 {
-	// Do a bitwise and on the keyboard state to check if the escape key is currently being pressed.
+	// Bitwise & on the keyboard state to check if the escape key is currently being pressed.
 	if (_keyboardState[DIK_ESCAPE] & 0x80)
 	{
 		return true;
