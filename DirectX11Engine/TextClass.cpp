@@ -3,20 +3,14 @@
 ///////////////////////////////////////////////////////////////////////////////
 #include "textclass.h"
 
-
 TextClass::TextClass()
 {}
 
-
 TextClass::TextClass(const TextClass& other)
-{
-}
-
+{}
 
 TextClass::~TextClass()
-{
-}
-
+{}
 
 bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, int screenWidth, int screenHeight, int maxLength,
 	bool shadow, FontClass* Font, char* text, int positionX, int positionY, float red, float green, float blue)
@@ -25,11 +19,11 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 
 
 	// Store the screen width and height.
-	m_screenWidth = screenWidth;
-	m_screenHeight = screenHeight;
+	_screenWidth = screenWidth;
+	_screenHeight = screenHeight;
 
 	// Store the maximum length of the sentence.
-	m_maxLength = maxLength;
+	_maxLength = maxLength;
 
 	// Initalize the sentence.
 	result = InitializeSentence(device, deviceContext, Font, text, positionX, positionY, red, green, blue);
@@ -62,35 +56,35 @@ bool TextClass::InitializeSentence(ID3D11Device* device, ID3D11DeviceContext* de
 
 
 	// Set the vertex and index count.
-	m_vertexCount = 6 * m_maxLength;
-	m_indexCount = 6 * m_maxLength;
+	_vertexCount = 6 * _maxLength;
+	_indexCount = 6 * _maxLength;
 
 	// Create the vertex array.
-	vertices = new VertexType[m_vertexCount];
+	vertices = new VertexType[_vertexCount];
 	if (!vertices)
 	{
 		return false;
 	}
 
 	// Create the index array.
-	indices = new unsigned long[m_indexCount];
+	indices = new unsigned long[_indexCount];
 	if (!indices)
 	{
 		return false;
 	}
 
 	// Initialize vertex array to zeros at first.
-	memset(vertices, 0, (sizeof(VertexType) * m_vertexCount));
+	memset(vertices, 0, (sizeof(VertexType) * _vertexCount));
 
 	// Initialize the index array.
-	for (i = 0; i<m_indexCount; i++)
+	for (i = 0; i<_indexCount; i++)
 	{
 		indices[i] = i;
 	}
 
 	// Set up the description of the dynamic vertex buffer.
 	vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-	vertexBufferDesc.ByteWidth = sizeof(VertexType) * m_vertexCount;
+	vertexBufferDesc.ByteWidth = sizeof(VertexType) * _vertexCount;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	vertexBufferDesc.MiscFlags = 0;
@@ -102,7 +96,7 @@ bool TextClass::InitializeSentence(ID3D11Device* device, ID3D11DeviceContext* de
 	vertexData.SysMemSlicePitch = 0;
 
 	// Create the vertex buffer.
-	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
+	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &_vertexBuffer);
 	if (FAILED(result))
 	{
 		return false;
@@ -110,7 +104,7 @@ bool TextClass::InitializeSentence(ID3D11Device* device, ID3D11DeviceContext* de
 
 	// Set up the description of the static index buffer.
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_indexCount;
+	indexBufferDesc.ByteWidth = sizeof(unsigned long) * _indexCount;
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
@@ -122,19 +116,19 @@ bool TextClass::InitializeSentence(ID3D11Device* device, ID3D11DeviceContext* de
 	indexData.SysMemSlicePitch = 0;
 
 	// Create the index buffer.
-	result = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
+	result = device->CreateBuffer(&indexBufferDesc, &indexData, &_indexBuffer);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer2);
+	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &_vertexBuffer2);
 	if (FAILED(result))
 	{
 		return false;
 	}
 
-	result = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer2);
+	result = device->CreateBuffer(&indexBufferDesc, &indexData, &_indexBuffer2);
 	if (FAILED(result))
 	{
 		return false;
@@ -171,36 +165,36 @@ bool TextClass::UpdateSentence(ID3D11DeviceContext* deviceContext, FontClass* Fo
 
 
 	// Store the color of the sentence.
-	m_pixelColor = XMFLOAT4(red, green, blue, 1.0f);
+	_pixelColor = XMFLOAT4(red, green, blue, 1.0f);
 
 	// Get the number of letters in the sentence.
 	numLetters = (int)strlen(text);
 
 	// Check for possible buffer overflow.
-	if (numLetters > m_maxLength)
+	if (numLetters > _maxLength)
 	{
 		return false;
 	}
 
 	// Create the vertex array.
-	vertices = new VertexType[m_vertexCount];
+	vertices = new VertexType[_vertexCount];
 	if (!vertices)
 	{
 		return false;
 	}
 
 	// Initialize vertex array to zeros at first.
-	memset(vertices, 0, (sizeof(VertexType) * m_vertexCount));
+	memset(vertices, 0, (sizeof(VertexType) * _vertexCount));
 
 	// Calculate the X and Y pixel position on the screen to start drawing to.
-	drawX = (float)(((m_screenWidth / 2) * -1) + positionX);
-	drawY = (float)((m_screenHeight / 2) - positionY);
+	drawX = (float)(((_screenWidth / 2) * -1) + positionX);
+	drawY = (float)((_screenHeight / 2) - positionY);
 
 	// Use the font class to build the vertex array from the sentence text and sentence draw location.
 	Font->BuildVertexArray((void*)vertices, text, drawX, drawY);
 
 	// Lock the vertex buffer.
-	result = deviceContext->Map(m_vertexBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = deviceContext->Map(_vertexBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
 		return false;
@@ -210,26 +204,26 @@ bool TextClass::UpdateSentence(ID3D11DeviceContext* deviceContext, FontClass* Fo
 	verticesPtr = (void*)mappedResource.pData;
 
 	// Copy the vertex array into the vertex buffer.
-	memcpy(verticesPtr, (void*)vertices, (sizeof(VertexType) * m_vertexCount));
+	memcpy(verticesPtr, (void*)vertices, (sizeof(VertexType) * _vertexCount));
 
 	// Unlock the vertex buffer.
-	deviceContext->Unmap(m_vertexBuffer.Get(), 0);
+	deviceContext->Unmap(_vertexBuffer.Get(), 0);
 
 	//SHADOWING
-	memset(vertices, 0, (sizeof(VertexType) * m_vertexCount));
+	memset(vertices, 0, (sizeof(VertexType) * _vertexCount));
 
-	drawX = (float)((((m_screenWidth / 2) * -1) + positionX) + 2);
-	drawY = (float)(((m_screenHeight / 2) - positionY) - 2);
+	drawX = (float)((((_screenWidth / 2) * -1) + positionX) + 2);
+	drawY = (float)(((_screenHeight / 2) - positionY) - 2);
 	Font->BuildVertexArray((void*)vertices, text, drawX, drawY);
 
-	result = deviceContext->Map(m_vertexBuffer2.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = deviceContext->Map(_vertexBuffer2.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
 		return false;
 	}
 	verticesPtr = (void*)mappedResource.pData;
-	memcpy(verticesPtr, (void*)vertices, (sizeof(VertexType) * m_vertexCount));
-	deviceContext->Unmap(m_vertexBuffer2.Get(), 0);
+	memcpy(verticesPtr, (void*)vertices, (sizeof(VertexType) * _vertexCount));
+	deviceContext->Unmap(_vertexBuffer2.Get(), 0);
 
 	// Release the vertex array as it is no longer needed.
 	delete[] vertices;
@@ -250,26 +244,19 @@ void TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, ShaderManager
 	stride = sizeof(VertexType);
 	offset = 0;
 
-	// If shadowed then render the shadow text first.
-	//if (m_shadow)
-	{
-		shadowColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-		deviceContext->IASetVertexBuffers(0, 1, m_vertexBuffer2.GetAddressOf(), &stride, &offset);
-		deviceContext->IASetIndexBuffer(m_indexBuffer2.Get(), DXGI_FORMAT_R32_UINT, 0);
-		deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-		pShaderManager->RenderFontShader(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, shadowColor);
-	}
+	shadowColor = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer2.GetAddressOf(), &stride, &offset);
+	deviceContext->IASetIndexBuffer(_indexBuffer2.Get(), DXGI_FORMAT_R32_UINT, 0);
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pShaderManager->RenderFontShader(deviceContext, _indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, shadowColor);
 
 	// Render the text buffers.
-	deviceContext->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
-	deviceContext->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
+	deviceContext->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// Render the text using the font shader. //@PROBLEM - do it the old way using the old texture
-	//result = pFontShader->Render(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, /**_Font->GetTexture(),*/ fontTexture, m_pixelColor);
-	result = pShaderManager->RenderFontShader(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, m_pixelColor); //@TODO: implement generic function
-	//result = pShaderManager->Render(deviceContext, m_indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, 
-	//	(*sceneActors)[i]->GetModel()->GetMaterial(), _Light.get(), _LightData.data(), _sceneEffects, XMFLOAT3(0, 0, 0), _Camera->GetReflectionViewMatrix(), m_pixelColor);
+	// Render the text using the font shader.
+	result = pShaderManager->RenderFontShader(deviceContext, _indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, _pixelColor); //@TODO: implement generic function
 	if (!result)
 	{
 		false;

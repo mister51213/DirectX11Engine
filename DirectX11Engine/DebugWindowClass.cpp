@@ -4,9 +4,6 @@
 #include "DebugWindowClass.h"
 
 DebugWindowClass::DebugWindowClass()
-	:
-	_vertexBuffer(0),
-	_indexBuffer(0)
 {}
 
 DebugWindowClass::DebugWindowClass(const DebugWindowClass& other)
@@ -41,14 +38,6 @@ bool DebugWindowClass::Initialize(ID3D11Device* device, int screenWidth, int scr
 	}
 
 	return true;
-}
-
-void DebugWindowClass::Shutdown()
-{
-	// Shutdown the vertex and index buffers.
-	ShutdownBuffers();
-
-	return;
 }
 
 bool DebugWindowClass::Render(ID3D11DeviceContext* deviceContext, int positionX, int positionY)
@@ -163,27 +152,6 @@ bool DebugWindowClass::InitializeBuffers(ID3D11Device* device)
 	return true;
 }
 
-
-void DebugWindowClass::ShutdownBuffers()
-{
-	// Release the index buffer.
-	if (_indexBuffer)
-	{
-		_indexBuffer->Release();
-		_indexBuffer = 0;
-	}
-
-	// Release the vertex buffer.
-	if (_vertexBuffer)
-	{
-		_vertexBuffer->Release();
-		_vertexBuffer = 0;
-	}
-
-	return;
-}
-
-
 bool DebugWindowClass::UpdateBuffers(ID3D11DeviceContext* deviceContext, int positionX, int positionY)
 {
 	float left, right, top, bottom;
@@ -245,7 +213,7 @@ bool DebugWindowClass::UpdateBuffers(ID3D11DeviceContext* deviceContext, int pos
 	vertices[5].texture = XMFLOAT2(1.0f, 1.0f);
 
 	// Lock the vertex buffer so it can be written to.
-	result = deviceContext->Map(_vertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+	result = deviceContext->Map(_vertexBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
 	if (FAILED(result))
 	{
 		return false;
@@ -258,7 +226,7 @@ bool DebugWindowClass::UpdateBuffers(ID3D11DeviceContext* deviceContext, int pos
 	memcpy(verticesPtr, (void*)vertices, (sizeof(VertexType) * _vertexCount));
 
 	// Unlock the vertex buffer.
-	deviceContext->Unmap(_vertexBuffer, 0);
+	deviceContext->Unmap(_vertexBuffer.Get(), 0);
 
 	// Release the vertex array as it is no longer needed.
 	delete[] vertices;
@@ -282,7 +250,7 @@ void DebugWindowClass::LoadVertices(ID3D11DeviceContext* deviceContext)
 	deviceContext->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 
 	// Set the index buffer to active in the input assembler so it can be rendered.
-	deviceContext->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	deviceContext->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

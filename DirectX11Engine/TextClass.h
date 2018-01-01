@@ -42,7 +42,7 @@ private:
 private:
 	unique_ptr<ShaderManagerClass> _ShaderManager;
 
-	ComPtr<ID3D11Buffer> m_vertexBuffer, m_indexBuffer, m_vertexBuffer2, m_indexBuffer2;
-	int m_screenWidth, m_screenHeight, m_maxLength, m_vertexCount, m_indexCount;
-	XMFLOAT4 m_pixelColor;
+	ComPtr<ID3D11Buffer> _vertexBuffer, _indexBuffer, _vertexBuffer2, _indexBuffer2;
+	int _screenWidth, _screenHeight, _maxLength, _vertexCount, _indexCount;
+	XMFLOAT4 _pixelColor;
 };
