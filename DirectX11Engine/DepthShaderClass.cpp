@@ -42,8 +42,7 @@ bool DepthShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 
 	// Get a count of the elements in the layout.
 	unsigned int numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
-	HRESULT result = device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(), _vertexShaderBuffer->GetBufferSize(), &_layout);
-	CHECK(SUCCEEDED(result), "input layout");
+	ThrowHResultIf(device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(), _vertexShaderBuffer->GetBufferSize(), &_layout));
 
 	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
 

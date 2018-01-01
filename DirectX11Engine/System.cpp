@@ -24,41 +24,33 @@ bool System::Initialize()
 	_Input.reset(new Input);
 	if (!_Input)return false;
 
-	result = _Input->Initialize(_hinstance, _hwnd, screenWidth, screenHeight);
-	CHECK(result, "input");
+	_Input->Initialize(_hinstance, _hwnd, screenWidth, screenHeight);
 
 	_Physics.reset(new Physics);
 	if (!_Physics) return false;
 
-	result = _Physics->Initialize();
-	CHECK(result, "physics");
+	_Physics->Initialize();
 
 	_Scene.reset(new Scene);
 	if (!_Scene) return false;
 	
-	result = _Scene->Initialize();
-	CHECK(result, "scene");
+	_Scene->Initialize();
 
 	// This object will handle rendering all the graphics for this application.
-	//_Graphics.reset(new Graphics);
 	_Graphics.reset(new GraphicsClass);
 	if (!_Graphics)	return false;
 
-	result = _Graphics->Initialize(screenWidth, screenHeight, _hwnd, _Scene.get());
-	//result = _Graphics->Initialize(screenWidth, screenHeight, _hwnd);
-	CHECK(result, "graphics");
+	_Graphics->Initialize(screenWidth, screenHeight, _hwnd, _Scene.get());
 
 	_Timer.reset(new TimerClass);
 	if (!_Timer)return false;
 
-	result = _Timer->Initialize();
-	CHECK(result, "timer");
+	_Timer->Initialize();
 
 	_UI.reset(new UI);
 	if (!_UI)return false;
 
-	result = _UI->Initialize();
-	CHECK(result, "UI");
+	_UI->Initialize();
 
 	return true;
 }
@@ -74,9 +66,6 @@ bool System::Tick()
 	_Scene->Tick(_Timer->GetTime(), _Input.get());
 
 	_Graphics->UpdateFrame(_Timer->GetTime(), _Scene.get(), _UI->_Fps->GetFps());
-	//XMFLOAT3 camPos = _Scene->GetCamera()->GetPosition();
-	//XMFLOAT3 camRot = _Scene->GetCamera()->GetOrientation();
-	//_Graphics->Frame(camPos.x, camPos.y, camPos.z, camRot.x, camRot.y, camRot.z);
 
 	_UI->Tick();
 
@@ -85,8 +74,6 @@ bool System::Tick()
 
 void System::Shutdown()
 {
-
-	// Shutdown the window.
 	ShutdownWindows();
 
 	return;
@@ -127,7 +114,6 @@ void System::Run()
 			}
 		}
 
-		//@TODO: should this also be in process input?
 		// Check if the user pressed escape and wants to quit.
 		if (_Input->IsEscapePressed() == true)
 		{
@@ -148,7 +134,6 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 	WNDCLASSEX wc;
 	DEVMODE dmScreenSettings;
 	int posX, posY;
-
 
 	// Get an external pointer to this object.
 	ApplicationHandle = this;

@@ -77,18 +77,21 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	//CHECK(SUCCEEDED(device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(), _vertexShaderBuffer->GetBufferSize(), &_layout), "input layout");
 	
 	// Create the texture wrap sampler state.
-	HRESULT result = device->CreateSamplerState(&MakeSamplerDesc(), &_sampleState);
-	CHECK(SUCCEEDED(result), "sampler state");
+	ThrowHResultIf(device->CreateSamplerState(&MakeSamplerDesc(), &_sampleState));
+	//HRESULT result = device->CreateSamplerState(&MakeSamplerDesc(), &_sampleState);
+	//CHECK(SUCCEEDED(result), "sampler state");
 
 	// Create the texture clamp sampler state.
-	result = device->CreateSamplerState(&MakeSamplerDesc(D3D11_TEXTURE_ADDRESS_CLAMP), &_sampleStateClamp);
-	CHECK(SUCCEEDED(result), "sampler state");
+	ThrowHResultIf(device->CreateSamplerState(&MakeSamplerDesc(D3D11_TEXTURE_ADDRESS_CLAMP), &_sampleStateClamp));
+	//result = device->CreateSamplerState(&MakeSamplerDesc(D3D11_TEXTURE_ADDRESS_CLAMP), &_sampleStateClamp);
+	//CHECK(SUCCEEDED(result), "sampler state");
 
 	D3D11_SAMPLER_DESC comparisonDesc = MakeSamplerDesc(D3D11_TEXTURE_ADDRESS_CLAMP);
 	comparisonDesc.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
 	comparisonDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
-	result = device->CreateSamplerState(&comparisonDesc, &_sampleStateComp);
-	CHECK(SUCCEEDED(result), "sampler state");
+	ThrowHResultIf(device->CreateSamplerState(&comparisonDesc, &_sampleStateComp));
+	//result = device->CreateSamplerState(&comparisonDesc, &_sampleStateComp);
+	//CHECK(SUCCEEDED(result), "sampler state");
 
 	// VS Buffers
 	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));

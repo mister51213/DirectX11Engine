@@ -20,7 +20,7 @@ using namespace DirectX;
 using Microsoft::WRL::ComPtr;
 using namespace std;
 
-#define CHECK(cond, msg)if (!(cond)){throw std::runtime_error( "Could not initialize the " + std::string((msg)) + " object. - line " + std::to_string( __LINE__ ) );}
+//#define CHECK(cond, msg)if (!(cond)){throw std::runtime_error( "Could not initialize the " + std::string((msg)) + " object. - line " + std::to_string( __LINE__ ) );}
 
 /////////////
 // GLOBALS //
@@ -33,7 +33,6 @@ const int SHADOWMAP_WIDTH = 1024;
 const int SHADOWMAP_HEIGHT = 1024;
 
 //#define CHECK_HRESULT(cond, msg)if (cond < S_OK){throw std::runtime_error( "Could not initialize the " + std::string((msg)) + " object. - line " + std::to_string( __LINE__ ) );}
-
 
 //////////////////////////
 // UPDATED ERROR CHECKING

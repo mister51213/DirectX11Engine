@@ -20,7 +20,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	_D3D.reset(new D3DClass);
 	if (!_D3D) return false;
 
-	CHECK(_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR), "Direct3D");
+	_D3D->Initialize(screenWidth, screenHeight, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
 
 	// SHADERS //
 	_ShaderManager.reset(new ShaderManagerClass);
@@ -43,7 +43,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 			return false;
 		}
 
-		CHECK(_RenderTextures[i]->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR), "render to texture");
+		_RenderTextures[i]->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR), "render to texture";
 	}
 
 	// MODELS //
@@ -57,8 +57,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		it->second->InstantiateModel(new Model);
 
 		vector<string> texArray(9, "../DirectX11Engine/data/" + texNames[i]);
-		CHECK(it->second->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/" + meshNames[i],
-			texArray, EShaderType::ELIGHT_SPECULAR), modelNames[i]);
+		it->second->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/" + meshNames[i],
+			texArray, EShaderType::ELIGHT_SPECULAR);
 
 		// Store the render texture in the texture view array of each model to make it accessible to the graphics pipeline
 		for (int idx = 0; idx < _RenderTextures.size(); ++idx)
@@ -214,7 +214,7 @@ bool GraphicsClass::Render(Scene* pScene)
 			_ShaderManager->_LightShader->Render(
 				_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 				it->second->GetModel()->GetMaterial()->GetResourceArray(),
-				/*_Lights[0]->GetAmbientColor(),*/	_sceneEffects.ambientColor,
+				_sceneEffects.ambientColor,
 				shadowLights, _Camera->GetPosition(),_sceneEffects.fogStart, _sceneEffects.fogEnd,
 				it->second->GetModel()->GetMaterial()->translation, it->second->GetModel()->GetMaterial()->transparency);
 		}
@@ -251,9 +251,8 @@ bool GraphicsClass::InitializeUI(int screenWidth, int screenHeight)
 	}
 
 	// Initialize the first font object.
-	result = _Font1->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/font.txt",
+	_Font1->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/font.txt",
 		"../DirectX11Engine/data/font.tga", 32.0f, 3);
-	CHECK(result, "font");
 
 	// Create the text object for the fps string.
 	_FpsString.reset(new TextClass);
@@ -263,9 +262,8 @@ bool GraphicsClass::InitializeUI(int screenWidth, int screenHeight)
 	}
 
 	// Initialize the fps text string.
-	result = _FpsString->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
+	_FpsString->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
 		"Fps: 0", 10, 50, 0.0f, 1.0f, 0.0f);
-	CHECK(result, "fps string");
 
 	// Initial the previous frame fps.
 	_previousFps = -1;
@@ -278,10 +276,9 @@ bool GraphicsClass::InitializeUI(int screenWidth, int screenHeight)
 		_PositionStrings.push_back(unique_ptr<TextClass>(new TextClass()));
 		if (!_PositionStrings[i]) return false;
 
-		result = _PositionStrings[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
+		_PositionStrings[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 16, false, _Font1.get(),
 			labels[i], 10, 310 + offset, 1.0f, 1.0f, 1.0f);
-		CHECK(result, "position string number " + to_string(i));
-
+		
 		offset += 20;
 		_previousPosition[i] = -1;
 	}
@@ -294,8 +291,7 @@ bool GraphicsClass::InitializeUI(int screenWidth, int screenHeight)
 		_RenderCountStrings.push_back(unique_ptr<TextClass>(new TextClass()));
 		if (!_RenderCountStrings[i]) return false;
 
-		result = _RenderCountStrings[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), renderLabels[i], 10, 260 + offset, 1.0f, 1.0f, 1.0f);
-		CHECK(result, "render count string number " + to_string(i));
+		_RenderCountStrings[i]->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), screenWidth, screenHeight, 32, false, _Font1.get(), renderLabels[i], 10, 260 + offset, 1.0f, 1.0f, 1.0f);
 
 		offset += 20;
 	}
@@ -403,7 +399,6 @@ bool GraphicsClass::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int r
 {
 	char tempString[32];
 	char finalString[32];
-	bool result;
 	
 	// Convert the render count integer to string format.
 	_itoa_s(renderCount, tempString, 10);
@@ -413,11 +408,7 @@ bool GraphicsClass::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int r
 	strcat_s(finalString, tempString);
 
 	// Update the sentence vertex buffer with the new string information.
-	result = _RenderCountStrings[0]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 260, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
+	_RenderCountStrings[0]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 260, 1.0f, 1.0f, 1.0f);
 
 	// Convert the cells drawn integer to string format.
 	_itoa_s(nodesDrawn, tempString, 10);
@@ -427,11 +418,7 @@ bool GraphicsClass::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int r
 	strcat_s(finalString, tempString);
 
 	// Update the sentence vertex buffer with the new string information.
-	result = _RenderCountStrings[1]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 280, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
+	_RenderCountStrings[1]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 280, 1.0f, 1.0f, 1.0f);
 
 	// Convert the cells culled integer to string format.
 	_itoa_s(nodesCulled, tempString, 10);
@@ -441,11 +428,7 @@ bool GraphicsClass::UpdateRenderCounts(ID3D11DeviceContext* deviceContext, int r
 	strcat_s(finalString, tempString);
 
 	// Update the sentence vertex buffer with the new string information.
-	result = _RenderCountStrings[2]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 300, 1.0f, 1.0f, 1.0f);
-	if (!result)
-	{
-		return false;
-	}
+	_RenderCountStrings[2]->UpdateSentence(deviceContext, _Font1.get(), finalString, 10, 300, 1.0f, 1.0f, 1.0f);
 
 	return true;
 }
