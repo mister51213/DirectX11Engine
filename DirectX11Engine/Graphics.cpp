@@ -51,6 +51,19 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	vector<string> meshNames = { "sphere.txt", "cube2.txt", "plane01.txt", "cube2.txt", "cube2.txt", "plane01.txt", "sphere.txt"};
 	vector<string> modelNames = { "cube", "sphere", "ground", "sphere2"};
 
+	// DEFAULT TEX //
+	vector<string> defaultTex{
+		"../DirectX11Engine/data/stone.dds",
+		"../DirectX11Engine/data/dirt.dds",
+		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/alpha.dds",
+		"../DirectX11Engine/data/bumpMap.dds", // normal map
+		"../DirectX11Engine/data/specMap.dds",
+		"../DirectX11Engine/data/specMap.dds",
+		"../DirectX11Engine/data/specMap.dds",
+		"../DirectX11Engine/data/specMap.dds"
+	};
+
 	int i = 0;
 	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 	{
@@ -58,7 +71,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 
 		vector<string> texArray(9, "../DirectX11Engine/data/" + texNames[i]);
 		it->second->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/" + meshNames[i],
-			texArray, EShaderType::ELIGHT_SPECULAR);
+			/*texArray*/defaultTex, EShaderType::ELIGHT_SPECULAR);
 
 		// Store the render texture in the texture view array of each model to make it accessible to the graphics pipeline
 		for (int idx = 0; idx < _RenderTextures.size(); ++idx)

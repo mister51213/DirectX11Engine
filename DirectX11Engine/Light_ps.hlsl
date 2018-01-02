@@ -78,6 +78,50 @@ struct PixelInputType
 	float fogFactor : FOG;
 };
 
+
+float4 CalculateNormalMapIntensity(PixelInputType input, float4 diffuseColor, float3 lightDirection)
+{
+    float3 bumpNormal;
+
+	// Get normal value from the bump map
+	float4 bumpMap = shaderTextures[4].Sample(SampleType, input.tex);
+
+	/////////////////// NORMAL MAPPING //////////////////
+	// Expand the range of the normal value from (0, +1) to (-1, +1).
+    bumpMap = (bumpMap * 2.0f) - 1.0f;
+
+	// Change the COORDINATE BASIS of the normal into the space represented by basis vectors tangent, binormal, and normal!
+    bumpNormal = normalize((bumpMap.x * input.tangent) + (bumpMap.y * input.binormal) + (bumpMap.z * input.normal));
+
+
+    // Set the default output color to the ambient light value for all pixels.
+    float lightColor = cb_ambientColor;
+
+    // Initialize the specular color.
+    float4 specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	// Invert the light direction for calculations.
+    float3 lightDir = -lightDirection;
+
+    // Calculate the amount of light on this pixel.
+    float lightIntensity = saturate(dot(bumpNormal, lightDir));
+
+	if(lightIntensity > 0.0f)
+    {
+        // Determine the final diffuse color based on the diffuse color and the amount of light intensity.
+        lightColor = saturate(lightColor + (diffuseColor * lightIntensity));
+
+		// Calculate the reflection vector based on the light intensity, normal vector, and light direction.
+        float3 reflection = normalize(2 * lightIntensity * bumpNormal - lightDir); 
+
+        // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
+        specular = pow(saturate(dot(reflection, input.viewDirection)), 30.f);
+    }
+
+    // Saturate the final light color.
+   return saturate(lightColor + specular);
+}
+
 float4 LightPixelShader(PixelInputType input) : SV_TARGET
 {
 	float bias;
@@ -128,8 +172,9 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 				if(lightIntensity > 0.0f)
 				{
 					// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-					//color += (diffuseCols[i] * lightIntensity * 0.25f);
-					color += (cb_lights[i].diffuseColor * lightIntensity * 0.25f);
+					//color += (cb_lights[i].diffuseColor * lightIntensity * 0.25f);
+
+					color += CalculateNormalMapIntensity(input, cb_lights[i].diffuseColor, cb_lights[i].lightDirection)*0.25f;
 				}
 			}
 			//else // shadow falloff here
@@ -144,8 +189,18 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
     // Saturate the final light color.
     color = saturate(color);
 
+	// BLENDING 	// BLENDING		// BLENDING
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
-	textureColor = shaderTextures[0].Sample(SampleTypeWrap, input.tex);
+    input.tex.x += textureTranslation;
+
+    // Sample the pixel color from the textures using the sampler at this texture coordinate location.
+	float4 color1 = shaderTextures[0].Sample(SampleTypeWrap, input.tex);
+    float4 color2 = shaderTextures[1].Sample(SampleTypeWrap, input.tex);
+	float4 alphaValue = shaderTextures[3].Sample(SampleTypeWrap, input.tex);
+
+	textureColor = saturate((alphaValue * color1) + ((1.0f - alphaValue) * color2));
+	// WORKING //
+	//textureColor = shaderTextures[0].Sample(SampleTypeWrap, input.tex);
 
 	// Combine the light and texture color.
 	color = color * textureColor;

@@ -27,14 +27,9 @@ struct LightTemplate_VS
 //////////////////////
 cbuffer MatrixBuffer:register(b0)
 {
-	//int cb_lightCount;
-	//float3 cb_padding;
-
 	matrix worldMatrix;
 	matrix viewMatrix;
 	matrix projectionMatrix;
-   //	matrix lightViewMatrix[NUM_LIGHTS]; // @TODO - REMOVE 
-   // matrix lightProjectionMatrix[NUM_LIGHTS]; // @TODO - REMOVE
 	LightTemplate_VS cb_lights[NUM_LIGHTS];
 };
 
@@ -45,13 +40,7 @@ cbuffer CameraBuffer:register(b1)
     float padding;
 };
 
-//cbuffer LightShadowBuffer:register(b2) // @TODO: REMOVE
-//{
-//	float4 c_lightShadowPos[NUM_LIGHTS];
-//};
-
-//cbuffer FogBuffer:register(b3) // @TODO: -> b2
-cbuffer FogBuffer:register(b2) // @TODO: -> b2
+cbuffer FogBuffer:register(b2)
 {
     float fogStart;
     float fogEnd;
