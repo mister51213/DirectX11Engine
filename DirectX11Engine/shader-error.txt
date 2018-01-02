@@ -1,3 +1,4 @@
 C:\Users\n\Documents\Visual Studio 2017\Projects\DirectX11Engine\DirectX11Engine\Light_ps.hlsl(98,11-38): warning X3206: implicit truncation of vector type
 C:\Users\n\Documents\Visual Studio 2017\Projects\DirectX11Engine\DirectX11Engine\Light_ps.hlsl(112,9-75): warning X3206: implicit truncation of vector type
-C:\Users\n\Documents\Visual Studio 2017\Projects\DirectX11Engine\DirectX11Engine\Light_ps.hlsl(195,2-7): error X3004: undeclared identifier 'color1'
+C:\Users\n\Documents\Visual Studio 2017\Projects\DirectX11Engine\DirectX11Engine\Light_ps.hlsl(153,16-36): warning X3550: sampler array index must be a literal expression, forcing loop to unroll
+C:\Users\n\Documents\Visual Studio 2017\Projects\DirectX11Engine\DirectX11Engine\Light_ps.hlsl(190,75-86): error X3504: array index out of bounds

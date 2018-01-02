@@ -138,7 +138,6 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 	return true;
 }
 
-
 bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 {
 	XMMATRIX worldMatrix, lightViewMatrix, lightProjectionMatrix, translateMatrix;
@@ -224,12 +223,16 @@ bool GraphicsClass::Render(Scene* pScene)
 			worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(it->second->GetPosition().x, it->second->GetPosition().y, it->second->GetPosition().z));
 			it->second->GetModel()->LoadVertices(_D3D->GetDeviceContext());
 
+			//_D3D->EnableAlphaBlending();
+
 			_ShaderManager->_LightShader->Render(
 				_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 				it->second->GetModel()->GetMaterial()->GetResourceArray(),
 				_sceneEffects.ambientColor,
 				shadowLights, _Camera->GetPosition(),_sceneEffects.fogStart, _sceneEffects.fogEnd,
 				it->second->GetModel()->GetMaterial()->translation, it->second->GetModel()->GetMaterial()->transparency);
+
+			//_D3D->DisableAlphaBlending();
 		}
 	}
 	
