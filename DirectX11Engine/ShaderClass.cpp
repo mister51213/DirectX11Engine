@@ -19,8 +19,6 @@ ShaderClass::~ShaderClass()
 
 bool ShaderClass::Initialize(ID3D11Device * device, HWND hwnd, char * vsFilename, char * psFilename)
 {
-	bool result;
-
 	// Initialize the vertex and pixel shaders.
 	InitializeShader(device,hwnd,vsFilename,psFilename);
 
@@ -35,41 +33,34 @@ bool ShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, char * vsFi
 bool ShaderClass::CompileShaders(
 	ID3D11Device * device, 
 	HWND hwnd, 
-	char* vsFilename, 
-	char* psFilename, 
+	//char* vsFilename,
+	//char* psFilename,
+	string vsFilename,
+	string psFilename,
 	char* vsDesc, 
 	char* psDesc, 
 	ID3D10Blob* errorMessage)
 {
-	// USING HLSL COMPILER
-	ComPtr<ID3D10Blob> pVertexShaderBuffer, pPixelShaderBuffer;
-
-	// Read in compiled shader files
-	ThrowHResultIf(D3DReadFileToBlob(charToWChar(vsFilename), _vertexShaderBuffer.GetAddressOf()));
-	ThrowHResultIf(D3DReadFileToBlob(charToWChar(psFilename), _pixelShaderBuffer.GetAddressOf()));
-
-	// USING D#D COMPILE FROM FILE
-	ShaderCompiler compiler;
-
-	// Compile the vertex shader code. 
+	// USING D3D COMPILE FROM FILE
+	//ShaderCompiler compiler;
+	//_pixelShaderBuffer = compiler.CompileShader(psDesc, "ps_5_0", psFilename, device);
 	//_vertexShaderBuffer = compiler.CompileShader(vsDesc, "vs_5_0", vsFilename, device);
 
-	// Create the vertex shader from the buffer.
-	ThrowHResultIf(device->CreateVertexShader(
-		_vertexShaderBuffer->GetBufferPointer(),
-		_vertexShaderBuffer->GetBufferSize(),
-		nullptr,
-		&_vertexShader));
+	// USING HLSL COMPILER
+	#ifdef RELEASE
+		vsFilename = "../x64/Release/" + vsFilename;
+		psFilename = "../x64/Release/" + psFilename;
+	#else
+		vsFilename = "../x64/Debug/" + vsFilename;
+		psFilename = "../x64/Debug/" + psFilename;
+	#endif
 
-	// Compile the pixel shader code.
-	//_pixelShaderBuffer = compiler.CompileShader(psDesc, "ps_5_0", psFilename, device);
+	ComPtr<ID3D10Blob> pVertexShaderBuffer, pPixelShaderBuffer;
+	ThrowHResultIf(D3DReadFileToBlob(charToWChar(vsFilename.data()), _vertexShaderBuffer.GetAddressOf()));
+	ThrowHResultIf(D3DReadFileToBlob(charToWChar(psFilename.data()), _pixelShaderBuffer.GetAddressOf()));
 
-	// Create the vertex shader from the buffer.
-	ThrowHResultIf(device->CreatePixelShader(
-		_pixelShaderBuffer->GetBufferPointer(),
-		_pixelShaderBuffer->GetBufferSize(),
-		nullptr,
-		&_pixelShader));
+	ThrowHResultIf(device->CreateVertexShader(_vertexShaderBuffer->GetBufferPointer(),_vertexShaderBuffer->GetBufferSize(),nullptr,&_vertexShader));
+	ThrowHResultIf(device->CreatePixelShader(_pixelShaderBuffer->GetBufferPointer(),_pixelShaderBuffer->GetBufferSize(),nullptr,&_pixelShader));
 
 	// @LEGACY // @LEGACY // @LEGACY // @LEGACY // @LEGACY // @LEGACY
 	//WCHAR* vsFilenameW = charToWChar(vsFilename);
