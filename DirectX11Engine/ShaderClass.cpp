@@ -41,10 +41,18 @@ bool ShaderClass::CompileShaders(
 	char* psDesc, 
 	ID3D10Blob* errorMessage)
 {
+	// USING HLSL COMPILER
+	ComPtr<ID3D10Blob> pVertexShaderBuffer, pPixelShaderBuffer;
+
+	// Read in compiled shader files
+	ThrowHResultIf(D3DReadFileToBlob(charToWChar(vsFilename), _vertexShaderBuffer.GetAddressOf()));
+	ThrowHResultIf(D3DReadFileToBlob(charToWChar(psFilename), _pixelShaderBuffer.GetAddressOf()));
+
+	// USING D#D COMPILE FROM FILE
 	ShaderCompiler compiler;
 
 	// Compile the vertex shader code. 
-	_vertexShaderBuffer = compiler.CompileShader(vsDesc, "vs_5_0", vsFilename, device);
+	//_vertexShaderBuffer = compiler.CompileShader(vsDesc, "vs_5_0", vsFilename, device);
 
 	// Create the vertex shader from the buffer.
 	ThrowHResultIf(device->CreateVertexShader(
@@ -54,7 +62,7 @@ bool ShaderClass::CompileShaders(
 		&_vertexShader));
 
 	// Compile the pixel shader code.
-	_pixelShaderBuffer = compiler.CompileShader(psDesc, "ps_5_0", psFilename, device);
+	//_pixelShaderBuffer = compiler.CompileShader(psDesc, "ps_5_0", psFilename, device);
 
 	// Create the vertex shader from the buffer.
 	ThrowHResultIf(device->CreatePixelShader(

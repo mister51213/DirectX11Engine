@@ -25,7 +25,8 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	// Initialize the texture shader object.
-	result = _TextureShader->Initialize(device, hwnd, "../DirectX11Engine/texture_vs.hlsl", "../DirectX11Engine/texture_ps.hlsl");
+	//result = _TextureShader->Initialize(device, hwnd, "../DirectX11Engine/texture_vs.hlsl", "../DirectX11Engine/texture_ps.hlsl");
+	result = _TextureShader->Initialize(device, hwnd, "../x64/Debug/texture_vs.cso", "../x64/Debug/texture_ps.cso");
 	if (!result)
 	{
 		throw std::runtime_error("Could not initialize the texture shader object. - " + to_string(__LINE__));
@@ -41,7 +42,8 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	// Initialize the light shader object.
-	result = _LightShader->Initialize(device, hwnd, "../DirectX11Engine/Light_vs.hlsl", "../DirectX11Engine/Light_ps.hlsl");
+	//result = _LightShader->Initialize(device, hwnd, "../DirectX11Engine/Light_vs.hlsl", "../DirectX11Engine/Light_ps.hlsl");
+	result = _LightShader->Initialize(device, hwnd, "../x64/Debug/Light_vs.cso", "../x64/Debug/Light_ps.cso");
 	if (!result)
 	{
 		throw std::runtime_error("Could not initialize the light shader object. - " + to_string(__LINE__));
@@ -57,7 +59,8 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	// Initialize the bump map shader object.
-	result = _FontShader->Initialize(device, hwnd, "../DirectX11Engine/font.vs", "../DirectX11Engine/font.ps");
+	//result = _FontShader->Initialize(device, hwnd, "../DirectX11Engine/font.vs", "../DirectX11Engine/font.ps");
+	result = _FontShader->Initialize(device, hwnd, "../x64/Debug/font_vs.cso", "../x64/Debug/font_ps.cso");
 	if (!result)
 	{
 		throw std::runtime_error("Could not initialize the bump map shader object. - " + to_string(__LINE__));
@@ -73,7 +76,8 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	}
 
 	// Initialize the bump map shader object.
-	result = _ReflectionShader->Initialize(device, hwnd, "../DirectX11Engine/Reflection_vs.hlsl", "../DirectX11Engine/Reflection_ps.hlsl");
+	//result = _ReflectionShader->Initialize(device, hwnd, "../DirectX11Engine/Reflection_vs.hlsl", "../DirectX11Engine/Reflection_ps.hlsl");
+	result = _ReflectionShader->Initialize(device, hwnd, "../x64/Debug/Reflection_vs.cso", "../x64/Debug/Reflection_ps.cso");
 	if (!result)
 	{
 		throw std::runtime_error("Could not initialize the reflection shader object. - " + to_string(__LINE__));
@@ -87,7 +91,8 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 		return false;
 	}
 
-	result = _WaterShader->Initialize(device, hwnd, "../DirectX11Engine/WaterShader_vs.hlsl", "../DirectX11Engine/WaterShader_ps.hlsl");
+	//result = _WaterShader->Initialize(device, hwnd, "../DirectX11Engine/WaterShader_vs.hlsl", "../DirectX11Engine/WaterShader_ps.hlsl");
+	result = _WaterShader->Initialize(device, hwnd, "../x64/Debug/WaterShader_vs.cso", "../x64/Debug/WaterShader_ps.cso");
 	if (!result)
 	{
 		throw std::runtime_error("Could not initialize the water shader object. - " + to_string(__LINE__));
@@ -101,7 +106,8 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 		return false;
 	}
 
-	result = _RefractionShader->Initialize(device, hwnd, "../DirectX11Engine/Refraction_vs.hlsl", "../DirectX11Engine/Refraction_ps.hlsl");
+	//result = _RefractionShader->Initialize(device, hwnd, "../DirectX11Engine/Refraction_vs.hlsl", "../DirectX11Engine/Refraction_ps.hlsl");
+	result = _RefractionShader->Initialize(device, hwnd, "../x64/Debug/Refraction_vs.cso", "../x64/Debug/Refraction_ps.cso");
 	if (!result)
 	{
 		throw std::runtime_error("Could not initialize the refraction shader object. - " + to_string(__LINE__));
@@ -115,7 +121,8 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 		return false;
 	}
 
-	result = _DepthShader->Initialize(device, hwnd, "../DirectX11Engine/depth.vs", "../DirectX11Engine/depth.ps");
+	//result = _DepthShader->Initialize(device, hwnd, "../DirectX11Engine/depth.vs", "../DirectX11Engine/depth.ps");
+	result = _DepthShader->Initialize(device, hwnd, "../x64/Debug/depth_vs.cso", "../x64/Debug/depth_ps.cso");
 	if (!result)
 	{
 		throw std::runtime_error("Could not initialize the depth shader object. - " + to_string(__LINE__));

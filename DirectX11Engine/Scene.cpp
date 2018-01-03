@@ -1,5 +1,4 @@
 #include "Scene.h"
-#include "Input.h"
 #include "Graphics.h"
 #include <DirectXMath.h>
 
@@ -66,6 +65,7 @@ void Scene::Tick(float deltaTime, Input* pInput)
 	UpdateActors(deltaTime);
 
 	// Update Lights
+	// light 1
 	if (_lightPositionX > 1.0f)
 	{
 		_lightPositionX = -1.f;
@@ -77,7 +77,15 @@ void Scene::Tick(float deltaTime, Input* pInput)
 	_lightPositionX += _lightPosIncrement;
 	_lightPositionZ += _lightPosIncrement;
 	_LightActors[0]->SetPosition(XMFLOAT3(cos(_lightPositionX)*5.f, 8.0f, sin(_lightPositionZ)*5.f));
-	_LightActors[1]->SetPosition(XMFLOAT3(_lightPositionX, 8.0f, _lightPositionZ));
+
+	// light 2
+	if (_lightPositionX2 > 5.0f || _lightPositionX2 < -5.0f)
+	{
+		_increment2 *= -1;
+	}
+	_lightPositionX2 += _increment2;
+
+	_LightActors[1]->SetPosition(XMFLOAT3(_lightPositionX2, 8.0f, sin(_lightPositionZ)*-8.f));
 }
 
 void Scene::ProcessInput(float deltaTime, Input* pInput)

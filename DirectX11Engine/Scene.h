@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 
+#include "Input.h"
 #include "Actor.h"
 #include "Position.h" 
 #include "LightClass.h"
@@ -19,8 +20,8 @@ public:
 	Scene();
 	~Scene();
 	bool Initialize();
-	void Tick(float deltaTime, class Input* pInput);
-	void ProcessInput(float deltaTime, Input * pInput);
+	void Tick(float deltaTime, Input* pInput);
+	void ProcessInput(float deltaTime, Input* pInput);
 	void UpdateActors(float deltaTime);
 	
 	inline Actor* GetCamera() const { return _Camera.get(); }
@@ -36,6 +37,9 @@ public:
 	float _lightPositionZ = 1.f;
 	float _lightPosIncrement = -0.008f;
 
+	float _lightPositionX2 = 5.f;
+	float _increment2 = -0.08f;
+	
 	const int NUM_LIGHTS = 3;
 };
 
