@@ -159,6 +159,12 @@ public:
 	bool Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* pScene);
 	bool UpdateFrame(float frameTime, class Scene* pScene, int fps);
 
+#pragma region WATER
+	unique_ptr<Model> /*_GroundModel,*/ _WallModel, _BathModel, _WaterModel;
+	float _waterHeight = 2.75f;
+	float _waterTranslation = 0.0f; // TODO: encapsulate in materials
+#pragma endregion
+
 #pragma region UI
 	bool InitializeUI(int screenWidth, int screenHeight);
 	bool UpdateRenderCounts(ID3D11DeviceContext*, int, int, int);
@@ -177,22 +183,24 @@ public:
 #pragma endregion
 
 private:
+	bool RenderWaterToTexture();
 	bool RenderSceneToTexture(Scene* pScene);
 	bool Render(Scene* pScene);
 
-private:
+	void RenderWaterScene(LightClass* shadowLights[]);
+
 	unique_ptr<D3DClass> _D3D;
 	unique_ptr<ShaderManagerClass> _ShaderManager;
 	unique_ptr<Camera> _Camera;
 	unique_ptr<Model> _CubeModel, _SphereModel, _GroundModel;	
 	vector<unique_ptr<RenderTextureClass>> _RenderTextures;
-	
 	vector<unique_ptr<LightClass>>_Lights;
 
 	/////////// GLOBAL EFFECTS /////////////
 	SceneEffects _sceneEffects;
 
-	const int NUM_RENDER_TEXTURES = 3;
+	//const int NUM_RENDER_TEXTURES = 3;
+	const int NUM_RENDER_TEXTURES = 5; // added reflection and refraction textures
 };
 #pragma endregion
 
