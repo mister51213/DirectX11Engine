@@ -33,7 +33,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	_Camera->UpdateViewPoint();
 	 
 	// RENDER TEXTURES //
-	for (int i = 0; i< NUM_RENDER_TEXTURES-2; ++i)
+	for (int i = 0; i< NUM_RENDER_TEXTURES; ++i)
 	{
 		_RenderTextures.push_back(unique_ptr<RenderTextureClass>());
 		_RenderTextures[i].reset(new RenderTextureClass);
@@ -46,13 +46,13 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	}
 
 	// REFRACTION / REFLECTION RENDER TEXTURES
-	_RenderTextures.push_back(unique_ptr<RenderTextureClass>());
-	_RenderTextures[3].reset(new RenderTextureClass);
-	_RenderTextures[3]->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR), "render to texture";
+	//_RenderTextures.push_back(unique_ptr<RenderTextureClass>());
+	_RefractionTexture.reset(new RenderTextureClass);
+	_RefractionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR), "render to texture";
 
-	_RenderTextures.push_back(unique_ptr<RenderTextureClass>());
-	_RenderTextures[4].reset(new RenderTextureClass);
-	_RenderTextures[4]->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR), "render to texture";
+	//_RenderTextures.push_back(unique_ptr<RenderTextureClass>());
+	_ReflectionTexture.reset(new RenderTextureClass);
+	_ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR), "render to texture";
 
 	///////////////////////////////////
 	// REFRACTION / REFLECTION MODELS
@@ -105,8 +105,10 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	_WaterModel->GetMaterial()->waterHeight = _waterHeight;
 	_WaterModel->GetMaterial()->bAnimated = true;
 	
-	_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RenderTextures[3]->GetShaderResourceView(); // refraction tex
-	_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _RenderTextures[4]->GetShaderResourceView(); // reflection tex
+	_WaterModel->SetResourceView(0, _ReflectionTexture->GetShaderResourceView());
+	_WaterModel->SetResourceView(1, _RefractionTexture->GetShaderResourceView());
+	//_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView(); // reflection tex
+	//_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView(); // refraction tex
 
 	// MODELS //
 	vector<string> texNames = { "wall01.dds", "marble.png", "metal001.dds", "wall01.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
@@ -387,12 +389,14 @@ void GraphicsClass::RenderWaterScene(LightClass* shadowLights[])
 	_WaterModel->LoadVertices(_D3D->GetDeviceContext());
 
 	// Render the water model using the water shader.
-	_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RenderTextures[3]->GetShaderResourceView(); // refraction tex
-	_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _RenderTextures[4]->GetShaderResourceView(); // reflection tex
+	//_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RenderTextures[3]->GetShaderResourceView(); // refraction tex
+	//_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _RenderTextures[4]->GetShaderResourceView(); // reflection tex
+	_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView(); // reflection tex
+	_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView(); // refraction tex
 
 	_ShaderManager->_WaterShader->Render(
 			_D3D->GetDeviceContext(), _WaterModel->GetIndexCount(), worldMatrix, viewMatrix,
-			projectionMatrix, reflectionMatrix, _WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray(), _waterTranslation, 0.01f);
+			projectionMatrix, reflectionMatrix, _WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray(), _WaterModel->GetMaterial()->translation, 0.01f);
 
 	// Present the rendered scene to the screen.
 	_D3D->EndScene();
@@ -409,10 +413,10 @@ bool GraphicsClass::RenderWaterToTexture()
 	_sceneEffects.clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, _waterHeight);
 	
 	// Set the render target to be the refraction render to texture.
-	_RenderTextures[3]->SetRenderTarget(_D3D->GetDeviceContext());
+	_RefractionTexture->SetRenderTarget(_D3D->GetDeviceContext());
 	
 	// Clear the refraction render to texture.
-	_RenderTextures[3]->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
+	_RefractionTexture->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
 	
 	// Generate the view matrix based on the camera's position.
 	_Camera->UpdateViewPoint();
@@ -438,10 +442,10 @@ bool GraphicsClass::RenderWaterToTexture()
 	XMMATRIX reflectionViewMatrix;  /*,worldMatrix, projectionMatrix;*/
 	
 	// Set the render target to be the reflection render to texture.
-	_RenderTextures[4]->SetRenderTarget(_D3D->GetDeviceContext());
+	_ReflectionTexture->SetRenderTarget(_D3D->GetDeviceContext());
 
 	// Clear the reflection render to texture.
-	_RenderTextures[4]->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
+	_ReflectionTexture->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
 
 	// Use the camera to render the reflection and create a reflection view matrix.
 	_Camera->RenderReflection(2.75f);

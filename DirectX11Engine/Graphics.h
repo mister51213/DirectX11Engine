@@ -163,6 +163,8 @@ public:
 	unique_ptr<Model> /*_GroundModel,*/ _WallModel, _BathModel, _WaterModel;
 	float _waterHeight = 2.75f;
 	float _waterTranslation = 0.0f; // TODO: encapsulate in materials
+	unique_ptr<RenderTextureClass> _RefractionTexture;
+	unique_ptr<RenderTextureClass> _ReflectionTexture;
 #pragma endregion
 
 #pragma region UI
@@ -199,8 +201,8 @@ private:
 	/////////// GLOBAL EFFECTS /////////////
 	SceneEffects _sceneEffects;
 
-	//const int NUM_RENDER_TEXTURES = 3;
-	const int NUM_RENDER_TEXTURES = 5; // added reflection and refraction textures
+	const int NUM_RENDER_TEXTURES = 3;
+	//const int NUM_RENDER_TEXTURES = 5; // added reflection and refraction textures
 };
 #pragma endregion
 
