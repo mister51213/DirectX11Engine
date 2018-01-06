@@ -64,6 +64,7 @@ private:
 
 public:
 	Model();
+	Model(XMFLOAT3 scale, XMFLOAT3 orientation, XMFLOAT3 translation);
 	Model(const Model&);
 	//~Model();
 
@@ -81,7 +82,7 @@ public:
 	bool LoadModel(const string name);
 
 	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
-	void LoadVertices(ID3D11DeviceContext* const deviceContext);
+	void PutVertsOnPipeline(ID3D11DeviceContext* const deviceContext);
 
 	inline XMFLOAT3 GetPosition() const
 	{
@@ -103,6 +104,9 @@ public:
 		_orientation = or ;
 	}
 
+	inline XMFLOAT3 GetScale() { return _scale; }
+
+	inline void SetScale(XMFLOAT3 scale) { _scale = scale; }
 
 private:
 	bool InitializeBuffers(ID3D11Device* const device);
@@ -121,5 +125,6 @@ private:
 	// Relative position and orientation (TODO: tie to parent actor)
 	XMFLOAT3 _position;
 	XMFLOAT3 _orientation;
+	XMFLOAT3 _scale;
 };
 

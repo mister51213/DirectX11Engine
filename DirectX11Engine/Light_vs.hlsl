@@ -30,6 +30,7 @@ cbuffer MatrixBuffer:register(b0)
 	matrix worldMatrix;
 	matrix viewMatrix;
 	matrix projectionMatrix;
+
 	LightTemplate_VS cb_lights[NUM_LIGHTS];
 };
 

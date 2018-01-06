@@ -160,6 +160,7 @@ public:
 	bool UpdateFrame(float frameTime, class Scene* pScene, int fps);
 
 #pragma region WATER
+	const float _waterSceneScale = 0.3f;
 	unique_ptr<Model> /*_GroundModel,*/ _WallModel, _BathModel, _WaterModel;
 	float _waterHeight = 2.75f;
 	float _waterTranslation = 0.0f; // TODO: encapsulate in materials

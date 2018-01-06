@@ -173,7 +173,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 					// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
 					//lightColor += (cb_lights[i].diffuseColor * lightIntensity * 0.25f);
 
-					lightColor += CalculateNormalMapIntensity(input, cb_lights[i].diffuseColor, cb_lights[i].lightDirection)*0.25f;
+					lightColor += CalculateNormalMapIntensity(input, cb_lights[i].diffuseColor, cb_lights[i].lightDirection)*0.35f;
 				}
 			}
 			//else // shadow falloff here

@@ -6,6 +6,7 @@ Actor::Actor()
 	:
 	Name("Actor")
 {
+	_scale = XMFLOAT3(1.f,1.f,1.f);
 	_MovementComp.reset(new MovementComponent);
 }
 
@@ -20,6 +21,7 @@ bool Actor::InitializeMovement(bool visible)
 {
 	bVisible = visible;
 
+	_scale = XMFLOAT3(1.f, 1.f, 1.f);
 	_MovementComp->Initialize();
 
 	return true;

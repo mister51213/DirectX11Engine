@@ -18,7 +18,25 @@ public:
 	/////////// Accessor functions ///////////////
 	XMFLOAT3 GetPosition()const;
 	XMFLOAT3 GetOrientation()const;
-
+	inline XMFLOAT3 GetScale() 
+	{ 
+		//if (_Model)
+		//{
+		//	return _Model->GetScale();
+		//}
+		//else
+		{
+			return _scale;
+		}
+	}
+	inline void SetScale(XMFLOAT3 scale) 
+	{
+		_scale = scale;
+		if (_Model)
+		{
+			_Model->SetScale(scale);
+		}
+	}
 	XMFLOAT3 GetLookAt() const;
 
 	void SetPosition(const XMFLOAT3& pos);
@@ -44,5 +62,7 @@ public:
 private:
 	unique_ptr<MovementComponent> _MovementComp;
 	unique_ptr<Model> _Model;
+	XMFLOAT3 _scale;
+
 };
 
