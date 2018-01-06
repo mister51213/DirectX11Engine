@@ -76,6 +76,7 @@ struct PixelInputType
 	float3 viewDirection : TEXCOORD1;
     float4 lightViewPositions[NUM_LIGHTS] : TEXCOORD6;
     float3 lightPositions[NUM_LIGHTS] : TEXCOORD9;
+	float4 rawPosition : TEXCOORD12;
 	float fogFactor : FOG; 
 };
 
@@ -92,6 +93,7 @@ PixelInputType LightVertexShader(VertexInputType input)
 
 	// Change the position vector to be 4 units for proper matrix calculations.
 	input.position.w = 1.0f;
+	output.rawPosition = input.position;
 
 	// Calculate the position of the vertex against the world, view, and projection matrices.
 	// place the vertex in the correct location for rendering in 3D space according to our view and then onto the 2D screen.

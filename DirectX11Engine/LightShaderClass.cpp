@@ -68,7 +68,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	// Create the vertex input layout.
 	unsigned int numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 	
-	D3D11_INPUT_ELEMENT_DESC polygonLayout2[2]; // invalid argument for testing purposes
+	//D3D11_INPUT_ELEMENT_DESC polygonLayout2[2]; // invalid argument for testing purposes
 	ThrowHResultIf(device->CreateInputLayout(polygonLayout/*polygonLayout2*/, numElements, _vertexShaderBuffer->GetBufferPointer(), _vertexShaderBuffer->GetBufferSize(), &_layout));
 	
 	// Create the texture wrap sampler state.

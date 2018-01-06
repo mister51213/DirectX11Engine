@@ -75,6 +75,7 @@ struct PixelInputType
     float3 viewDirection : TEXCOORD1;
     float4 lightViewPositions[NUM_LIGHTS] : TEXCOORD6;
     float3 lightPositions[NUM_LIGHTS] : TEXCOORD9;
+	float4 rawPosition : TEXCOORD12;
 	float fogFactor : FOG;
 };
 
@@ -139,6 +140,31 @@ float4 sphereMask(float2 tex)
 	return alpha;
 }
 
+// Calculates spot lights, based on position and direction of the light and
+// of the direction of the surface.
+float CalculateSpotLightIntensity(
+	float3 LightPosition, 
+	float3 LightDirection, 
+	float3 SurfacePosition, 
+	float3 SurfaceNormal)
+{
+	float intensity = 0;
+
+	// Calculate the direction of the light to the surface
+	float3 lightToSurface = normalize(SurfacePosition - LightPosition);
+	
+	// Calculate how much of light is reaching point on surface
+	//float dotProduct = saturate(dot(lightToSurface, normalize(LightDirection)));
+	float dotProduct = saturate(dot(SurfaceNormal, normalize(LightPosition)));
+
+	if (dotProduct > .8)
+	{
+		intensity = dotProduct;
+	}
+
+	return intensity;
+}
+
 float4 LightPixelShader(PixelInputType input) : SV_TARGET
 {
 	float2 projectTexCoord;
@@ -188,29 +214,24 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 		// Compare the depth of the shadow map value and the depth of the light to determine whether to shadow or to light this pixel.
 		// If the light is in front of the object then light the pixel, if not then shadow this pixel since an object (occluder) is casting a shadow on it.
-			float alpha = sphereMask(input.tex);
-
-
 			if(lightDepthValue < depthValue)
 			{
 				// Calculate the amount of light on this pixel.
 				lightIntensity = saturate(dot(bumpNormal, normalize(input.lightPositions[i])));
-				//lightIntensity = saturate(dot(input.normal, normalize(input.lightPositions[i])));//*lightVisibility;
 
 				if(lightIntensity > 0.0f)
 				{
 					// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-					//lightColor += (cb_lights[i].diffuseColor * lightIntensity * 0.25f);
+					float spotLightIntensity = CalculateSpotLightIntensity(
+						input.lightPositions[i], // NOTE - this is NOT NORMALIZED!!!
+						cb_lights[i].lightDirection, 
+						input.rawPosition.xyz, 
+						bumpNormal);
 
-					lightColor += CalculateNormalMapIntensity(input, cb_lights[i].diffuseColor, cb_lights[i].lightDirection)*0.35f;
+					lightColor += cb_lights[i].diffuseColor*spotLightIntensity* .2f;
+					//lightColor += cb_lights[i].diffuseColor*lightIntensity* .2f;
 				}
 			}
-			//else // shadow falloff here
-			//{
-			//	float4 shadowCol = (1,1,1,1);
-			//	float shadowIntensity = saturate(length(input.lightPositions[i])*0.038);	
-			//	color += shadowCol * shadowIntensity*shadowIntensity*shadowIntensity;
-			//}
 		}
 	}
 

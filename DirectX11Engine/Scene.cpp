@@ -18,7 +18,7 @@ bool Scene::Initialize()
 	_Camera->GetMovementComponent()->SetPosition(XMFLOAT3(0.f,5.f,-12.f));
 
 	/////// INIT ACTORS //////////////
-	vector<XMFLOAT3> positions = { XMFLOAT3(-10.0f, 1.f, 0.0f), XMFLOAT3(10.0f, 1.f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.f, 2.0f) };
+	vector<XMFLOAT3> positions = { XMFLOAT3(-5.0f, 1.f, 0.0f), XMFLOAT3(5.0f, 1.f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.f, 2.0f) };
 
 	for (int i = 0; i < _numActors; ++i)
 	{
@@ -28,7 +28,7 @@ bool Scene::Initialize()
 		
 		_Actors.emplace(pActor->Name, std::move(pActor));
 	}
-	_Actors["Actor3"]->SetScale(XMFLOAT3(5.f, 8.0f, 5.f));
+	_Actors["Actor3"]->SetScale(XMFLOAT3(3.f, 1.0f, 3.f));
 	
 	///// INIT LIGHTS //////
 	for (int i = 0; i < NUM_LIGHTS; ++i)

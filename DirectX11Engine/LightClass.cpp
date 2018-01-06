@@ -31,7 +31,7 @@ void LightClass::GenerateViewMatrix()
 
 void LightClass::GenerateProjectionMatrix(float screenDepth, float screenNear)
 {
-	float fieldOfView = (float)XM_PI / 2.0f;
+	float fieldOfView = (float)XM_PI / 2.f;
 	float screenAspect = 1.0f;
 	_lightBufferVS->projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, screenAspect, screenNear, screenDepth);
 }
