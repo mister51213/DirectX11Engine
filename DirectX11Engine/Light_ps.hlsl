@@ -123,6 +123,22 @@ float4 CalculateNormalMapIntensity(PixelInputType input, float4 diffuseColor, fl
   // return lightColor;
 }
 
+float4 sphereMask(float2 tex)
+{
+	float alpha = 0;
+
+	float radius = .4f;
+	float2 offsetFromCenter = tex - float2(0.5f,0.5f);
+	float dist = length(offsetFromCenter);
+	
+	if(dist <= radius)
+	{
+		alpha = (1-dist)*(1-dist);
+	}
+
+	return alpha;
+}
+
 float4 LightPixelShader(PixelInputType input) : SV_TARGET
 {
 	float2 projectTexCoord;
@@ -193,12 +209,14 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
     input.tex.x += textureTranslation;
 
-    // Sample the pixel color from the textures using the sampler at this texture coordinate location.
+	float alpha = sphereMask(input.tex);
+
 	float4 color1 = shaderTextures[0].Sample(SampleTypeWrap, input.tex);
     float4 color2 = shaderTextures[1].Sample(SampleTypeWrap, input.tex);
-	float4 alphaValue = shaderTextures[3].Sample(SampleTypeWrap, input.tex);
-
+	float4 alphaValue = float4(alpha,alpha,alpha,alpha);
 	textureColor = saturate((alphaValue * color1) + ((1.0f - alphaValue) * color2));
+	//float4 alphaValue = shaderTextures[3].Sample(SampleTypeWrap, input.tex);
+
 	// WORKING //
 	//textureColor = shaderTextures[0].Sample(SampleTypeWrap, input.tex);
 
