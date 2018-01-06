@@ -154,6 +154,16 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	// Set the default output color to the ambient light value for all pixels.
     float4 lightColor = cb_ambientColor;
 
+	/////////////////// NORMAL MAPPING //////////////////
+	float4 bumpMap = shaderTextures[4].Sample(SampleType, input.tex);
+
+	// Expand the range of the normal value from (0, +1) to (-1, +1).
+    bumpMap = (bumpMap * 2.0f) - 1.0f;
+
+	// Change the COORDINATE BASIS of the normal into the space represented by basis vectors tangent, binormal, and normal!
+    float3 bumpNormal = normalize((bumpMap.x * input.tangent) + (bumpMap.y * input.binormal) + (bumpMap.z * input.normal));
+
+
 	////////////////////////////////////////////
 	//////////////// LIGHT LOOP ////////////////
 	////////////////////////////////////////////
@@ -178,11 +188,14 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 		// Compare the depth of the shadow map value and the depth of the light to determine whether to shadow or to light this pixel.
 		// If the light is in front of the object then light the pixel, if not then shadow this pixel since an object (occluder) is casting a shadow on it.
+			float alpha = sphereMask(input.tex);
+
+
 			if(lightDepthValue < depthValue)
 			{
 				// Calculate the amount of light on this pixel.
-				//lightIntensity = saturate(dot(input.normal, input.lightPositions[i]));
-				lightIntensity = saturate(dot(input.normal, normalize(input.lightPositions[i])));//*lightVisibility;
+				lightIntensity = saturate(dot(bumpNormal, normalize(input.lightPositions[i])));
+				//lightIntensity = saturate(dot(input.normal, normalize(input.lightPositions[i])));//*lightVisibility;
 
 				if(lightIntensity > 0.0f)
 				{
@@ -209,13 +222,13 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	// Sample the pixel color from the texture using the sampler at this texture coordinate location.
     input.tex.x += textureTranslation;
 
-	float alpha = sphereMask(input.tex);
+	//float alpha = sphereMask(input.tex);
+	//float4 alphaValue = float4(alpha,alpha,alpha,alpha);
 
 	float4 color1 = shaderTextures[0].Sample(SampleTypeWrap, input.tex);
     float4 color2 = shaderTextures[1].Sample(SampleTypeWrap, input.tex);
-	float4 alphaValue = float4(alpha,alpha,alpha,alpha);
+	float4 alphaValue = shaderTextures[3].Sample(SampleTypeWrap, input.tex);
 	textureColor = saturate((alphaValue * color1) + ((1.0f - alphaValue) * color2));
-	//float4 alphaValue = shaderTextures[3].Sample(SampleTypeWrap, input.tex);
 
 	// WORKING //
 	//textureColor = shaderTextures[0].Sample(SampleTypeWrap, input.tex);
