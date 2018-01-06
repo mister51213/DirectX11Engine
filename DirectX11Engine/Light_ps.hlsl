@@ -148,21 +148,20 @@ float CalculateSpotLightIntensity(
 	float3 SurfacePosition, 
 	float3 SurfaceNormal)
 {
-	float intensity = 0;
-
-	// Calculate the direction of the light to the surface
 	float3 lightToSurface = normalize(SurfacePosition - LightPosition);
-	
-	// Calculate how much of light is reaching point on surface
-	//float dotProduct = saturate(dot(lightToSurface, normalize(LightDirection)));
-	float dotProduct = saturate(dot(SurfaceNormal, normalize(LightPosition)));
+	float dotProduct = saturate(dot(lightToSurface, normalize(LightDirection)));
 
-	if (dotProduct > .8)
+	// METALLIC EFFECT (deactivate for now)
+	float metalEffect = saturate(dot(SurfaceNormal, normalize(LightPosition)));
+	if(dotProduct > .8 /*&& metalEffect > .8*/)
 	{
-		intensity = dotProduct;
+		//return saturate(dot(SurfaceNormal, normalize(LightPosition))) * dotProduct;
+		return saturate(dot(SurfaceNormal, normalize(LightPosition)));
 	}
-
-	return intensity;
+	else
+	{
+		return 0;
+	}
 }
 
 float4 LightPixelShader(PixelInputType input) : SV_TARGET
@@ -228,7 +227,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 						input.rawPosition.xyz, 
 						bumpNormal);
 
-					lightColor += cb_lights[i].diffuseColor*spotLightIntensity* .2f;
+					lightColor += cb_lights[i].diffuseColor*spotLightIntensity* .25f;
 					//lightColor += cb_lights[i].diffuseColor*lightIntensity* .2f;
 				}
 			}

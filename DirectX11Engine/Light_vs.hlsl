@@ -98,6 +98,7 @@ PixelInputType LightVertexShader(VertexInputType input)
 	// Calculate the position of the vertex against the world, view, and projection matrices.
 	// place the vertex in the correct location for rendering in 3D space according to our view and then onto the 2D screen.
 	output.position = mul(input.position, worldMatrix);
+	//output.rawPosition = input.position;
 	output.position = mul(output.position, viewMatrix);
 	output.position = mul(output.position, projectionMatrix);
 
@@ -160,6 +161,9 @@ PixelInputType LightVertexShader(VertexInputType input)
 
 		// Calculate the world offset of the light from the vertex
 		output.lightPositions[i] = cb_lights[i].lightPosition - worldPosition.xyz;
+
+		//output.lightPositions[i] = mul(cb_lights[i].lightPosition, worldMatrix);
+		//output.lightPositions[i] = output.lightPositions[i] - worldPosition.xyz;
 	}
 
 	return output;
