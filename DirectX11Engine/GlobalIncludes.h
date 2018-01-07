@@ -28,6 +28,10 @@ const float SCREEN_NEAR = 1.0f;
 const int SHADOWMAP_WIDTH = 1024;
 const int SHADOWMAP_HEIGHT = 1024;
 
+#define VISIBLE true
+#define INVISIBLE false
+
+
 class RuntimeException
 {
 public:

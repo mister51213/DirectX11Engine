@@ -18,19 +18,84 @@ bool Scene::Initialize()
 	_Camera->GetMovementComponent()->SetPosition(XMFLOAT3(0.f,5.f,-12.f));
 
 	/////// INIT ACTORS //////////////
-	vector<XMFLOAT3> positions = { XMFLOAT3(-5.0f, 1.f, 0.0f), XMFLOAT3(5.0f, 1.f, 0.0f), XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(0.0f, 1.f, 2.0f) };
 
-	for (int i = 0; i < _numActors; ++i)
+	//for (int i = 0; i < _numActors; ++i) // init the fi
+	//{
+	//	unique_ptr<Actor> pActor = std::make_unique<Actor>("Actor"+ to_string(i + 1));
+	//	pActor->InitializeMovement(true); 
+	//	pActor->SetPosition(positions[i]);
+	//	
+	//	_Actors.emplace(pActor->Name, std::move(pActor));
+	//}
+
+	// note actors w same name must be added CONSECUTIVELY!!!!
+	vector<string> actorNames = { 
+		"Cube", 
+		"Sphere", 
+		"Ground", 
+		"Wall", 
+		"Bath", 
+		"Water"};
+
+	vector<XMFLOAT3> positions;
+	positions = {
+		XMFLOAT3(-5.0f, 1.f, 0.0f), // cube
+		XMFLOAT3(5.0f, 1.f, 0.0f), // sphere
+		XMFLOAT3(0.0f, 1.0f, 0.0f), // ground
+		XMFLOAT3(0.0f, 6.0f, 8.0f), // wall
+		XMFLOAT3(0.0f, 2.0f, 0.0f),  // bath
+		XMFLOAT3(0.0f, _waterHeight, 0.0f) }; //water
+	positions.resize(actorNames.size()); // safety check
+
+	// Instantiate actors and update their names if duplicates
+	int duplicateIdx = 0; 
+	string DuplicateBaseName = actorNames[0];
+
+	for (int i = 0; i < actorNames.size(); ++i)
 	{
-		unique_ptr<Actor> pActor = std::make_unique<Actor>("Actor"+ to_string(i + 1));
-		pActor->InitializeMovement(true); 
+		if (i > 0)
+		{
+			// Decide whether to reset duplicate reference name
+			if (actorNames[i - 1] == actorNames[i]) 
+			{
+				duplicateIdx = 0;
+				DuplicateBaseName = actorNames[i];
+			}
+
+			// Check each name against the latest duplicate name and number it if it matches
+			if (actorNames[i] == DuplicateBaseName)
+			{
+				if (actorNames[i - 1] == DuplicateBaseName)
+				{
+					actorNames[i-1] += to_string(duplicateIdx);
+				}
+
+				duplicateIdx++;
+				actorNames[i] += to_string(duplicateIdx);
+			}
+
+		}
+
+		// Instantiate each actor with the updated name
+		unique_ptr<Actor> pActor = std::make_unique<Actor>(actorNames[i]);
+		pActor->InitializeMovement(VISIBLE);
 		pActor->SetPosition(positions[i]);
-		
 		_Actors.emplace(pActor->Name, std::move(pActor));
 	}
-	_Actors["Actor3"]->SetScale(XMFLOAT3(3.f, 1.0f, 3.f));
-	//_Actors["Actor3"]->SetOrientation(XMFLOAT3(45.f, 45.0f, 45.f)); // WORKING
+
+	_Actors["Ground"]->SetScale(XMFLOAT3(3.f, 1.0f, 3.f)); 
+
 	
+	// Cube
+	//unique_ptr<Actor> pActor = std::make_unique<Actor>("Actor" + to_string(i + 1));
+	//pActor->InitializeMovement(true);
+	//pActor->SetPosition(positions[i]);
+
+	//_Actors.emplace(pActor->Name, std::move(pActor));
+
+	// Sphere
+
+
 	///// INIT LIGHTS //////
 	for (int i = 0; i < NUM_LIGHTS; ++i)
 	{

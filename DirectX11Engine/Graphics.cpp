@@ -32,7 +32,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	_Camera->SetPosition(pScene->GetCamera()->GetPosition().x, pScene->GetCamera()->GetPosition().y, pScene->GetCamera()->GetPosition().z);
 	_Camera->UpdateViewPoint();
 	 
-	// RENDER TEXTURES //
+	// SHADOW RENDER TEXTURES //
 	for (int i = 0; i < NUM_RENDER_TEXTURES; ++i)
 	{
 		_RenderTextures.push_back(unique_ptr<RenderTextureClass>());
@@ -44,7 +44,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		}
 	}
 
-	// REFRACTION / REFLECTION RENDER TEXTURES
+	// WATER RENDER TEXTURES
 	//_RenderTextures.push_back(unique_ptr<RenderTextureClass>());
 	_RefractionTexture.reset(new RenderTextureClass);
 	_RefractionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR), "render to texture";

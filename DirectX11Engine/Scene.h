@@ -26,8 +26,6 @@ public:
 	
 	inline Actor* GetCamera() const { return _Camera.get(); }
 
-	int _numActors = 3;
-
 	unique_ptr<Actor> _Camera;
 	map<string, unique_ptr<Actor>> _Actors;
 	vector<unique_ptr<Actor>> _LightActors;
@@ -41,5 +39,8 @@ public:
 	float _increment2 = -0.08f;
 	
 	const int NUM_LIGHTS = 3;
+
+	//////// WATER CONSTANTS /////////
+	float _waterHeight = 2.75f;
 };
 
