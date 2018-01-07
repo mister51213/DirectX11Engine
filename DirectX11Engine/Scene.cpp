@@ -29,6 +29,7 @@ bool Scene::Initialize()
 		_Actors.emplace(pActor->Name, std::move(pActor));
 	}
 	_Actors["Actor3"]->SetScale(XMFLOAT3(3.f, 1.0f, 3.f));
+	//_Actors["Actor3"]->SetOrientation(XMFLOAT3(45.f, 45.0f, 45.f)); // WORKING
 	
 	///// INIT LIGHTS //////
 	for (int i = 0; i < NUM_LIGHTS; ++i)

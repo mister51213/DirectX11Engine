@@ -23,6 +23,8 @@
 
 namespace GfxUtil
 {
+	constexpr float DEGTORAD = XM_PI / 180.f;
+
 	// TEXT RELATED
 	static wchar_t* charToWChar(const char* text)
 	{
@@ -242,4 +244,6 @@ namespace GfxUtil
 		float waterHeight = 2.75f;
 	};
 
+	///////////// MATRIX MATH /////////////
+	XMMATRIX ComputeWorldTransform(XMFLOAT3& rotation, XMFLOAT3& scale, XMFLOAT3& translation);
 }

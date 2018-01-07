@@ -306,11 +306,8 @@ bool GraphicsClass::Render(Scene* pScene)
 
 			//worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(it->second->GetPosition().x, it->second->GetPosition().y, it->second->GetPosition().z));
 
-			XMMATRIX rot = XMMatrixRotationRollPitchYaw(
-				it->second->GetOrientation().x*XM_PI / 180.f, it->second->GetOrientation().y*XM_PI / 180.f, it->second->GetOrientation().z*XM_PI / 180.f);
-			XMMATRIX scal = XMMatrixScaling(it->second->GetScale().x, it->second->GetScale().y, it->second->GetScale().z);
-			XMMATRIX trans = XMMatrixTranslation(it->second->GetPosition().x, it->second->GetPosition().y, it->second->GetPosition().z);// XMMatrixTranslationFromVector(xmPosition);
-			worldMatrix = rot*scal*trans*worldMatrix;
+			//worldMatrix = ComputeWorldTransform(it, worldMatrix);
+			worldMatrix*= ComputeWorldTransform(it->second->GetOrientation(), it->second->GetScale(), it->second->GetPosition());
 
 			it->second->GetModel()->PutVertsOnPipeline(_D3D->GetDeviceContext());
 

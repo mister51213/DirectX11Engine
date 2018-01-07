@@ -51,3 +51,12 @@ void GfxUtil::Material::Animate(float deltaTime)
 		}
 	}
 }
+
+/////////// MATRIX MATH /////////////////
+XMMATRIX GfxUtil::ComputeWorldTransform(XMFLOAT3& rotation, XMFLOAT3& scale, XMFLOAT3& translation)
+{
+	XMMATRIX rot = XMMatrixRotationRollPitchYaw(rotation.x*DEGTORAD, rotation.y*DEGTORAD, rotation.z*DEGTORAD);
+	XMMATRIX scal = XMMatrixScaling(scale.x, scale.y, scale.z);
+	XMMATRIX trans = XMMatrixTranslation(translation.x, translation.y, translation.z);
+	return rot*scal*trans;
+}
