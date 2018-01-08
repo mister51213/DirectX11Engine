@@ -13,42 +13,42 @@ Scene::~Scene()
 
 bool Scene::Initialize()
 {
+	/////// INIT CAMERA ////////
 	_Camera.reset(new Actor);
 	_Camera->InitializeMovement(false);
 	_Camera->GetMovementComponent()->SetPosition(XMFLOAT3(0.f,5.f,-12.f));
 
-	/////// INIT ACTORS //////////////
+	/////// INIT ACTORS ////////
+	InitializeActors();
 
-	//for (int i = 0; i < _numActors; ++i) // init the fi
-	//{
-	//	unique_ptr<Actor> pActor = std::make_unique<Actor>("Actor"+ to_string(i + 1));
-	//	pActor->InitializeMovement(true); 
-	//	pActor->SetPosition(positions[i]);
-	//	
-	//	_Actors.emplace(pActor->Name, std::move(pActor));
-	//}
+	/////// INIT LIGHTS ////////
+	InitializeLights();
 
-	// note actors w same name must be added CONSECUTIVELY!!!!
-	vector<string> actorNames = { 
-		"Cube", 
-		"Sphere", 
-		"Ground", 
-		"Wall", 
-		"Bath", 
-		"Water"};
+	return true;
+}
 
-	vector<XMFLOAT3> positions;
-	positions = {
-		XMFLOAT3(-5.0f, 1.f, 0.0f), // cube
-		XMFLOAT3(5.0f, 1.f, 0.0f), // sphere
-		XMFLOAT3(0.0f, 1.0f, 0.0f), // ground
+void Scene::InitializeActors()
+{
+	vector<string> actorNames = { // note actors w same name must be added CONSECUTIVELY!!!!
+		"Cube",
+		"Sphere",
+		"Ground",
+		"Wall",
+		"Bath",
+		"Water" };
+
+	vector<XMFLOAT3> positions = {
+		XMFLOAT3(-10.0f, 1.f, 0.0f), // cube
+		XMFLOAT3(10.0f, 1.f, 0.0f), // sphere
+		XMFLOAT3(0.0f, 0.0f, 0.0f), // ground
 		XMFLOAT3(0.0f, 6.0f, 8.0f), // wall
 		XMFLOAT3(0.0f, 2.0f, 0.0f),  // bath
 		XMFLOAT3(0.0f, _waterHeight, 0.0f) }; //water
+
 	positions.resize(actorNames.size()); // safety check
 
 	// Instantiate actors and update their names if duplicates
-	int duplicateIdx = 0; 
+	int duplicateIdx = 0;
 	string DuplicateBaseName = actorNames[0];
 
 	for (int i = 0; i < actorNames.size(); ++i)
@@ -56,7 +56,7 @@ bool Scene::Initialize()
 		if (i > 0)
 		{
 			// Decide whether to reset duplicate reference name
-			if (actorNames[i - 1] == actorNames[i]) 
+			if (actorNames[i - 1] == actorNames[i])
 			{
 				duplicateIdx = 0;
 				DuplicateBaseName = actorNames[i];
@@ -67,13 +67,12 @@ bool Scene::Initialize()
 			{
 				if (actorNames[i - 1] == DuplicateBaseName)
 				{
-					actorNames[i-1] += to_string(duplicateIdx);
+					actorNames[i - 1] += to_string(duplicateIdx);
 				}
 
 				duplicateIdx++;
 				actorNames[i] += to_string(duplicateIdx);
 			}
-
 		}
 
 		// Instantiate each actor with the updated name
@@ -83,20 +82,12 @@ bool Scene::Initialize()
 		_Actors.emplace(pActor->Name, std::move(pActor));
 	}
 
-	_Actors["Ground"]->SetScale(XMFLOAT3(3.f, 1.0f, 3.f)); 
+	// Custom tweaks on actors
+	_Actors["Ground"]->SetScale(XMFLOAT3(3.f, 1.0f, 3.f));
+}
 
-	
-	// Cube
-	//unique_ptr<Actor> pActor = std::make_unique<Actor>("Actor" + to_string(i + 1));
-	//pActor->InitializeMovement(true);
-	//pActor->SetPosition(positions[i]);
-
-	//_Actors.emplace(pActor->Name, std::move(pActor));
-
-	// Sphere
-
-
-	///// INIT LIGHTS //////
+void Scene::InitializeLights()
+{
 	for (int i = 0; i < NUM_LIGHTS; ++i)
 	{
 		_LightActors.push_back(unique_ptr<Actor>());
@@ -104,25 +95,10 @@ bool Scene::Initialize()
 		_LightActors[i]->InitializeMovement(true);
 		_LightActors[i]->SetLookAt(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	}
-	
-	_LightActors[0]->SetPosition(XMFLOAT3 (5.f, 8.0f, -5.f));
+
+	_LightActors[0]->SetPosition(XMFLOAT3(5.f, 8.0f, -5.f));
 	_LightActors[1]->SetPosition(XMFLOAT3(-5.f, 8.0f, -5.f));
 	_LightActors[2]->SetPosition(XMFLOAT3(5.f, 8.0f, 5.f));
-
-	///// WATER DEMO SETUP //////
-	// Overwrite the last 4 actors in the array with custom appearance (initialization by hand)
-	//int indexToStopAt = _Actors.size() - 4;
-	//for (int i = _Actors.size() - 1; i >= indexToStopAt; --i)
-	//{
-	//	_Actors[i]->bCustomAppearance = true;
-	//}
-
-	//_Actors[_Actors.size() - 4]->SetPosition(XMFLOAT3(0.0f, 1.0f, 0.0f));
-	//_Actors[_Actors.size() - 3]->SetPosition(XMFLOAT3(0.0f, 6.0f, 8.0f));
-	//_Actors[_Actors.size() - 2]->SetPosition(XMFLOAT3(0.0f, 2.0f, 0.0f));
-	//_Actors[_Actors.size() - 1]->SetPosition(XMFLOAT3(0.0f, 2.75, 0.0f));
-
-	return true;
 }
 
 void Scene::Tick(float deltaTime, Input* pInput)

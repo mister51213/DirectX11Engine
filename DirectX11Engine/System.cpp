@@ -117,6 +117,15 @@ void System::Run()
 		{
 			done = true;
 		}
+
+		if (_Input->IsKeyDown(DIK_Y))
+		{
+			_Graphics->_D3D->EnableWireframe();
+		}
+		if (_Input->IsKeyDown(DIK_U))
+		{
+			_Graphics->_D3D->DisableWireframe();
+		}
 	}
 	}
 

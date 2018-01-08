@@ -28,6 +28,9 @@ using namespace Microsoft::WRL;
 ////////////////////////////////////////////////////////////////////////////////
 class D3DClass
 {
+
+friend class System;
+
 public:
 	D3DClass();
 	D3DClass(const D3DClass&);

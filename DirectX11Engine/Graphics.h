@@ -151,6 +151,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 class GraphicsClass
 {
+
+friend class System;
+
 public:
 	GraphicsClass();
 	GraphicsClass(const GraphicsClass&);
@@ -160,8 +163,10 @@ public:
 	bool UpdateFrame(float frameTime, class Scene* pScene, int fps);
 
 #pragma region WATER
-	const float _waterSceneScale = 0.3f;
-	unique_ptr<Model> /*_GroundModel,*/ _WallModel, _BathModel, _WaterModel;
+	//const float _waterSceneScale = 0.3f;
+	//unique_ptr<Model> /*_GroundModel,*/ _WallModel, _BathModel, _WaterModel;
+	//shared_ptr<Model> /*_GroundModel,*/ _WallModel, _BathModel, _WaterModel;
+	//Model* _WallModel, *_BathModel, *_WaterModel;
 	float _waterHeight = 2.75f;
 	float _waterTranslation = 0.0f; // TODO: encapsulate in materials
 	unique_ptr<RenderTextureClass> _RefractionTexture;
@@ -186,11 +191,11 @@ public:
 #pragma endregion
 
 private:
-	bool RenderWaterToTexture();
+	bool RenderWaterToTexture(Scene* pScene);
 	bool RenderSceneToTexture(Scene* pScene);
 	bool Render(Scene* pScene);
 
-	void RenderWaterScene(LightClass* shadowLights[]);
+	void RenderWaterScene(LightClass* shadowLights[], Scene* pScene);
 
 	unique_ptr<D3DClass> _D3D;
 	unique_ptr<ShaderManagerClass> _ShaderManager;

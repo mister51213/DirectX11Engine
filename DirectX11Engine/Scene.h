@@ -20,6 +20,8 @@ public:
 	Scene();
 	~Scene();
 	bool Initialize();
+	void InitializeLights();
+	void InitializeActors();
 	void Tick(float deltaTime, Input* pInput);
 	void ProcessInput(float deltaTime, Input* pInput);
 	void UpdateActors(float deltaTime);

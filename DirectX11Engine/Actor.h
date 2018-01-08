@@ -62,6 +62,7 @@ public:
 private:
 	unique_ptr<MovementComponent> _MovementComp;
 	unique_ptr<Model> _Model;
+	//shared_ptr<Model> _Model;
 	XMFLOAT3 _scale;
 
 };
