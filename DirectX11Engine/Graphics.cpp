@@ -46,72 +46,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	// WATER RENDER TEXTURES
 	_RefractionTexture.reset(new RenderTextureClass);
 	_RefractionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR), "render to texture";
-	//_RenderTextures.push_back(_RefractionTexture);
-
 	_ReflectionTexture.reset(new RenderTextureClass);
 	_ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR), "render to texture";
-	//_RenderTextures.push_back(_ReflectionTexture);
-
-	/////////////////////////////////////
-	//// REFRACTION / REFLECTION MODELS
-	/////////////////////////////////////
-	//_WallModel.reset(new Model(XMFLOAT3(_waterSceneScale, _waterSceneScale, _waterSceneScale), XMFLOAT3(), XMFLOAT3()));
-	//vector<string>wallTex{
-	//	"../DirectX11Engine/data/wall.dds",
-	//	"../DirectX11Engine/data/dirt.dds",
-	//	"../DirectX11Engine/data/light.dds",
-	//	"../DirectX11Engine/data/alpha.dds",
-	//	"../DirectX11Engine/data/bumpMap.dds", // normal map
-	//	"../DirectX11Engine/data/specMap.dds",
-	//	"../DirectX11Engine/data/noise.png",
-	//	"../DirectX11Engine/data/noise.png",
-	//	"../DirectX11Engine/data/noise.png"};
-	//_WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),"../DirectX11Engine/data/wall.txt", wallTex, EShaderType::ELIGHT_SPECULAR);
-	//// Set Wall Model Shadow textures
-	//for (int idx = 0; idx < _RenderTextures.size(); ++idx)
-	//{
-	//	_WallModel->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
-	//}
-	//pScene->_Actors["Wall"]->InstantiateModel(_WallModel.get());
-
-	//_BathModel.reset(new Model(XMFLOAT3(_waterSceneScale, _waterSceneScale, _waterSceneScale), XMFLOAT3(), XMFLOAT3()));
-	//vector<string>bathTex{
-	//	"../DirectX11Engine/data/marble.png", 
-	//	"../DirectX11Engine/data/dirt.dds",
-	//	"../DirectX11Engine/data/light.dds",
-	//	"../DirectX11Engine/data/alpha.dds",
-	//	"../DirectX11Engine/data/blue.dds", // normal map
-	//	"../DirectX11Engine/data/specMap.dds",
-	//	"../DirectX11Engine/data/noise.png" ,
-	//	"../DirectX11Engine/data/noise.png",
-	//	"../DirectX11Engine/data/noise.png"};
-	//_BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),	"../DirectX11Engine/data/bath.txt", bathTex, EShaderType::EREFRACTION);
-	//// Set Bath Model Shadow textures
-	//for (int idx = 0; idx < _RenderTextures.size(); ++idx)
-	//{
-	//	_BathModel->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
-	//}
-	//pScene->_Actors["Bath"]->InstantiateModel(_BathModel.get());
-
-	//_WaterModel.reset(new Model(XMFLOAT3(_waterSceneScale, _waterSceneScale, _waterSceneScale), XMFLOAT3(), XMFLOAT3()));
-	//vector<string> waterTextures{ "../DirectX11Engine/data/water.dds", "../DirectX11Engine/data/water.dds" , "../DirectX11Engine/data/water.dds" };
-	//_WaterModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),"../DirectX11Engine/data/water.txt", waterTextures, EShaderType::EWATER);
-	//pScene->_Actors["Water"]->InstantiateModel(_WaterModel.get());
-
-
-	//_WaterModel->GetMaterial()->reflectRefractScale = 0.01f;
-	//_WaterModel->GetMaterial()->waterHeight = _waterHeight*_waterSceneScale;
-	//_WaterModel->GetMaterial()->bAnimated = true;
-	//
-	//_WaterModel->SetResourceView(0, _ReflectionTexture->GetShaderResourceView());
-	//_WaterModel->SetResourceView(1, _RefractionTexture->GetShaderResourceView());
 
 	///////////////////////////////////
 	// DEFAULT SCENE MODELS
 	///////////////////////////////////	
 	vector<string> texNames = { "wall01.dds", "marble.png", "metal001.dds", "wall01.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
-	vector<string> meshNames = { "sphere.txt", "cube2.txt" };// , "plane01.txt"};// , "cube2.txt", "plane01.txt", "sphere.txt"};
-	//vector<string> modelNames = { "cube", "sphere", "ground", "sphere2" };
+	vector<string> meshNames = { "sphere.txt", "cube2.txt" };
 
 	// DEFAULT TEX //
 	vector<string> defaultTex{
@@ -134,7 +76,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		{
 			continue;
 		}
-		// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
 
 		it->second->InstantiateModel(new Model(it->second->GetScale(), it->second->GetOrientation(), it->second->GetPosition()));
 
@@ -154,7 +95,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	///////////////////////////////////
 	// REFRACTION / REFLECTION MODELS
 	///////////////////////////////////
-	//_WallModel.reset(new Model(XMFLOAT3(_waterSceneScale, _waterSceneScale, _waterSceneScale), XMFLOAT3(), XMFLOAT3()));
 	pScene->_Actors["Wall"]->InstantiateModel(new Model(pScene->_Actors["Wall"]->GetScale()/*XMFLOAT3(_waterSceneScale, _waterSceneScale, _waterSceneScale)*/, XMFLOAT3(), XMFLOAT3()));
 	vector<string>wallTex{
 		"../DirectX11Engine/data/wall.dds",
@@ -166,18 +106,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		"../DirectX11Engine/data/noise.png",
 		"../DirectX11Engine/data/noise.png",
 		"../DirectX11Engine/data/noise.png" };
-	//_WallModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/wall.txt", wallTex, EShaderType::ELIGHT_SPECULAR);
 	pScene->_Actors["Wall"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/wall.txt", wallTex, EShaderType::ELIGHT_SPECULAR);
+	
 	// Set Wall Model Shadow textures
 	for (int idx = 0; idx < _RenderTextures.size(); ++idx)
 	{
-		//_WallModel->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
 		pScene->_Actors["Wall"]->GetModel()->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
 	}
-	//pScene->_Actors["Wall"]->InstantiateModel(_WallModel);
 
-	//_BathModel.reset(new Model(XMFLOAT3(_waterSceneScale, _waterSceneScale, _waterSceneScale), XMFLOAT3(), XMFLOAT3()));
-	//_BathModel = new Model(XMFLOAT3(_waterSceneScale, _waterSceneScale, _waterSceneScale), XMFLOAT3(), XMFLOAT3());
 	pScene->_Actors["Bath"]->InstantiateModel(new Model(pScene->_Actors["Bath"]->GetScale()/*XMFLOAT3(_waterSceneScale, _waterSceneScale, _waterSceneScale)*/, XMFLOAT3(), XMFLOAT3()));
 	vector<string>bathTex{
 		"../DirectX11Engine/data/marble.png",
@@ -189,12 +125,11 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		"../DirectX11Engine/data/noise.png",
 		"../DirectX11Engine/data/noise.png",
 		"../DirectX11Engine/data/noise.png" };
-	//_BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/bath.txt", bathTex, EShaderType::EREFRACTION);
 	pScene->_Actors["Bath"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/bath.txt", bathTex, EShaderType::EREFRACTION);
+	
 	// Set Bath Model Shadow textures
 	for (int idx = 0; idx < _RenderTextures.size(); ++idx)
 	{
-		//_BathModel->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
 		pScene->_Actors["Bath"]->GetModel()->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
 	}
 
@@ -209,28 +144,18 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		"../DirectX11Engine/data/noise.png",
 		"../DirectX11Engine/data/noise.png",
 		"../DirectX11Engine/data/noise.png" };
-	//_BathModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/bath.txt", bathTex, EShaderType::EREFRACTION);
 	pScene->_Actors["Ground"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt", groundTex, EShaderType::EREFRACTION);
+	
 	// Set Bath Model Shadow textures
 	for (int idx = 0; idx < _RenderTextures.size(); ++idx)
 	{
-		//_BathModel->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
 		pScene->_Actors["Ground"]->GetModel()->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
 	}
 
-	//_WaterModel.reset(new Model(XMFLOAT3(_waterSceneScale, _waterSceneScale, _waterSceneScale), XMFLOAT3(), XMFLOAT3()));
-	//_WaterModel = new Model(XMFLOAT3(_waterSceneScale, _waterSceneScale, _waterSceneScale), XMFLOAT3(), XMFLOAT3());
 	pScene->_Actors["Water"]->InstantiateModel(new Model(pScene->_Actors["Water"]->GetScale()/*XMFLOAT3(_waterSceneScale, _waterSceneScale, _waterSceneScale)*/, XMFLOAT3(), XMFLOAT3()));
 	vector<string> waterTextures{ "../DirectX11Engine/data/water.dds", "../DirectX11Engine/data/water.dds", "../DirectX11Engine/data/water.dds" };
-	//_WaterModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/water.txt", waterTextures, EShaderType::EWATER);
+	
 	pScene->_Actors["Water"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/water.txt", waterTextures, EShaderType::EWATER);
-
-	//_WaterModel->GetMaterial()->reflectRefractScale = 0.01f;
-	//_WaterModel->GetMaterial()->waterHeight = _waterHeight*_waterSceneScale;
-	//_WaterModel->GetMaterial()->bAnimated = true;
-	//_WaterModel->SetResourceView(0, _ReflectionTexture->GetShaderResourceView());
-	//_WaterModel->SetResourceView(1, _RefractionTexture->GetShaderResourceView());
-
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->reflectRefractScale = 0.01f;
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->waterHeight = _waterHeight;// *_waterSceneScale;
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->bAnimated = true;
@@ -271,7 +196,6 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 	}
 
 	// WATER DEMO
-	//_WaterModel->GetMaterial()->Animate();
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->Animate();
 
 	// 2. Update Camera
@@ -302,7 +226,7 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 // SHADOW MAPPING
 bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 {
-	XMMATRIX worldMatrix, lightViewMatrix, lightProjectionMatrix, translateMatrix;
+	XMMATRIX worldMatrix, lightViewMatrix, lightProjectionMatrix/*, translateMatrix*/;
 	float posX, posY, posZ;
 	bool result;
 
@@ -323,58 +247,19 @@ bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 			{
 				continue;
 			}
-			// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
 
 			if (it->second->GetModel())
 			{
 				// Reset the world matrix.
 				_D3D->GetWorldMatrix(worldMatrix);
 				
-				//XMMATRIX rot = XMMatrixRotationRollPitchYaw(
-				//	it->second->GetOrientation().x*XM_PI / 180.f, it->second->GetOrientation().y*XM_PI / 180.f, it->second->GetOrientation().z*XM_PI / 180.f);
-				//XMMATRIX scal = XMMatrixScaling(it->second->GetScale().x, it->second->GetScale().y, it->second->GetScale().z);
-				//XMMATRIX trans = XMMatrixTranslation(it->second->GetPosition().x, it->second->GetPosition().y, it->second->GetPosition().z);// XMMatrixTranslationFromVector(xmPosition);
-				//worldMatrix = rot*scal*trans*worldMatrix;
+				//@TODO - convert to radians!!!
 				worldMatrix *= ComputeWorldTransform(it->second->GetOrientation(), it->second->GetScale(), it->second->GetPosition());
-
 
 				it->second->GetModel()->PutVertsOnPipeline(_D3D->GetDeviceContext());
 				_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 			}
 		}
-
-		/////////////////////////////////////
-		//// DRAW EXTRA WALL AND BATH MODELS
-		//_D3D->GetWorldMatrix(worldMatrix);
-		////XMMATRIX rot = XMMatrixRotationRollPitchYaw(
-		////	_WallModel->GetOrientation().x*XM_PI / 180.f, _WallModel->GetOrientation().y*XM_PI / 180.f, _WallModel->GetOrientation().z*XM_PI / 180.f);
-		////XMMATRIX scal = XMMatrixScaling(_WallModel->GetScale().x, _WallModel->GetScale().y, _WallModel->GetScale().z);
-		////XMMATRIX trans = XMMatrixTranslation(0.0f, 6.0f, 8.0f);// XMMatrixTranslationFromVector(xmPosition);
-		////worldMatrix = rot*scal*trans*worldMatrix;
-		//worldMatrix *= ComputeWorldTransform(pScene->_Actors["Wall"]->GetOrientation(), pScene->_Actors["Wall"]->GetScale(), pScene->_Actors["Wall"]->GetPosition());
-
-		////_WallModel->PutVertsOnPipeline(_D3D->GetDeviceContext());
-		////_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-		//
-		//pScene->_Actors["Wall"]->GetModel()->PutVertsOnPipeline(_D3D->GetDeviceContext());
-		//_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), pScene->_Actors["Wall"]->GetModel()->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-
-		//// Reset the world matrix.
-		//_D3D->GetWorldMatrix(worldMatrix);
-		////rot = XMMatrixRotationRollPitchYaw(
-		////	_BathModel->GetOrientation().x*XM_PI / 180.f, _BathModel->GetOrientation().y*XM_PI / 180.f, _BathModel->GetOrientation().z*XM_PI / 180.f);
-		////scal = XMMatrixScaling(_BathModel->GetScale().x, _BathModel->GetScale().y, _BathModel->GetScale().z);
-		////trans = XMMatrixTranslation(0.0f, 2.0f, 0.0f);// XMMatrixTranslationFromVector(xmPosition);
-		////worldMatrix = rot*scal*trans*worldMatrix;
-		//worldMatrix *= ComputeWorldTransform(pScene->_Actors["Bath"]->GetOrientation(), pScene->_Actors["Bath"]->GetScale(), pScene->_Actors["Bath"]->GetPosition());
-
-		////_BathModel->PutVertsOnPipeline(_D3D->GetDeviceContext());
-		////_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), _BathModel->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-
-		//pScene->_Actors["Bath"]->GetModel()->PutVertsOnPipeline(_D3D->GetDeviceContext());
-		//_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), pScene->_Actors["Bath"]->GetModel()->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-
-		/////////////////////////////////////
 	}
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
@@ -386,22 +271,20 @@ bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 
 bool GraphicsClass::Render(Scene* pScene)
 {
-	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, translateMatrix;
-	XMMATRIX lightViewMatrix[3], lightProjectionMatrix[3];
-	float posX, posY, posZ;
-
+	// DRAW TO RENDER TEXTURES
 	RenderSceneToTexture(pScene);
-
 	RenderWaterToTexture(pScene);
 
+	// DRAW MAIN SCENE
 	_D3D->BeginScene(0.0f, 0.0f, 1.0f, 1.0f);
 
-	// Get the world, view, and projection matrices from the camera and d3d objects.
-	_Camera->GetViewMatrix(viewMatrix);
-	_D3D->GetProjectionMatrix(projectionMatrix);
-
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix/*, translateMatrix*/;
+	XMMATRIX lightViewMatrix[3], lightProjectionMatrix[3];
+	
 	// Generate the view matrix based on the camera's position.
 	_Camera->UpdateViewPoint();
+	_Camera->GetViewMatrix(viewMatrix);
+	_D3D->GetProjectionMatrix(projectionMatrix);
 
 	for (int i = 0; i < pScene->NUM_LIGHTS; ++i)
 	{
@@ -414,7 +297,7 @@ bool GraphicsClass::Render(Scene* pScene)
 	LightClass* shadowLights[3] = { _Lights[0].get() , _Lights[1].get(), _Lights[2].get() };
 
 	/////////////////////////////////////////////////////////////////
-	////////////////// RENDER ACTUAL SCENE - LOOP IMPLEMENTATION ////
+	////////////////// RENDER ACTUAL SCENE  /////////////////////////
 	/////////////////////////////////////////////////////////////////
 	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 	{
@@ -447,18 +330,85 @@ bool GraphicsClass::Render(Scene* pScene)
 		}
 	}
 	
-	////////////////////////////////////////
 	//////////// RENDER WATER //////////////
-	////////////////////////////////////////
 	RenderWaterScene(shadowLights, pScene);
 	
-	////////////////////////////////////////
-	// UI //// UI //// UI //// UI //// UI //
-	////////////////////////////////////////
+	///////////////// UI ///////////////////
 	RenderText();
 
 	// Present the rendered scene to the screen.
 	_D3D->EndScene();
+
+	return true;
+}
+
+bool GraphicsClass::RenderWaterToTexture(Scene* pScene)
+{
+	//////////////
+	// REFRACTION
+	//////////////
+	_RefractionTexture->SetRenderTarget(_D3D->GetDeviceContext());
+	_RefractionTexture->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
+	_sceneEffects.clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, _waterHeight);
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
+	_Camera->UpdateViewPoint();
+	_Camera->GetViewMatrix(viewMatrix);
+	_D3D->GetProjectionMatrix(projectionMatrix);
+	_D3D->GetWorldMatrix(worldMatrix);
+	worldMatrix *= ComputeWorldTransform(pScene->_Actors["Bath"]->GetOrientation(), pScene->_Actors["Bath"]->GetScale(), pScene->_Actors["Bath"]->GetPosition());
+	pScene->_Actors["Bath"]->GetModel()->PutVertsOnPipeline(_D3D->GetDeviceContext());
+	
+	//// RENDER WITH SHADOWING INSTEAD ////
+	XMMATRIX lightViewMatrix[3], lightProjectionMatrix[3];
+	for (int i = 0; i < pScene->NUM_LIGHTS; ++i)
+	{
+		_Lights[i]->GenerateViewMatrix();
+		lightViewMatrix[i] = _Lights[i]->GetViewMatrix();
+		lightProjectionMatrix[i] = _Lights[i]->GetProjectionMatrix();
+	}
+	LightClass* shadowLights[3] = { _Lights[0].get(), _Lights[1].get(), _Lights[2].get() };
+
+	_ShaderManager->_LightShader->Render(
+		_D3D->GetDeviceContext(), pScene->_Actors["Bath"]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+		pScene->_Actors["Bath"]->GetModel()->GetMaterial()->GetResourceArray(),
+		_sceneEffects.ambientColor,	shadowLights, _Camera->GetPosition(), _sceneEffects.fogStart, _sceneEffects.fogEnd,
+		pScene->_Actors["Bath"]->GetModel()->GetMaterial()->translation, pScene->_Actors["Bath"]->GetModel()->GetMaterial()->transparency);
+	
+	//// RENDER WITH DEFAULT DIFFUSE SHADER
+	//_ShaderManager->_RefractionShader->Render(
+	//	_D3D->GetDeviceContext(), pScene->_Actors["Bath"]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+	//	pScene->_Actors["Bath"]->GetModel()->GetMaterial()->GetResourceArray()[0], _Lights[0]->GetDirection(), XMFLOAT4(0.15f, 0.15f, 0.15f, 1.f), XMFLOAT4(1.f, 1.f, 1.f, 1.f), XMFLOAT4(0.0f, -1.0f, 0.0f, _waterHeight));
+
+	//////////////
+	// REFLECTION
+	//////////////
+	XMMATRIX reflectionViewMatrix;
+	
+	// Set the render target to be the reflection render to texture.
+	_ReflectionTexture->SetRenderTarget(_D3D->GetDeviceContext());
+
+	// Clear the reflection render to texture.
+	_ReflectionTexture->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Use the camera to render the reflection and create a reflection view matrix.
+	_Camera->RenderReflection(2.75f);
+
+	// Get the camera reflection view matrix instead of the normal view matrix.
+	reflectionViewMatrix = _Camera->GetReflectionViewMatrix();
+
+	// Get the world and projection matrices from the d3d object.
+	_D3D->GetProjectionMatrix(projectionMatrix);
+	_D3D->GetWorldMatrix(worldMatrix);
+	worldMatrix *= ComputeWorldTransform(pScene->_Actors["Wall"]->GetOrientation(), pScene->_Actors["Wall"]->GetScale(), pScene->_Actors["Wall"]->GetPosition());
+	pScene->_Actors["Wall"]->GetModel()->PutVertsOnPipeline(_D3D->GetDeviceContext());
+
+	_ShaderManager->_WaterShader->Render(_D3D->GetDeviceContext(), pScene->_Actors["Wall"]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, reflectionViewMatrix,
+		pScene->_Actors["Wall"]->GetModel()->GetMaterial()->GetResourceArray(), pScene->_Actors["Wall"]->GetModel()->GetMaterial()->translation, pScene->_Actors["Wall"]->GetModel()->GetMaterial()->reflectRefractScale);
+
+	// Reset the render target back to the original back buffer and not the render to texture anymore.
+	_D3D->SetBackBufferRenderTarget();
 
 	return true;
 }
@@ -475,156 +425,20 @@ void GraphicsClass::RenderWaterScene(LightClass* shadowLights[], Scene* pScene)
 	// Reset the world matrix.
 	_D3D->GetWorldMatrix(worldMatrix);
 
-	//XMMATRIX rot = XMMatrixRotationRollPitchYaw(
-	//	_WallModel->GetOrientation().x*XM_PI / 180.f, _WallModel->GetOrientation().y*XM_PI / 180.f, _WallModel->GetOrientation().z*XM_PI / 180.f);
-	//XMMATRIX scal = XMMatrixScaling(_WallModel->GetScale().x, _WallModel->GetScale().y, _WallModel->GetScale().z);
-	//XMMATRIX trans = XMMatrixTranslation(0.0f, 6.0f, 8.0f);
-	//worldMatrix = rot*scal*trans*worldMatrix;
-
-	//// Put the wall model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	//_WallModel->PutVertsOnPipeline(_D3D->GetDeviceContext());
-
-	//// Render the wall model using the light shader.
-	//_ShaderManager->_LightShader->Render(
-	//	_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, viewMatrix,
-	//	projectionMatrix, _WallModel->GetMaterial()->GetResourceArray(),
-	//	_sceneEffects.ambientColor, shadowLights, _Camera->GetPosition(), _sceneEffects.fogStart, _sceneEffects.fogEnd,
-	//	_WallModel->GetMaterial()->translation, _WallModel->GetMaterial()->transparency);
-	//
-	//// Reset the world matrix.
-	//_D3D->GetWorldMatrix(worldMatrix);
-
-	//rot = XMMatrixRotationRollPitchYaw(
-	//	_BathModel->GetOrientation().x*XM_PI / 180.f, _BathModel->GetOrientation().y*XM_PI / 180.f, _BathModel->GetOrientation().z*XM_PI / 180.f);
-	//scal = XMMatrixScaling(_BathModel->GetScale().x, _BathModel->GetScale().y, _BathModel->GetScale().z);
-	//trans = XMMatrixTranslation(0.0f, 2.0f, 0.0f);// XMMatrixTranslationFromVector(xmPosition);
-	//worldMatrix = rot*scal*trans*worldMatrix;
-
-	//// Put the bath model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	//_BathModel->PutVertsOnPipeline(_D3D->GetDeviceContext());
-
-	//// Render the bath model using the light shader.
-	//_ShaderManager->_LightShader->Render(
-	//	_D3D->GetDeviceContext(), _BathModel->GetIndexCount(), worldMatrix, viewMatrix,
-	//	projectionMatrix, _BathModel->GetMaterial()->GetResourceArray(),
-	//	_sceneEffects.ambientColor, shadowLights, _Camera->GetPosition(), _sceneEffects.fogStart, _sceneEffects.fogEnd,
-	//	_BathModel->GetMaterial()->translation, _BathModel->GetMaterial()->transparency);
-
-	// Reset the world matrix.
-	_D3D->GetWorldMatrix(worldMatrix);
-
 	// Get the camera reflection view matrix.
 	reflectionMatrix = _Camera->GetReflectionViewMatrix();
 
-	//rot = XMMatrixRotationRollPitchYaw(
-	//	_WaterModel->GetOrientation().x*XM_PI / 180.f, _WaterModel->GetOrientation().y*XM_PI / 180.f, _WaterModel->GetOrientation().z*XM_PI / 180.f);
-	//scal = XMMatrixScaling(_WaterModel->GetScale().x, _WaterModel->GetScale().y, _WaterModel->GetScale().z);
-	//trans = XMMatrixTranslation(0.0f, _waterHeight/**_waterSceneScale*/, 0.0f);// XMMatrixTranslationFromVector(xmPosition);
-	//worldMatrix = rot*scal*trans*worldMatrix;
+	// TODO: CONVERT ROTATION TO RADIANS!!!!
 	XMFLOAT3 shrink = XMFLOAT3(pScene->_Actors["Water"]->GetScale().x*.2f, pScene->_Actors["Water"]->GetScale().y*.2, pScene->_Actors["Water"]->GetScale().z*.2);
 	worldMatrix *= ComputeWorldTransform(pScene->_Actors["Water"]->GetOrientation(), /*shrink*/pScene->_Actors["Water"]->GetScale(), pScene->_Actors["Water"]->GetPosition());
-
 	pScene->_Actors["Water"]->GetModel()->PutVertsOnPipeline(_D3D->GetDeviceContext());
 
-
-	// Put the water model vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	pScene->_Actors["Water"]->GetModel()->PutVertsOnPipeline(_D3D->GetDeviceContext());
-
-	// Render the water model using the water shader.
-	//_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RenderTextures[3]->GetShaderResourceView(); // refraction tex
-	//_WaterModel->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _RenderTextures[4]->GetShaderResourceView(); // reflection tex
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView(); // reflection tex
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView(); // refraction tex
 
 	_ShaderManager->_WaterShader->Render(
-			_D3D->GetDeviceContext(), pScene->_Actors["Water"]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix,
-			projectionMatrix, reflectionMatrix, pScene->_Actors["Water"]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray(), pScene->_Actors["Water"]->GetModel()->GetMaterial()->translation, 0.01f);
-
-};
-
-bool GraphicsClass::RenderWaterToTexture(Scene* pScene)
-{
-	//////////////
-	// REFRACTION
-	//////////////
-	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
-	
-	// Setup a clipping plane based on the height of the water to clip everything above it.
-	_sceneEffects.clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, _waterHeight);
-	
-	// Set the render target to be the refraction render to texture.
-	_RefractionTexture->SetRenderTarget(_D3D->GetDeviceContext());
-	
-	// Clear the refraction render to texture.
-	_RefractionTexture->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
-	
-	// Generate the view matrix based on the camera's position.
-	_Camera->UpdateViewPoint();
-
-	// Get the world, view, and projection matrices from the camera and d3d objects.
-	_D3D->GetWorldMatrix(worldMatrix);
-	_Camera->GetViewMatrix(viewMatrix);
-	_D3D->GetProjectionMatrix(projectionMatrix);
-	
-	//XMMATRIX rot = XMMatrixRotationRollPitchYaw(
-	//	_BathModel->GetOrientation().x*XM_PI / 180.f, _BathModel->GetOrientation().y*XM_PI / 180.f, _BathModel->GetOrientation().z*XM_PI / 180.f);
-	//XMMATRIX scal = XMMatrixScaling(_BathModel->GetScale().x, _BathModel->GetScale().y, _BathModel->GetScale().z);
-	//XMMATRIX trans = XMMatrixTranslation(0.0f, 2, 0.0f);// XMMatrixTranslationFromVector(xmPosition);
-	//worldMatrix = rot*scal*trans*worldMatrix;
-	worldMatrix *= ComputeWorldTransform(pScene->_Actors["Bath"]->GetOrientation(), pScene->_Actors["Bath"]->GetScale(), pScene->_Actors["Bath"]->GetPosition());
-
-	//_BathModel->PutVertsOnPipeline(_D3D->GetDeviceContext());
-	//_ShaderManager->_RefractionShader->Render(
-	//	_D3D->GetDeviceContext(), _BathModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-	//	_BathModel->GetMaterial()->GetResourceArray()[0], _Lights[0]->GetDirection(), XMFLOAT4(0.15f, 0.15f, 0.15f, 1.f), XMFLOAT4(1.f, 1.f, 1.f, 1.f), XMFLOAT4(0.0f, -1.0f, 0.0f, _waterHeight));
-
-	pScene->_Actors["Bath"]->GetModel()->PutVertsOnPipeline(_D3D->GetDeviceContext());
-	_ShaderManager->_RefractionShader->Render(
-		_D3D->GetDeviceContext(), pScene->_Actors["Bath"]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		pScene->_Actors["Bath"]->GetModel()->GetMaterial()->GetResourceArray()[0], _Lights[0]->GetDirection(), XMFLOAT4(0.15f, 0.15f, 0.15f, 1.f), XMFLOAT4(1.f, 1.f, 1.f, 1.f), XMFLOAT4(0.0f, -1.0f, 0.0f, _waterHeight));
-
-
-	//////////////
-	// REFLECTION
-	//////////////
-	XMMATRIX reflectionViewMatrix;  /*,worldMatrix, projectionMatrix;*/
-	
-	// Set the render target to be the reflection render to texture.
-	_ReflectionTexture->SetRenderTarget(_D3D->GetDeviceContext());
-
-	// Clear the reflection render to texture.
-	_ReflectionTexture->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
-
-	// Use the camera to render the reflection and create a reflection view matrix.
-	_Camera->RenderReflection(2.75f);
-
-	// Get the camera reflection view matrix instead of the normal view matrix.
-	reflectionViewMatrix = _Camera->GetReflectionViewMatrix();
-
-	// Get the world and projection matrices from the d3d object.
-	_D3D->GetWorldMatrix(worldMatrix);
-	_D3D->GetProjectionMatrix(projectionMatrix);
-
-	//rot = XMMatrixRotationRollPitchYaw(
-	//	_WallModel->GetOrientation().x*XM_PI / 180.f, _WallModel->GetOrientation().y*XM_PI / 180.f, _WallModel->GetOrientation().z*XM_PI / 180.f);
-	//scal = XMMatrixScaling(_WallModel->GetScale().x, _WallModel->GetScale().y, _WallModel->GetScale().z);
-	//trans = XMMatrixTranslation(0.0f, 6.0f, 8.0f);// XMMatrixTranslationFromVector(xmPosition);
-	//worldMatrix = rot*scal*trans*worldMatrix;
-	worldMatrix *= ComputeWorldTransform(pScene->_Actors["Wall"]->GetOrientation(), pScene->_Actors["Wall"]->GetScale(), pScene->_Actors["Wall"]->GetPosition());
-
-
-	//_WallModel->PutVertsOnPipeline(_D3D->GetDeviceContext());
-	//_ShaderManager->_WaterShader->Render(_D3D->GetDeviceContext(), _WallModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, reflectionViewMatrix,
-	//	_WallModel->GetMaterial()->GetResourceArray(), _WallModel->GetMaterial()->translation, _WallModel->GetMaterial()->reflectRefractScale);
-	pScene->_Actors["Wall"]->GetModel()->PutVertsOnPipeline(_D3D->GetDeviceContext());
-	_ShaderManager->_WaterShader->Render(_D3D->GetDeviceContext(), pScene->_Actors["Wall"]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, reflectionViewMatrix,
-		pScene->_Actors["Wall"]->GetModel()->GetMaterial()->GetResourceArray(), pScene->_Actors["Wall"]->GetModel()->GetMaterial()->translation, pScene->_Actors["Wall"]->GetModel()->GetMaterial()->reflectRefractScale);
-
-
-	// Reset the render target back to the original back buffer and not the render to texture anymore.
-	_D3D->SetBackBufferRenderTarget();
-
-	return true;
+		_D3D->GetDeviceContext(), pScene->_Actors["Water"]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix,
+		projectionMatrix, reflectionMatrix, pScene->_Actors["Water"]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray(), pScene->_Actors["Water"]->GetModel()->GetMaterial()->translation, 0.01f);
 }
 
 #pragma region UI
