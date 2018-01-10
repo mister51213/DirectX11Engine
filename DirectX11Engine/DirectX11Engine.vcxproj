@@ -312,7 +312,7 @@
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="ReflectionShaderClass.cpp" />
-    <ClCompile Include="RefractionShaderClass.cpp" />
+    <ClCompile Include="DiffuseShaderClass.cpp" />
     <ClCompile Include="RenderTextureClass.cpp" />
     <ClCompile Include="ShaderClass.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />
@@ -568,7 +568,7 @@
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Position.h" />
     <ClInclude Include="ReflectionShaderClass.h" />
-    <ClInclude Include="RefractionShaderClass.h" />
+    <ClInclude Include="DiffuseShaderClass.h" />
     <ClInclude Include="RenderTextureClass.h" />
     <ClInclude Include="ShaderClass.h" />
     <ClInclude Include="ShaderCompiler.h" />

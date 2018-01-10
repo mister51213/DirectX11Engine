@@ -13,7 +13,8 @@
 #include "FontShaderClass.h"
 #include "ReflectionShaderClass.h"
 #include "WaterShaderClass.h"
-#include "RefractionShaderClass.h"
+//#include "RefractionShaderClass.h"
+#include "DiffuseShaderClass.h"
 #include "DepthShaderClass.h"
 
 #include "GfxUtil.h"
@@ -47,7 +48,8 @@ public:
 	unique_ptr<LightShaderClass> _LightShader;
 	unique_ptr<DepthShaderClass> _DepthShader;
 	unique_ptr<ReflectionShaderClass> _ReflectionShader;
-	unique_ptr<RefractionShaderClass> _RefractionShader;
+	//unique_ptr<RefractionShaderClass> _RefractionShader;
+	unique_ptr<DiffuseShaderClass> _DiffuseShader;
 	unique_ptr<TextureShaderClass> _TextureShader;
 	unique_ptr<FontShaderClass> _FontShader;
 	unique_ptr<WaterShaderClass> _WaterShader;

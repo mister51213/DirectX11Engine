@@ -105,15 +105,15 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 		return false;
 	}
 
-	_RefractionShader.reset(new RefractionShaderClass);
-	if (!_RefractionShader)
+	_DiffuseShader.reset(new DiffuseShaderClass);
+	if (!_DiffuseShader)
 	{
 		return false;
 	}
 
 	//result = _RefractionShader->Initialize(device, hwnd, "../DirectX11Engine/Refraction_vs.hlsl", "../DirectX11Engine/Refraction_ps.hlsl");
 	//result = _RefractionShader->Initialize(device, hwnd, "../x64/Debug/Refraction_vs.cso", "../x64/Debug/Refraction_ps.cso");
-	result = _RefractionShader->Initialize(device, hwnd, "Refraction_vs.cso", "Refraction_ps.cso");
+	result = _DiffuseShader->Initialize(device, hwnd, "Refraction_vs.cso", "Refraction_ps.cso");
 	if (!result)
 	{
 		throw std::runtime_error("Could not initialize the refraction shader object. - " + to_string(__LINE__));
@@ -175,7 +175,7 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 		break;
 
 	case EShaderType::EREFRACTION:
-		result = _RefractionShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
+		result = _DiffuseShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
 			material->GetResourceArray()[0], lights[0]->GetDirection(), effects.ambientColor, lights[0]->GetDiffuseColor(), effects.clipPlane);
 		if (!result) return false;
 		//_RefractionShader->RenderShader(device, indexCount);

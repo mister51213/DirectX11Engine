@@ -72,9 +72,6 @@
     <ClCompile Include="WaterShaderClass.cpp">
       <Filter>Source Files\Tier2\Shaders</Filter>
     </ClCompile>
-    <ClCompile Include="RefractionShaderClass.cpp">
-      <Filter>Source Files\Tier2\Shaders</Filter>
-    </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Tier2</Filter>
     </ClCompile>
@@ -594,6 +591,9 @@
     <ClCompile Include="ShaderCompiler.cpp">
       <Filter>Source Files\Tier2\Shaders</Filter>
     </ClCompile>
+    <ClCompile Include="DiffuseShaderClass.cpp">
+      <Filter>Source Files\Tier2\Shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VectorMath.h">
@@ -618,9 +618,6 @@
       <Filter>Header Files\Tier1\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="ReflectionShaderClass.h">
-      <Filter>Header Files\Tier1\Shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="RefractionShaderClass.h">
       <Filter>Header Files\Tier1\Shaders</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
@@ -1356,6 +1353,9 @@
       <Filter>Header Files\Deprecated</Filter>
     </ClInclude>
     <ClInclude Include="ShaderCompiler.h">
+      <Filter>Header Files\Tier1\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="DiffuseShaderClass.h">
       <Filter>Header Files\Tier1\Shaders</Filter>
     </ClInclude>
   </ItemGroup>

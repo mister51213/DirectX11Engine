@@ -52,6 +52,12 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	///////////////////////////////////
 	// DEFAULT SCENE MODELS
 	///////////////////////////////////	
+	// SKY
+	_Sky.reset(new Model);
+	_Sky->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
+		vector<string>(1, "../DirectX11Engine/data/clouds2.jpg"), EShaderType::ETEXTURE);
+
+
 	vector<string> texNames = { "wall01.dds", "marble.png", "metal001.dds", "wall01.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
 	vector<string> meshNames = { "sphere.txt", "cube2.txt" };
 
@@ -133,9 +139,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		pScene->_Actors["Bath"]->GetModel()->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
 	}
 
-	pScene->_Actors["Ground"]->InstantiateModel(new Model(pScene->_Actors["Ground"]->GetScale()/*XMFLOAT3(_waterSceneScale, _waterSceneScale, _waterSceneScale)*/, XMFLOAT3(), XMFLOAT3()));
+	pScene->_Actors["Ground"]->InstantiateModel(new Model(pScene->_Actors["Ground"]->GetScale(), XMFLOAT3(), XMFLOAT3()));
 	vector<string>groundTex{
-		"../DirectX11Engine/data/marble.png",
+		"../DirectX11Engine/data/snow.jpg",
 		"../DirectX11Engine/data/dirt.dds",
 		"../DirectX11Engine/data/light.dds",
 		"../DirectX11Engine/data/alpha.dds",
@@ -144,7 +150,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		"../DirectX11Engine/data/noise.png",
 		"../DirectX11Engine/data/noise.png",
 		"../DirectX11Engine/data/noise.png" };
-	pScene->_Actors["Ground"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt", groundTex, EShaderType::EREFRACTION);
+	pScene->_Actors["Ground"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), /*"../DirectX11Engine/data/plane01.txt",*/ "../DirectX11Engine/data/SnowTerrain_LowPoly.txt", groundTex, EShaderType::EREFRACTION);
 	
 	// Set Bath Model Shadow textures
 	for (int idx = 0; idx < _RenderTextures.size(); ++idx)
@@ -251,7 +257,7 @@ bool GraphicsClass::RenderSceneToTexture(Scene* pScene)
 			if (it->second->GetModel())
 			{
 				// Reset the world matrix.
-				_D3D->GetWorldMatrix(worldMatrix);
+				worldMatrix = _D3D->GetWorldMatrix();
 				
 				//@TODO - convert to radians!!!
 				worldMatrix *= ComputeWorldTransform(it->second->GetOrientation(), it->second->GetScale(), it->second->GetPosition());
@@ -281,11 +287,22 @@ bool GraphicsClass::Render(Scene* pScene)
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix/*, translateMatrix*/;
 	XMMATRIX lightViewMatrix[3], lightProjectionMatrix[3];
 	
-	// Generate the view matrix based on the camera's position.
 	_Camera->UpdateViewPoint();
-	_Camera->GetViewMatrix(viewMatrix);
-	_D3D->GetProjectionMatrix(projectionMatrix);
+	
+	// Draw Sky first
+	worldMatrix = _D3D->GetWorldMatrix();
+	viewMatrix = _Camera->GetViewMatrix();
+	projectionMatrix = _D3D->GetProjectionMatrix();
+	_Sky->SetScale(XMFLOAT3(200, 200, 200));
+	worldMatrix *= ComputeWorldTransform(_Sky->GetOrientation(), _Sky->GetScale(), _Sky->GetPosition());
+	_Sky->PutVertsOnPipeline(_D3D->GetDeviceContext());
+	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), _Sky->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,	_Sky->GetMaterial()->GetResourceArray()[0]);
 
+	// Generate the view matrix based on the camera's position.
+	viewMatrix = _Camera->GetViewMatrix();
+	projectionMatrix = _D3D->GetProjectionMatrix();
+
+	// Update lights
 	for (int i = 0; i < pScene->NUM_LIGHTS; ++i)
 	{
 		_Lights[i]->GenerateViewMatrix();
@@ -296,9 +313,9 @@ bool GraphicsClass::Render(Scene* pScene)
 	//@TODO // AWAY WITH THIS MADNESS! ~ properly loop / hold in the right containers
 	LightClass* shadowLights[3] = { _Lights[0].get() , _Lights[1].get(), _Lights[2].get() };
 
-	/////////////////////////////////////////////////////////////////
 	////////////////// RENDER ACTUAL SCENE  /////////////////////////
-	/////////////////////////////////////////////////////////////////
+
+	// Render all other actors
 	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 	{
 		// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
@@ -310,7 +327,7 @@ bool GraphicsClass::Render(Scene* pScene)
 
 		if (it->second->GetModel())
 		{
-			_D3D->GetWorldMatrix(worldMatrix);
+			worldMatrix = _D3D->GetWorldMatrix();
 
 			XMFLOAT3 shrink = XMFLOAT3(it->second->GetScale().x*.2f, it->second->GetScale().y*.2, it->second->GetScale().z*.2);
 			worldMatrix*= ComputeWorldTransform(it->second->GetOrientation(), /*shrink*/it->second->GetScale(), it->second->GetPosition());
@@ -353,10 +370,10 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene)
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
-	_Camera->UpdateViewPoint();
-	_Camera->GetViewMatrix(viewMatrix);
-	_D3D->GetProjectionMatrix(projectionMatrix);
-	_D3D->GetWorldMatrix(worldMatrix);
+	//_Camera->UpdateViewPoint();
+	viewMatrix = _Camera->GetViewMatrix();
+	projectionMatrix = _D3D->GetProjectionMatrix();
+	worldMatrix = _D3D->GetWorldMatrix();
 	worldMatrix *= ComputeWorldTransform(pScene->_Actors["Bath"]->GetOrientation(), pScene->_Actors["Bath"]->GetScale(), pScene->_Actors["Bath"]->GetPosition());
 	pScene->_Actors["Bath"]->GetModel()->PutVertsOnPipeline(_D3D->GetDeviceContext());
 	
@@ -399,8 +416,8 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene)
 	reflectionViewMatrix = _Camera->GetReflectionViewMatrix();
 
 	// Get the world and projection matrices from the d3d object.
-	_D3D->GetProjectionMatrix(projectionMatrix);
-	_D3D->GetWorldMatrix(worldMatrix);
+	projectionMatrix = _D3D->GetProjectionMatrix();
+	worldMatrix = _D3D->GetWorldMatrix();
 	worldMatrix *= ComputeWorldTransform(pScene->_Actors["Wall"]->GetOrientation(), pScene->_Actors["Wall"]->GetScale(), pScene->_Actors["Wall"]->GetPosition());
 	pScene->_Actors["Wall"]->GetModel()->PutVertsOnPipeline(_D3D->GetDeviceContext());
 
@@ -418,12 +435,12 @@ void GraphicsClass::RenderWaterScene(LightClass* shadowLights[], Scene* pScene)
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix;
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
-	_D3D->GetWorldMatrix(worldMatrix);
-	_Camera->GetViewMatrix(viewMatrix);
-	_D3D->GetProjectionMatrix(projectionMatrix);
+	worldMatrix = _D3D->GetWorldMatrix();
+	viewMatrix = _Camera->GetViewMatrix();
+	projectionMatrix = _D3D->GetProjectionMatrix();
 
 	// Reset the world matrix.
-	_D3D->GetWorldMatrix(worldMatrix);
+	worldMatrix = _D3D->GetWorldMatrix();
 
 	// Get the camera reflection view matrix.
 	reflectionMatrix = _Camera->GetReflectionViewMatrix();
@@ -641,7 +658,7 @@ void GraphicsClass::RenderText()
 
 	XMMATRIX worldMatrix, baseViewMatrix, orthoMatrix;
 
-	_D3D->GetWorldMatrix(worldMatrix);
+	worldMatrix = _D3D->GetWorldMatrix();
 	_Camera->GetBaseViewMatrix(baseViewMatrix);
 	_D3D->GetOrthoMatrix(orthoMatrix);
 

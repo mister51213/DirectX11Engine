@@ -59,13 +59,13 @@ private:
 	bool RenderWaterToTexture(Scene* pScene);
 	bool RenderSceneToTexture(Scene* pScene);
 	bool Render(Scene* pScene);
-
 	void RenderWaterScene(LightClass* shadowLights[], Scene* pScene);
 
 	unique_ptr<D3DClass> _D3D;
 	unique_ptr<ShaderManagerClass> _ShaderManager;
 	unique_ptr<Camera> _Camera;
-	unique_ptr<Model> _CubeModel, _SphereModel, _GroundModel;	
+	//unique_ptr<Model> _CubeModel, _SphereModel, _GroundModel;	
+	unique_ptr<Model> _Sky;
 	vector<unique_ptr<RenderTextureClass>> _RenderTextures;
 	vector<unique_ptr<LightClass>>_Lights;
 

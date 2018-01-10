@@ -141,9 +141,9 @@ void Camera::UpdateViewPoint()
 	_bFirstRenderPass = false;
 }
 
-void Camera::GetViewMatrix(XMMATRIX& viewMatrix)
+XMMATRIX Camera::GetViewMatrix()
 {
-	viewMatrix = _viewMatrix;
+	return _viewMatrix;
 }
 
 void Camera::GetBaseViewMatrix(XMMATRIX& viewMatrix)
