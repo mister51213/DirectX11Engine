@@ -3,6 +3,7 @@
 #include <DirectXMath.h>
 
 using namespace DirectX;
+using namespace VectorMath;
 
 Scene::Scene()
 {
@@ -99,9 +100,14 @@ void Scene::InitializeLights()
 		_LightActors[i]->SetLookAt(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	}
 
-	_LightActors[0]->SetPosition(XMFLOAT3(5.f, 20.0f, 0.f));
-	_LightActors[1]->SetPosition(XMFLOAT3(-5.f, 20.0f, 0.f));
-	_LightActors[2]->SetPosition(XMFLOAT3(0.f, 20.0f, -5.f));
+	_LightActors[0]->SetPosition(XMFLOAT3(20.f, 20.0f, 0.f));
+	_LightActors[0]->SetLookAt((-1.f*_LightActors[0]->GetPosition()));
+
+	_LightActors[1]->SetPosition(XMFLOAT3(-20.f, 20.0f, 0.f));
+	_LightActors[1]->SetLookAt((-1.f*_LightActors[1]->GetPosition()));
+
+	_LightActors[2]->SetPosition(XMFLOAT3(0.f, 20.0f, 20.f));
+	_LightActors[2]->SetLookAt((-1.f*_LightActors[2]->GetPosition()));
 }
 
 void Scene::Tick(float deltaTime, Input* pInput)
@@ -112,26 +118,26 @@ void Scene::Tick(float deltaTime, Input* pInput)
 
 	// Update Lights
 	// light 1
-	//if (_lightPositionX > 1.0f)
-	//{
-	//	_lightPositionX = -1.f;
-	//}
-	//if (_lightPositionZ > 1.0f)
-	//{
-	//	_lightPositionZ = -1.f;
-	//}
-	//_lightPositionX += _lightPosIncrement;
-	//_lightPositionZ += _lightPosIncrement;
-	//_LightActors[0]->SetPosition(XMFLOAT3(cos(_lightPositionX)*5.f, 8.0f, sin(_lightPositionZ)*5.f));
+	if (_lightPositionX > 1.0f)
+	{
+		_lightPositionX = -1.f;
+	}
+	if (_lightPositionZ > 1.0f)
+	{
+		_lightPositionZ = -1.f;
+	}
+	_lightPositionX += _lightPosIncrement;
+	_lightPositionZ += _lightPosIncrement;
+	_LightActors[0]->SetPosition(XMFLOAT3(cos(_lightPositionX)*20.f, 20.0f, sin(_lightPositionZ)*20.f));
 
-	//// light 2
-	//if (_lightPositionX2 > 5.0f || _lightPositionX2 < -5.0f)
-	//{
-	//	_increment2 *= -1;
-	//}
-	//_lightPositionX2 += _increment2;
+	// light 2
+	if (_lightPositionX2 > 20.0f || _lightPositionX2 < -20.0f)
+	{
+		_increment2 *= -1;
+	}
+	_lightPositionX2 += _increment2;
 
-	//_LightActors[1]->SetPosition(XMFLOAT3(_lightPositionX2, 8.0f, sin(_lightPositionZ)*-8.f));
+	_LightActors[1]->SetPosition(XMFLOAT3(_lightPositionX2, 20.0f, sin(_lightPositionZ)*-20.f));
 }
 
 void Scene::ProcessInput(float deltaTime, Input* pInput)

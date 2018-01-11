@@ -179,13 +179,17 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		_Lights[i].reset(new LightClass);
 		if (!_Lights[i])return false;
 
-		//_Lights[i]->SetAmbientColor(XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f));
 		_Lights[i]->SetDiffuseColor(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 		_Lights[i]->SetLookAt(pScene->_LightActors[i]->GetLookAt());
 		_Lights[i]->SetPosition(pScene->_LightActors[i]->GetPosition());
 		_Lights[i]->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
 	}
 
+	// Effects
+	_sceneEffects.ambientColor = XMFLOAT4(.1, .1, .1, 1);
+	_sceneEffects.fogEnd = 0;
+	_sceneEffects.fogStart = 0;
+	
 	// UI
 	InitializeUI(screenWidth, screenHeight);
 	
@@ -219,6 +223,7 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 	{
 		light->SetPosition(pScene->_LightActors[i]->GetPosition());
 		light->SetLookAt(pScene->_LightActors[i]->GetLookAt());
+		light->SetDirection(pScene->_LightActors[i]->GetLookAt());
 		++i;
 	}
 	

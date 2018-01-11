@@ -11,6 +11,7 @@
 #include <sstream>
 #include <wrl/client.h>
 #include <directxmath.h>
+#include "VectorMath.h"
 #include <d3d11.h>
 #include "comdef.h"
 

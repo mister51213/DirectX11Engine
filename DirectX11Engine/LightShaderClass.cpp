@@ -147,11 +147,11 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	///////////////////////// LIGHT INIT - PS BUFFER 0 //////////////////////
 	bufferNumber = 0;
 
-	LightDataTemplate_PS tempLightsPS[NUM_LIGHTS] = {
-		*shadowLight[0]->GetLightBufferPS(), *shadowLight[1]->GetLightBufferPS(), *shadowLight[2]->GetLightBufferPS()};
+	//LightDataTemplate_PS tempLightsPS[NUM_LIGHTS] = {*shadowLight[0]->GetLightBufferPS(), *shadowLight[1]->GetLightBufferPS(), *shadowLight[2]->GetLightBufferPS()};
 
 	SceneLightBufferType tempLightBuff = 
-		{ ambientColor, tempLightsPS[0], tempLightsPS[1], tempLightsPS[2] };
+	{ ambientColor, *shadowLight[0]->GetLightBufferPS(), *shadowLight[1]->GetLightBufferPS(), *shadowLight[2]->GetLightBufferPS() };
+	//{ ambientColor, tempLightsPS[0], tempLightsPS[1], tempLightsPS[2] };
 
 	MapBuffer(tempLightBuff, _psBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, _psBuffers[bufferNumber].GetAddressOf());
