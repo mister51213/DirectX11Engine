@@ -63,8 +63,8 @@ private:
 	unique_ptr<D3DClass> _D3D;
 	unique_ptr<ShaderManagerClass> _ShaderManager;
 	unique_ptr<Camera> _Camera;
-	//unique_ptr<Model> _CubeModel, _SphereModel, _GroundModel;	
 	unique_ptr<Model> _Sky;
+	unique_ptr<Model> _Earth;
 	vector<unique_ptr<RenderTextureClass>> _RenderTextures;
 	vector<unique_ptr<LightClass>>_Lights;
 

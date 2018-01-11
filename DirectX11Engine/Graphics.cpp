@@ -55,14 +55,19 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	///////////////////////////////////	
 	// SKY
 	_Sky.reset(new Model);
+	vector<string> skytex = { "../DirectX11Engine/data/galaxypurple.jpg" , "../DirectX11Engine/data/skydome_alpha2.jpg" };
 	_Sky->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
-		vector<string>(1, "../DirectX11Engine/data/clouds2.jpg"), EShaderType::ETEXTURE);
+		skytex, EShaderType::ETEXTURE);
 
-
-	vector<string> texNames = { "wall01.dds", "marble.png", "metal001.dds", "wall01.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
-	vector<string> meshNames = { "sphere.txt", "cube2.txt", "sphere.txt" };
+	// EARTH
+	_Earth.reset(new Model);
+	vector<string> earthtex = { "../DirectX11Engine/data/fire2.dds", "../DirectX11Engine/data/skydome_alpha3.jpg" };
+	_Earth->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
+		earthtex, EShaderType::ETEXTURE);
 
 	// DEFAULT TEX //
+	vector<string> texNames = { "wall01.dds", "marble.png", "metal001.dds", "wall01.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
+	vector<string> meshNames = { "sphere.txt", "cube2.txt", "sphere.txt" };
 	vector<string> defaultTex{
 		"../DirectX11Engine/data/metal001.dds",
 		"../DirectX11Engine/data/dirt.dds",
@@ -292,18 +297,28 @@ bool GraphicsClass::Render(Scene* pScene)
 	RenderWaterToTexture(pScene);
 
 	// DRAW MAIN SCENE
-	_D3D->BeginScene(0.0f, 0.0f, 1.0f, 1.0f);
+	_D3D->BeginScene(1.0f, 1.0f, 1.0f, 1.0f);
 	_Camera->UpdateViewPoint();
-	
-	// DRAW SKY
-	_Sky->PutVertsOnPipeline(_D3D->GetDeviceContext());
 
 	XMMATRIX viewMatrix = _Camera->GetViewMatrix();
 	XMMATRIX projectionMatrix = _D3D->GetProjectionMatrix();
 
-	_Sky->SetScale(XMFLOAT3(200, 200, 200));
-	XMMATRIX worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(_Sky->GetOrientation(), _Sky->GetScale(), _Sky->GetPosition());
-	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), _Sky->GetIndexCount(), worldTransform, viewMatrix, projectionMatrix,	_Sky->GetMaterial()->GetResourceArray()[0]);
+	// DRAW EARTH
+	_Earth->PutVertsOnPipeline(_D3D->GetDeviceContext());
+	_Earth->SetScale(XMFLOAT3(250, 400, 250));
+	_Earth->SetPosition(XMFLOAT3(0, -300, 0));
+	_Earth->SetOrientation(XMFLOAT3(180, _Sky->GetOrientation().y, _Sky->GetOrientation().z));
+	XMMATRIX worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(_Earth->GetOrientation(), _Earth->GetScale(), _Earth->GetPosition());
+	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), _Earth->GetIndexCount(), worldTransform, viewMatrix, projectionMatrix, _Earth->GetMaterial()->GetResourceArray());
+
+	// DRAW SKY
+	_Sky->PutVertsOnPipeline(_D3D->GetDeviceContext());
+	_Sky->SetScale(XMFLOAT3(100, 150, 100));
+	_Sky->SetPosition(XMFLOAT3(0, 300, 0));
+	worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(_Sky->GetOrientation(), _Sky->GetScale(), _Sky->GetPosition());
+	_D3D->EnableAlphaBlending();
+	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), _Sky->GetIndexCount(), worldTransform, viewMatrix, projectionMatrix,	_Sky->GetMaterial()->GetResourceArray());
+	_D3D->DisableAlphaBlending();
 
 	// Update lights
 	XMMATRIX lightViewMatrix[3], lightProjectionMatrix[3];
@@ -640,6 +655,8 @@ void GraphicsClass::RenderText()
 
 	worldMatrix = _D3D->GetWorldMatrix();
 	_Camera->GetBaseViewMatrix(baseViewMatrix);
+
+	baseViewMatrix = XMMatrixIdentity();
 	_D3D->GetOrthoMatrix(orthoMatrix);
 
 

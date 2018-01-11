@@ -149,7 +149,7 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 	switch (material->shaderType)
 	{
 	case EShaderType::ETEXTURE:
-		result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray()[0]);
+		result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray());
 		if (!result) return false;
 		//_TextureShader->RenderShader(device, indexCount);
 		break;
@@ -201,7 +201,7 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 		break;
 
 	default:
-		result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray()[0]);
+		result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray());
 		if (!result) return false;
 		//_TextureShader->RenderShader(device, indexCount);
 		break;
