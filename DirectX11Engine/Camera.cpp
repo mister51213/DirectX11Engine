@@ -1,6 +1,8 @@
 #include "Camera.h"
 
 Camera::Camera()
+	:
+	_lookAt(XMFLOAT3(0,0,0))
 {
 	_positionX = 0.0f;
 	_positionY = 0.0f;
@@ -44,8 +46,7 @@ void Camera::MoveInDirectionRelative(XMFLOAT3 displacement)
 {
 	XMVECTOR posCamSpace = XMLoadFloat3(&displacement);
 
-	XMMATRIX camRotMatrix =
-		DirectX::XMMatrixRotationRollPitchYaw(
+	XMMATRIX camRotMatrix =	DirectX::XMMatrixRotationRollPitchYaw(
 			_rotationX*0.0174532925f,
 			_rotationY*0.0174532925f,
 			_rotationZ*0.0174532925f);
@@ -86,6 +87,16 @@ XMFLOAT3 Camera::GetRotation()
 	return XMFLOAT3(_rotationX, _rotationY, _rotationZ);
 }
 
+XMFLOAT3 Camera::GetLookAt()
+{
+	return _lookAt;
+}
+
+void Camera::SetLookAt(XMFLOAT3 lookAt)
+{
+	_lookAt = lookAt;
+}
+
 void Camera::UpdateViewPoint()
 {
 	XMFLOAT3 up, position, lookAt;
@@ -112,9 +123,10 @@ void Camera::UpdateViewPoint()
 	// Setup where the camera is looking by default.
 	lookAt.x = 0.0f;
 	lookAt.y = 0.0f;
-	lookAt.z = 1.0f;
+	lookAt.z = 1.f;
 
 	// Load it into a XMVECTOR structure.
+	//lookAtVector = XMLoadFloat3(&lookAt);
 	lookAtVector = XMLoadFloat3(&lookAt);
 
 	// convert yaw (Y axis), pitch (X axis), and roll (Z axis) to radians.

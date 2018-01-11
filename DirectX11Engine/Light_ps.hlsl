@@ -74,8 +74,8 @@ struct PixelInputType
 	float3 tangent : TANGENT;
     float3 binormal : BINORMAL;
     float3 viewDirection : TEXCOORD1;
-    float4 lightViewPositions[NUM_LIGHTS] : TEXCOORD6;
-    float3 lightPositions[NUM_LIGHTS] : TEXCOORD9;
+    float4 vertex_ProjLightSpace[NUM_LIGHTS] : TEXCOORD6;
+    float3 lightPos_LS[NUM_LIGHTS] : TEXCOORD9;
 	float fogFactor : FOG;
 };
 
@@ -139,23 +139,23 @@ float4 sphereMask(float2 tex)
 	return alpha;
 }
 
-// Calculates spot lights, based on position and direction of the light and
-// of the direction of the surface.
+// Calculates spot lights, based on position and direction of the light and of the direction of the surface.
 float CalculateSpotLightIntensity(
-	float3 LightPosition, 
+	float3 LightPos_VertexSpace, 
 	float3 LightDirection, 
 	float3 SurfacePosition, 
 	float3 SurfaceNormal)
 {
-	float3 lightToSurface = normalize(SurfacePosition - LightPosition);
-	float dotProduct = saturate(dot(lightToSurface, normalize(LightDirection)));
+	//float3 lightToVertex = normalize(SurfacePosition - LightPos_VertexSpace);
+	float3 lightToVertex = -LightPos_VertexSpace;
+	float dotProduct = saturate(dot(normalize(lightToVertex), normalize(LightDirection)));
 
 	// METALLIC EFFECT (deactivate for now)
-	float metalEffect = saturate(dot(SurfaceNormal, normalize(LightPosition)));
+	float metalEffect = saturate(dot(SurfaceNormal, normalize(LightPos_VertexSpace)));
 	if(dotProduct > .8 /*&& metalEffect > .8*/)
 	{
 		//return saturate(dot(SurfaceNormal, normalize(LightPosition))) * dotProduct;
-		return saturate(dot(SurfaceNormal, normalize(LightPosition)));
+		return saturate(dot(SurfaceNormal, normalize(LightPos_VertexSpace)));
 	}
 	else
 	{
@@ -168,7 +168,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	float2 projectTexCoord;
 	float depthValue;
 	float lightDepthValue;
-    float lightIntensity;
+    //float lightIntensity;
 	float4 textureColor;
 
 
@@ -194,8 +194,8 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	// Calculate the projected texture coordinates.
 	for(int i = 0; i < NUM_LIGHTS; ++i)
 	{
-	projectTexCoord.x =  input.lightViewPositions[i].x / input.lightViewPositions[i].w / 2.0f + 0.5f;
-	projectTexCoord.y = -input.lightViewPositions[i].y / input.lightViewPositions[i].w / 2.0f + 0.5f;
+	projectTexCoord.x =  input.vertex_ProjLightSpace[i].x / input.vertex_ProjLightSpace[i].w / 2.0f + 0.5f;
+	projectTexCoord.y = -input.vertex_ProjLightSpace[i].y / input.vertex_ProjLightSpace[i].w / 2.0f + 0.5f;
 
 	if((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
 	{
@@ -203,7 +203,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 		depthValue = shaderTextures[6 + i].Sample(SampleTypeClamp, projectTexCoord).r;
 
 		// Calculate the depth of the light.
-		lightDepthValue = input.lightViewPositions[i].z / input.lightViewPositions[i].w;
+		lightDepthValue = input.vertex_ProjLightSpace[i].z / input.vertex_ProjLightSpace[i].w;
 
 		// Subtract the bias from the lightDepthValue.
 		lightDepthValue = lightDepthValue - bias;
@@ -215,13 +215,13 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 			if(lightDepthValue < depthValue)
 			{
 				// Calculate the amount of light on this pixel.
-				lightIntensity = saturate(dot(bumpNormal, normalize(input.lightPositions[i])));
+				float lightIntensity = saturate(dot(bumpNormal, normalize(input.lightPos_LS[i])));
 
 				if(lightIntensity > 0.0f)
 				{
 					// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
 					float spotLightIntensity = CalculateSpotLightIntensity(
-						input.lightPositions[i], // NOTE - this is NOT NORMALIZED!!!
+						input.lightPos_LS[i], // NOTE - this is NOT NORMALIZED!!!
 						cb_lights[i].lightDirection, 
 						input.vertPos_ModelSpace.xyz, 
 						bumpNormal);

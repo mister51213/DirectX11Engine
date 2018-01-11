@@ -30,7 +30,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 
 	_Camera->SetPosition(pScene->GetCamera()->GetPosition().x, pScene->GetCamera()->GetPosition().y, pScene->GetCamera()->GetPosition().z);
 	_Camera->UpdateViewPoint();
-	 
+	_Camera->SetRotation(pScene->GetCamera()->GetOrientation().x, pScene->GetCamera()->GetOrientation().y, pScene->GetCamera()->GetOrientation().z);
+
 	// SHADOW RENDER TEXTURES //
 	for (int i = 0; i < NUM_RENDER_TEXTURES; ++i)
 	{
