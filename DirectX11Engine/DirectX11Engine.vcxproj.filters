@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="HLSL Files">
-      <UniqueIdentifier>{657fbe75-46a3-4c50-aa2c-afe1df7d0ba9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Tier2">
       <UniqueIdentifier>{7a01fe3e-0f02-4463-972e-63de2852f2c6}</UniqueIdentifier>
     </Filter>
@@ -37,40 +34,43 @@
     <Filter Include="Source Files\Utilities">
       <UniqueIdentifier>{a16c463b-626a-4b06-a800-edb25db65756}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Tier2\Shaders">
-      <UniqueIdentifier>{4430a54b-1eb0-489b-a461-733153231cba}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Deprecated">
       <UniqueIdentifier>{998611fc-7201-42e9-910f-d0f8be8aee06}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Tier1\Shaders">
-      <UniqueIdentifier>{b07e6c23-7ae4-4cf7-b952-952ca8225b07}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Utilities">
       <UniqueIdentifier>{ec5d199e-ce31-4d18-8541-6bfc735b9b89}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Shaders_HLSL">
+      <UniqueIdentifier>{657fbe75-46a3-4c50-aa2c-afe1df7d0ba9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Shader_Classes">
+      <UniqueIdentifier>{b07e6c23-7ae4-4cf7-b952-952ca8225b07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Shader_Classes">
+      <UniqueIdentifier>{4430a54b-1eb0-489b-a461-733153231cba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FontShaderClass.cpp">
-      <Filter>Source Files\Tier2\Shaders</Filter>
+      <Filter>Source Files\Shader_Classes</Filter>
     </ClCompile>
     <ClCompile Include="LightShaderClass.cpp">
-      <Filter>Source Files\Tier2\Shaders</Filter>
+      <Filter>Source Files\Shader_Classes</Filter>
     </ClCompile>
     <ClCompile Include="TextureShaderClass.cpp">
-      <Filter>Source Files\Tier2\Shaders</Filter>
+      <Filter>Source Files\Shader_Classes</Filter>
     </ClCompile>
     <ClCompile Include="ShaderClass.cpp">
-      <Filter>Source Files\Tier2\Shaders</Filter>
+      <Filter>Source Files\Shader_Classes</Filter>
     </ClCompile>
     <ClCompile Include="ShaderManagerClass.cpp">
-      <Filter>Source Files\Tier2\Shaders</Filter>
+      <Filter>Source Files\Shader_Classes</Filter>
     </ClCompile>
     <ClCompile Include="ReflectionShaderClass.cpp">
-      <Filter>Source Files\Tier2\Shaders</Filter>
+      <Filter>Source Files\Shader_Classes</Filter>
     </ClCompile>
     <ClCompile Include="WaterShaderClass.cpp">
-      <Filter>Source Files\Tier2\Shaders</Filter>
+      <Filter>Source Files\Shader_Classes</Filter>
     </ClCompile>
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\Tier2</Filter>
@@ -517,7 +517,7 @@
       <Filter>Source Files\Tier1</Filter>
     </ClCompile>
     <ClCompile Include="DepthShaderClass.cpp">
-      <Filter>Source Files\Tier2\Shaders</Filter>
+      <Filter>Source Files\Shader_Classes</Filter>
     </ClCompile>
     <ClCompile Include="CameraClass.cpp">
       <Filter>Source Files\Deprecated</Filter>
@@ -589,10 +589,10 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ShaderCompiler.cpp">
-      <Filter>Source Files\Tier2\Shaders</Filter>
+      <Filter>Source Files\Shader_Classes</Filter>
     </ClCompile>
     <ClCompile Include="DiffuseShaderClass.cpp">
-      <Filter>Source Files\Tier2\Shaders</Filter>
+      <Filter>Source Files\Shader_Classes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -600,25 +600,25 @@
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="LightShaderClass.h">
-      <Filter>Header Files\Tier1\Shaders</Filter>
+      <Filter>Header Files\Shader_Classes</Filter>
     </ClInclude>
     <ClInclude Include="FontShaderClass.h">
-      <Filter>Header Files\Tier1\Shaders</Filter>
+      <Filter>Header Files\Shader_Classes</Filter>
     </ClInclude>
     <ClInclude Include="TextureShaderClass.h">
-      <Filter>Header Files\Tier1\Shaders</Filter>
+      <Filter>Header Files\Shader_Classes</Filter>
     </ClInclude>
     <ClInclude Include="ShaderClass.h">
-      <Filter>Header Files\Tier1\Shaders</Filter>
+      <Filter>Header Files\Shader_Classes</Filter>
     </ClInclude>
     <ClInclude Include="ShaderManagerClass.h">
-      <Filter>Header Files\Tier1\Shaders</Filter>
+      <Filter>Header Files\Shader_Classes</Filter>
     </ClInclude>
     <ClInclude Include="WaterShaderClass.h">
-      <Filter>Header Files\Tier1\Shaders</Filter>
+      <Filter>Header Files\Shader_Classes</Filter>
     </ClInclude>
     <ClInclude Include="ReflectionShaderClass.h">
-      <Filter>Header Files\Tier1\Shaders</Filter>
+      <Filter>Header Files\Shader_Classes</Filter>
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Tier2</Filter>
@@ -1320,7 +1320,7 @@
       <Filter>Header Files\Tier1</Filter>
     </ClInclude>
     <ClInclude Include="DepthShaderClass.h">
-      <Filter>Header Files\Tier1\Shaders</Filter>
+      <Filter>Header Files\Shader_Classes</Filter>
     </ClInclude>
     <ClInclude Include="D3DClass.h">
       <Filter>Header Files\Tier1</Filter>
@@ -1353,75 +1353,75 @@
       <Filter>Header Files\Deprecated</Filter>
     </ClInclude>
     <ClInclude Include="ShaderCompiler.h">
-      <Filter>Header Files\Tier1\Shaders</Filter>
+      <Filter>Header Files\Shader_Classes</Filter>
     </ClInclude>
     <ClInclude Include="DiffuseShaderClass.h">
-      <Filter>Header Files\Tier1\Shaders</Filter>
+      <Filter>Header Files\Shader_Classes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Light_vs_PRESHADOW.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </None>
     <None Include="Light_ps_PRESHADOW.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </None>
     <None Include="shadow.ps">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </None>
     <None Include="shadow.vs">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="NMap_vs.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
     <FxCompile Include="NMap_ps.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
     <FxCompile Include="Light_ps.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
     <FxCompile Include="depth_ps.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
     <FxCompile Include="depth_vs.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
     <FxCompile Include="font_ps.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
     <FxCompile Include="font_vs.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
     <FxCompile Include="Light_vs.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
     <FxCompile Include="Reflection_ps.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
     <FxCompile Include="Reflection_vs.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
     <FxCompile Include="Refraction_ps.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
     <FxCompile Include="Refraction_vs.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
     <FxCompile Include="texture_ps.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
     <FxCompile Include="texture_vs.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
     <FxCompile Include="WaterShader_ps.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
     <FxCompile Include="WaterShader_vs.hlsl">
-      <Filter>HLSL Files</Filter>
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

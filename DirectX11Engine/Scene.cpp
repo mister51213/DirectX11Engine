@@ -29,8 +29,9 @@ bool Scene::Initialize()
 
 void Scene::InitializeActors()
 {
-	vector<string> actorNames = { // note actors w same name must be added CONSECUTIVELY!!!!
+	vector<string> actorNames = { // actors w same name must be added CONSECUTIVELY!!!!
 		"Cube",
+		"Sphere",
 		"Sphere",
 		"Ground",
 		"Wall",
@@ -38,8 +39,9 @@ void Scene::InitializeActors()
 		"Water" };
 
 	vector<XMFLOAT3> positions = {
-		XMFLOAT3(-10.0f, 1.f, 0.0f), // cube
-		XMFLOAT3(10.0f, 1.f, 0.0f), // sphere
+		XMFLOAT3(-5.0f, 1.f, 0.0f), // cube
+		XMFLOAT3(5.0f, 1.f, 0.0f), // sphere
+		XMFLOAT3(0.0f, 1.f, -5.0f), // sphere
 		XMFLOAT3(0.0f, 0.0f, 0.0f), // ground
 		XMFLOAT3(0.0f, 6.0f, 8.0f), // wall
 		XMFLOAT3(0.0f, 2.0f, 0.0f),  // bath

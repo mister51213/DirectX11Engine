@@ -59,7 +59,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 
 
 	vector<string> texNames = { "wall01.dds", "marble.png", "metal001.dds", "wall01.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
-	vector<string> meshNames = { "sphere.txt", "cube2.txt" };
+	vector<string> meshNames = { "sphere.txt", "cube2.txt", "sphere.txt" };
 
 	// DEFAULT TEX //
 	vector<string> defaultTex{
@@ -144,12 +144,25 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		"../DirectX11Engine/data/snow.jpg",
 		"../DirectX11Engine/data/fire2.dds",
 		"../DirectX11Engine/data/light.dds",
-		"../DirectX11Engine/data/alpha.dds",
-		"../DirectX11Engine/data/blue.dds", // normal map
+		"../DirectX11Engine/data/noise.png",	// alpha map
+		"../DirectX11Engine/data/bumpMap.dds",	// normal map
 		"../DirectX11Engine/data/specMap.dds",
 		"../DirectX11Engine/data/noise.png",
 		"../DirectX11Engine/data/noise.png",
 		"../DirectX11Engine/data/noise.png" };
+
+	vector<string> defaultTexRef{
+		"../DirectX11Engine/data/metal001.dds",
+		"../DirectX11Engine/data/dirt.dds",
+		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/alpha.dds",
+		"../DirectX11Engine/data/bumpMap.dds", // normal map
+		"../DirectX11Engine/data/specMap.dds",
+		"../DirectX11Engine/data/specMap.dds",
+		"../DirectX11Engine/data/specMap.dds",
+		"../DirectX11Engine/data/specMap.dds"
+	};
+
 	pScene->_Actors["Ground"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt"/*"../DirectX11Engine/data/SnowTerrain_LowPoly.txt"*/, groundTex, EShaderType::EREFRACTION);
 	
 	// Set Bath Model Shadow textures
