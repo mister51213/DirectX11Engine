@@ -59,7 +59,6 @@ private:
 	bool RenderWaterToTexture(Scene* pScene);
 	bool RenderSceneToTexture(Scene* pScene);
 	bool Render(Scene* pScene);
-	void RenderWaterScene(LightClass* shadowLights[], Scene* pScene);
 
 	unique_ptr<D3DClass> _D3D;
 	unique_ptr<ShaderManagerClass> _ShaderManager;
