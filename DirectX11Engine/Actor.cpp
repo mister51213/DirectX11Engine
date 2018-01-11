@@ -1,7 +1,5 @@
 #include "Actor.h"
 
-
-
 Actor::Actor()
 	:
 	Name("Actor")
@@ -22,7 +20,14 @@ bool Actor::InitializeMovement(bool visible)
 	bVisible = visible;
 
 	_scale = XMFLOAT3(1.f, 1.f, 1.f);
-	_MovementComp->Initialize();
+	if (_MovementComp)
+	{
+		_MovementComp->Initialize();
+	}
+	else
+	{
+		ThrowRuntime("MovementComp not found!");
+	}
 
 	return true;
 }
@@ -35,7 +40,7 @@ XMFLOAT3 Actor::GetPosition() const
 	}
 	else
 	{
-		return XMFLOAT3();
+		ThrowRuntime("MovementComp not found!");
 	}
 }
 
@@ -47,7 +52,7 @@ XMFLOAT3 Actor::GetOrientation() const
 	}
 	else
 	{
-		return XMFLOAT3();
+		ThrowRuntime("MovementComp not found!");
 	}
 }
 
@@ -59,7 +64,7 @@ XMFLOAT3 Actor::GetLookAt() const
 	}
 	else
 	{
-		return XMFLOAT3();
+		ThrowRuntime("MovementComp not found!");
 	}
 }
 
@@ -69,6 +74,10 @@ void Actor::SetPosition(const XMFLOAT3 & pos)
 	{
 		_MovementComp->SetPosition(pos);
 	}
+	else
+	{
+		ThrowRuntime("MovementComp not found!");
+	}
 }
 
 void Actor::SetOrientation(const XMFLOAT3 & or )
@@ -77,6 +86,10 @@ void Actor::SetOrientation(const XMFLOAT3 & or )
 	{
 		_MovementComp->SetOrientation(or);
 	}
+	else
+	{
+		ThrowRuntime("MovementComp not found!");
+	}
 }
 
 void Actor::SetLookAt(const XMFLOAT3 & lookat)
@@ -84,5 +97,9 @@ void Actor::SetLookAt(const XMFLOAT3 & lookat)
 	if (_MovementComp)
 	{
 		_MovementComp->SetLookAt(lookat);
+	}
+	else
+	{
+		ThrowRuntime("MovementComp not found!");
 	}
 }

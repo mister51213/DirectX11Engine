@@ -20,7 +20,7 @@ public:
 	Scene();
 	~Scene();
 	bool Initialize();
-	void InitializeLights();
+	void InitializeLights(map<string, unique_ptr<Actor>>& actors);
 	void InitializeActors();
 	void Tick(float deltaTime, Input* pInput);
 	void ProcessInput(float deltaTime, Input* pInput);

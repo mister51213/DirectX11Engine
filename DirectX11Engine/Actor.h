@@ -36,6 +36,10 @@ public:
 		{
 			_Model->SetScale(scale);
 		}
+		//else
+		//{
+		//	ThrowRuntime("Model not found!");
+		//}
 	}
 	XMFLOAT3 GetLookAt() const;
 

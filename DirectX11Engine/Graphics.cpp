@@ -53,7 +53,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	_ReflectionTexture->Initialize(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR), "render to texture";
 
 	///////////////////////////////////
-	// DEFAULT SCENE MODELS
+	// DEFAULT SCENE BACKGROUND
 	///////////////////////////////////	
 	// SKY
 	_Sky.reset(new Model);
@@ -67,12 +67,21 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	_SkyInner->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
 		skytexInner, EShaderType::ETEXTURE);
 
-
 	// EARTH
 	_Earth.reset(new Model);
 	vector<string> earthtex = { "../DirectX11Engine/data/fire2.dds", "../DirectX11Engine/data/skydome_alpha3.jpg" };
 	_Earth->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
 		earthtex, EShaderType::ETEXTURE);
+
+	// EARTH INNER
+	_EarthInner.reset(new Model);
+	vector<string> earthtex2 = { "../DirectX11Engine/data/fire.dds", "../DirectX11Engine/data/skydome_alpha5.jpg" };
+	_EarthInner->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
+		earthtex2, EShaderType::ETEXTURE);
+
+	///////////////////////////////////
+	// DEFAULT SCENE MODELS
+	///////////////////////////////////	
 
 	// DEFAULT TEX //
 	vector<string> texNames = { "wall01.dds", "marble.png", "metal001.dds", "wall01.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
@@ -116,43 +125,42 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	///////////////////////////////////
 	// REFRACTION / REFLECTION MODELS
 	///////////////////////////////////
-	//pScene->_Actors["Wall"]->InstantiateModel(new Model(pScene->_Actors["Wall"]->GetScale()/*XMFLOAT3(_waterSceneScale, _waterSceneScale, _waterSceneScale)*/, XMFLOAT3(), XMFLOAT3()));
-	//vector<string>wallTex{
-	//	"../DirectX11Engine/data/wall.dds",
-	//	"../DirectX11Engine/data/dirt.dds",
-	//	"../DirectX11Engine/data/light.dds",
-	//	"../DirectX11Engine/data/alpha.dds",
-	//	"../DirectX11Engine/data/bumpMap.dds", // normal map
-	//	"../DirectX11Engine/data/specMap.dds",
-	//	"../DirectX11Engine/data/noise.png",
-	//	"../DirectX11Engine/data/noise.png",
-	//	"../DirectX11Engine/data/noise.png" };
-	//pScene->_Actors["Wall"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/wall.txt", wallTex, EShaderType::ELIGHT_SPECULAR);
-	//
-	//// Set Wall Model Shadow textures
-	//for (int idx = 0; idx < _RenderTextures.size(); ++idx)
-	//{
-	//	pScene->_Actors["Wall"]->GetModel()->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
-	//}
-
-	//pScene->_Actors["Bath"]->InstantiateModel(new Model(pScene->_Actors["Bath"]->GetScale()/*XMFLOAT3(_waterSceneScale, _waterSceneScale, _waterSceneScale)*/, XMFLOAT3(), XMFLOAT3()));
-	//vector<string>bathTex{
-	//	"../DirectX11Engine/data/marble.png",
-	//	"../DirectX11Engine/data/dirt.dds",
-	//	"../DirectX11Engine/data/light.dds",
-	//	"../DirectX11Engine/data/alpha.dds",
-	//	"../DirectX11Engine/data/blue.dds", // normal map
-	//	"../DirectX11Engine/data/specMap.dds",
-	//	"../DirectX11Engine/data/noise.png",
-	//	"../DirectX11Engine/data/noise.png",
-	//	"../DirectX11Engine/data/noise.png" };
-	//pScene->_Actors["Bath"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/bath.txt", bathTex, EShaderType::EREFRACTION);
-	//
-	//// Set Bath Model Shadow textures
-	//for (int idx = 0; idx < _RenderTextures.size(); ++idx)
-	//{
-	//	pScene->_Actors["Bath"]->GetModel()->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
-	//}
+	pScene->_Actors["Wall"]->InstantiateModel(new Model(pScene->_Actors["Wall"]->GetScale()/*XMFLOAT3(_waterSceneScale, _waterSceneScale, _waterSceneScale)*/, XMFLOAT3(), XMFLOAT3()));
+	vector<string>wallTex{
+		"../DirectX11Engine/data/wall.dds",
+		"../DirectX11Engine/data/dirt.dds",
+		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/alpha.dds",
+		"../DirectX11Engine/data/bumpMap.dds", // normal map
+		"../DirectX11Engine/data/specMap.dds",
+		"../DirectX11Engine/data/noise.png",
+		"../DirectX11Engine/data/noise.png",
+		"../DirectX11Engine/data/noise.png" };
+	pScene->_Actors["Wall"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/wall.txt", wallTex, EShaderType::ELIGHT_SPECULAR);
+	
+	// Set Wall Model Shadow textures
+	for (int idx = 0; idx < _RenderTextures.size(); ++idx)
+	{
+		pScene->_Actors["Wall"]->GetModel()->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
+	}
+	pScene->_Actors["Bath"]->InstantiateModel(new Model(pScene->_Actors["Bath"]->GetScale()/*XMFLOAT3(_waterSceneScale, _waterSceneScale, _waterSceneScale)*/, XMFLOAT3(), XMFLOAT3()));
+	vector<string>bathTex{
+		"../DirectX11Engine/data/marble.png",
+		"../DirectX11Engine/data/dirt.dds",
+		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/alpha.dds",
+		"../DirectX11Engine/data/blue.dds", // normal map
+		"../DirectX11Engine/data/specMap.dds",
+		"../DirectX11Engine/data/noise.png",
+		"../DirectX11Engine/data/noise.png",
+		"../DirectX11Engine/data/noise.png" };
+	pScene->_Actors["Bath"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/bath.txt", bathTex, EShaderType::EREFRACTION);
+	
+	// Set Bath Model Shadow textures
+	for (int idx = 0; idx < _RenderTextures.size(); ++idx)
+	{
+		pScene->_Actors["Bath"]->GetModel()->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
+	}
 
 	pScene->_Actors["Ground"]->InstantiateModel(new Model(pScene->_Actors["Ground"]->GetScale(), XMFLOAT3(), XMFLOAT3()));
 	vector<string>groundTex{
@@ -166,23 +174,24 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		"../DirectX11Engine/data/noise.png",
 		"../DirectX11Engine/data/noise.png" };
 
-	pScene->_Actors["Ground"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt"/*"../DirectX11Engine/data/SnowTerrain_LowPoly.txt"*/, groundTex, EShaderType::EREFRACTION);
-	
+	pScene->_Actors["Ground"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), /*"../DirectX11Engine/data/plane01.txt"*/"../DirectX11Engine/data/SnowTerrain_LowPoly.txt", groundTex, EShaderType::EREFRACTION);
+	pScene->_Actors["Ground"]->GetModel()->SetScale(XMFLOAT3(.6, .6, .6));
+
 	// Set Bath Model Shadow textures
 	for (int idx = 0; idx < _RenderTextures.size(); ++idx)
 	{
 		pScene->_Actors["Ground"]->GetModel()->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
 	}
 
-	//pScene->_Actors["Water"]->InstantiateModel(new Model(pScene->_Actors["Water"]->GetScale(), XMFLOAT3(), XMFLOAT3()));
-	//vector<string> waterTextures{ "../DirectX11Engine/data/water.dds", "../DirectX11Engine/data/water.dds", "../DirectX11Engine/data/water.dds" };
-	//
-	//pScene->_Actors["Water"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/water.txt", waterTextures, EShaderType::EWATER);
-	//pScene->_Actors["Water"]->GetModel()->GetMaterial()->reflectRefractScale = 0.01f;
-	//pScene->_Actors["Water"]->GetModel()->GetMaterial()->waterHeight = _waterHeight;// *_waterSceneScale;
-	//pScene->_Actors["Water"]->GetModel()->GetMaterial()->bAnimated = true;
-	//pScene->_Actors["Water"]->GetModel()->SetResourceView(0, _ReflectionTexture->GetShaderResourceView());
-	//pScene->_Actors["Water"]->GetModel()->SetResourceView(1, _RefractionTexture->GetShaderResourceView());
+	pScene->_Actors["Water"]->InstantiateModel(new Model(pScene->_Actors["Water"]->GetScale(), XMFLOAT3(), XMFLOAT3()));
+	vector<string> waterTextures{ "../DirectX11Engine/data/water.dds", "../DirectX11Engine/data/water.dds", "../DirectX11Engine/data/water.dds" };
+	
+	pScene->_Actors["Water"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/water.txt", waterTextures, EShaderType::EWATER);
+	pScene->_Actors["Water"]->GetModel()->GetMaterial()->reflectRefractScale = 0.01f;
+	pScene->_Actors["Water"]->GetModel()->GetMaterial()->waterHeight = _waterHeight;// *_waterSceneScale;
+	pScene->_Actors["Water"]->GetModel()->GetMaterial()->bAnimated = true;
+	pScene->_Actors["Water"]->GetModel()->SetResourceView(0, _ReflectionTexture->GetShaderResourceView());
+	pScene->_Actors["Water"]->GetModel()->SetResourceView(1, _RefractionTexture->GetShaderResourceView());
 
 	///////////////////////////////////
 	// INITIALIZE LIGHTS
@@ -315,6 +324,10 @@ bool GraphicsClass::Render(Scene* pScene)
 	// Generate the view matrix based on the camera's position.
 	_Camera->UpdateViewPoint();
 
+	/////////////////////////////
+	//////// BACKGROUND /////////
+	_D3D->EnableAlphaBlending();
+
 	// DRAW EARTH
 	_Earth->PutVertsOnPipeline(_D3D->GetDeviceContext());
 	_Earth->SetScale(XMFLOAT3(250, 400, 250));
@@ -323,9 +336,15 @@ bool GraphicsClass::Render(Scene* pScene)
 	worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(_Earth->GetOrientation(), _Earth->GetScale(), _Earth->GetPosition());
 	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), _Earth->GetIndexCount(), worldTransform, viewMatrix, projectionMatrix, _Earth->GetMaterial()->GetResourceArray());
 
-	// DRAW SKY
-	_D3D->EnableAlphaBlending();
+	// DRAW EARTH INNER
+	_EarthInner->PutVertsOnPipeline(_D3D->GetDeviceContext());
+	_EarthInner->SetScale(.75f * _Earth->GetScale());
+	_EarthInner->SetPosition(XMFLOAT3(0, -200, 0));
+	_EarthInner->SetOrientation(XMFLOAT3(180, _Sky->GetOrientation().y, _Sky->GetOrientation().z));
+	worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(_EarthInner->GetOrientation(), _EarthInner->GetScale(), _EarthInner->GetPosition());
+	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), _EarthInner->GetIndexCount(), worldTransform, viewMatrix, projectionMatrix, _EarthInner->GetMaterial()->GetResourceArray());
 
+	// DRAW SKY
 	_Sky->PutVertsOnPipeline(_D3D->GetDeviceContext());
 	_Sky->SetScale(XMFLOAT3(100, 150, 100));
 	_Sky->SetPosition(XMFLOAT3(0, 300, 0));
@@ -334,7 +353,7 @@ bool GraphicsClass::Render(Scene* pScene)
 
 	// DRAW INNER SKY
 	_SkyInner->PutVertsOnPipeline(_D3D->GetDeviceContext());
-	_SkyInner->SetScale(.8f * _Sky->GetScale());
+	_SkyInner->SetScale(.7f * _Sky->GetScale());
 	_SkyInner->SetPosition(XMFLOAT3(0, 150, 0));
 	worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(_SkyInner->GetOrientation(), _SkyInner->GetScale(), _SkyInner->GetPosition());
 	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), _SkyInner->GetIndexCount(), worldTransform, viewMatrix, projectionMatrix, _SkyInner->GetMaterial()->GetResourceArray());

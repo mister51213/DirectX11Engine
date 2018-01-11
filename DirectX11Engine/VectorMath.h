@@ -21,6 +21,14 @@ namespace VectorMath
 						in1.z + in2.z);
 	}
 
+	inline DirectX::XMFLOAT3 operator - (const DirectX::XMFLOAT3 destination, const DirectX::XMFLOAT3 origin)
+	{
+		return XMFLOAT3(
+			destination.x - origin.x,
+			destination.y - origin.y,
+			destination.z - origin.z);
+	}
+
 	inline void operator += (DirectX::XMFLOAT3& thisVector, const DirectX::XMFLOAT3 in)
 	{
 		thisVector.x += in.x;
