@@ -18,7 +18,7 @@ struct LightTemplate_VS
 {
    	matrix lightViewMatrix;
     matrix lightProjMatrix;
-	float4 lightPosition;
+	float4 lightPosition_WS;
 };
 
 //////////////////////
@@ -36,14 +36,14 @@ cbuffer MatrixBuffer:register(b0)
 // pass in position of camera for reflection
 cbuffer CameraBuffer:register(b1)
 {
-    float3 cb_cameraPosition; // okay not to be float4?
+    float3 cb_camPosition_WS; // okay not to be float4?
     float cb_padding;
 };
 
 cbuffer FogBuffer:register(b2)
 {
-    float cb_fogStart;
-    float cb_fogEnd;
+    float cb_fogStart_ViewSpace;
+    float cb_fogEnd_ViewSpace;
 };
 
 
@@ -79,153 +79,126 @@ struct PixelInputType
 	float fogFactor : FOG; 
 };
 
-// The output of the vertex shader will be sent to the pixel shader.
-////////////////////////////////////////////////////////////////////////////////
-// Vertex Shader
-////////////////////////////////////////////////////////////////////////////////
-//PixelInputType LightVertexShader(VertexInputType input)
-//{
-//	// The output of this function, to be passed to the pixel shader
-//	PixelInputType output;
+//// The output of the vertex shader will be sent to the pixel shader.
+//////////////////////////////////////////////////////////////////////////////////
+//// Vertex Shader
+//////////////////////////////////////////////////////////////////////////////////
+PixelInputType LightVertexShader(VertexInputType input)
+{
+	//The final output for the vertex shader
+	PixelInputType output;
 
-//	// Pass in tex coordinate untouched
-//	output.tex  = input.tex;
+	// Pass through tex coordinates untouched
+	output.tex  = input.tex;
 
-//	// Pre-calculate vertex position in world space
-//	input.vertex_ModelSpace.w = 1.0f;
-//	float4 vertex_WS =  mul(input.vertex_ModelSpace, cb_worldMatrix);
+	// Pre-calculate vertex position in world space
+	float4 vertex_WS = mul(input.vertex_ModelSpace, cb_worldMatrix);
 
-//	// Bring the vertex position into view, then screen space
-//	output.vertex_ScrnSpace = mul(vertex_WS, cb_viewMatrix);
-//	output.vertex_ScrnSpace = mul(output.vertex_ScrnSpace, cb_projectionMatrix);
+	output.viewDirection = normalize(cb_camPosition_WS.xyz - vertex_WS.xyz);
 
-//	// get view direction in world space
-//	output.viewDirection = normalize(cb_cameraPosition.xyz - vertex_WS); 
+	// Change the position vector to be 4 units for proper matrix calculations.
+	input.vertex_ModelSpace.w = 1.0f;
+	output.vertex_ModelSpace = input.vertex_ModelSpace; // store the raw vert position in model space for pixel shader
 
-//	// Bring normal, tangent, and binormal into world space
-//    output.normal = normalize(mul(input.normal, (float3x3)cb_worldMatrix));
-//    output.tangent = normalize(mul(input.tangent, (float3x3)cb_worldMatrix));
-//    output.binormal = normalize(mul(input.binormal, (float3x3)cb_worldMatrix));
+	// Bring vertex from model space into world, view (camera), then screen space
+	float4 vertex_ViewSpace = mul(vertex_WS, cb_viewMatrix);
+	output.vertex_ScrnSpace = mul(vertex_ViewSpace, cb_projectionMatrix);
 
-//	// Calculate the position of the vertex in the world.
-//   // float4 vertexPositionWS = mul(input.vertex_ModelSpace, cb_worldMatrix);
+	// Bring normal, tangent, and binormal into world space
+    output.normal = normalize(mul(input.normal, (float3x3)cb_worldMatrix));
+    output.tangent = normalize(mul(input.tangent, (float3x3)cb_worldMatrix));
+    output.binormal = normalize(mul(input.binormal, (float3x3)cb_worldMatrix));
 
-//    // Determine the viewing direction based on the position of the camera and the position of the vertex in the world.
-//    //output.viewDirection = cb_cameraPosition.xyz - vertexPositionWS.xyz;
+    // Calculate linear fog.
+    output.fogFactor = saturate((cb_fogEnd_ViewSpace - vertex_ViewSpace.z) / (cb_fogEnd_ViewSpace - cb_fogStart_ViewSpace));
+	
+	//... SHADOWING ... //
+	for(int i = 0; i< NUM_LIGHTS; ++i)
+	{
+		// Bring the vertex into light view space, then project it onto the texture
+		output.lightViewPositions[i] = mul(vertex_WS, cb_lights[i].lightViewMatrix);
+		output.lightViewPositions[i] = mul(output.lightViewPositions[i], cb_lights[i].lightProjMatrix);
 
-//    // Calculate the camera position. // is this the same as the following method?
-//    float4 cb_cameraPosition = mul(input.vertex_ModelSpace, cb_worldMatrix);
-//    cb_cameraPosition = mul(cb_cameraPosition, cb_viewMatrix);
-//	//float4 vertexPosViewSpace = mul(vertexPositionWS, cb_viewMatrix); @TODO: decide which way is better
+		// Calculate light position relative to the vertex in WORLD SPACE
+		output.lightPositions[i] = cb_lights[i].lightPosition_WS - vertex_WS.xyz;
+	}
 
-//    // Calculate linear fog.
-//    output.fogFactor = saturate((cb_fogEnd - /*vertexPosViewSpace.z*/cb_cameraPosition.z) / (cb_fogEnd - cb_fogStart));
-
-//    // Normalize the viewing direction vector.
-//   // output.viewDirection = normalize(output.viewDirection);
-
-//	//... SHADOWING ... //
-//	for(int i = 0; i< NUM_LIGHTS; ++i)
-//	{
-//		output.lightViewPositions[i] = mul(input.vertex_ModelSpace, cb_worldMatrix);
-//		output.lightViewPositions[i] = mul(output.lightViewPositions[i], cb_lights[i].lightViewMatrix);
-//		output.lightViewPositions[i] = mul(output.lightViewPositions[i], cb_lights[i].lightProjMatrix);
-//		//output.lightPositions[i] = normalize(c_lightShadowPos[i].xyz - vertexPositionWS.xyz);
-
-//		// Calculate the world offset of the light from the vertex
-//		output.lightPositions[i] = cb_lights[i].lightPosition - vertex_WS.xyz;
-
-//		//output.lightPositions[i] = mul(cb_lights[i].lightPosition, cb_worldMatrix);
-//		//output.lightPositions[i] = output.lightPositions[i] - vertexPositionWS.xyz;
-//	}
-
-//	return output;
-//}
+	return output;
+}
 
 // BACKUP /////
 // The output of the vertex shader will be sent to the pixel shader.
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
 ////////////////////////////////////////////////////////////////////////////////
-PixelInputType LightVertexShader(VertexInputType input)
-{
-	PixelInputType output;
-	float4 vertexPositionWS;
+//PixelInputType LightVertexShader(VertexInputType input)
+//{
+//	//The final output for the vertex shader
+//	PixelInputType output;
 
-	// Change the position vector to be 4 units for proper matrix calculations.
-	input.vertex_ModelSpace.w = 1.0f;
-	output.vertex_ModelSpace = input.vertex_ModelSpace;
+//	// Pass through tex coordinates untouched
+//	output.tex  = input.tex;
 
-	// Calculate the position of the vertex against the world, view, and projection matrices.
-	// place the vertex in the correct location for rendering in 3D space according to our view and then onto the 2D screen.
-	output.vertex_ScrnSpace = mul(input.vertex_ModelSpace, cb_worldMatrix);
-	//output.rawPosition = input.position;
-	output.vertex_ScrnSpace = mul(output.vertex_ScrnSpace, cb_viewMatrix);
-	output.vertex_ScrnSpace = mul(output.vertex_ScrnSpace, cb_projectionMatrix);
+//	// Pre-calculate vertex position in world space
+//	float4 vertexPositionWS = mul(input.vertex_ModelSpace, cb_worldMatrix);
 
-	// Store the input color for the pixel shader to use.
-	output.tex  = input.tex;
+//	output.viewDirection = normalize(cb_camPosition_WS.xyz - vertexPositionWS.xyz);
 
-	// Calculate the normal vector against the world matrix only.
-    output.normal = mul(input.normal, (float3x3)cb_worldMatrix);
-	output.normal = normalize(output.normal);
+//	// Change the position vector to be 4 units for proper matrix calculations.
+//	input.vertex_ModelSpace.w = 1.0f;
+//	output.vertex_ModelSpace = input.vertex_ModelSpace;
 
-	// Calculate the tangent vector against the world matrix only and then normalize the final value.
-    output.tangent = mul(input.tangent, (float3x3)cb_worldMatrix);
-    output.tangent = normalize(output.tangent);
+//	// Calculate the position of the vertex against the world, view, and projection matrices.
+//	// place the vertex in the correct location for rendering in 3D space according to our view and then onto the 2D screen.
+//	output.vertex_ScrnSpace = mul(input.vertex_ModelSpace, cb_worldMatrix);
+//	//output.rawPosition = input.position;
+//	output.vertex_ScrnSpace = mul(output.vertex_ScrnSpace, cb_viewMatrix);
+//	output.vertex_ScrnSpace = mul(output.vertex_ScrnSpace, cb_projectionMatrix);
 
-    // Calculate the binormal vector against the world matrix only and then normalize the final value.
-    output.binormal = mul(input.binormal, (float3x3)cb_worldMatrix);
-    output.binormal = normalize(output.binormal);
+//	// Bring normal, tangent, and binormal into world space
+//    output.normal = normalize(mul(input.normal, (float3x3)cb_worldMatrix));
+//    output.tangent = normalize(mul(input.tangent, (float3x3)cb_worldMatrix));
+//    output.binormal = normalize(mul(input.binormal, (float3x3)cb_worldMatrix));
 
-	// Calculate the position of the vertex in the world.
-    vertexPositionWS = mul(input.vertex_ModelSpace, cb_worldMatrix);
+//    // Calculate the camera position. // is this the same as the following method?
+//    float4 cb_camPosition = mul(input.vertex_ModelSpace, cb_worldMatrix);
+//    cb_camPosition = mul(cb_camPosition, cb_viewMatrix);
+//	//float4 vertexPosViewSpace = mul(vertexPositionWS, cb_viewMatrix); @TODO: decide which way is better
 
-    // Determine the viewing direction based on the position of the camera and the position of the vertex in the world.
-    output.viewDirection = cb_cameraPosition.xyz - vertexPositionWS.xyz;
+//    // Calculate linear fog.
+//    output.fogFactor = saturate((cb_fogEnd_ViewSpace - /*vertexPosViewSpace.z*/cb_camPosition.z) / (cb_fogEnd_ViewSpace - cb_fogStart_ViewSpace));
 
-    // Calculate the camera position. // is this the same as the following method?
-    float4 cb_cameraPosition = mul(input.vertex_ModelSpace, cb_worldMatrix);
-    cb_cameraPosition = mul(cb_cameraPosition, cb_viewMatrix);
-	//float4 vertexPosViewSpace = mul(vertexPositionWS, cb_viewMatrix); @TODO: decide which way is better
-
-    // Calculate linear fog.
-    output.fogFactor = saturate((cb_fogEnd - /*vertexPosViewSpace.z*/cb_cameraPosition.z) / (cb_fogEnd - cb_fogStart));
-
-    // Normalize the viewing direction vector.
-    output.viewDirection = normalize(output.viewDirection);
-
-	//////////// POINT LIGHTS ////////////////////
-	// Determine the light positions based on the position of the lights and the position of the vertex in the world.
-    //output.lightPos1.xyz = normalize(lightPosition[0].xyz - vertexPositionWS.xyz);
-    //output.lightPos2.xyz = normalize(lightPosition[1].xyz - vertexPositionWS.xyz);
-    //output.lightPos3.xyz = normalize(lightPosition[2].xyz - vertexPositionWS.xyz);
+//	//////////// POINT LIGHTS ////////////////////
+//	// Determine the light positions based on the position of the lights and the position of the vertex in the world.
+//    //output.lightPos1.xyz = normalize(lightPosition_WS[0].xyz - vertexPositionWS.xyz);
+//    //output.lightPos2.xyz = normalize(lightPosition_WS[1].xyz - vertexPositionWS.xyz);
+//    //output.lightPos3.xyz = normalize(lightPosition_WS[2].xyz - vertexPositionWS.xyz);
 	
-	//... SHADOWING ... ////... SHADOWING ... ////... SHADOWING ... ////... SHADOWING ... ////... SHADOWING ... //
-	for(int i = 0; i< NUM_LIGHTS; ++i)
-	{
-		//// Calculate the position of the vertice as viewed by the light sources.
-		//output.lightViewPositions[i] = mul(input.position, cb_worldMatrix);
-		//output.lightViewPositions[i] = mul(output.lightViewPositions[i], lightcb_viewMatrix[i]);
-		//output.lightViewPositions[i] = mul(output.lightViewPositions[i], lightProjectionMatrix[i]);
-		////output.lightPositions[i] = normalize(c_lightShadowPos[i].xyz - vertexPositionWS.xyz);
+//	//... SHADOWING ... ////... SHADOWING ... ////... SHADOWING ... ////... SHADOWING ... ////... SHADOWING ... //
+//	for(int i = 0; i< NUM_LIGHTS; ++i)
+//	{
+//		//// Calculate the position of the vertice as viewed by the light sources.
+//		//output.lightViewPositions[i] = mul(input.position, cb_worldMatrix);
+//		//output.lightViewPositions[i] = mul(output.lightViewPositions[i], lightcb_viewMatrix[i]);
+//		//output.lightViewPositions[i] = mul(output.lightViewPositions[i], lightProjectionMatrix[i]);
+//		////output.lightPosition_WSs[i] = normalize(c_lightShadowPos[i].xyz - vertexPositionWS.xyz);
 
-		//// Calculate the world offset of the light from the vertex
-		//output.lightPositions[i] = c_lightShadowPos[i].xyz - vertexPositionWS.xyz;
+//		//// Calculate the world offset of the light from the vertex
+//		//output.lightPosition_WSs[i] = c_lightShadowPos[i].xyz - vertexPositionWS.xyz;
 
-		// NEW ALL IN ONE LIGHT BUFFER METHOD
-		// Calculate the position of the vertice as viewed by the light sources.
-		output.lightViewPositions[i] = mul(input.vertex_ModelSpace, cb_worldMatrix);
-		output.lightViewPositions[i] = mul(output.lightViewPositions[i], cb_lights[i].lightViewMatrix);
-		output.lightViewPositions[i] = mul(output.lightViewPositions[i], cb_lights[i].lightProjMatrix);
-		//output.lightPositions[i] = normalize(c_lightShadowPos[i].xyz - vertexPositionWS.xyz);
+//		// NEW ALL IN ONE LIGHT BUFFER METHOD
+//		// Calculate the position of the vertice as viewed by the light sources.
+//		output.lightViewPositions[i] = mul(input.vertex_ModelSpace, cb_worldMatrix);
+//		output.lightViewPositions[i] = mul(output.lightViewPositions[i], cb_lights[i].lightViewMatrix);
+//		output.lightViewPositions[i] = mul(output.lightViewPositions[i], cb_lights[i].lightProjMatrix);
+//		//output.lightPosition_WSs[i] = normalize(c_lightShadowPos[i].xyz - vertexPositionWS.xyz);
 
-		// Calculate the world offset of the light from the vertex
-		output.lightPositions[i] = cb_lights[i].lightPosition - vertexPositionWS.xyz;
+//		// Calculate the world offset of the light from the vertex
+//		output.lightPositions[i] = cb_lights[i].lightPosition_WS - vertexPositionWS.xyz;
 
-		//output.lightPositions[i] = mul(cb_lights[i].lightPosition, cb_worldMatrix);
-		//output.lightPositions[i] = output.lightPositions[i] - vertexPositionWS.xyz;
-	}
+//		//output.lightPositions[i] = mul(cb_lights[i].lightPosition_WS, cb_worldMatrix);
+//		//output.lightPositions[i] = output.lightPositions[i] - vertexPositionWS.xyz;
+//	}
 
-	return output;
-}
+//	return output;
+//}
