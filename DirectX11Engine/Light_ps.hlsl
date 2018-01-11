@@ -67,7 +67,8 @@ cbuffer TransparentBuffer:register(b2)
 //////////////
 struct PixelInputType
 {
-	float4 position : SV_POSITION;
+	float4 vertPos_ModelSpace : TEXCOORD12;
+	float4 vertPos_ScrnSpace : SV_POSITION;
 	float2 tex : TEXCOORD0;
     float3 normal : NORMAL;
 	float3 tangent : TANGENT;
@@ -75,10 +76,8 @@ struct PixelInputType
     float3 viewDirection : TEXCOORD1;
     float4 lightViewPositions[NUM_LIGHTS] : TEXCOORD6;
     float3 lightPositions[NUM_LIGHTS] : TEXCOORD9;
-	float4 rawPosition : TEXCOORD12;
 	float fogFactor : FOG;
 };
-
 
 float4 CalculateNormalMapIntensity(PixelInputType input, float4 diffuseColor, float3 lightDirection)
 {
@@ -224,7 +223,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 					float spotLightIntensity = CalculateSpotLightIntensity(
 						input.lightPositions[i], // NOTE - this is NOT NORMALIZED!!!
 						cb_lights[i].lightDirection, 
-						input.rawPosition.xyz, 
+						input.vertPos_ModelSpace.xyz, 
 						bumpNormal);
 
 					lightColor += cb_lights[i].diffuseColor*spotLightIntensity* .25f;

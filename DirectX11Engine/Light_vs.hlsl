@@ -9,7 +9,6 @@
 /////////////
 // DEFINES //
 /////////////
-//#define NUM_LIGHTS 4
 #define NUM_LIGHTS 3
 
 /////////////
@@ -59,7 +58,7 @@ cbuffer FogBuffer:register(b2)
 */
 struct VertexInputType
 {
-	float4 position : POSITION;
+	float4 vertex_ModelSpace : POSITION;
     float2 tex : TEXCOORD0;
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
@@ -68,7 +67,8 @@ struct VertexInputType
 
 struct PixelInputType
 {
-	float4 position : SV_POSITION;
+	float4 vertex_ModelSpace : TEXCOORD12;
+	float4 vertex_ScrnSpace : SV_POSITION;
     float2 tex : TEXCOORD0;
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
@@ -76,7 +76,6 @@ struct PixelInputType
 	float3 viewDirection : TEXCOORD1;
     float4 lightViewPositions[NUM_LIGHTS] : TEXCOORD6;
     float3 lightPositions[NUM_LIGHTS] : TEXCOORD9;
-	float4 rawPosition : TEXCOORD12;
 	float fogFactor : FOG; 
 };
 
@@ -84,23 +83,85 @@ struct PixelInputType
 ////////////////////////////////////////////////////////////////////////////////
 // Vertex Shader
 ////////////////////////////////////////////////////////////////////////////////
+//PixelInputType LightVertexShader(VertexInputType input)
+//{
+//	// The output of this function, to be passed to the pixel shader
+//	PixelInputType output;
 
+//	// Pass in tex coordinate untouched
+//	output.tex  = input.tex;
 
+//	// Pre-calculate vertex position in world space
+//	input.vertex_ModelSpace.w = 1.0f;
+//	float4 vertex_WS =  mul(input.vertex_ModelSpace, cb_worldMatrix);
+
+//	// Bring the vertex position into view, then screen space
+//	output.vertex_ScrnSpace = mul(vertex_WS, cb_viewMatrix);
+//	output.vertex_ScrnSpace = mul(output.vertex_ScrnSpace, cb_projectionMatrix);
+
+//	// get view direction in world space
+//	output.viewDirection = normalize(cb_cameraPosition.xyz - vertex_WS); 
+
+//	// Bring normal, tangent, and binormal into world space
+//    output.normal = normalize(mul(input.normal, (float3x3)cb_worldMatrix));
+//    output.tangent = normalize(mul(input.tangent, (float3x3)cb_worldMatrix));
+//    output.binormal = normalize(mul(input.binormal, (float3x3)cb_worldMatrix));
+
+//	// Calculate the position of the vertex in the world.
+//   // float4 vertexPositionWS = mul(input.vertex_ModelSpace, cb_worldMatrix);
+
+//    // Determine the viewing direction based on the position of the camera and the position of the vertex in the world.
+//    //output.viewDirection = cb_cameraPosition.xyz - vertexPositionWS.xyz;
+
+//    // Calculate the camera position. // is this the same as the following method?
+//    float4 cb_cameraPosition = mul(input.vertex_ModelSpace, cb_worldMatrix);
+//    cb_cameraPosition = mul(cb_cameraPosition, cb_viewMatrix);
+//	//float4 vertexPosViewSpace = mul(vertexPositionWS, cb_viewMatrix); @TODO: decide which way is better
+
+//    // Calculate linear fog.
+//    output.fogFactor = saturate((cb_fogEnd - /*vertexPosViewSpace.z*/cb_cameraPosition.z) / (cb_fogEnd - cb_fogStart));
+
+//    // Normalize the viewing direction vector.
+//   // output.viewDirection = normalize(output.viewDirection);
+
+//	//... SHADOWING ... //
+//	for(int i = 0; i< NUM_LIGHTS; ++i)
+//	{
+//		output.lightViewPositions[i] = mul(input.vertex_ModelSpace, cb_worldMatrix);
+//		output.lightViewPositions[i] = mul(output.lightViewPositions[i], cb_lights[i].lightViewMatrix);
+//		output.lightViewPositions[i] = mul(output.lightViewPositions[i], cb_lights[i].lightProjMatrix);
+//		//output.lightPositions[i] = normalize(c_lightShadowPos[i].xyz - vertexPositionWS.xyz);
+
+//		// Calculate the world offset of the light from the vertex
+//		output.lightPositions[i] = cb_lights[i].lightPosition - vertex_WS.xyz;
+
+//		//output.lightPositions[i] = mul(cb_lights[i].lightPosition, cb_worldMatrix);
+//		//output.lightPositions[i] = output.lightPositions[i] - vertexPositionWS.xyz;
+//	}
+
+//	return output;
+//}
+
+// BACKUP /////
+// The output of the vertex shader will be sent to the pixel shader.
+////////////////////////////////////////////////////////////////////////////////
+// Vertex Shader
+////////////////////////////////////////////////////////////////////////////////
 PixelInputType LightVertexShader(VertexInputType input)
 {
 	PixelInputType output;
 	float4 vertexPositionWS;
 
 	// Change the position vector to be 4 units for proper matrix calculations.
-	input.position.w = 1.0f;
-	output.rawPosition = input.position;
+	input.vertex_ModelSpace.w = 1.0f;
+	output.vertex_ModelSpace = input.vertex_ModelSpace;
 
 	// Calculate the position of the vertex against the world, view, and projection matrices.
 	// place the vertex in the correct location for rendering in 3D space according to our view and then onto the 2D screen.
-	output.position = mul(input.position, cb_worldMatrix);
+	output.vertex_ScrnSpace = mul(input.vertex_ModelSpace, cb_worldMatrix);
 	//output.rawPosition = input.position;
-	output.position = mul(output.position, cb_viewMatrix);
-	output.position = mul(output.position, cb_projectionMatrix);
+	output.vertex_ScrnSpace = mul(output.vertex_ScrnSpace, cb_viewMatrix);
+	output.vertex_ScrnSpace = mul(output.vertex_ScrnSpace, cb_projectionMatrix);
 
 	// Store the input color for the pixel shader to use.
 	output.tex  = input.tex;
@@ -118,13 +179,13 @@ PixelInputType LightVertexShader(VertexInputType input)
     output.binormal = normalize(output.binormal);
 
 	// Calculate the position of the vertex in the world.
-    vertexPositionWS = mul(input.position, cb_worldMatrix);
+    vertexPositionWS = mul(input.vertex_ModelSpace, cb_worldMatrix);
 
     // Determine the viewing direction based on the position of the camera and the position of the vertex in the world.
     output.viewDirection = cb_cameraPosition.xyz - vertexPositionWS.xyz;
 
     // Calculate the camera position. // is this the same as the following method?
-    float4 cb_cameraPosition = mul(input.position, cb_worldMatrix);
+    float4 cb_cameraPosition = mul(input.vertex_ModelSpace, cb_worldMatrix);
     cb_cameraPosition = mul(cb_cameraPosition, cb_viewMatrix);
 	//float4 vertexPosViewSpace = mul(vertexPositionWS, cb_viewMatrix); @TODO: decide which way is better
 
@@ -154,7 +215,7 @@ PixelInputType LightVertexShader(VertexInputType input)
 
 		// NEW ALL IN ONE LIGHT BUFFER METHOD
 		// Calculate the position of the vertice as viewed by the light sources.
-		output.lightViewPositions[i] = mul(input.position, cb_worldMatrix);
+		output.lightViewPositions[i] = mul(input.vertex_ModelSpace, cb_worldMatrix);
 		output.lightViewPositions[i] = mul(output.lightViewPositions[i], cb_lights[i].lightViewMatrix);
 		output.lightViewPositions[i] = mul(output.lightViewPositions[i], cb_lights[i].lightProjMatrix);
 		//output.lightPositions[i] = normalize(c_lightShadowPos[i].xyz - vertexPositionWS.xyz);

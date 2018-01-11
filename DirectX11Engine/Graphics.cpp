@@ -151,18 +151,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		"../DirectX11Engine/data/noise.png",
 		"../DirectX11Engine/data/noise.png" };
 
-	vector<string> defaultTexRef{
-		"../DirectX11Engine/data/metal001.dds",
-		"../DirectX11Engine/data/dirt.dds",
-		"../DirectX11Engine/data/light.dds",
-		"../DirectX11Engine/data/alpha.dds",
-		"../DirectX11Engine/data/bumpMap.dds", // normal map
-		"../DirectX11Engine/data/specMap.dds",
-		"../DirectX11Engine/data/specMap.dds",
-		"../DirectX11Engine/data/specMap.dds",
-		"../DirectX11Engine/data/specMap.dds"
-	};
-
 	pScene->_Actors["Ground"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt"/*"../DirectX11Engine/data/SnowTerrain_LowPoly.txt"*/, groundTex, EShaderType::EREFRACTION);
 	
 	// Set Bath Model Shadow textures
@@ -299,26 +287,20 @@ bool GraphicsClass::Render(Scene* pScene)
 
 	// DRAW MAIN SCENE
 	_D3D->BeginScene(0.0f, 0.0f, 1.0f, 1.0f);
-
-	XMMATRIX worldMatrix, viewMatrix, projectionMatrix/*, translateMatrix*/;
-	XMMATRIX lightViewMatrix[3], lightProjectionMatrix[3];
-	
 	_Camera->UpdateViewPoint();
 	
-	// Draw Sky first
-	worldMatrix = _D3D->GetWorldMatrix();
-	viewMatrix = _Camera->GetViewMatrix();
-	projectionMatrix = _D3D->GetProjectionMatrix();
-	_Sky->SetScale(XMFLOAT3(200, 200, 200));
-	worldMatrix *= ComputeWorldTransform(_Sky->GetOrientation(), _Sky->GetScale(), _Sky->GetPosition());
+	// DRAW SKY
 	_Sky->PutVertsOnPipeline(_D3D->GetDeviceContext());
-	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), _Sky->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,	_Sky->GetMaterial()->GetResourceArray()[0]);
 
-	// Generate the view matrix based on the camera's position.
-	viewMatrix = _Camera->GetViewMatrix();
-	projectionMatrix = _D3D->GetProjectionMatrix();
+	XMMATRIX viewMatrix = _Camera->GetViewMatrix();
+	XMMATRIX projectionMatrix = _D3D->GetProjectionMatrix();
+
+	_Sky->SetScale(XMFLOAT3(200, 200, 200));
+	XMMATRIX worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(_Sky->GetOrientation(), _Sky->GetScale(), _Sky->GetPosition());
+	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), _Sky->GetIndexCount(), worldTransform, viewMatrix, projectionMatrix,	_Sky->GetMaterial()->GetResourceArray()[0]);
 
 	// Update lights
+	XMMATRIX lightViewMatrix[3], lightProjectionMatrix[3];
 	for (int i = 0; i < pScene->NUM_LIGHTS; ++i)
 	{
 		_Lights[i]->GenerateViewMatrix();
@@ -335,27 +317,17 @@ bool GraphicsClass::Render(Scene* pScene)
 	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 	{
 		// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
-		if (it->first == "Water")
-		{
-			continue;
-		}
-
-		if (!it->second->GetModel())
-		{
-			continue;
-		}
-
-		worldMatrix = _D3D->GetWorldMatrix();
-
-		XMFLOAT3 shrink = XMFLOAT3(it->second->GetScale().x*.2f, it->second->GetScale().y*.2, it->second->GetScale().z*.2);
-		worldMatrix *= ComputeWorldTransform(it->second->GetOrientation(), /*shrink*/it->second->GetScale(), it->second->GetPosition());
+		if (it->first == "Water" || !it->second->GetModel()) continue;
 
 		it->second->GetModel()->PutVertsOnPipeline(_D3D->GetDeviceContext());
+
+		XMFLOAT3 shrink = XMFLOAT3(it->second->GetScale().x*.2f, it->second->GetScale().y*.2, it->second->GetScale().z*.2);
+		worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(it->second->GetOrientation(), /*shrink*/it->second->GetScale(), it->second->GetPosition());
 
 		//_D3D->EnableAlphaBlending();
 
 		_ShaderManager->_LightShader->Render(
-			_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+			_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), worldTransform, viewMatrix, projectionMatrix,
 			it->second->GetModel()->GetMaterial()->GetResourceArray(),
 			_sceneEffects.ambientColor,
 			shadowLights, _Camera->GetPosition(), _sceneEffects.fogStart, _sceneEffects.fogEnd,
@@ -367,19 +339,18 @@ bool GraphicsClass::Render(Scene* pScene)
 	//////////// RENDER WATER //////////////
 	if (pScene->_Actors["Water"]->GetModel())
 	{
-		worldMatrix = _D3D->GetWorldMatrix();
 		XMMATRIX reflectionMatrix = _Camera->GetReflectionViewMatrix();
 
 		// TODO: CONVERT ROTATION TO RADIANS!!!!
 		XMFLOAT3 shrink = XMFLOAT3(pScene->_Actors["Water"]->GetScale().x*.2f, pScene->_Actors["Water"]->GetScale().y*.2, pScene->_Actors["Water"]->GetScale().z*.2);
-		worldMatrix *= ComputeWorldTransform(pScene->_Actors["Water"]->GetOrientation(), /*shrink*/pScene->_Actors["Water"]->GetScale(), pScene->_Actors["Water"]->GetPosition());
+		worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(pScene->_Actors["Water"]->GetOrientation(), /*shrink*/pScene->_Actors["Water"]->GetScale(), pScene->_Actors["Water"]->GetPosition());
 		pScene->_Actors["Water"]->GetModel()->PutVertsOnPipeline(_D3D->GetDeviceContext());
 
 		pScene->_Actors["Water"]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[0] = _ReflectionTexture->GetShaderResourceView(); // reflection tex
 		pScene->_Actors["Water"]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray()[1] = _RefractionTexture->GetShaderResourceView(); // refraction tex
 
 		_ShaderManager->_WaterShader->Render(
-			_D3D->GetDeviceContext(), pScene->_Actors["Water"]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix,
+			_D3D->GetDeviceContext(), pScene->_Actors["Water"]->GetModel()->GetIndexCount(), worldTransform, viewMatrix,
 			projectionMatrix, reflectionMatrix, pScene->_Actors["Water"]->GetModel()->GetMaterial()->GetTextureObject()->GetTextureArray(), pScene->_Actors["Water"]->GetModel()->GetMaterial()->translation, 0.01f);
 	}
 	
@@ -408,8 +379,7 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene)
 	//_Camera->UpdateViewPoint();
 	viewMatrix = _Camera->GetViewMatrix();
 	projectionMatrix = _D3D->GetProjectionMatrix();
-	worldMatrix = _D3D->GetWorldMatrix();
-	worldMatrix *= ComputeWorldTransform(pScene->_Actors["Bath"]->GetOrientation(), pScene->_Actors["Bath"]->GetScale(), pScene->_Actors["Bath"]->GetPosition());
+	worldMatrix = _D3D->GetWorldMatrix()*ComputeWorldTransform(pScene->_Actors["Bath"]->GetOrientation(), pScene->_Actors["Bath"]->GetScale(), pScene->_Actors["Bath"]->GetPosition());
 	
 	pScene->_Actors["Bath"]->GetModel()->PutVertsOnPipeline(_D3D->GetDeviceContext());
 	
