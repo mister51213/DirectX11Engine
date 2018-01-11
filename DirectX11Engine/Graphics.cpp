@@ -3,6 +3,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "graphics.h"
 
+using namespace VectorMath;
+
 GraphicsClass::GraphicsClass()
 {}
 
@@ -30,7 +32,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 
 	_Camera->SetPosition(pScene->GetCamera()->GetPosition().x, pScene->GetCamera()->GetPosition().y, pScene->GetCamera()->GetPosition().z);
 	_Camera->UpdateViewPoint();
-	_Camera->SetRotation(pScene->GetCamera()->GetOrientation().x, pScene->GetCamera()->GetOrientation().y, pScene->GetCamera()->GetOrientation().z);
+	//_Camera->SetRotation(pScene->GetCamera()->GetOrientation().x, pScene->GetCamera()->GetOrientation().y, pScene->GetCamera()->GetOrientation().z);
 
 	// SHADOW RENDER TEXTURES //
 	for (int i = 0; i < NUM_RENDER_TEXTURES; ++i)
@@ -55,9 +57,16 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	///////////////////////////////////	
 	// SKY
 	_Sky.reset(new Model);
-	vector<string> skytex = { "../DirectX11Engine/data/galaxypurple.jpg" , "../DirectX11Engine/data/skydome_alpha2.jpg" };
+	vector<string> skytex = { "../DirectX11Engine/data/galaxyblue.jpg" , "../DirectX11Engine/data/skydome_alpha2.jpg" };
 	_Sky->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
 		skytex, EShaderType::ETEXTURE);
+
+	// SKY INNNER
+	_SkyInner.reset(new Model);
+	vector<string> skytexInner = { "../DirectX11Engine/data/galaxypurple.jpg", "../DirectX11Engine/data/skydome_alpha4.jpg" };
+	_SkyInner->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
+		skytexInner, EShaderType::ETEXTURE);
+
 
 	// EARTH
 	_Earth.reset(new Model);
@@ -298,26 +307,38 @@ bool GraphicsClass::Render(Scene* pScene)
 
 	// DRAW MAIN SCENE
 	_D3D->BeginScene(1.0f, 1.0f, 1.0f, 1.0f);
-	_Camera->UpdateViewPoint();
 
+	XMMATRIX worldTransform;
 	XMMATRIX viewMatrix = _Camera->GetViewMatrix();
 	XMMATRIX projectionMatrix = _D3D->GetProjectionMatrix();
+
+	// Generate the view matrix based on the camera's position.
+	_Camera->UpdateViewPoint();
 
 	// DRAW EARTH
 	_Earth->PutVertsOnPipeline(_D3D->GetDeviceContext());
 	_Earth->SetScale(XMFLOAT3(250, 400, 250));
 	_Earth->SetPosition(XMFLOAT3(0, -300, 0));
 	_Earth->SetOrientation(XMFLOAT3(180, _Sky->GetOrientation().y, _Sky->GetOrientation().z));
-	XMMATRIX worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(_Earth->GetOrientation(), _Earth->GetScale(), _Earth->GetPosition());
+	worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(_Earth->GetOrientation(), _Earth->GetScale(), _Earth->GetPosition());
 	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), _Earth->GetIndexCount(), worldTransform, viewMatrix, projectionMatrix, _Earth->GetMaterial()->GetResourceArray());
 
 	// DRAW SKY
+	_D3D->EnableAlphaBlending();
+
 	_Sky->PutVertsOnPipeline(_D3D->GetDeviceContext());
 	_Sky->SetScale(XMFLOAT3(100, 150, 100));
 	_Sky->SetPosition(XMFLOAT3(0, 300, 0));
 	worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(_Sky->GetOrientation(), _Sky->GetScale(), _Sky->GetPosition());
-	_D3D->EnableAlphaBlending();
 	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), _Sky->GetIndexCount(), worldTransform, viewMatrix, projectionMatrix,	_Sky->GetMaterial()->GetResourceArray());
+
+	// DRAW INNER SKY
+	_SkyInner->PutVertsOnPipeline(_D3D->GetDeviceContext());
+	_SkyInner->SetScale(.8f * _Sky->GetScale());
+	_SkyInner->SetPosition(XMFLOAT3(0, 150, 0));
+	worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(_SkyInner->GetOrientation(), _SkyInner->GetScale(), _SkyInner->GetPosition());
+	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), _SkyInner->GetIndexCount(), worldTransform, viewMatrix, projectionMatrix, _SkyInner->GetMaterial()->GetResourceArray());
+	
 	_D3D->DisableAlphaBlending();
 
 	// Update lights
@@ -389,6 +410,8 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene)
 	//////////////
 	// REFRACTION
 	//////////////
+	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
+
 	if (!pScene->_Actors["Bath"]->GetModel()) return false;
 
 	_RefractionTexture->SetRenderTarget(_D3D->GetDeviceContext());
@@ -396,8 +419,7 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene)
 	_sceneEffects.clipPlane = XMFLOAT4(0.0f, -1.0f, 0.0f, _waterHeight);
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
-	XMMATRIX worldMatrix, viewMatrix, projectionMatrix;
-	//_Camera->UpdateViewPoint();
+	_Camera->UpdateViewPoint();
 	viewMatrix = _Camera->GetViewMatrix();
 	projectionMatrix = _D3D->GetProjectionMatrix();
 	worldMatrix = _D3D->GetWorldMatrix()*ComputeWorldTransform(pScene->_Actors["Bath"]->GetOrientation(), pScene->_Actors["Bath"]->GetScale(), pScene->_Actors["Bath"]->GetPosition());
@@ -655,8 +677,6 @@ void GraphicsClass::RenderText()
 
 	worldMatrix = _D3D->GetWorldMatrix();
 	_Camera->GetBaseViewMatrix(baseViewMatrix);
-
-	baseViewMatrix = XMMatrixIdentity();
 	_D3D->GetOrthoMatrix(orthoMatrix);
 
 

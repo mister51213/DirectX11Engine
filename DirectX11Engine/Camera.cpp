@@ -148,8 +148,11 @@ void Camera::UpdateViewPoint()
 	// Finally create the view matrix from the three updated vectors.
 	_viewMatrix = DirectX::XMMatrixLookAtLH(positionVector, lookAtVector, upVector);
 
-	if(_bFirstRenderPass)
-	m_baseViewMatrix = _viewMatrix;
+	if (_bFirstRenderPass)
+	{
+		m_baseViewMatrix = _viewMatrix;
+	}
+
 	_bFirstRenderPass = false;
 }
 

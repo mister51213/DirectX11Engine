@@ -64,6 +64,7 @@ private:
 	unique_ptr<ShaderManagerClass> _ShaderManager;
 	unique_ptr<Camera> _Camera;
 	unique_ptr<Model> _Sky;
+	unique_ptr<Model> _SkyInner;
 	unique_ptr<Model> _Earth;
 	vector<unique_ptr<RenderTextureClass>> _RenderTextures;
 	vector<unique_ptr<LightClass>>_Lights;

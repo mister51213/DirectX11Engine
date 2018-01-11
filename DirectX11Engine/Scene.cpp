@@ -17,8 +17,9 @@ bool Scene::Initialize()
 	/////// INIT CAMERA ////////
 	_Camera.reset(new Actor);
 	_Camera->InitializeMovement(false);
-	_Camera->SetPosition(XMFLOAT3(-5.f, 20.0f, 0.f));
-	_Camera->SetOrientation(XMFLOAT3(-90, -90, 0));
+	_Camera->GetMovementComponent()->SetPosition(XMFLOAT3(0.f, 5.f, -20.f));
+	//_Camera->SetPosition(XMFLOAT3(0.f, 5.f, -20.f));
+	//_Camera->SetOrientation(XMFLOAT3(-90, -90, 0));
 
 	/////// INIT ACTORS ////////
 	InitializeActors();
