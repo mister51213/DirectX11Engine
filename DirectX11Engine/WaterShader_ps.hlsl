@@ -76,7 +76,8 @@ float4 WaterPixelShader(PixelInputType input) : SV_TARGET
     refractionColor = shaderTextures[1].Sample(SampleType, refractTexCoord);
 
     // Combine the reflection and refraction results for the final color.
-    color = lerp(reflectionColor, refractionColor, 0.6f);
+    //color = lerp(reflectionColor, refractionColor, 0.6f);
+    color = refractionColor;
 	
     return color;
 }

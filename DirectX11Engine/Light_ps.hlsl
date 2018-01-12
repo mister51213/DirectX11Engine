@@ -145,6 +145,11 @@ float CalculateSpotLightIntensity(
 	float3 LightDirection_WS, 
 	float3 SurfaceNormal_WS)
 {
+	// CALCULATE SPOTLIGHT ATTENUATION
+	float maxLightRange = 50.f;
+	float dist = length(LightPos_VertexSpace);
+	float attenuation = 1.f - (maxLightRange - dist) / maxLightRange;
+
 	//float3 lightToVertex = normalize(SurfacePosition - LightPos_VertexSpace);
 	float3 lightToVertex_WS = -LightPos_VertexSpace;
 	
@@ -154,9 +159,9 @@ float CalculateSpotLightIntensity(
 	float metalEffect = saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace)));
 	if(dotProduct > .95 /*&& metalEffect > .55*/)
 	{
-		//return saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace)));
 		float expandedRange = (dotProduct - .95)/.05f;
-		return saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace))* expandedRange*expandedRange);
+		return saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace))* expandedRange*attenuation);
+		//return saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace)));
 		//return dotProduct;
 	}
 	else
