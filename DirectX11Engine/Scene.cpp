@@ -35,16 +35,16 @@ void Scene::InitializeActors()
 	vector<string> actorNames = { // actors w same name must be added CONSECUTIVELY!!!!
 		"Cube",
 		"Sphere",
-		//"Sphere",
+		"Sphere",
 		"Ground",
 		"Wall",
 		"Bath",
 		"Water" };
 
 	vector<XMFLOAT3> positions = {
-		XMFLOAT3(-10.0f, 1.f, 0.0f), // cube
-		XMFLOAT3(10.0f, 1.f, 0.0f), // sphere
-		//XMFLOAT3(0.0f, 1.f, -5.0f), // sphere
+		XMFLOAT3(-10.0f, 2.f, 0.0f), // cube
+		XMFLOAT3(10.0f, 2.f, 0.0f), // sphere
+		XMFLOAT3(0.0f, 2.f, -10.0f), // sphere
 		XMFLOAT3(0.0f, 0.0f, 0.0f), // ground
 		XMFLOAT3(0.0f, 6.0f, 8.0f), // wall
 		XMFLOAT3(0.0f, 2.0f, 0.0f),  // bath
@@ -88,7 +88,8 @@ void Scene::InitializeActors()
 	}
 
 	// Custom tweaks on actors
-	_Actors["Ground"]->SetScale(XMFLOAT3(3.f, 1.0f, 3.f));
+	_Actors["Ground"]->SetScale(XMFLOAT3(6.f, 1.0f, 6.f));
+	_Actors["Ground"]->SetPosition(XMFLOAT3(0.f, 1.0f, 0.f));
 }
 
 void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
@@ -101,15 +102,21 @@ void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
 		_LightActors[i]->SetLookAt(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	}
 
-	_LightActors[0]->SetPosition(XMFLOAT3(20.f, 25.0f, 0.f));
+	_LightActors[0]->SetPosition(XMFLOAT3(-10, 15.f, 0.f));
+	//_LightActors[0]->SetLookAt(-1*XMFLOAT3(10.f, 10.0f, 0.f));
+	//_LightActors[0]->SetPosition(XMFLOAT3(20.f, 25.0f, 0.f));
 	//_LightActors[0]->SetLookAt((-1.f*_LightActors[0]->GetPosition()));
-	_LightActors[0]->SetLookAt((actors["Sphere"]->GetPosition() - _LightActors[0]->GetPosition()));
+	_LightActors[0]->SetLookAt((actors["Bath"]->GetPosition() - _LightActors[0]->GetPosition()));
 
-	_LightActors[1]->SetPosition(XMFLOAT3(-10.f, 25.0f, 0.f));
+	_LightActors[1]->SetPosition(XMFLOAT3(0, 10.0f, 0.f));
+	//_LightActors[1]->SetLookAt(-1*XMFLOAT3(-10.f, 10.0f, 0.f));
+	//_LightActors[1]->SetPosition(XMFLOAT3(-10.f, 25.0f, 0.f));
 	//_LightActors[1]->SetLookAt((-1.f*_LightActors[1]->GetPosition()));
-	_LightActors[1]->SetLookAt((actors["Sphere"]->GetPosition() - _LightActors[1]->GetPosition()));
+	_LightActors[1]->SetLookAt((actors["Sphere1"]->GetPosition() - _LightActors[1]->GetPosition()));
 
-	_LightActors[2]->SetPosition(XMFLOAT3(0.f, 25.0f,20.f));
+	_LightActors[2]->SetPosition(XMFLOAT3(0.f, 10.0f, 0));
+	//_LightActors[2]->SetLookAt(-1*XMFLOAT3(0.f, 10.0f, 10.f));
+	//_LightActors[2]->SetPosition(XMFLOAT3(0.f, 25.0f,20.f));
 	//_LightActors[2]->SetLookAt((-1.f*_LightActors[2]->GetPosition()));
 	_LightActors[2]->SetLookAt((actors["Cube"]->GetPosition() - _LightActors[2]->GetPosition()));
 }
@@ -120,28 +127,28 @@ void Scene::Tick(float deltaTime, Input* pInput)
 
 	UpdateActors(deltaTime);
 
-	// Update Lights
-	// light 1
-	if (_lightPositionX > 1.0f)
-	{
-		_lightPositionX = -1.f;
-	}
-	if (_lightPositionZ > 1.0f)
-	{
-		_lightPositionZ = -1.f;
-	}
-	_lightPositionX += _lightPosIncrement;
-	_lightPositionZ += _lightPosIncrement;
-	_LightActors[0]->SetPosition(XMFLOAT3(cos(_lightPositionX)*20.f, 20.0f, sin(_lightPositionZ)*20.f));
+	//// Update Lights
+	//// light 1
+	//if (_lightPositionX > 1.0f)
+	//{
+	//	_lightPositionX = -1.f;
+	//}
+	//if (_lightPositionZ > 1.0f)
+	//{
+	//	_lightPositionZ = -1.f;
+	//}
+	//_lightPositionX += _lightPosIncrement;
+	//_lightPositionZ += _lightPosIncrement;
+	//_LightActors[0]->SetPosition(XMFLOAT3(cos(_lightPositionX)*20.f, 20.0f, sin(_lightPositionZ)*20.f));
 
-	// light 2
-	if (_lightPositionX2 > 20.0f || _lightPositionX2 < -20.0f)
-	{
-		_increment2 *= -1;
-	}
-	_lightPositionX2 += _increment2;
+	//// light 2
+	//if (_lightPositionX2 > 20.0f || _lightPositionX2 < -20.0f)
+	//{
+	//	_increment2 *= -1;
+	//}
+	//_lightPositionX2 += _increment2;
 
-	_LightActors[1]->SetPosition(XMFLOAT3(_lightPositionX2, 20.0f, sin(_lightPositionZ)*-20.f));
+	//_LightActors[1]->SetPosition(XMFLOAT3(_lightPositionX2, 20.0f, sin(_lightPositionZ)*-20.f));
 }
 
 void Scene::ProcessInput(float deltaTime, Input* pInput)

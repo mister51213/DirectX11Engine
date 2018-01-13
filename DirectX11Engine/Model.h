@@ -64,7 +64,7 @@ private:
 
 public:
 	Model();
-	Model(XMFLOAT3 scale, XMFLOAT3 orientation, XMFLOAT3 translation);
+	Model(XMFLOAT3 scale, XMFLOAT3 orientation, XMFLOAT3 translation, string name);
 	Model(const Model&);
 	//~Model();
 
@@ -107,6 +107,9 @@ public:
 	inline XMFLOAT3 GetScale() { return _scale; }
 
 	inline void SetScale(XMFLOAT3 scale) { _scale = scale; }
+
+public:
+	string Name;
 
 private:
 	bool InitializeBuffers(ID3D11Device* const device);

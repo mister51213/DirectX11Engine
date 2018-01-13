@@ -7,17 +7,20 @@
 using namespace GfxUtil;
 
 Model::Model()
+	:
+	Name("Model")
 {
 	_scale = XMFLOAT3(1.f, 1.f, 1.f);
 	_orientation = XMFLOAT3(0.f, 0.f, 0.f);
 	_position = XMFLOAT3(0.f, 0.f, 0.f);
 }
 
-Model::Model(XMFLOAT3 scale, XMFLOAT3 orientation, XMFLOAT3 translation)
+Model::Model(XMFLOAT3 scale, XMFLOAT3 orientation, XMFLOAT3 translation, string name)
 {
 	_scale = scale;
 	_orientation = orientation;
 	_position = translation;
+	Name = name;
 }
 
 Model::Model(const Model& other)

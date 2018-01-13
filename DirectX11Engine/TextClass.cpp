@@ -256,11 +256,18 @@ void TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, ShaderManager
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Render the text using the font shader.
-	result = pShaderManager->RenderFontShader(deviceContext, _indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, _pixelColor); //@TODO: implement generic function
+	//result = pShaderManager->RenderFontShader(deviceContext, _indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, _pixelColor); //@TODO: implement generic function
+	//if (!result)
+	//{
+	//	false;
+	//}
+	result = pShaderManager->_FontShader->Render(deviceContext, _indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, _pixelColor); //@TODO: implement generic function
 	if (!result)
 	{
 		false;
 	}
+
+	//deviceContext->DrawIndexed(_indexCount, 0, 0);
 
 	return;
 }

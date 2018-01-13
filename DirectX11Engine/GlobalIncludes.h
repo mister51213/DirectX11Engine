@@ -26,8 +26,8 @@ const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 10000.0f;
 const float SCREEN_NEAR = 1.0f;
-const int SHADOWMAP_WIDTH = 2048;
-const int SHADOWMAP_HEIGHT = 2048;
+const int SHADOWMAP_WIDTH = 4096;
+const int SHADOWMAP_HEIGHT = 4096;
 
 #define VISIBLE true
 #define INVISIBLE false
