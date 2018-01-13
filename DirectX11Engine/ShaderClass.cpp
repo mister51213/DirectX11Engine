@@ -157,6 +157,6 @@ void ShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCoun
 	// Set the sampler state in the pixel shader.
 	deviceContext->PSSetSamplers(0, 1, _sampleState.GetAddressOf());
 
-	deviceContext->DrawIndexed(indexCount, 0, 0);
+	//deviceContext->DrawIndexed(indexCount, 0, 0);
 }
 

@@ -267,7 +267,7 @@ void TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, ShaderManager
 		false;
 	}
 
-	//deviceContext->DrawIndexed(_indexCount, 0, 0);
+	deviceContext->DrawIndexed(_indexCount, 0, 0);
 
 	return;
 }

@@ -375,7 +375,7 @@ void GraphicsClass::DrawModel(Model& model, DirectX::XMMATRIX &worldTransform, c
 	//	model.GetMaterial()->GetResourceArray(),_sceneEffects.ambientColor, lights, _Camera->GetPosition(),
 	//	_sceneEffects.fogStart, _sceneEffects.fogEnd, model.GetMaterial()->translation, model.GetMaterial()->transparency);
 
-	//_D3D->GetDeviceContext()->DrawIndexed(model.GetIndexCount(), 0, 0);
+	_D3D->GetDeviceContext()->DrawIndexed(model.GetIndexCount(), 0, 0);
 }
 
 bool GraphicsClass::RenderShadowsToTexture(Scene* pScene)
