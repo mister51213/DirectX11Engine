@@ -60,7 +60,7 @@ private:
 	bool RenderShadowsToTexture(Scene* pScene);
 	bool Render(Scene* pScene);
 
-	void DrawModel(Actor& actor, DirectX::XMMATRIX &worldTransform, const DirectX::XMMATRIX &viewMatrix, const DirectX::XMMATRIX &projectionMatrix, LightClass * shadowLights[3]);
+	void DrawModel(Model& model, DirectX::XMMATRIX &worldTransform, const DirectX::XMMATRIX &viewMatrix, const DirectX::XMMATRIX &projectionMatrix, LightClass * shadowLights[] = nullptr, EShaderType shaderType = EShaderType::EMATERIAL_DEFAULT, XMMATRIX reflectionMatrix = XMMatrixIdentity());
 
 	unique_ptr<D3DClass> _D3D;
 	unique_ptr<ShaderManagerClass> _ShaderManager;

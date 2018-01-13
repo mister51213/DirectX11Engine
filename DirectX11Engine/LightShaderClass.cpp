@@ -43,8 +43,7 @@ void LightShaderClass::RenderShader(ID3D11DeviceContext * deviceContext, int ind
 	deviceContext->PSSetSamplers(1, 1, _sampleState.GetAddressOf());
 	deviceContext->PSSetSamplers(2, 1, _sampleStateComp.GetAddressOf());
 
-	// Render the triangle.
-	deviceContext->DrawIndexed(indexCount, 0, 0);
+	//deviceContext->DrawIndexed(indexCount, 0, 0);
 
 	return;
 }

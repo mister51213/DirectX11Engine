@@ -200,7 +200,8 @@ namespace GfxUtil
 		EWATER = 4,
 		EFONT = 5,
 		EDEPTH = 6,
-		ESIZE = 7
+		EMATERIAL_DEFAULT = 7,
+		ESIZE = 8
 	};
 
 	struct SceneEffects

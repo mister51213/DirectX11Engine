@@ -37,7 +37,7 @@ public:
 	bool Initialize(ID3D11Device*, HWND);
 
 	bool Render(ID3D11DeviceContext* device, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, Material* material, LightClass* lights[], SceneEffects& effects,
-		XMFLOAT3 cameraPos = XMFLOAT3(0,0,0), XMMATRIX reflectionMatrix = XMMatrixIdentity(), ID3D11ShaderResourceView * reflectionTexture = nullptr, ID3D11ShaderResourceView * refractionTexture = nullptr/*, ID3D11ShaderResourceView * normalTexture = nullptr*/);
+		XMFLOAT3 cameraPos = XMFLOAT3(0,0,0), EShaderType shaderType = EShaderType::EMATERIAL_DEFAULT, XMMATRIX reflectionMatrix = XMMatrixIdentity());
 
 	bool RenderFontShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
 		XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT4 pixelColor);

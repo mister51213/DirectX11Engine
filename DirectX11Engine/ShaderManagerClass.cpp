@@ -141,12 +141,26 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 }
 
 // @TODO the params at teh end need to be encapsulated
-bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, Material * material,
-	LightClass* lights[], SceneEffects& effects, XMFLOAT3 cameraPos, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView * reflectionTexture, ID3D11ShaderResourceView * refractionTexture/*, ID3D11ShaderResourceView * normalTexture*/)
+bool ShaderManagerClass::Render(
+	ID3D11DeviceContext * device, int indexCount, 
+	XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
+	Material * material,
+	LightClass* lights[], 
+	SceneEffects& effects, 
+	XMFLOAT3 cameraPos, 
+	EShaderType inShaderType,
+	XMMATRIX reflectionMatrix)
 {
 	bool result;
 
-	switch (material->shaderType)
+	// Allow caller of this function to specify an override shader type to use
+	EShaderType shaderToUse = inShaderType;
+	if (shaderToUse == EShaderType::EMATERIAL_DEFAULT)
+	{
+		shaderToUse = material->shaderType;
+	}
+
+	switch (shaderToUse)
 	{
 	case EShaderType::ETEXTURE:
 		result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray());
@@ -155,7 +169,10 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 		break;
 
 	case EShaderType::ELIGHT_SPECULAR:
-		ThrowRuntime("UNDER CONSTRUCTION! ~ this switch case not yet working; currently calling _LightShader->Render() directly from Graphics.cpp!");
+		result = _LightShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
+			material->GetResourceArray(), effects.ambientColor, lights, cameraPos,
+			effects.fogStart, effects.fogEnd, material->translation, material->transparency);
+		//ThrowRuntime("UNDER CONSTRUCTION! ~ this switch case not yet working; currently calling _LightShader->Render() directly from Graphics.cpp!");
 		//@TODO - not passing in right values - need to REWORK ShaderManagerClass::Render() params to do so!
 		/*result = _LightShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
 			&light->GetViewMatrix(), 
@@ -163,46 +180,48 @@ bool ShaderManagerClass::Render(ID3D11DeviceContext * device, int indexCount, XM
 			material->GetResourceArray(), light->GetDirection(), light->GetAmbientColor(), light->GetDiffuseColor(), light->GetDiffuseColor(),
 			lights, 
 			cameraPos, light->GetSpecularColor(), light->GetSpecularPower(), effects.fogStart, effects.fogEnd, material->translation, material->transparency);*/	
-		if (!result) return false;
+		
+		if (!result) ThrowRuntime("Could not render the light shader.");
 		//_LightShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::EREFLECTION:
-		result = _ReflectionShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
-			material->GetResourceArray()[0], reflectionTexture, reflectionMatrix);
-		if (!result) return false;
+		ThrowRuntime("UNDER CONSTRUCTION! ~ reflection shader currently not working. Need to refactor and pass its reflection texture in the texture array now");
+		//result = _ReflectionShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
+		//	material->GetResourceArray()[0], reflectionTexture, reflectionMatrix);
+		//if (!result) ThrowRuntime("Could not render the reflection shader.");
 		//_ReflectionShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::EREFRACTION:
 		result = _DiffuseShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
 			material->GetResourceArray()[0], lights[0]->GetDirection(), effects.ambientColor, lights[0]->GetDiffuseColor(), effects.clipPlane);
-		if (!result) return false;
+		if (!result) ThrowRuntime("Could not render the refraction shader.");
 		//_RefractionShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::EWATER:
 		result = _WaterShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix,
 			material->GetResourceArray(), material->translation, material->reflectRefractScale);
-		if (!result) return false;
-	//	_WaterShader->RenderShader(device, indexCount);
+		if (!result) ThrowRuntime("Could not render the water shader.");
+		//	_WaterShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::EFONT:
 		result = _FontShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
 			material->GetResourceArray()[0], material->pixelColor);
-		if (!result) return false;
+		if (!result) ThrowRuntime("Could not render the font shader.");
 		//_FontShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::EDEPTH:
 		result = _DepthShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix);
-		if (!result) return false;
+		if (!result) ThrowRuntime("Could not render the depth shader.");
 		break;
 
 	default:
 		result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray());
-		if (!result) return false;
+		if (!result) ThrowRuntime("Could not render the texture shader.");
 		//_TextureShader->RenderShader(device, indexCount);
 		break;
 	}
