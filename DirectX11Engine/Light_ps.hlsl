@@ -157,10 +157,12 @@ float CalculateSpotLightIntensity(
 
 	// METALLIC EFFECT (deactivate for now)
 	float metalEffect = saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace)));
-	if(dotProduct > .95 /*&& metalEffect > .55*/)
+
+	float dpCutOff = .77f;
+	if(dotProduct > dpCutOff /*&& metalEffect > .55*/)
 	{
-		float expandedRange = (dotProduct - .95)/.05f;
-		return saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace))* expandedRange*attenuation);
+		float expandedRange = (dotProduct - dpCutOff)/(1.f - dpCutOff);
+		return saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace))* expandedRange/**attenuation*/);
 		//return saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace)));
 		//return dotProduct;
 	}
@@ -253,6 +255,5 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 	/////// TRANSPARENCY /////////
 	//finalColor.a = 0.2f;
-
-    return finalColor;
+	return finalColor;
 }

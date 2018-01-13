@@ -18,7 +18,7 @@ bool Scene::Initialize()
 	_Camera.reset(new Actor);
 	_Camera->InitializeMovement(false);
 	_Camera->GetMovementComponent()->SetPosition(XMFLOAT3(0.f, 5.f, -20.f));
-	//_Camera->SetPosition(XMFLOAT3(0.f, 5.f, -20.f));
+	_Camera->SetPosition(XMFLOAT3(0.f, 50.f, -20.f));
 	//_Camera->SetOrientation(XMFLOAT3(-90, -90, 0));
 
 	/////// INIT ACTORS ////////
@@ -101,15 +101,15 @@ void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
 		_LightActors[i]->SetLookAt(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	}
 
-	_LightActors[0]->SetPosition(XMFLOAT3(20.f, 30.0f, 0.f));
+	_LightActors[0]->SetPosition(XMFLOAT3(20.f, 25.0f, 0.f));
 	//_LightActors[0]->SetLookAt((-1.f*_LightActors[0]->GetPosition()));
 	_LightActors[0]->SetLookAt((actors["Sphere"]->GetPosition() - _LightActors[0]->GetPosition()));
 
-	_LightActors[1]->SetPosition(XMFLOAT3(-10.f, 30.0f, 0.f));
+	_LightActors[1]->SetPosition(XMFLOAT3(-10.f, 25.0f, 0.f));
 	//_LightActors[1]->SetLookAt((-1.f*_LightActors[1]->GetPosition()));
 	_LightActors[1]->SetLookAt((actors["Sphere"]->GetPosition() - _LightActors[1]->GetPosition()));
 
-	_LightActors[2]->SetPosition(XMFLOAT3(0.f, 30.0f,20.f));
+	_LightActors[2]->SetPosition(XMFLOAT3(0.f, 25.0f,20.f));
 	//_LightActors[2]->SetLookAt((-1.f*_LightActors[2]->GetPosition()));
 	_LightActors[2]->SetLookAt((actors["Cube"]->GetPosition() - _LightActors[2]->GetPosition()));
 }

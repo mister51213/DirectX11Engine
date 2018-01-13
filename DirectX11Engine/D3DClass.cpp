@@ -2,7 +2,12 @@
 // Filename: d3dclass.cpp
 ////////////////////////////////////////////////////////////////////////////////
 #include "d3dclass.h"
+#include <iostream>
+#include <fstream>
+#include <stdlib.h>
+#include <algorithm>
 
+using namespace std;
 
 D3DClass::D3DClass()
 {}
@@ -13,6 +18,42 @@ D3DClass::D3DClass(const D3DClass& other)
 
 D3DClass::~D3DClass()
 {
+}
+
+std::vector <IDXGIAdapter*> D3DClass::EnumerateAdapters(int& adapterIndexToUse)
+{
+	IDXGIAdapter* pAdapter;
+	std::vector <IDXGIAdapter*> vAdapters;
+	IDXGIFactory* pFactory = NULL;
+
+
+	// Create a DXGIFactory object.
+	if (FAILED(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&pFactory)))
+	{
+		return vAdapters;
+	}
+
+	adapterIndexToUse = 0;
+	for (UINT i = 0;
+		pFactory->EnumAdapters(i, &pAdapter) != DXGI_ERROR_NOT_FOUND;
+		++i)
+	{
+		vAdapters.push_back(pAdapter);
+	
+		//DXGI_ADAPTER_DESC adapterDesc;
+		//vAdapters[i]->GetDesc(&adapterDesc);
+		//if ((int)adapterDesc.DedicatedVideoMemory > (int)vAdapters[adapterIndexToUse]->GetDesc.DedicatedVideoMemory)
+		//{
+		//	adapterIndexToUse = i;
+		//}
+	}
+
+	if (pFactory)
+	{
+		pFactory->Release();
+	}
+
+	return vAdapters;
 }
 
 bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const bool vsync, const HWND hwnd, const bool fullscreen, const float screenDepth, const float screenNear)
@@ -37,15 +78,47 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	D3D11_DEPTH_STENCIL_DESC depthDisabledStencilDesc;
 	D3D11_BLEND_DESC blendStateDescription;
 
-
 	// Store the vsync setting.
 	_vsync_enabled = vsync;
+
+	//////////////////////////////////////////////////////////////////
+	// CHOOSE TEH BEST ADAPTER WITH MOST MEMORY //
+	/////////////////////////////////////////////////////////////////////////////
+	/////// PRINT ADAPTERS /////////
+	int adapterIndexToUse = 0;
+	std::vector <IDXGIAdapter*> adapters = EnumerateAdapters(adapterIndexToUse);
+	std::ofstream file("adapter_output.txt");
+	for (auto adapter : adapters)
+	{
+		adapter->GetDesc(&adapterDesc);
+		std::wstring wDesc(adapterDesc.Description);
+		std::string desc(wDesc.begin(), wDesc.end());
+		file << desc << "\n";
+	}
+	file.close();
+
+	auto bestAdapter = *(std::max_element(adapters.begin(), adapters.end(), [](IDXGIAdapter* a1, IDXGIAdapter* a2)
+	{
+		DXGI_ADAPTER_DESC aDesc;
+
+		a1->GetDesc(&aDesc);
+		int mem1 = aDesc.DedicatedVideoMemory;
+
+		a2->GetDesc(&aDesc);
+		int mem2 = aDesc.DedicatedVideoMemory;
+
+		return mem1 > mem2;
+	}));
+
+	DXGI_ADAPTER_DESC testDesc;
+	bestAdapter->GetDesc(&testDesc);
+	//////////////////////////////////////////////////////////////////
 
 	// Create a DirectX graphics interface factory.
 	ThrowHResultIf(CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory));
 
 	// Use the factory to create an adapter for the primary graphics interface (video card).
-	ThrowHResultIf(factory->EnumAdapters(0, &adapter));
+	ThrowHResultIf(factory->EnumAdapters(0 /*adapterIndexToUse*/, &adapter));
 
 	// Enumerate the primary adapter output (monitor).
 	ThrowHResultIf(adapter->EnumOutputs(0, &adapterOutput));
@@ -165,7 +238,8 @@ bool D3DClass::Initialize(const int screenWidth, const int screenHeight, const b
 	featureLevel = D3D_FEATURE_LEVEL_11_0;
 
 	// Create the swap chain, Direct3D device, and Direct3D device context.
-	ThrowHResultIf(D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0, &featureLevel, 1,
+	ThrowHResultIf(D3D11CreateDeviceAndSwapChain(bestAdapter /*NULL*/, D3D_DRIVER_TYPE::D3D_DRIVER_TYPE_UNKNOWN/*D3D_DRIVER_TYPE_HARDWARE*/, NULL, 0, 
+		/*NULL, 0,*/ &featureLevel, 1,
 		D3D11_SDK_VERSION, &swapChainDesc, &_swapChain, &_device, NULL, &_deviceContext));
 
 	// Get the pointer to the back buffer.
