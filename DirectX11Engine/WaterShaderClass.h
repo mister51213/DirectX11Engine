@@ -31,12 +31,12 @@ public:
 	WaterShaderClass(const WaterShaderClass&);
 	~WaterShaderClass();
 
-	bool Render(ID3D11DeviceContext*, int, XMMATRIX, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView** textureArray, float, float);
+	bool Render(ID3D11DeviceContext*, int, XMMATRIX, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, float, float);
 
 private:
 	bool InitializeShader(ID3D11Device*, HWND, char*, char*);
 	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, XMMATRIX, 
-		ID3D11ShaderResourceView** textureArray, float, float);
+		ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, float, float);
 
 private:
 	const int _numBufferDescs = 3;

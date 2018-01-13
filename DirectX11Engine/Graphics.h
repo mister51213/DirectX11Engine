@@ -34,7 +34,7 @@ public:
 #pragma region WATER
 	float _waterHeight = 2.75f;
 	float _waterTranslation = 0.0f; // TODO: encapsulate in materials
-	unique_ptr<RenderTextureClass> _RefractionTexture;
+	//unique_ptr<RenderTextureClass> _RefractionTexture;
 	unique_ptr<RenderTextureClass> _ReflectionTexture;
 #pragma endregion
 
@@ -56,8 +56,8 @@ public:
 #pragma endregion
 
 private:
-	bool RenderWaterToTexture(Scene* pScene);
-	bool RenderShadowsToTexture(Scene* pScene);
+	bool RenderWaterToTexture(Scene* pScene, LightClass* lights[]);
+	bool RenderShadowsToTexture(Scene* pScene, LightClass* lights[]);
 	bool Render(Scene* pScene);
 
 	void DrawModel(Model& model, DirectX::XMMATRIX &worldTransform, const DirectX::XMMATRIX &viewMatrix, const DirectX::XMMATRIX &projectionMatrix, LightClass * shadowLights[] = nullptr, EShaderType shaderType = EShaderType::EMATERIAL_DEFAULT, XMMATRIX reflectionMatrix = XMMatrixIdentity());
@@ -65,6 +65,7 @@ private:
 	unique_ptr<D3DClass> _D3D;
 	unique_ptr<ShaderManagerClass> _ShaderManager;
 	unique_ptr<Camera> _Camera;
+
 	unique_ptr<Model> _Sky;
 	unique_ptr<Model> _SkyInner;
 	unique_ptr<Model> _Earth;

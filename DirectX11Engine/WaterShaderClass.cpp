@@ -10,12 +10,12 @@ WaterShaderClass::~WaterShaderClass()
 {}
 
 bool WaterShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, 
-	XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, float waterTranslation, float reflectRefractScale)
+	XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, float waterTranslation, float reflectRefractScale)
 {
 	bool result;
 
 	// Set the shader parameters that it will use for rendering.
-	SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, textureArray, waterTranslation, reflectRefractScale);
+	SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, textureArray, texViews, waterTranslation, reflectRefractScale);
 
 	// Now render the prepared buffers with the shader.
 	RenderShader(deviceContext, indexCount);
@@ -61,12 +61,13 @@ bool WaterShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 }
 
 bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, float waterTranslation, float reflectRefractScale)
+	XMMATRIX projectionMatrix, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, float waterTranslation, float reflectRefractScale)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
-	deviceContext->PSSetShaderResources(0, 3, textureArray);
+	//deviceContext->PSSetShaderResources(0, texArraySize, textureArray);
+	deviceContext->PSSetShaderResources(0, texViews.size(), texViews.data()->GetAddressOf());
 	
 	///////////////////////////////////////////////////////////////
 	///////////////////////// VS BUFFERS //////////////////////////

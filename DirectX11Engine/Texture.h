@@ -40,9 +40,9 @@ public:
 	ID3D11ShaderResourceView** GetTextureArray();
 	void ResetTextureArray(ID3D11ShaderResourceView** array, int size);
 
+	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>> _textureViews;
 private:
 	unsigned char* LoadTarga(char*, int&, int&, unsigned char* pTargaData);
-	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>> _textureViews;
 	
 	// for dds and everything else
 	vector<Microsoft::WRL::ComPtr <ID3D11Resource>> _resourceArray;

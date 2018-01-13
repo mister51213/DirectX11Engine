@@ -183,9 +183,6 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	// Set the bias value for fixing the floating point precision issues.
 	float bias = 0.001f;
 
-	// Set the default output color to the ambient light value for all pixels.
-    float4 lightColor = cb_ambientColor;
-
 	/////////////////// NORMAL MAPPING //////////////////
 	float4 bumpMap = shaderTextures[4].Sample(SampleType, input.tex);
 
@@ -195,8 +192,11 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	// Change the COORDINATE BASIS of the normal into the space represented by basis vectors tangent, binormal, and normal!
     float3 bumpNormal = normalize((bumpMap.x * input.tangent) + (bumpMap.y * input.binormal) + (bumpMap.z * input.normal));
 
+	//////////////// AMBIENT BASE COLOR ////////////////
+	// Set the default output color to the ambient light value for all pixels.
+    float4 lightColor = cb_ambientColor* saturate(dot(bumpNormal, input.normal) + .35);
 
-	//////////////// LIGHT LOOP ////////////////
+	//////////////// SHADOWING LOOP ////////////////
 	for(int i = 0; i < NUM_LIGHTS; ++i)
 	{
 	// Calculate the projected texture coordinates.

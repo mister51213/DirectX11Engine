@@ -28,7 +28,11 @@ bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* de
 		strcpy(cpath, filenames[i].c_str());
 
 		_textureViews.push_back(Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>());
-		InitializeTexture(device, deviceContext, cpath, i);
+		
+		if (filenames[i] != "")
+		{
+			InitializeTexture(device, deviceContext, cpath, i);
+		}
 
 		delete[] cpath;		
 	}

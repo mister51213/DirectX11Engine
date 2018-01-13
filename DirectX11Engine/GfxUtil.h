@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include "Texture.h"
+#include "RenderTextureClass.h"
 #include "GlobalIncludes.h"
 //#include <memory>
 //#include <wrl/client.h>
@@ -224,8 +225,11 @@ namespace GfxUtil
 	{
 	public:
 		Material();
+		Material(EShaderType inShaderType, int numRenderTex);
 
-		bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, EShaderType inShaderType, /*vector<char*>*/vector<string> fileNames);
+		bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, EShaderType inShaderType, vector<string> fileNames);
+
+		ID3D11ShaderResourceView* AddRenderTexture(ID3D11Device* const device, const int textureWidth, const int textureHeight, const float screenDepth, const float screenNear);
 
 		TextureClass* GetTextureObject();
 		ID3D11ShaderResourceView** GetResourceArray();
@@ -243,6 +247,12 @@ namespace GfxUtil
 		float translation = 0.f;
 		float reflectRefractScale = 0.01f;
 		float waterHeight = 2.75f;
+
+		// RENDER TEXTURES - for shadowing, reflection, and refraction
+		vector<unique_ptr<RenderTextureClass>> _RenderTextures;
+
+	private:
+		int numRenderTextures = 0;
 	};
 
 	///////////// MATRIX MATH /////////////

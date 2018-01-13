@@ -202,7 +202,7 @@ bool ShaderManagerClass::Render(
 
 	case EShaderType::EWATER:
 		result = _WaterShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix,
-			material->GetResourceArray(), material->translation, material->reflectRefractScale);
+			material->GetResourceArray(), material->GetTextureObject()->_textureViews, material->translation, material->reflectRefractScale);
 		if (!result) ThrowRuntime("Could not render the water shader.");
 		//	_WaterShader->RenderShader(device, indexCount);
 		break;

@@ -60,7 +60,7 @@ float4 WaterPixelShader(PixelInputType input) : SV_TARGET
 
     // Sample the normal from the normal map texture.
     //normalMap = normalTexture.Sample(SampleType, input.tex);
-    normalMap = shaderTextures[2].Sample(SampleType, input.tex);
+    normalMap = shaderTextures[0].Sample(SampleType, input.tex);
 
     // Expand the range of the normal from (0,1) to (-1,+1).
     normal = (normalMap.xyz * 2.0f) - 1.0f;
@@ -72,8 +72,8 @@ float4 WaterPixelShader(PixelInputType input) : SV_TARGET
     // Sample the texture pixels from the textures using the updated texture coordinates.
     //reflectionColor = reflectionTexture.Sample(SampleType, reflectTexCoord);
     //refractionColor = refractionTexture.Sample(SampleType, refractTexCoord);
-	reflectionColor = shaderTextures[0].Sample(SampleType, reflectTexCoord);
     refractionColor = shaderTextures[1].Sample(SampleType, refractTexCoord);
+	reflectionColor = shaderTextures[2].Sample(SampleType, reflectTexCoord);
 
     // Combine the reflection and refraction results for the final color.
     //color = lerp(reflectionColor, refractionColor, 0.6f);

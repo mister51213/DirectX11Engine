@@ -6,9 +6,16 @@ GfxUtil::Material::Material()
 		texArraySize = 1;
 	}
 
-bool GfxUtil::Material::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, EShaderType inShaderType, /*vector<char*>*/vector<string> fileNames)
+GfxUtil::Material::Material(EShaderType inShaderType, int numRenderTex = 0)
 {
-	texArraySize = fileNames.size();
+	shaderType = inShaderType;
+	texArraySize = 1;
+	numRenderTextures = numRenderTex;
+}
+
+bool GfxUtil::Material::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, EShaderType inShaderType, vector<string> texFileNames)
+{
+	texArraySize = texFileNames.size();
 
 	shaderType = inShaderType;
 
@@ -18,7 +25,7 @@ bool GfxUtil::Material::Initialize(ID3D11Device* device, ID3D11DeviceContext* de
 		return false;
 	}
 
-	bool result = _TextureArray->InitializeArray(device, deviceContext, fileNames);
+	bool result = _TextureArray->InitializeArray(device, deviceContext, texFileNames);
 	if (!result)
 	{
 		return false;
@@ -26,6 +33,21 @@ bool GfxUtil::Material::Initialize(ID3D11Device* device, ID3D11DeviceContext* de
 
 	return true;
 }
+
+ID3D11ShaderResourceView* GfxUtil::Material::AddRenderTexture(ID3D11Device* const device, const int textureWidth, const int textureHeight, const float screenDepth, const float screenNear)
+{
+	// Add a new EMPTY resource view to the texture array object
+	_TextureArray->_textureViews.push_back(Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>());
+
+	// Create a new render texture and push it back into the render texture array in this material
+	_RenderTextures.push_back(unique_ptr<RenderTextureClass>(new RenderTextureClass(device, textureWidth, textureHeight, screenDepth, screenNear)));
+	
+	// Point the newly added resource view inside the Texture Array owned by this material at the render texture we just created
+	_TextureArray->GetTextureArray()[_TextureArray->_textureViews.size()-1] = _RenderTextures[_RenderTextures.size() - 1]->GetShaderResourceView();
+
+	return _RenderTextures[_RenderTextures.size() - 1]->GetShaderResourceView();
+}
+
 
 TextureClass * GfxUtil::Material::GetTextureObject()
 {

@@ -27,6 +27,7 @@ class RenderTextureClass
 {
 public:
 	RenderTextureClass();
+	RenderTextureClass(ID3D11Device * const device, const int textureWidth, const int textureHeight, const float screenDepth, const float screenNear);
 	RenderTextureClass(const RenderTextureClass&);
 	~RenderTextureClass();
 
