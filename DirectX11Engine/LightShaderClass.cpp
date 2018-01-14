@@ -16,12 +16,13 @@ LightShaderClass::~LightShaderClass()
 bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, 
 	MatrixBufferType& transforms,
 	XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix,
-	ID3D11ShaderResourceView** textureArray, XMFLOAT4 ambientColor, LightClass* shadowLight[], 
+	ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
+	XMFLOAT4 ambientColor, LightClass* shadowLight[], 
 	XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency)
 {
 	// Set the shader parameters that it will use for rendering.
 	SetShaderParameters(deviceContext, transforms, worldMatrix, viewMatrix, projectionMatrix,
-		textureArray, ambientColor, shadowLight, cameraPosition, fogStart, fogEnd, translation, transparency);
+		textureArray, texViews, ambientColor, shadowLight, cameraPosition, fogStart, fogEnd, translation, transparency);
 
 	// Now render the prepared buffers with the shader.
 	RenderShader(deviceContext, indexCount);
@@ -99,13 +100,16 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, 
 	MatrixBufferType& transforms,
 	XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
-	ID3D11ShaderResourceView** textureArray, XMFLOAT4 ambientColor,	LightClass* shadowLight[],
+	ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
+	XMFLOAT4 ambientColor,	LightClass* shadowLight[],
 	XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
 	/////////////////////// SET TEXTURE RESOURCES //////////////////////
-	deviceContext->PSSetShaderResources(0, 9, textureArray); // @SHADOWING - TODO: Feed in texture view elsewhere in the framework!!!
+	//deviceContext->PSSetShaderResources(0, 9, textureArray); // @SHADOWING - TODO: Feed in texture view elsewhere in the framework!!!
+	deviceContext->PSSetShaderResources(0, texViews.size(), texViews.data()->GetAddressOf());
+
 
 	///////////////////////////////////////////////////////////////
 	///////////////////////// VS BUFFERS //////////////////////////

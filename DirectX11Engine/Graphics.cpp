@@ -653,14 +653,14 @@ void GraphicsClass::RenderText()
 	_D3D->GetOrthoMatrix(orthoMatrix);
 
 
-	_FpsString->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+	_FpsString->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture(), _Font1->GetTextureObject()->_textureViews);
 	for (int i = 0; i < 6; i++)
 	{
-		_PositionStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+		_PositionStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture(), _Font1->GetTextureObject()->_textureViews);
 	}
 	for (int i = 0; i < 3; i++)
 	{
-		_RenderCountStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture());
+		_RenderCountStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture(), _Font1->GetTextureObject()->_textureViews);
 	}
 
 	_D3D->DisableAlphaBlending();

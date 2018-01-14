@@ -15,12 +15,12 @@ TextureShaderClass::~TextureShaderClass()
 {}
 
 bool TextureShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray)
+	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews)
 {
 	bool result;
 
 	// Set the shader parameters that it will use for rendering.
-	SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray);
+	SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, texViews);
 
 	// Now render the prepared buffers with the shader.
 	RenderShader(deviceContext, indexCount);
@@ -64,18 +64,19 @@ bool TextureShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char*
 }
 
 bool TextureShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray)
+	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews)
 {
+	// Set shader texture resource in the pixel shader.
+	//deviceContext->PSSetShaderResources(0, 1, &texture);
+	//deviceContext->PSSetShaderResources(0, 2, textureArray);
+	deviceContext->PSSetShaderResources(0, texViews.size(), texViews.data()->GetAddressOf());
+
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
 	unsigned int bufferNumber = 0;
 	MatrixBufferType tempMatBuff = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix) };
 	MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
-
-	// Set shader texture resource in the pixel shader.
-	//deviceContext->PSSetShaderResources(0, 1, &texture);
-	deviceContext->PSSetShaderResources(0, 2, textureArray);
 
 	return true;
 }

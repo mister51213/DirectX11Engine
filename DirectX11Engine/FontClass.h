@@ -42,6 +42,7 @@ public:
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, char* fontFilename, char* textureFilename,
 	float fontHeight, int spaceSize);
 
+	TextureClass* GetTextureObject();
 	ID3D11ShaderResourceView* GetTexture();
 	void BuildVertexArray(void*, char*, float, float);
 	int GetSentencePixelLength(char*);

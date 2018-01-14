@@ -68,7 +68,8 @@ public:
 	bool Render(ID3D11DeviceContext* deviceContext, int indexCount,
 		MatrixBufferType& transforms,
 		XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
-		ID3D11ShaderResourceView** textureArray, XMFLOAT4 ambientColor, LightClass* shadowLight[],
+		ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
+		XMFLOAT4 ambientColor, LightClass* shadowLight[],
 		XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency);
 
 	virtual void RenderShader(ID3D11DeviceContext* deviceContext, int indexCount) override;
@@ -78,7 +79,8 @@ public:
 	bool SetShaderParameters(ID3D11DeviceContext* deviceContext,
 		MatrixBufferType& transforms,
 		XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
-		ID3D11ShaderResourceView** textureArray, XMFLOAT4 ambientColor, LightClass* shadowLight[],
+		ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
+		XMFLOAT4 ambientColor, LightClass* shadowLight[],
 		XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency);
 
 private:

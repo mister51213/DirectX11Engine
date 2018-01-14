@@ -36,10 +36,10 @@ bool TextClass::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceCont
 }
 
 void TextClass::Render(ID3D11DeviceContext* deviceContext, ShaderManagerClass* pShaderManager, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX orthoMatrix, ID3D11ShaderResourceView* fontTexture)
+	XMMATRIX orthoMatrix, ID3D11ShaderResourceView* fontTexture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews)
 {
 	// Draw the sentence.
-	RenderSentence(deviceContext, pShaderManager, worldMatrix, viewMatrix, orthoMatrix, fontTexture);
+	RenderSentence(deviceContext, pShaderManager, worldMatrix, viewMatrix, orthoMatrix, fontTexture, texViews);
 
 	return;
 }
@@ -234,7 +234,7 @@ bool TextClass::UpdateSentence(ID3D11DeviceContext* deviceContext, FontClass* Fo
 
 // HIS @CUSTOM
 void TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, ShaderManagerClass* pShaderManager, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX orthoMatrix, ID3D11ShaderResourceView* fontTexture)
+	XMMATRIX orthoMatrix, ID3D11ShaderResourceView* fontTexture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews)
 {
 	unsigned int stride, offset;
 	XMFLOAT4 shadowColor;
@@ -248,7 +248,7 @@ void TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, ShaderManager
 	deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer2.GetAddressOf(), &stride, &offset);
 	deviceContext->IASetIndexBuffer(_indexBuffer2.Get(), DXGI_FORMAT_R32_UINT, 0);
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	pShaderManager->RenderFontShader(deviceContext, _indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, shadowColor);
+	pShaderManager->RenderFontShader(deviceContext, _indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, texViews, shadowColor);
 
 	// Render the text buffers.
 	deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
@@ -261,7 +261,7 @@ void TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, ShaderManager
 	//{
 	//	false;
 	//}
-	result = pShaderManager->_FontShader->Render(deviceContext, _indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, _pixelColor); //@TODO: implement generic function
+	result = pShaderManager->_FontShader->Render(deviceContext, _indexCount, worldMatrix, viewMatrix, orthoMatrix, fontTexture, texViews, _pixelColor); //@TODO: implement generic function
 	if (!result)
 	{
 		false;

@@ -108,6 +108,12 @@ bool FontClass::LoadTexture(ID3D11Device* device, ID3D11DeviceContext* deviceCon
 	return true;
 }
 
+
+TextureClass* FontClass::GetTextureObject()
+{
+	return _Texture.get();
+}
+
 ID3D11ShaderResourceView* FontClass::GetTexture()
 {
 	ID3D11ShaderResourceView** views = _Texture->GetTextureArray();

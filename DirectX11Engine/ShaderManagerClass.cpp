@@ -164,7 +164,7 @@ bool ShaderManagerClass::Render(
 	switch (shaderToUse)
 	{
 	case EShaderType::ETEXTURE:
-		result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray());
+		result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray(), material->GetTextureObject()->_textureViews);
 		if (!result) return false;
 		//_TextureShader->RenderShader(device, indexCount);
 		break;
@@ -173,7 +173,8 @@ bool ShaderManagerClass::Render(
 		result = _LightShader->Render(device, indexCount, 
 			transforms,
 			worldMatrix, viewMatrix, projectionMatrix,
-			material->GetResourceArray(), effects.ambientColor, lights, cameraPos,
+			material->GetResourceArray(), material->GetTextureObject()->_textureViews, 
+			effects.ambientColor, lights, cameraPos,
 			effects.fogStart, effects.fogEnd, material->translation, material->transparency);
 		//ThrowRuntime("UNDER CONSTRUCTION! ~ this switch case not yet working; currently calling _LightShader->Render() directly from Graphics.cpp!");
 		//@TODO - not passing in right values - need to REWORK ShaderManagerClass::Render() params to do so!
@@ -198,7 +199,7 @@ bool ShaderManagerClass::Render(
 
 	case EShaderType::EREFRACTION:
 		result = _DiffuseShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
-			material->GetResourceArray()[0], lights[0]->GetDirection(), effects.ambientColor, lights[0]->GetDiffuseColor(), effects.clipPlane);
+			material->GetResourceArray()[0], material->GetTextureObject()->_textureViews, lights[0]->GetDirection(), effects.ambientColor, lights[0]->GetDiffuseColor(), effects.clipPlane);
 		if (!result) ThrowRuntime("Could not render the refraction shader.");
 		//_RefractionShader->RenderShader(device, indexCount);
 		break;
@@ -212,7 +213,7 @@ bool ShaderManagerClass::Render(
 
 	case EShaderType::EFONT:
 		result = _FontShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
-			material->GetResourceArray()[0], material->pixelColor);
+			material->GetResourceArray()[0], material->GetTextureObject()->_textureViews, material->pixelColor);
 		if (!result) ThrowRuntime("Could not render the font shader.");
 		//_FontShader->RenderShader(device, indexCount);
 		break;
@@ -223,7 +224,7 @@ bool ShaderManagerClass::Render(
 		break;
 
 	default:
-		result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray());
+		result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray(), material->GetTextureObject()->_textureViews);
 		if (!result) ThrowRuntime("Could not render the texture shader.");
 		//_TextureShader->RenderShader(device, indexCount);
 		break;
@@ -240,9 +241,9 @@ FontShaderClass * ShaderManagerClass::GetFontShader()
 }
 
 bool ShaderManagerClass::RenderFontShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, XMFLOAT4 pixelColor)
+	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 pixelColor)
 {
-	if (!_FontShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, pixelColor))
+	if (!_FontShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, texViews, pixelColor))
 	{
 		ThrowRuntime("Could not initialize the font shader object.");
 	}

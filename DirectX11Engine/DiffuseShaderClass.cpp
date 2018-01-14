@@ -11,10 +11,12 @@ DiffuseShaderClass::DiffuseShaderClass(const DiffuseShaderClass & other)
 DiffuseShaderClass::~DiffuseShaderClass()
 {}
 
-bool DiffuseShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, ID3D11ShaderResourceView * texture, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT4 clipPlane)
+bool DiffuseShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, 
+	ID3D11ShaderResourceView * texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
+	XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT4 clipPlane)
 {
 	// Set the shader parameters that it will use for rendering.
-	ThrowHResultIf(SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture, lightDirection, ambientColor, diffuseColor, clipPlane));
+	ThrowHResultIf(SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture, texViews, lightDirection, ambientColor, diffuseColor, clipPlane));
 
 	// Now render the prepared buffers with the shader.
 	RenderShader(deviceContext, indexCount);
@@ -56,12 +58,15 @@ bool DiffuseShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, char
 	return true;
 }
 
-bool DiffuseShaderClass::SetShaderParameters(ID3D11DeviceContext * deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, ID3D11ShaderResourceView * texture, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT4 clipPlane)
+bool DiffuseShaderClass::SetShaderParameters(ID3D11DeviceContext * deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, 
+	ID3D11ShaderResourceView * texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
+	XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT4 clipPlane)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
 	// Set shader texture resource in the pixel shader.
-	deviceContext->PSSetShaderResources(0, 1, &texture);
+	//deviceContext->PSSetShaderResources(0, 1, &texture);
+	deviceContext->PSSetShaderResources(0, texViews.size(), texViews.data()->GetAddressOf());
 
 	///////////////////////////////////////////////////////////////
 	///////////////////////// VS BUFFERS //////////////////////////
