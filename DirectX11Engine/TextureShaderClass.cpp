@@ -14,13 +14,13 @@ TextureShaderClass::TextureShaderClass(const TextureShaderClass& other)
 TextureShaderClass::~TextureShaderClass()
 {}
 
-bool TextureShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews)
+bool TextureShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms,/* XMMATRIX worldMatrix, XMMATRIX viewMatrix,	XMMATRIX projectionMatrix,*/
+	ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews)
 {
 	bool result;
 
 	// Set the shader parameters that it will use for rendering.
-	SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, textureArray, texViews);
+	SetShaderParameters(deviceContext, transforms, /*worldMatrix, viewMatrix, projectionMatrix,*/ textureArray, texViews);
 
 	// Now render the prepared buffers with the shader.
 	RenderShader(deviceContext, indexCount);
@@ -63,8 +63,8 @@ bool TextureShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char*
 	return true;
 }
 
-bool TextureShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews)
+bool TextureShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType& transforms,/*XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix, */
+	ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews)
 {
 	// Set shader texture resource in the pixel shader.
 	//deviceContext->PSSetShaderResources(0, 1, &texture);
@@ -74,8 +74,12 @@ bool TextureShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
 	unsigned int bufferNumber = 0;
-	MatrixBufferType tempMatBuff = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix) };
-	MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
+
+	//MatrixBufferType tempMatBuff = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix) };
+	//MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
+		
+	MapBuffer(transforms, _vsBuffers[bufferNumber].Get(), deviceContext);
+
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
 	return true;

@@ -164,7 +164,9 @@ bool ShaderManagerClass::Render(
 	switch (shaderToUse)
 	{
 	case EShaderType::ETEXTURE:
-		result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray(), material->GetTextureObject()->_textureViews);
+		result = _TextureShader->Render(device, indexCount,/* worldMatrix, viewMatrix, projectionMatrix, */
+			transforms,
+			material->GetResourceArray(), material->GetTextureObject()->_textureViews);
 		if (!result) return false;
 		//_TextureShader->RenderShader(device, indexCount);
 		break;
@@ -172,7 +174,7 @@ bool ShaderManagerClass::Render(
 	case EShaderType::ELIGHT_SPECULAR:
 		result = _LightShader->Render(device, indexCount, 
 			transforms,
-			worldMatrix, viewMatrix, projectionMatrix,
+			//worldMatrix, viewMatrix, projectionMatrix,
 			material->GetResourceArray(), material->GetTextureObject()->_textureViews, 
 			effects.ambientColor, lights, cameraPos,
 			effects.fogStart, effects.fogEnd, material->translation, material->transparency);
@@ -198,15 +200,19 @@ bool ShaderManagerClass::Render(
 		break;
 
 	case EShaderType::EREFRACTION:
-		result = _DiffuseShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
+		result = _DiffuseShader->Render(device, indexCount, 
+			transforms,
+			//worldMatrix, viewMatrix, projectionMatrix,
 			material->GetResourceArray()[0], material->GetTextureObject()->_textureViews, lights[0]->GetDirection(), effects.ambientColor, lights[0]->GetDiffuseColor(), effects.clipPlane);
 		if (!result) ThrowRuntime("Could not render the refraction shader.");
 		//_RefractionShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::EWATER:
-		result = _WaterShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix,
-			material->GetResourceArray(), material->GetTextureObject()->_textureViews, material->translation, material->reflectRefractScale);
+		result = _WaterShader->Render(device, indexCount, 
+			transforms,
+			/*worldMatrix, viewMatrix, projectionMatrix, */
+			reflectionMatrix, material->GetResourceArray(), material->GetTextureObject()->_textureViews, material->translation, material->reflectRefractScale);
 		if (!result) ThrowRuntime("Could not render the water shader.");
 		//	_WaterShader->RenderShader(device, indexCount);
 		break;
@@ -219,12 +225,15 @@ bool ShaderManagerClass::Render(
 		break;
 
 	case EShaderType::EDEPTH:
-		result = _DepthShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix);
+		result = _DepthShader->Render(device, indexCount, transforms,
+			worldMatrix, viewMatrix, projectionMatrix);
 		if (!result) ThrowRuntime("Could not render the depth shader.");
 		break;
 
 	default:
-		result = _TextureShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray(), material->GetTextureObject()->_textureViews);
+		result = _TextureShader->Render(device, indexCount, transforms,
+			/*worldMatrix, viewMatrix, projectionMatrix,*/
+			material->GetResourceArray(), material->GetTextureObject()->_textureViews);
 		if (!result) ThrowRuntime("Could not render the texture shader.");
 		//_TextureShader->RenderShader(device, indexCount);
 		break;

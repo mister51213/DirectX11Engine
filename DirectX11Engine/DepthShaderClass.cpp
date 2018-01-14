@@ -11,11 +11,10 @@ DepthShaderClass::~DepthShaderClass()
 {
 }
 
-bool DepthShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix)
+bool DepthShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms,XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix)
 {
 	// Set the shader parameters that it will use for rendering.
-	SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix);
+	SetShaderParameters(deviceContext, transforms,worldMatrix, viewMatrix, projectionMatrix);
 
 	// Now render the prepared buffers with the shader.
 	RenderShader(deviceContext, indexCount);
@@ -42,14 +41,18 @@ bool DepthShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	return true;
 }
 
-bool DepthShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
+bool DepthShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType& transforms, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
 	///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
 	unsigned int bufferNumber = 0;
+
 	MatrixBufferType tempMatBuff = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix)};		// @SHADOWING
 	MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
+
+	//MapBuffer(transforms, _vsBuffers[bufferNumber].Get(), deviceContext);
+
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
 	return true;

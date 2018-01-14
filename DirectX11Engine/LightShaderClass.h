@@ -66,8 +66,8 @@ public:
 	~LightShaderClass();
 
 	bool Render(ID3D11DeviceContext* deviceContext, int indexCount,
-		MatrixBufferType& transforms,
-		XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
+		MatrixBufferType& transforms,/*
+		XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,*/
 		ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
 		XMFLOAT4 ambientColor, LightClass* shadowLight[],
 		XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency);
@@ -77,8 +77,8 @@ public:
 	bool InitializeShader(ID3D11Device*, HWND, char*, char*);
 
 	bool SetShaderParameters(ID3D11DeviceContext* deviceContext,
-		MatrixBufferType& transforms,
-		XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
+		MatrixBufferType& transforms,/*
+		XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,*/
 		ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
 		XMFLOAT4 ambientColor, LightClass* shadowLight[],
 		XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency);

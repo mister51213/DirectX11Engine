@@ -9,13 +9,15 @@ WaterShaderClass::WaterShaderClass(const WaterShaderClass &)
 WaterShaderClass::~WaterShaderClass()
 {}
 
-bool WaterShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, 
+bool WaterShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCount, 
+	MatrixBufferType& transforms,
+	//XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, 
 	XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, float waterTranslation, float reflectRefractScale)
 {
 	bool result;
 
 	// Set the shader parameters that it will use for rendering.
-	SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, reflectionMatrix, textureArray, texViews, waterTranslation, reflectRefractScale);
+	SetShaderParameters(deviceContext, transforms,/*worldMatrix, viewMatrix, projectionMatrix,*/ reflectionMatrix, textureArray, texViews, waterTranslation, reflectRefractScale);
 
 	// Now render the prepared buffers with the shader.
 	RenderShader(deviceContext, indexCount);
@@ -60,8 +62,10 @@ bool WaterShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	return true;
 }
 
-bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, float waterTranslation, float reflectRefractScale)
+bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, 
+	MatrixBufferType& transforms,
+	//XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix, 
+	XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, float waterTranslation, float reflectRefractScale)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -75,8 +79,12 @@ bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 
 	///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
 	unsigned int bufferNumber = 0;
-	MatrixBufferType tempMatBuff = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix) };
-	MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
+
+	//MatrixBufferType tempMatBuff = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix) };
+	//MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
+
+	MapBuffer(transforms, _vsBuffers[bufferNumber].Get(), deviceContext);
+
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
 	///////////////////// REFLECTION INIT - VS BUFFER 1 //////////////////////////////////
