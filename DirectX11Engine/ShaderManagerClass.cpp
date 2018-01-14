@@ -143,6 +143,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 // @TODO the params at teh end need to be encapsulated
 bool ShaderManagerClass::Render(
 	ID3D11DeviceContext * device, int indexCount, 
+	MatrixBufferType& transforms,
 	XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
 	Material * material,
 	LightClass* lights[], 
@@ -169,7 +170,9 @@ bool ShaderManagerClass::Render(
 		break;
 
 	case EShaderType::ELIGHT_SPECULAR:
-		result = _LightShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
+		result = _LightShader->Render(device, indexCount, 
+			transforms,
+			worldMatrix, viewMatrix, projectionMatrix,
 			material->GetResourceArray(), effects.ambientColor, lights, cameraPos,
 			effects.fogStart, effects.fogEnd, material->translation, material->transparency);
 		//ThrowRuntime("UNDER CONSTRUCTION! ~ this switch case not yet working; currently calling _LightShader->Render() directly from Graphics.cpp!");

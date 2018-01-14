@@ -82,7 +82,7 @@ public:
 	bool LoadModel(const string name);
 
 	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
-	void PutVertsOnPipeline(ID3D11DeviceContext* const deviceContext);
+	void Draw(ID3D11DeviceContext* const deviceContext);
 
 	inline XMFLOAT3 GetPosition() const
 	{

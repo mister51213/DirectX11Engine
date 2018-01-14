@@ -21,7 +21,7 @@ class LightShaderClass: public ShaderClass
 {
 private:
 	///////////////////////// VS BUFFER TYPES //////////////////////////
-	struct MatrixBufferType
+	struct MatrixBufferLightType
 	{
 		XMMATRIX world;
 		XMMATRIX view;
@@ -65,7 +65,9 @@ public:
 	LightShaderClass(const LightShaderClass&);
 	~LightShaderClass();
 
-	bool Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix,
+	bool Render(ID3D11DeviceContext* deviceContext, int indexCount,
+		MatrixBufferType& transforms,
+		XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
 		ID3D11ShaderResourceView** textureArray, XMFLOAT4 ambientColor, LightClass* shadowLight[],
 		XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency);
 
@@ -73,9 +75,11 @@ public:
 
 	bool InitializeShader(ID3D11Device*, HWND, char*, char*);
 
-	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, 
-		ID3D11ShaderResourceView** textureArray, XMFLOAT4 ambientColor,	LightClass* shadowLight[],
-		XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float texTranslation, float transparency);
+	bool SetShaderParameters(ID3D11DeviceContext* deviceContext,
+		MatrixBufferType& transforms,
+		XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
+		ID3D11ShaderResourceView** textureArray, XMFLOAT4 ambientColor, LightClass* shadowLight[],
+		XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency);
 
 private:
 	// Total number of buffers including parent matrix buffer

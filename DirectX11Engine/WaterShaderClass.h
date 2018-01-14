@@ -5,14 +5,13 @@ class WaterShaderClass :
 	public ShaderClass
 {
 private:
-	// cBuffer type that will be used with the vertex shader.
-	// This typedef must be exactly the same as the one in the vertex shader as the model data needs to match the typedefs in the shader for proper rendering.
-	struct MatrixBufferType
-	{
-		XMMATRIX world;
-		XMMATRIX view;
-		XMMATRIX projection;
-	};
+	// cBuffer type that will be used with the vertex shader - typedef must be exactly the same as the one in the vertex shader as the model data needs to match the typedefs in the shader for proper rendering.
+	//struct MatrixBufferType
+	//{
+	//	XMMATRIX world;
+	//	XMMATRIX view;
+	//	XMMATRIX projection;
+	//};
 
 	struct ReflectionBufferType
 	{

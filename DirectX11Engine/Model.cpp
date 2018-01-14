@@ -143,14 +143,11 @@ bool Model::InitializeBuffers(ID3D11Device* const device)
 	return true;
 }
 
-void Model::PutVertsOnPipeline(ID3D11DeviceContext* const deviceContext)
+void Model::Draw(ID3D11DeviceContext* const deviceContext)
 {
-	unsigned int stride;
-	unsigned int offset;
-	
 	// Set vertex buffer stride and offset.
-	stride = sizeof(VertexType);
-	offset = 0;
+	unsigned int stride = sizeof(VertexType);
+	unsigned int offset = 0;
 
 	// Set the vertex buffer to active in the input assembler so it can be rendered.
 	deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
@@ -160,6 +157,8 @@ void Model::PutVertsOnPipeline(ID3D11DeviceContext* const deviceContext)
 
 	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
 	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	deviceContext->DrawIndexed(_indexCount, 0, 0);
 }
 
 void Model::CalculateModelVectors()

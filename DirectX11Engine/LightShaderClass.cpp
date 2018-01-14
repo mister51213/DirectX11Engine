@@ -13,12 +13,14 @@ LightShaderClass::LightShaderClass(const LightShaderClass& other)
 LightShaderClass::~LightShaderClass()
 {}
 
-bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix, 
+bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, 
+	MatrixBufferType& transforms,
+	XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix,
 	ID3D11ShaderResourceView** textureArray, XMFLOAT4 ambientColor, LightClass* shadowLight[], 
 	XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency)
 {
 	// Set the shader parameters that it will use for rendering.
-	SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, 
+	SetShaderParameters(deviceContext, transforms, worldMatrix, viewMatrix, projectionMatrix,
 		textureArray, ambientColor, shadowLight, cameraPosition, fogStart, fogEnd, translation, transparency);
 
 	// Now render the prepared buffers with the shader.
@@ -82,7 +84,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	ThrowHResultIf(device->CreateSamplerState(&comparisonDesc, &_sampleStateComp));
 
 	// VS Buffers
-	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
+	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferLightType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<CameraBufferType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<FogBufferType>(device));
 
@@ -94,7 +96,9 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	return true;
 }
 
-bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
+bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, 
+	MatrixBufferType& transforms,
+	XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
 	ID3D11ShaderResourceView** textureArray, XMFLOAT4 ambientColor,	LightClass* shadowLight[],
 	XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency)
 {
@@ -114,16 +118,17 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, X
 	LightDataTemplate_VS tempLightsVS[NUM_LIGHTS] = { *shadowLight[0]->GetLightBufferVS(), *shadowLight[1]->GetLightBufferVS(), *shadowLight[2]->GetLightBufferVS() };
 
 	tempLightsVS[0].viewMatrix = XMMatrixTranspose(tempLightsVS[0].viewMatrix);
-	tempLightsVS[1].viewMatrix = XMMatrixTranspose(tempLightsVS[1].viewMatrix);
-	tempLightsVS[2].viewMatrix = XMMatrixTranspose(tempLightsVS[2].viewMatrix);
-
 	tempLightsVS[0].projectionMatrix = XMMatrixTranspose(tempLightsVS[0].projectionMatrix);
+	
+	tempLightsVS[1].viewMatrix = XMMatrixTranspose(tempLightsVS[1].viewMatrix);
 	tempLightsVS[1].projectionMatrix = XMMatrixTranspose(tempLightsVS[1].projectionMatrix);
+	
+	tempLightsVS[2].viewMatrix = XMMatrixTranspose(tempLightsVS[2].viewMatrix);
 	tempLightsVS[2].projectionMatrix = XMMatrixTranspose(tempLightsVS[2].projectionMatrix);
 
-	MatrixBufferType tempMatBuff = {
-		XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix),
-		tempLightsVS[0], tempLightsVS[1], tempLightsVS[2] };
+	MatrixBufferLightType tempMatBuff = {transforms.world, transforms.view, transforms.projection, tempLightsVS[0], tempLightsVS[1], tempLightsVS[2] };
+	///////////////////////// TEMP IMPLEMENTATION //////////////////////////
+
 	MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 

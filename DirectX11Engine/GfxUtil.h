@@ -64,6 +64,14 @@ namespace GfxUtil
 			padding = 0;
 		}
 
+		LightDataTemplate_VS(const XMMATRIX& view, const XMMATRIX& projection,const XMFLOAT3& pos)
+		{
+			viewMatrix = view;
+			projectionMatrix = projection;
+			position = pos;
+			padding = 0;
+		}
+
 		LightDataTemplate_VS(const LightDataTemplate_VS& otherBuff)
 		{
 
@@ -104,6 +112,15 @@ namespace GfxUtil
 			specularColor = otherBuff.specularColor;
 		}
 	};
+
+	struct MatrixBufferType
+	{
+		XMMATRIX world;
+		XMMATRIX view;
+		XMMATRIX projection;
+	};
+
+	// DIRECT3D UTILITY FUNCTIONS
 
 	template<class BufferType>
 	static Microsoft::WRL::ComPtr<ID3D11Buffer> MakeConstantBuffer(ID3D11Device* device)

@@ -3,13 +3,13 @@
 
 class DepthShaderClass : public ShaderClass
 {
-private:
-	struct MatrixBufferType
-	{
-		XMMATRIX world;
-		XMMATRIX view;
-		XMMATRIX projection;
-	};
+//private:
+//	struct MatrixBufferType
+//	{
+//		XMMATRIX world;
+//		XMMATRIX view;
+//		XMMATRIX projection;
+//	};
 
 public:
 	DepthShaderClass();

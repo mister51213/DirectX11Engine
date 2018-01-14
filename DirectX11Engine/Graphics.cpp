@@ -296,15 +296,19 @@ bool GraphicsClass::Render(Scene* pScene)
 	XMMATRIX viewMatrix = _Camera->GetViewMatrix();
 	XMMATRIX projectionMatrix = _D3D->GetProjectionMatrix();
 
+	// NEW REFACTOR
+	MatrixBufferType transforms = { XMMatrixIdentity(), XMMatrixTranspose(_Camera->GetViewMatrix()), XMMatrixTranspose(_D3D->GetProjectionMatrix())};
+	// NEW REFACTOR
+
 	// Generate the view matrix based on the camera's position.
 	_Camera->UpdateViewPoint();
 
 	//////// BACKGROUND /////////
 	_D3D->EnableAlphaBlending();
-	DrawModel(*_Earth, worldTransform, viewMatrix, projectionMatrix);
-	DrawModel(*_EarthInner, worldTransform, viewMatrix, projectionMatrix);
-	DrawModel(*_Sky, worldTransform, viewMatrix, projectionMatrix);
-	DrawModel(*_SkyInner, worldTransform, viewMatrix, projectionMatrix);
+	DrawModel(*_Earth, transforms, worldTransform, viewMatrix, projectionMatrix);
+	DrawModel(*_EarthInner, transforms, worldTransform, viewMatrix, projectionMatrix);
+	DrawModel(*_Sky, transforms, worldTransform, viewMatrix, projectionMatrix);
+	DrawModel(*_SkyInner, transforms, worldTransform, viewMatrix, projectionMatrix);
 	_D3D->DisableAlphaBlending();
 
 	////////////////// RENDER ACTUAL SCENE  /////////////////////////
@@ -314,14 +318,14 @@ bool GraphicsClass::Render(Scene* pScene)
 		if (it->first == "Water" || !it->second->GetModel()) continue;
 
 		//_D3D->EnableAlphaBlending();
-		DrawModel(*it->second->GetModel(), worldTransform, viewMatrix, projectionMatrix, lights);
+		DrawModel(*it->second->GetModel(), transforms, worldTransform, viewMatrix, projectionMatrix, lights);
 		//_D3D->DisableAlphaBlending();
 	}
 	
 	//////////// RENDER WATER //////////////
 	if (pScene->_Actors["Water"]->GetModel())
 	{
-		DrawModel(*pScene->_Actors["Water"]->GetModel(), worldTransform, viewMatrix, projectionMatrix, lights, EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
+		DrawModel(*pScene->_Actors["Water"]->GetModel(), transforms, worldTransform, viewMatrix, projectionMatrix, lights, EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
 	}
 	
 	///////////////// UI ///////////////////
@@ -333,16 +337,18 @@ bool GraphicsClass::Render(Scene* pScene)
 	return true;
 }
 
-void GraphicsClass::DrawModel(Model& model, DirectX::XMMATRIX &worldTransform, const DirectX::XMMATRIX &viewMatrix, const DirectX::XMMATRIX &projectionMatrix, LightClass * lights[], EShaderType shaderType, XMMATRIX reflectionMatrix)
+void GraphicsClass::DrawModel(Model& model, MatrixBufferType& transforms, XMMATRIX &worldTransform, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, LightClass * lights[], EShaderType shaderType, XMMATRIX reflectionMatrix)
 {
-	model.PutVertsOnPipeline(_D3D->GetDeviceContext());
+	// NEW IMPLEMENTATION
+	transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(model.GetOrientation(), model.GetScale(), model.GetPosition()));
+	// NEW IMPLEMENTATION
 
 	worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(model.GetOrientation(), model.GetScale(), model.GetPosition());
 
-	_ShaderManager->Render(_D3D->GetDeviceContext(), model.GetIndexCount(), worldTransform, viewMatrix, projectionMatrix,
+	_ShaderManager->Render(_D3D->GetDeviceContext(), model.GetIndexCount(), transforms, worldTransform, viewMatrix, projectionMatrix,
 		model.GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), shaderType, reflectionMatrix);
 
-	_D3D->GetDeviceContext()->DrawIndexed(model.GetIndexCount(), 0, 0);
+	model.Draw(_D3D->GetDeviceContext());
 }
 
 bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
@@ -365,7 +371,7 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 				continue;
 			}
 
-			DrawModel(*it->second->GetModel(), worldMatrix, _Lights[i]->GetViewMatrix(), _Lights[i]->GetProjectionMatrix(), nullptr, EDEPTH);
+			DrawModel(*it->second->GetModel(), MatrixBufferType(), worldMatrix, _Lights[i]->GetViewMatrix(), _Lights[i]->GetProjectionMatrix(), nullptr, EDEPTH);
 		}
 	}
 
@@ -396,8 +402,12 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[])
 	XMMATRIX worldMatrix;
 	XMMATRIX viewMatrix = _Camera->GetViewMatrix();
 	XMMATRIX projectionMatrix = _D3D->GetProjectionMatrix();
+
+	// NEW REFACTOR
+	MatrixBufferType transforms = { XMMatrixIdentity(), XMMatrixTranspose(_Camera->GetViewMatrix()), XMMatrixTranspose(_D3D->GetProjectionMatrix()) };
+	// NEW REFACTOR
 	
-	DrawModel(*pScene->_Actors["Bath"]->GetModel(), worldMatrix, viewMatrix, projectionMatrix, lights, EShaderType::ELIGHT_SPECULAR);
+	DrawModel(*pScene->_Actors["Bath"]->GetModel(), transforms, worldMatrix, viewMatrix, projectionMatrix, lights, EShaderType::ELIGHT_SPECULAR);
 	
 #pragma region REFLECTION DEACTIVATED
 	////////////////
@@ -423,7 +433,7 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[])
 	//projectionMatrix = _D3D->GetProjectionMatrix();
 	//worldMatrix = _D3D->GetWorldMatrix();
 	//worldMatrix *= ComputeWorldTransform(pScene->_Actors["Wall"]->GetOrientation(), pScene->_Actors["Wall"]->GetScale(), pScene->_Actors["Wall"]->GetPosition());
-	//pScene->_Actors["Wall"]->GetModel()->PutVertsOnPipeline(_D3D->GetDeviceContext());
+	//pScene->_Actors["Wall"]->GetModel()->Draw(_D3D->GetDeviceContext());
 
 	//_ShaderManager->_WaterShader->Render(_D3D->GetDeviceContext(), pScene->_Actors["Wall"]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, reflectionViewMatrix,
 	//	pScene->_Actors["Wall"]->GetModel()->GetMaterial()->GetResourceArray(), pScene->_Actors["Wall"]->GetModel()->GetMaterial()->translation, pScene->_Actors["Wall"]->GetModel()->GetMaterial()->reflectRefractScale);
