@@ -17,7 +17,6 @@
 
 using namespace std;
 using Microsoft::WRL::ComPtr;
-using namespace DirectX;
 
 /////////////
 // GLOBALS //
@@ -32,6 +31,25 @@ const int SHADOWMAP_HEIGHT = 4096;
 #define VISIBLE true
 #define INVISIBLE false
 
+// PHYSICS
+static bool bRigidBodyPhysicsEnabled = true;
+
+struct PhysicsTransform
+{
+	XMFLOAT4 rotation;
+	XMFLOAT3 position;
+
+	PhysicsTransform()
+	{
+		rotation = XMFLOAT4(0, 0, 0, 1);
+		position = XMFLOAT3(0, 0, 0);
+	}
+	PhysicsTransform(const XMFLOAT4& newRot, const XMFLOAT3& newPos)
+	{
+		rotation = newRot;
+		position = newPos;
+	}
+};
 
 class RuntimeException
 {

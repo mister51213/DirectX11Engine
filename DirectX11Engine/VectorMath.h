@@ -46,6 +46,14 @@ namespace VectorMath
 		return XMFLOAT3(in2.x* in1, in2.y * in1, in2.z * in1);
 	}
 
+	inline DirectX::XMFLOAT4 EulerToQuat(const XMFLOAT3& pitchYawRoll)
+	{
+		XMFLOAT4 outQuat;
+		XMStoreFloat4(&outQuat, DirectX::XMQuaternionRotationRollPitchYaw(pitchYawRoll.x, pitchYawRoll.y, pitchYawRoll.z));
+		// REFERENCE: XMMatrixRotationRollPitchYaw(pitch, yaw, roll);
+		return outQuat;
+	}
+
 	/* 2D Spline generator
 	1. Pick 3 points for the curve to pass through
 	2. Generate a matrix from the coefficients of the terms of the equation to find

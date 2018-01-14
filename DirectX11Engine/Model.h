@@ -111,6 +111,12 @@ public:
 public:
 	string Name;
 
+	// PHYSICS
+	bool bPerVertexCollision;
+	//VertexType* _Vertices;
+	vector<XMFLOAT4> _Vertices;
+	vector<unsigned int> _Indices;
+
 private:
 	bool InitializeBuffers(ID3D11Device* const device);
 

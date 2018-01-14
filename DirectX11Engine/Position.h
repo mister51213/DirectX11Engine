@@ -59,6 +59,7 @@ private:
 	float _leftIncrement;
 	float _rightIncrement; //@TODO: store these values in one vector
 
+	// FOR CONTROLLABLE, NON-PHYSICS BASED ACTORS
 	//const float _moveSpeed = 0.0002f;
 	const float _moveSpeed = 0.07f;
 	const float _brakeSpeed = 0.13f;

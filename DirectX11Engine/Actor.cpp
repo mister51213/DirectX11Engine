@@ -1,4 +1,5 @@
 #include "Actor.h"
+#include "Model.h"
 
 Actor::Actor()
 	:
@@ -6,6 +7,13 @@ Actor::Actor()
 {
 	_scale = XMFLOAT3(1.f,1.f,1.f);
 	_MovementComp.reset(new MovementComponent);
+
+	// PHYSICS DEFAULT INIT
+	bRigidBody = bKinematic = true;
+	collisionShape = "SPHERE";
+	mass = friction = restitution = damping = 1.0f;
+	physicsType = "ACTIVE";
+	physicsObjectID = -1;
 }
 
 Actor::Actor(const string& name)
@@ -56,6 +64,31 @@ XMFLOAT3 Actor::GetOrientation() const
 	}
 }
 
+XMFLOAT3 Actor::GetScale() const
+{
+	//if (_Model)
+	//{
+	//	return _Model->GetScale();
+	//}
+	//else
+	{
+		return _scale;
+	}
+}
+
+void Actor::SetScale(XMFLOAT3 scale)
+{
+	_scale = scale;
+	if (_Model)
+	{
+		_Model->SetScale(scale);
+	}
+	//else
+	//{
+	//	ThrowRuntime("Model not found!");
+	//}
+}
+
 XMFLOAT3 Actor::GetLookAt() const
 {
 	if (_MovementComp)
@@ -102,4 +135,19 @@ void Actor::SetLookAt(const XMFLOAT3 & lookat)
 	{
 		ThrowRuntime("MovementComp not found!");
 	}
+}
+
+MovementComponent * Actor::GetMovementComponent()
+{
+	return _MovementComp.get();
+}
+
+void Actor::InstantiateModel(Model * model)
+{
+	_Model.reset(model);
+}
+
+Model* Actor::GetModel() const
+{
+	return _Model.get();
 }

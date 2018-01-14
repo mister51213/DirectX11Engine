@@ -8,7 +8,8 @@ using namespace GfxUtil;
 
 Model::Model()
 	:
-	Name("Model")
+	Name("Model"),
+	bPerVertexCollision(false)
 {
 	_scale = XMFLOAT3(1.f, 1.f, 1.f);
 	_orientation = XMFLOAT3(0.f, 0.f, 0.f);
@@ -81,6 +82,11 @@ bool Model::InitializeBuffers(ID3D11Device* const device)
 	{
 		return false;
 	}
+	//_Vertices = new VertexType[_vertexCount];
+	//if (!_Vertices)
+	//{
+	//	return false;
+	//}
 
 	// Create the index array.
 	indices = new unsigned long[_indexCount];
@@ -98,6 +104,12 @@ bool Model::InitializeBuffers(ID3D11Device* const device)
 		vertices[i].tangent = XMFLOAT3(_model.get()[i].tx, _model.get()[i].ty, _model.get()[i].tz);
 		vertices[i].binormal = XMFLOAT3(_model.get()[i].bx, _model.get()[i].by, _model.get()[i].bz);
 
+		//_Vertices[i].position = XMFLOAT3(_model.get()[i].x, _model.get()[i].y, _model.get()[i].z);
+		//_Vertices[i].texture = XMFLOAT2(_model.get()[i].tu, _model.get()[i].tv);
+		//_Vertices[i].normal = XMFLOAT3(_model.get()[i].nx, _model.get()[i].ny, _model.get()[i].nz);
+		//_Vertices[i].tangent = XMFLOAT3(_model.get()[i].tx, _model.get()[i].ty, _model.get()[i].tz);
+		//_Vertices[i].binormal = XMFLOAT3(_model.get()[i].bx, _model.get()[i].by, _model.get()[i].bz);
+
 		indices[i] = i;
 	}
 
@@ -110,6 +122,7 @@ bool Model::InitializeBuffers(ID3D11Device* const device)
 	vertexBufferDesc.StructureByteStride = 0;
 
 	// Give the subresource structure a pointer to the vertex data.
+	//vertexData.pSysMem = _Vertices;
 	vertexData.pSysMem = vertices;
 	vertexData.SysMemPitch = 0;
 	vertexData.SysMemSlicePitch = 0;
@@ -132,6 +145,24 @@ bool Model::InitializeBuffers(ID3D11Device* const device)
 
 	// Create the index buffer.
 	ThrowHResultIf(device->CreateBuffer(&indexBufferDesc, &indexData, _indexBuffer.GetAddressOf()));
+
+	// If using per vertex collision, store an array of positions with w value 1 for positional calculations and array of indices
+	if (bPerVertexCollision)
+	{
+		VertexType* localVert = vertices;
+		for (int i = 0; i < _vertexCount; ++i)
+		{
+			_Vertices.emplace_back(vertices->position.x, vertices->position.y, vertices->position.z, 1.f);
+			localVert++;
+		}
+
+		unsigned long* localIndex = indices;
+		for (int i = 0; i < _vertexCount; ++i)
+		{
+			_Indices.push_back((static_cast<unsigned int>(*localIndex)));
+			localIndex++;
+		}
+	}
 
 	// Release the arrays now that the vertex and index buffers have been created and loaded.
 	delete[] vertices;

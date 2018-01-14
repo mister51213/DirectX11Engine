@@ -26,10 +26,10 @@ bool System::Initialize()
 
 	_Input->Initialize(_hinstance, _hwnd, screenWidth, screenHeight);
 
-	_Physics.reset(new Physics);
-	if (!_Physics) return false;
+	//_Physics.reset(new Physics);
+	//if (!_Physics) return false;
 
-	_Physics->Initialize();
+	//_Physics->Initialize();
 
 	_Scene.reset(new Scene);
 	if (!_Scene) return false;
