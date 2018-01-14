@@ -48,10 +48,10 @@ bool DepthShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, M
 	///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
 	unsigned int bufferNumber = 0;
 
-	MatrixBufferType tempMatBuff = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix)};		// @SHADOWING
-	MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
+	//MatrixBufferType tempMatBuff = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix)};		// @SHADOWING
+	//MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
 
-	//MapBuffer(transforms, _vsBuffers[bufferNumber].Get(), deviceContext);
+	MapBuffer(transforms, _vsBuffers[bufferNumber].Get(), deviceContext);
 
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 

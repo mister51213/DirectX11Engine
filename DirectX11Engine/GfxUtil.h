@@ -118,6 +118,20 @@ namespace GfxUtil
 		XMMATRIX world;
 		XMMATRIX view;
 		XMMATRIX projection;
+
+		MatrixBufferType()
+		{
+			XMMATRIX world = XMMatrixIdentity();
+			XMMATRIX view = XMMatrixIdentity();
+			XMMATRIX projection = XMMatrixIdentity();
+		}
+
+		MatrixBufferType(const XMMATRIX& wrld, const XMMATRIX& vw, const XMMATRIX& proj)
+		{
+			world = wrld;
+			view = vw;
+			projection = proj;
+		}
 	};
 
 	// DIRECT3D UTILITY FUNCTIONS

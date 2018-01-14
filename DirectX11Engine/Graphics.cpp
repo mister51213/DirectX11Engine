@@ -337,20 +337,6 @@ bool GraphicsClass::Render(Scene* pScene)
 	return true;
 }
 
-void GraphicsClass::DrawModel(Model& model, MatrixBufferType& transforms, XMMATRIX &worldTransform, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, LightClass * lights[], EShaderType shaderType, XMMATRIX reflectionMatrix)
-{
-	// NEW IMPLEMENTATION
-	transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(model.GetOrientation(), model.GetScale(), model.GetPosition()));
-	// NEW IMPLEMENTATION
-
-	worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(model.GetOrientation(), model.GetScale(), model.GetPosition());
-
-	_ShaderManager->Render(_D3D->GetDeviceContext(), model.GetIndexCount(), transforms, worldTransform, viewMatrix, projectionMatrix,
-		model.GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), shaderType, reflectionMatrix);
-
-	model.Draw(_D3D->GetDeviceContext());
-}
-
 bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 {
 	XMMATRIX worldMatrix, lightViewMatrix, lightProjectionMatrix;
@@ -362,6 +348,8 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 		_RenderTextures[i]->SetRenderTarget(_D3D->GetDeviceContext());
 		_RenderTextures[i]->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
 
+		MatrixBufferType matBuffer(XMMatrixIdentity(), XMMatrixTranspose(_Lights[i]->GetViewMatrix()), XMMatrixTranspose(_Lights[i]->GetProjectionMatrix()));
+
 		// Draw all actors in scene to this render texture
 		for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 		{
@@ -370,8 +358,7 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 			{
 				continue;
 			}
-
-			DrawModel(*it->second->GetModel(), MatrixBufferType(), worldMatrix, _Lights[i]->GetViewMatrix(), _Lights[i]->GetProjectionMatrix(), nullptr, EDEPTH);
+			DrawModel(*it->second->GetModel(), matBuffer, worldMatrix, _Lights[i]->GetViewMatrix(), _Lights[i]->GetProjectionMatrix(), nullptr, EDEPTH);
 		}
 	}
 
@@ -380,6 +367,20 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 	_D3D->ResetViewport();
 
 	return true;
+}
+
+void GraphicsClass::DrawModel(Model& model, MatrixBufferType& transforms, XMMATRIX &worldTransform, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, LightClass * lights[], EShaderType shaderType, XMMATRIX reflectionMatrix)
+{
+	// NEW IMPLEMENTATION // NOTE - this transposes it BEFORE sending it in!!!!
+	transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(model.GetOrientation(), model.GetScale(), model.GetPosition()));
+	// NEW IMPLEMENTATION // NOTE - this transposes it BEFORE sending it in!!!!
+
+	worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(model.GetOrientation(), model.GetScale(), model.GetPosition());
+
+	_ShaderManager->Render(_D3D->GetDeviceContext(), model.GetIndexCount(), transforms, worldTransform, viewMatrix, projectionMatrix,
+		model.GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), shaderType, reflectionMatrix);
+
+	model.Draw(_D3D->GetDeviceContext());
 }
 
 bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[])
@@ -468,8 +469,7 @@ bool GraphicsClass::InitializeUI(int screenWidth, int screenHeight)
 	}
 
 	// Initialize the first font object.
-	_Font1->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/font.txt",
-		"../DirectX11Engine/data/font.tga", 32.0f, 3);
+	_Font1->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/font.txt",	"../DirectX11Engine/data/font.tga", 32.0f, 3);
 
 	// Create the text object for the fps string.
 	_FpsString.reset(new TextClass);
