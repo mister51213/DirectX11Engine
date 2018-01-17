@@ -121,7 +121,7 @@ void Physics::Tick(float deltaTime)
 {
 	if (bRigidBodyPhysicsEnabled)
 	{
-		dynamicsWorld->stepSimulation(deltaTime, 6);
+		//dynamicsWorld->stepSimulation(deltaTime, 6);
 	}
 }
 

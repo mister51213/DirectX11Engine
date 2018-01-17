@@ -21,11 +21,16 @@ class LightShaderClass: public ShaderClass
 {
 private:
 	///////////////////////// VS BUFFER TYPES //////////////////////////
-	struct MatrixBufferLightType
+	//struct MatrixBufferLightType
+	//{
+	//	XMMATRIX world;
+	//	XMMATRIX view;
+	//	XMMATRIX projection;
+	//	LightDataTemplate_VS lights[NUM_LIGHTS];
+	//};
+
+	struct SceneLightBufferType_VS
 	{
-		XMMATRIX world;
-		XMMATRIX view;
-		XMMATRIX projection;
 		LightDataTemplate_VS lights[NUM_LIGHTS];
 	};
 

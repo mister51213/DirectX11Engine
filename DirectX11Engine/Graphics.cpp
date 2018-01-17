@@ -35,7 +35,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	//_Camera->SetRotation(pScene->GetCamera()->GetOrientation().x, pScene->GetCamera()->GetOrientation().y, pScene->GetCamera()->GetOrientation().z);
 
 	// SHADOW RENDER TEXTURES //
-	for (int i = 0; i < NUM_RENDER_TEXTURES; ++i)
+	for (int i = 0; i < NUM_SHADOWS; ++i)
 	{
 		_RenderTextures.push_back(unique_ptr<RenderTextureClass>());
 		_RenderTextures[i].reset(new RenderTextureClass);

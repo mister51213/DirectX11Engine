@@ -24,23 +24,35 @@ struct LightTemplate_VS
 //////////////////////
 // CONSTANT BUFFERS //
 //////////////////////
+//cbuffer MatrixBuffer:register(b0)
+//{
+//	matrix cb_worldMatrix;
+//	matrix cb_viewMatrix;
+//	matrix cb_projectionMatrix;
+
+//	LightTemplate_VS cb_lights[NUM_LIGHTS];
+//};
+
 cbuffer MatrixBuffer:register(b0)
 {
 	matrix cb_worldMatrix;
 	matrix cb_viewMatrix;
 	matrix cb_projectionMatrix;
-
-	LightTemplate_VS cb_lights[NUM_LIGHTS];
 };
 
+cbuffer SceneLightBufferType_VS:register(b1)
+{
+	LightTemplate_VS cb_lights[NUM_LIGHTS];
+}
+
 // pass in position of camera for reflection
-cbuffer CameraBuffer:register(b1)
+cbuffer CameraBuffer:register(b2) /*b1*/
 {
     float3 cb_camPosition_WS; // okay not to be float4?
     float cb_padding;
 };
 
-cbuffer FogBuffer:register(b2)
+cbuffer FogBuffer:register(b3) /*b2*/
 {
     float cb_fogStart_ViewSpace;
     float cb_fogEnd_ViewSpace;

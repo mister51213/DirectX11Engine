@@ -33,9 +33,9 @@ public:
 
 #pragma region WATER
 	float _waterHeight = 2.75f;
-	float _waterTranslation = 0.0f; // TODO: encapsulate in materials
+	float _waterTranslation = 0.0f; 
 	//unique_ptr<RenderTextureClass> _RefractionTexture;
-	unique_ptr<RenderTextureClass> _ReflectionTexture;
+	unique_ptr<RenderTextureClass> _ReflectionTexture; // TODO: encapsulate in materials
 #pragma endregion
 
 #pragma region UI
@@ -76,5 +76,5 @@ private:
 	/////////// GLOBAL EFFECTS /////////////
 	SceneEffects _sceneEffects;
 
-	const int NUM_RENDER_TEXTURES = 3; // FOR SHADOWING ONLY!!!
+	const int NUM_SHADOWS = 3; // FOR SHADOWING ONLY!!!
 };
