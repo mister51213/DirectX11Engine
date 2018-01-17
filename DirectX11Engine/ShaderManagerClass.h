@@ -38,12 +38,12 @@ public:
 
 	bool Render(ID3D11DeviceContext* device, int indexCount, 
 		MatrixBufferType& transforms,
-		XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, 
+		//XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, 
 		Material* material, LightClass* lights[], SceneEffects& effects,
 		XMFLOAT3 cameraPos = XMFLOAT3(0,0,0), EShaderType shaderType = EShaderType::EMATERIAL_DEFAULT, XMMATRIX reflectionMatrix = XMMatrixIdentity());
 
-	bool RenderFontShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-		XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 pixelColor);
+	bool RenderFontShader(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType transforms, /*XMMATRIX worldMatrix, XMMATRIX viewMatrix,
+		XMMATRIX projectionMatrix, */ID3D11ShaderResourceView* texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 pixelColor);
 
 	FontShaderClass* GetFontShader();
 

@@ -144,7 +144,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 bool ShaderManagerClass::Render(
 	ID3D11DeviceContext * device, int indexCount, 
 	MatrixBufferType& transforms,
-	XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
+	//XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
 	Material * material,
 	LightClass* lights[], 
 	SceneEffects& effects, 
@@ -218,15 +218,15 @@ bool ShaderManagerClass::Render(
 		break;
 
 	case EShaderType::EFONT:
-		result = _FontShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
+		result = _FontShader->Render(device, indexCount, transforms,// worldMatrix, viewMatrix, projectionMatrix,
 			material->GetResourceArray()[0], material->GetTextureObject()->_textureViews, material->pixelColor);
 		if (!result) ThrowRuntime("Could not render the font shader.");
 		//_FontShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::EDEPTH:
-		result = _DepthShader->Render(device, indexCount, transforms,
-			worldMatrix, viewMatrix, projectionMatrix);
+		result = _DepthShader->Render(device, indexCount, transforms/*,
+			worldMatrix, viewMatrix, projectionMatrix*/);
 		if (!result) ThrowRuntime("Could not render the depth shader.");
 		break;
 
@@ -249,10 +249,10 @@ FontShaderClass * ShaderManagerClass::GetFontShader()
 	return nullptr;
 }
 
-bool ShaderManagerClass::RenderFontShader(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 pixelColor)
+bool ShaderManagerClass::RenderFontShader(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType transforms, /*XMMATRIX worldMatrix, XMMATRIX viewMatrix,
+	XMMATRIX projectionMatrix, */ID3D11ShaderResourceView* texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 pixelColor)
 {
-	if (!_FontShader->Render(deviceContext, indexCount, worldMatrix, viewMatrix, projectionMatrix, texture, texViews, pixelColor))
+	if (!_FontShader->Render(deviceContext, indexCount, transforms, /*worldMatrix, viewMatrix, projectionMatrix,*/texture, texViews, pixelColor))
 	{
 		ThrowRuntime("Could not initialize the font shader object.");
 	}

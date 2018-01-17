@@ -48,7 +48,7 @@ private:
 	};
 
 	///////////////////////// PS BUFFER TYPES //////////////////////////
-	struct SceneLightBufferType
+	struct SceneLightBufferType_PS
 	{
 		XMFLOAT4 ambientColor;
 		LightDataTemplate_PS lights[NUM_LIGHTS];

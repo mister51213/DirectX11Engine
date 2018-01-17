@@ -31,13 +31,13 @@ public:
 	~TextClass();
 
 	bool Initialize(ID3D11Device*, ID3D11DeviceContext*, int, int, int, bool, FontClass*, char*, int, int, float, float, float);
-	void Render(ID3D11DeviceContext*, ShaderManagerClass* pShaderManager, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews);
+	void Render(ID3D11DeviceContext*, ShaderManagerClass* pShaderManager, MatrixBufferType transforms,/* XMMATRIX, XMMATRIX, XMMATRIX,*/ ID3D11ShaderResourceView*, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews);
 
 	bool UpdateSentence(ID3D11DeviceContext*, FontClass*, char*, int, int, float, float, float);
 
 private:
 	bool InitializeSentence(ID3D11Device*, ID3D11DeviceContext*, FontClass*, char*, int, int, float, float, float);
-	void RenderSentence(ID3D11DeviceContext*, ShaderManagerClass* shaderManager, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews);
+	void RenderSentence(ID3D11DeviceContext*, ShaderManagerClass* shaderManager, MatrixBufferType transforms, /*XMMATRIX, XMMATRIX, XMMATRIX, */ID3D11ShaderResourceView*, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews);
 
 private:
 	unique_ptr<ShaderManagerClass> _ShaderManager;

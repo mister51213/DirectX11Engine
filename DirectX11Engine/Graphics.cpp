@@ -221,6 +221,110 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	// UI
 	InitializeUI(screenWidth, screenHeight);
 	
+#pragma region QUARANTINE SECTION
+	/////////////// QUARANTINE SECTION ////////////////
+	bool result;
+	int downSampleWidth, downSampleHeight;
+
+
+	// Create the light object.
+	m_SoftLight = new LightClass;
+	if (!m_SoftLight)
+	{
+		return false;
+	}
+
+	// Initialize the light object.
+	m_SoftLight->SetAmbientColor(XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f));
+	m_SoftLight->SetDiffuseColor(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+	m_SoftLight->SetLookAt(XMFLOAT3(0.0f, 0.0f, 0.0f));
+	m_SoftLight->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+
+	// Create the render to texture object.
+	m_RenderTexture = new RenderTextureClass;
+	if (!m_RenderTexture)
+	{
+		return false;
+	}
+
+	// Initialize the render to texture object.
+	m_RenderTexture->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
+
+	// Create the black and white render to texture object.
+	m_BlackWhiteRenderTexture = new RenderTextureClass;
+	if (!m_BlackWhiteRenderTexture)
+	{
+		return false;
+	}
+
+	// Initialize the black and white render to texture object.
+	m_BlackWhiteRenderTexture->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
+
+	// Create the shadow shader object.
+	m_ShadowShader = new ShadowShaderClass;
+
+	// Initialize the shadow shader object.
+	m_ShadowShader->Initialize(_D3D->GetDevice(), hwnd);
+
+	// Set the size to sample down to.
+	downSampleWidth = SHADOWMAP_WIDTH / 2;
+	downSampleHeight = SHADOWMAP_HEIGHT / 2;
+
+	// Create the down sample render to texture object.
+	m_DownSampleTexure = new RenderTextureClass;
+
+	// Initialize the down sample render to texture object.
+	m_DownSampleTexure->Initialize(_D3D->GetDevice(), downSampleWidth, downSampleHeight, 100.0f, 1.0f);
+
+	// Create the small ortho window object.
+	m_SmallWindow = new OrthoWindowClass;
+
+	// Initialize the small ortho window object.
+	result = m_SmallWindow->Initialize(_D3D->GetDevice(), downSampleWidth, downSampleHeight);
+
+	// Create the horizontal blur render to texture object.
+	m_HorizontalBlurTexture = new RenderTextureClass;
+
+	// Initialize the horizontal blur render to texture object.
+	result = m_HorizontalBlurTexture->Initialize(_D3D->GetDevice(), downSampleWidth, downSampleHeight, SCREEN_DEPTH, 0.1f);
+
+	// Create the horizontal blur shader object.
+	m_HorizontalBlurShader = new HorizontalBlurShaderClass;
+
+	// Initialize the horizontal blur shader object.
+	result = m_HorizontalBlurShader->Initialize(_D3D->GetDevice(), hwnd);
+
+	// Create the vertical blur render to texture object.
+	m_VerticalBlurTexture = new RenderTextureClass;
+
+	// Initialize the vertical blur render to texture object.
+	result = m_VerticalBlurTexture->Initialize(_D3D->GetDevice(), downSampleWidth, downSampleHeight, SCREEN_DEPTH, 0.1f);
+
+	// Create the vertical blur shader object.
+	m_VerticalBlurShader = new VerticalBlurShaderClass;
+
+	// Initialize the vertical blur shader object.
+	result = m_VerticalBlurShader->Initialize(_D3D->GetDevice(), hwnd);
+
+	// Create the up sample render to texture object.
+	m_UpSampleTexure = new RenderTextureClass;
+
+	// Initialize the up sample render to texture object.
+	result = m_UpSampleTexure->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, 0.1f);
+
+	// Create the full screen ortho window object.
+	m_FullScreenWindow = new OrthoWindowClass;
+
+	// Initialize the full screen ortho window object.
+	result = m_FullScreenWindow->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
+
+	// Create the soft shadow shader object.
+	m_SoftShadowShader = new SoftShadowShaderClass;
+
+	// Initialize the soft shadow shader object.
+	m_SoftShadowShader->Initialize(_D3D->GetDevice(), hwnd);
+#pragma endregion
+
 	return true;
 }
 
@@ -305,10 +409,10 @@ bool GraphicsClass::Render(Scene* pScene)
 
 	//////// BACKGROUND /////////
 	_D3D->EnableAlphaBlending();
-	DrawModel(*_Earth, transforms, worldTransform, viewMatrix, projectionMatrix);
-	DrawModel(*_EarthInner, transforms, worldTransform, viewMatrix, projectionMatrix);
-	DrawModel(*_Sky, transforms, worldTransform, viewMatrix, projectionMatrix);
-	DrawModel(*_SkyInner, transforms, worldTransform, viewMatrix, projectionMatrix);
+	DrawModel(*_Earth, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
+	DrawModel(*_EarthInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
+	DrawModel(*_Sky, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
+	DrawModel(*_SkyInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
 	_D3D->DisableAlphaBlending();
 
 	////////////////// RENDER ACTUAL SCENE  /////////////////////////
@@ -318,14 +422,14 @@ bool GraphicsClass::Render(Scene* pScene)
 		if (it->first == "Water" || !it->second->GetModel()) continue;
 
 		//_D3D->EnableAlphaBlending();
-		DrawModel(*it->second->GetModel(), transforms, worldTransform, viewMatrix, projectionMatrix, lights);
+		DrawModel(*it->second->GetModel(), transforms,/*, worldTransform, viewMatrix, projectionMatrix, */lights);
 		//_D3D->DisableAlphaBlending();
 	}
 	
 	//////////// RENDER WATER //////////////
 	if (pScene->_Actors["Water"]->GetModel())
 	{
-		DrawModel(*pScene->_Actors["Water"]->GetModel(), transforms, worldTransform, viewMatrix, projectionMatrix, lights, EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
+		DrawModel(*pScene->_Actors["Water"]->GetModel(), transforms/*, worldTransform, viewMatrix, projectionMatrix*/, lights, EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
 	}
 	
 	///////////////// UI ///////////////////
@@ -358,7 +462,7 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 			{
 				continue;
 			}
-			DrawModel(*it->second->GetModel(), matBuffer, worldMatrix, _Lights[i]->GetViewMatrix(), _Lights[i]->GetProjectionMatrix(), nullptr, EDEPTH);
+			DrawModel(*it->second->GetModel(), matBuffer,/*, worldMatrix, _Lights[i]->GetViewMatrix(), _Lights[i]->GetProjectionMatrix(), */nullptr, EDEPTH);
 		}
 	}
 
@@ -369,15 +473,14 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 	return true;
 }
 
-void GraphicsClass::DrawModel(Model& model, MatrixBufferType& transforms, XMMATRIX &worldTransform, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, LightClass * lights[], EShaderType shaderType, XMMATRIX reflectionMatrix)
+void GraphicsClass::DrawModel(Model& model, MatrixBufferType& transforms, /*XMMATRIX &worldTransform, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, */LightClass * lights[], EShaderType shaderType, XMMATRIX reflectionMatrix)
 {
 	// NEW IMPLEMENTATION // NOTE - this transposes it BEFORE sending it in!!!!
 	transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(model.GetOrientation(), model.GetScale(), model.GetPosition()));
-	// NEW IMPLEMENTATION // NOTE - this transposes it BEFORE sending it in!!!!
 
-	worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(model.GetOrientation(), model.GetScale(), model.GetPosition());
+	//worldTransform = _D3D->GetWorldMatrix()*ComputeWorldTransform(model.GetOrientation(), model.GetScale(), model.GetPosition());
 
-	_ShaderManager->Render(_D3D->GetDeviceContext(), model.GetIndexCount(), transforms, worldTransform, viewMatrix, projectionMatrix,
+	_ShaderManager->Render(_D3D->GetDeviceContext(), model.GetIndexCount(), transforms, /*worldTransform, viewMatrix, projectionMatrix,*/
 		model.GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), shaderType, reflectionMatrix);
 
 	model.Draw(_D3D->GetDeviceContext());
@@ -408,7 +511,7 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[])
 	MatrixBufferType transforms = { XMMatrixIdentity(), XMMatrixTranspose(_Camera->GetViewMatrix()), XMMatrixTranspose(_D3D->GetProjectionMatrix()) };
 	// NEW REFACTOR
 	
-	DrawModel(*pScene->_Actors["Bath"]->GetModel(), transforms, worldMatrix, viewMatrix, projectionMatrix, lights, EShaderType::ELIGHT_SPECULAR);
+	DrawModel(*pScene->_Actors["Bath"]->GetModel(), transforms, /*worldMatrix, viewMatrix, projectionMatrix, */lights, EShaderType::ELIGHT_SPECULAR);
 	
 #pragma region REFLECTION DEACTIVATED
 	////////////////
@@ -447,6 +550,56 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[])
 	_D3D->SetBackBufferRenderTarget();
 
 	return true;
+}
+
+
+ID3D11ShaderResourceView* GraphicsClass::ApplyBlur(ID3D11ShaderResourceView* viewToBlur, RenderTextureClass* outputRenderTarget)
+{
+	_Camera->UpdateViewPoint();
+	_D3D->TurnZBufferOff();
+
+	MatrixBufferType transforms = { XMMatrixTranspose(_D3D->GetWorldMatrix()), XMMatrixIdentity(), XMMatrixIdentity() };
+	_Camera->GetBaseViewMatrix(transforms.view);
+
+	// Tex 1
+	m_DownSampleTexure->SetRenderTarget(_D3D->GetDeviceContext());
+	m_DownSampleTexure->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f); // REALLY UNNECESSARY???
+	m_DownSampleTexure->GetOrthoMatrix(transforms.projection);
+	m_SmallWindow->Render(_D3D->GetDeviceContext());
+	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), m_SmallWindow->GetIndexCount(), transforms, &viewToBlur, 
+		vector<ComPtr<ID3D11ShaderResourceView>>(1, ComPtr<ID3D11ShaderResourceView>(viewToBlur)));
+	m_SmallWindow->RenderBuffers(_D3D->GetDeviceContext());
+
+	// Tex 2
+	m_HorizontalBlurTexture->SetRenderTarget(_D3D->GetDeviceContext());
+	m_HorizontalBlurTexture->GetOrthoMatrix(transforms.projection);
+	m_SmallWindow->Render(_D3D->GetDeviceContext());
+	m_HorizontalBlurShader->Render(_D3D->GetDeviceContext(), m_SmallWindow->GetIndexCount(), transforms.world, transforms.view, transforms.projection,
+		m_DownSampleTexure->GetShaderResourceView(), (float)(SHADOWMAP_WIDTH * 0.5f));
+	m_SmallWindow->RenderBuffers(_D3D->GetDeviceContext());
+
+	// Tex 3
+	m_VerticalBlurTexture->SetRenderTarget(_D3D->GetDeviceContext());
+	m_VerticalBlurTexture->GetOrthoMatrix(transforms.projection);
+	m_SmallWindow->Render(_D3D->GetDeviceContext());
+	m_VerticalBlurShader->Render(_D3D->GetDeviceContext(), m_SmallWindow->GetIndexCount(), transforms.world, transforms.view, transforms.projection,
+		m_HorizontalBlurTexture->GetShaderResourceView(), (float)(SHADOWMAP_HEIGHT * 0.5f));
+	m_SmallWindow->RenderBuffers(_D3D->GetDeviceContext());
+
+	// Tex 4
+	outputRenderTarget->SetRenderTarget(_D3D->GetDeviceContext());
+	outputRenderTarget->GetOrthoMatrix(transforms.projection);
+	m_FullScreenWindow->Render(_D3D->GetDeviceContext());
+	ID3D11ShaderResourceView* tempView = m_VerticalBlurTexture->GetShaderResourceView();
+	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), m_FullScreenWindow->GetIndexCount(), transforms, &tempView,
+		vector<ComPtr<ID3D11ShaderResourceView>>(1, ComPtr<ID3D11ShaderResourceView>(m_VerticalBlurTexture->GetShaderResourceView())));
+	m_FullScreenWindow->RenderBuffers(_D3D->GetDeviceContext());
+
+	_D3D->TurnZBufferOn();
+	_D3D->SetBackBufferRenderTarget();
+	_D3D->ResetViewport();
+
+	return outputRenderTarget->GetShaderResourceView();
 }
 
 #pragma region UI
@@ -652,15 +805,18 @@ void GraphicsClass::RenderText()
 	_Camera->GetBaseViewMatrix(baseViewMatrix);
 	_D3D->GetOrthoMatrix(orthoMatrix);
 
+	// NEW IMPLEMENTATION
+	MatrixBufferType transforms = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(baseViewMatrix), XMMatrixTranspose(orthoMatrix) };
+	// NEW IMPLEMENTATION
 
-	_FpsString->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture(), _Font1->GetTextureObject()->_textureViews);
+	_FpsString->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), transforms,/*worldMatrix, baseViewMatrix, orthoMatrix, */_Font1->GetTexture(), _Font1->GetTextureObject()->_textureViews);
 	for (int i = 0; i < 6; i++)
 	{
-		_PositionStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture(), _Font1->GetTextureObject()->_textureViews);
+		_PositionStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), transforms, /*worldMatrix, baseViewMatrix, orthoMatrix,*/ _Font1->GetTexture(), _Font1->GetTextureObject()->_textureViews);
 	}
 	for (int i = 0; i < 3; i++)
 	{
-		_RenderCountStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), worldMatrix, baseViewMatrix, orthoMatrix, _Font1->GetTexture(), _Font1->GetTextureObject()->_textureViews);
+		_RenderCountStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), transforms,/*worldMatrix, baseViewMatrix, orthoMatrix, */_Font1->GetTexture(), _Font1->GetTextureObject()->_textureViews);
 	}
 
 	_D3D->DisableAlphaBlending();

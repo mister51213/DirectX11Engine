@@ -15,6 +15,14 @@
 #include "textclass.h"
 //#include "frustumclass.h"
 
+// SOFT SHADOW INTEGRATION
+
+#include "QUARANTINE/shadowshaderclass.h"
+#include "QUARANTINE/orthowindowclass.h"
+#include "QUARANTINE/horizontalblurshaderclass.h"
+#include "QUARANTINE/verticalblurshaderclass.h"
+#include "QUARANTINE/softshadowshaderclass.h"
+
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: GraphicsClass
 ////////////////////////////////////////////////////////////////////////////////
@@ -60,7 +68,7 @@ private:
 	bool RenderShadowsToTexture(Scene* pScene, LightClass* lights[]);
 	bool Render(Scene* pScene);
 
-	void DrawModel(Model& model, MatrixBufferType& transforms, XMMATRIX &worldTransform, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, LightClass * shadowLights[] = nullptr, EShaderType shaderType = EShaderType::EMATERIAL_DEFAULT, XMMATRIX reflectionMatrix = XMMatrixIdentity());
+	void DrawModel(Model& model, MatrixBufferType& transforms, /*XMMATRIX &worldTransform, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix,*/ LightClass * shadowLights[] = nullptr, EShaderType shaderType = EShaderType::EMATERIAL_DEFAULT, XMMATRIX reflectionMatrix = XMMatrixIdentity());
 
 	unique_ptr<D3DClass> _D3D;
 	unique_ptr<ShaderManagerClass> _ShaderManager;
@@ -75,6 +83,18 @@ private:
 
 	/////////// GLOBAL EFFECTS /////////////
 	SceneEffects _sceneEffects;
-
 	const int NUM_SHADOWS = 3; // FOR SHADOWING ONLY!!!
+
+	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
+	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
+	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
+	ID3D11ShaderResourceView* ApplyBlur(ID3D11ShaderResourceView* viewToBlur, RenderTextureClass* outputRenderTarget);
+	RenderTextureClass *m_RenderTexture, *m_BlackWhiteRenderTexture, *m_DownSampleTexure;
+	RenderTextureClass *m_HorizontalBlurTexture, *m_VerticalBlurTexture, *m_UpSampleTexure;
+	OrthoWindowClass *m_SmallWindow, *m_FullScreenWindow;
+	HorizontalBlurShaderClass* m_HorizontalBlurShader;
+	VerticalBlurShaderClass* m_VerticalBlurShader;
+	SoftShadowShaderClass* m_SoftShadowShader;
+	ShadowShaderClass* m_ShadowShader;
+	LightClass* m_SoftLight;
 };

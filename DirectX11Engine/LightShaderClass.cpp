@@ -92,7 +92,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	_vsBuffers.emplace_back(MakeConstantBuffer<FogBufferType>(device));
 
 	// PS Buffers
-	_psBuffers.emplace_back(MakeConstantBuffer<SceneLightBufferType>(device));
+	_psBuffers.emplace_back(MakeConstantBuffer<SceneLightBufferType_PS>(device));
 	_psBuffers.emplace_back(MakeConstantBuffer<TranslateBufferType>(device));
 	_psBuffers.emplace_back(MakeConstantBuffer<TransparentBufferType>(device));
 
@@ -166,7 +166,7 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 
 	//LightDataTemplate_PS tempLightsPS[NUM_LIGHTS] = {*shadowLight[0]->GetLightBufferPS(), *shadowLight[1]->GetLightBufferPS(), *shadowLight[2]->GetLightBufferPS()};
 
-	SceneLightBufferType tempLightBuff = 
+	SceneLightBufferType_PS tempLightBuff = 
 	{ ambientColor, *shadowLight[0]->GetLightBufferPS(), *shadowLight[1]->GetLightBufferPS(), *shadowLight[2]->GetLightBufferPS() };
 	//{ ambientColor, tempLightsPS[0], tempLightsPS[1], tempLightsPS[2] };
 

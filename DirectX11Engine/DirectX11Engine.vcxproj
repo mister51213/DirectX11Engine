@@ -311,6 +311,12 @@
     <ClCompile Include="ModelListClass.cpp" />
     <ClCompile Include="Physics.cpp" />
     <ClCompile Include="Position.cpp" />
+    <ClCompile Include="QUARANTINE\horizontalblurshaderclass.cpp" />
+    <ClCompile Include="QUARANTINE\orthowindowclass.cpp" />
+    <ClCompile Include="QUARANTINE\ShaderBase.cpp" />
+    <ClCompile Include="QUARANTINE\shadowshaderclass.cpp" />
+    <ClCompile Include="QUARANTINE\softshadowshaderclass.cpp" />
+    <ClCompile Include="QUARANTINE\verticalblurshaderclass.cpp" />
     <ClCompile Include="ReflectionShaderClass.cpp" />
     <ClCompile Include="DiffuseShaderClass.cpp" />
     <ClCompile Include="RenderTextureClass.cpp" />
@@ -567,6 +573,12 @@
     <ClInclude Include="ModelListClass.h" />
     <ClInclude Include="Physics.h" />
     <ClInclude Include="Position.h" />
+    <ClInclude Include="QUARANTINE\horizontalblurshaderclass.h" />
+    <ClInclude Include="QUARANTINE\orthowindowclass.h" />
+    <ClInclude Include="QUARANTINE\ShaderBase.h" />
+    <ClInclude Include="QUARANTINE\shadowshaderclass.h" />
+    <ClInclude Include="QUARANTINE\softshadowshaderclass.h" />
+    <ClInclude Include="QUARANTINE\verticalblurshaderclass.h" />
     <ClInclude Include="ReflectionShaderClass.h" />
     <ClInclude Include="DiffuseShaderClass.h" />
     <ClInclude Include="RenderTextureClass.h" />
@@ -656,9 +668,48 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Common.hlsli" />
     <None Include="packages.config" />
-    <None Include="shadow.ps" />
-    <None Include="shadow.vs" />
+    <FxCompile Include="QUARANTINE\horizontalblur_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">HorizontalBlurPixelShader</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="QUARANTINE\horizontalblur_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">HorizontalBlurVertexShader</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="QUARANTINE\shadow_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShadowPixelShader</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="QUARANTINE\shadow_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ShadowVertexShader</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="QUARANTINE\softshadow_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SoftShadowPixelShader</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="QUARANTINE\softshadow_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SoftShadowVertexShader</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="QUARANTINE\verticalblur_ps.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VerticalBlurPixelShader</EntryPointName>
+    </FxCompile>
+    <FxCompile Include="QUARANTINE\verticalblur_vs.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VerticalBlurVertexShader</EntryPointName>
+    </FxCompile>
     <FxCompile Include="texture_ps.hlsl">
       <FileType>Document</FileType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
@@ -678,6 +729,7 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
     </FxCompile>
+    <None Include="QUARANTINE\blur_ps.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Reflection_vs.hlsl">

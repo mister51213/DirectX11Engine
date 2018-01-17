@@ -5,6 +5,8 @@
 // SV_Depth and SV_Target system-value semantics.
 ////////////////////////////////////////////////////////////////////////////////
 
+#include "Common.hlsli"
+
 /////////////
 // DEFINES //
 /////////////
@@ -79,65 +81,21 @@ struct PixelInputType
 	float fogFactor : FOG;
 };
 
-float4 CalculateNormalMapIntensity(PixelInputType input, float4 diffuseColor, float3 lightDirection)
-{
-    float3 bumpNormal;
+//float4 sphereMask(float2 tex)
+//{
+//	float alpha = 0;
 
-	// Get normal value from the bump map
-	float4 bumpMap = shaderTextures[4].Sample(SampleType, input.tex);
-
-	/////////////////// NORMAL MAPPING //////////////////
-	// Expand the range of the normal value from (0, +1) to (-1, +1).
-    bumpMap = (bumpMap * 2.0f) - 1.0f;
-
-	// Change the COORDINATE BASIS of the normal into the space represented by basis vectors tangent, binormal, and normal!
-    bumpNormal = normalize((bumpMap.x * input.tangent) + (bumpMap.y * input.binormal) + (bumpMap.z * input.normal));
-
-
-    // Set the default output color to the ambient light value for all pixels.
-    float lightColor = cb_ambientColor;
-
-    // Initialize the specular color.
-    float4 specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
-
-	// Invert the light direction for calculations.
-    float3 lightDir = -lightDirection;
-
-    // Calculate the amount of light on this pixel.
-    float lightIntensity = saturate(dot(bumpNormal, lightDir));
-
-	if(lightIntensity > 0.0f)
-    {
-        // Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-        lightColor = saturate(lightColor + (diffuseColor * lightIntensity));
-
-		// Calculate the reflection vector based on the light intensity, normal vector, and light direction.
-        float3 reflection = normalize(2 * lightIntensity * bumpNormal - lightDir); 
-
-        // Determine the amount of specular light based on the reflection vector, viewing direction, and specular power.
-        specular = pow(saturate(dot(reflection, input.viewDirection)), 5.f);
-    }
-
-    // Saturate the final light color.
-   return saturate(lightColor + specular);
-  // return lightColor;
-}
-
-float4 sphereMask(float2 tex)
-{
-	float alpha = 0;
-
-	float radius = .4f;
-	float2 offsetFromCenter = tex - float2(0.5f,0.5f);
-	float dist = length(offsetFromCenter);
+//	float radius = .4f;
+//	float2 offsetFromCenter = tex - float2(0.5f,0.5f);
+//	float dist = length(offsetFromCenter);
 	
-	if(dist <= radius)
-	{
-		alpha = (1-dist)*(1-dist);
-	}
+//	if(dist <= radius)
+//	{
+//		alpha = (1-dist)*(1-dist);
+//	}
 
-	return alpha;
-}
+//	return alpha;
+//}
 
 // Calculates spot lights, based on position and direction of the light and of the direction of the surface.
 float CalculateSpotLightIntensity(
@@ -194,7 +152,7 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 
 	//////////////// AMBIENT BASE COLOR ////////////////
 	// Set the default output color to the ambient light value for all pixels.
-    float4 lightColor = cb_ambientColor* saturate(dot(bumpNormal, input.normal) + .35);
+    float4 lightColor = cb_ambientColor* saturate(dot(bumpNormal, input.normal) + .2);
 
 	//////////////// SHADOWING LOOP ////////////////
 	for(int i = 0; i < NUM_LIGHTS; ++i)
