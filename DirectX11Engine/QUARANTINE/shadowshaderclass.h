@@ -45,7 +45,7 @@ private:
 public:
 	ShadowShaderClass();
 	ShadowShaderClass(const ShadowShaderClass&);
-	~ShadowShaderClass();
+	//~ShadowShaderClass();
 
 	bool Initialize(ID3D11Device*, HWND);
 	void Shutdown();
@@ -53,7 +53,7 @@ public:
 
 private:
 	bool InitializeShader(ID3D11Device*, HWND, WCHAR*, WCHAR*);
-	void ShutdownShader();
+	//void ShutdownShader();
 
 	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*, XMFLOAT3);
 	void RenderShader(ID3D11DeviceContext*, int);

@@ -13,8 +13,8 @@ ShaderBase::ShaderBase()
 ShaderBase::ShaderBase(const ShaderBase& other)
 {}
 
-ShaderBase::~ShaderBase()
-{}
+//ShaderBase::~ShaderBase()
+//{}
 
 
 bool ShaderBase::CreateShaders(

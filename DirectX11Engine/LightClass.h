@@ -18,7 +18,7 @@ class LightClass : public Actor
 public:
 	LightClass();
 	LightClass(const LightClass&);
-	~LightClass();
+	//~LightClass();
 
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	//~~~~ Info stored in VS Buffers ~~~~

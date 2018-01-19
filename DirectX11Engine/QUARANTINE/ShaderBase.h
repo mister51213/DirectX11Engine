@@ -29,7 +29,7 @@ class ShaderBase
 public:
 	ShaderBase();
 	ShaderBase(const ShaderBase&);
-	~ShaderBase();
+	//~ShaderBase();
 
 protected:
 	bool CreateShaders(ID3D11Device * device,HWND hwnd,	wstring vsFilename,	wstring psFilename);

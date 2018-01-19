@@ -12,8 +12,8 @@ LightClass::LightClass()
 LightClass::LightClass(const LightClass& other)
 {}
 
-LightClass::~LightClass()
-{}
+//LightClass::~LightClass()
+//{}
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 //~~~~ Info stored in VS Buffers ~~~~
@@ -25,8 +25,13 @@ void LightClass::SetPosition(const XMFLOAT3& pos)
 
 void LightClass::GenerateViewMatrix()
 {
+	XMVECTOR eyePosition = XMLoadFloat3(&_lightBufferVS->position);
+	XMVECTOR focusPosition = XMLoadFloat3(&_lookAt);
 	XMFLOAT3 up(0, 1, 0);
-	_lightBufferVS->viewMatrix = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&_lightBufferVS->position), XMLoadFloat3(&_lookAt), XMLoadFloat3(&up)); // TEST
+	XMVECTOR upVector = XMLoadFloat3(&up);
+	XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(eyePosition, focusPosition, upVector);
+	_lightBufferVS->viewMatrix = viewMatrix;
+	//_lightBufferVS->viewMatrix = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&_lightBufferVS->position), XMLoadFloat3(&_lookAt), XMLoadFloat3(&up));
 }
 
 void LightClass::GenerateProjectionMatrix(float screenDepth, float screenNear)

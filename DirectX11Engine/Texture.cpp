@@ -18,7 +18,7 @@ using namespace GfxUtil;
 
 TextureClass::TextureClass(){}
 TextureClass::TextureClass(const TextureClass& other){}
-TextureClass::~TextureClass(){}
+//TextureClass::~TextureClass(){}
 
 bool TextureClass::InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, vector<string> filenames)
 {

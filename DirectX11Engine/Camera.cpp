@@ -150,11 +150,43 @@ void Camera::UpdateViewPoint()
 
 	if (_bFirstRenderPass)
 	{
-		m_baseViewMatrix = _viewMatrix;
+		//m_baseViewMatrix = _viewMatrix;
 	}
 
 	_bFirstRenderPass = false;
 }
+
+void Camera::RenderBaseViewMatrix()
+{
+	XMFLOAT3 up, position, lookAt;
+	float radians;
+
+
+	// Setup the vector that points upwards.
+	up.x = 0.0f;
+	up.y = 1.0f;
+	up.z = 0.0f;
+
+	// Setup the position of the camera in the world.
+	position.x = _positionX;
+	position.y = _positionY;
+	position.z = _positionZ;
+
+	// Calculate the rotation in radians.
+	radians = _rotationY * 0.0174532925f;
+
+	// Setup where the camera is looking.
+	lookAt.x = sinf(radians) + _positionX;
+	lookAt.y = _positionY;
+	lookAt.z = cosf(radians) + _positionZ;
+
+	// Create the base view matrix from the three vectors.
+	//XMMATRIXLookAtLH(&m_baseViewMatrix, &position, &lookAt, &up);
+	m_baseViewMatrix = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&position), XMLoadFloat3(&lookAt), XMLoadFloat3(&up));
+
+	return;
+}
+
 
 XMMATRIX Camera::GetViewMatrix()
 {

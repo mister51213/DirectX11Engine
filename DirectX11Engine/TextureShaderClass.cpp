@@ -11,8 +11,8 @@ TextureShaderClass::TextureShaderClass(const TextureShaderClass& other)
 {
 }
 
-TextureShaderClass::~TextureShaderClass()
-{}
+//TextureShaderClass::~TextureShaderClass()
+//{}
 
 bool TextureShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms,/* XMMATRIX worldMatrix, XMMATRIX viewMatrix,	XMMATRIX projectionMatrix,*/
 	ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews)

@@ -20,9 +20,9 @@ ShadowShaderClass::ShadowShaderClass(const ShadowShaderClass& other)
 }
 
 
-ShadowShaderClass::~ShadowShaderClass()
-{
-}
+//ShadowShaderClass::~ShadowShaderClass()
+//{
+//}
 
 
 bool ShadowShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
@@ -43,13 +43,13 @@ bool ShadowShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 }
 
 
-void ShadowShaderClass::Shutdown()
-{
-	// Shutdown the vertex and pixel shaders as well as the related objects.
-	ShutdownShader();
-
-	return;
-}
+//void ShadowShaderClass::Shutdown()
+//{
+//	// Shutdown the vertex and pixel shaders as well as the related objects.
+//	ShutdownShader();
+//
+//	return;
+//}
 
 
 bool ShadowShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, 
@@ -245,54 +245,6 @@ bool ShadowShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR*
 	}
 
 	return true;
-}
-
-
-void ShadowShaderClass::ShutdownShader()
-{
-	// Release the light constant buffer.
-	if(m_lightBuffer2)
-	{
-		m_lightBuffer2->Release();
-		m_lightBuffer2 = 0;
-	}
-
-	// Release the matrix constant buffer.
-	if(m_matrixBuffer)
-	{
-		m_matrixBuffer->Release();
-		m_matrixBuffer = 0;
-	}
-
-	// Release the sampler state.
-	if(m_sampleStateClamp)
-	{
-		m_sampleStateClamp->Release();
-		m_sampleStateClamp = 0;
-	}
-
-	// Release the layout.
-	if(m_layout)
-	{
-		m_layout->Release();
-		m_layout = 0;
-	}
-
-	//// Release the pixel shader.
-	//if(m_pixelShader)
-	//{
-	//	m_pixelShader->Release();
-	//	m_pixelShader = 0;
-	//}
-
-	//// Release the vertex shader.
-	//if(m_vertexShader)
-	//{
-	//	m_vertexShader->Release();
-	//	m_vertexShader = 0;
-	//}
-
-	return;
 }
 
 

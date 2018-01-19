@@ -34,7 +34,7 @@ friend class System;
 public:
 	GraphicsClass();
 	GraphicsClass(const GraphicsClass&);
-	~GraphicsClass();
+	//~GraphicsClass();
 
 	bool Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* pScene);
 	bool UpdateFrame(float frameTime, class Scene* pScene, int fps);
@@ -68,7 +68,9 @@ private:
 	bool RenderShadowsToTexture(Scene* pScene, LightClass* lights[]);
 	bool Render(Scene* pScene);
 
-	void DrawModel(Model& model, MatrixBufferType& transforms, /*XMMATRIX &worldTransform, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix,*/ LightClass * shadowLights[] = nullptr, EShaderType shaderType = EShaderType::EMATERIAL_DEFAULT, XMMATRIX reflectionMatrix = XMMatrixIdentity());
+	void RenderShadowScene(Scene * pScene);
+
+	void DrawModel(Model& model, MatrixBufferType& transforms, LightClass * shadowLights[] = nullptr, EShaderType shaderType = EShaderType::EMATERIAL_DEFAULT, XMMATRIX reflectionMatrix = XMMatrixIdentity());
 
 	unique_ptr<D3DClass> _D3D;
 	unique_ptr<ShaderManagerClass> _ShaderManager;
@@ -87,14 +89,20 @@ private:
 
 	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
 	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
-	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
 	ID3D11ShaderResourceView* ApplyBlur(ID3D11ShaderResourceView* viewToBlur, RenderTextureClass* outputRenderTarget);
+	void RenderShadows(Scene* pScene);
+
 	RenderTextureClass *m_RenderTexture, *m_BlackWhiteRenderTexture, *m_DownSampleTexure;
 	RenderTextureClass *m_HorizontalBlurTexture, *m_VerticalBlurTexture, *m_UpSampleTexure;
+	
 	OrthoWindowClass *m_SmallWindow, *m_FullScreenWindow;
 	HorizontalBlurShaderClass* m_HorizontalBlurShader;
 	VerticalBlurShaderClass* m_VerticalBlurShader;
 	SoftShadowShaderClass* m_SoftShadowShader;
 	ShadowShaderClass* m_ShadowShader;
+	
 	LightClass* m_SoftLight;
+	Model *m_CubeModel, *m_GroundModel, *m_SphereModel;
+	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
+	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
 };

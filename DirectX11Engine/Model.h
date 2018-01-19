@@ -65,10 +65,10 @@ private:
 public:
 	Model();
 	Model(XMFLOAT3 scale, XMFLOAT3 orientation, XMFLOAT3 translation, string name);
-	Model(const Model&);
+	//Model(const Model&);
 	//~Model();
 
-	bool Initialize(ID3D11Device* const device, ID3D11DeviceContext* const deviceContext, const string modelFilename, vector<string> texFileNames, const EShaderType shaderType);
+	bool Initialize(ID3D11Device* const device, ID3D11DeviceContext* const deviceContext, const string modelFilename, vector<string> texFileNames, EShaderType shaderType = EShaderType::ETEXTURE);
 
 	/** Needed by the shader to draw this model */
 	int GetIndexCount();
@@ -80,6 +80,8 @@ public:
 	void SetResourceView(const int index, ID3D11ShaderResourceView* const view);
 
 	bool LoadModel(const string name);
+
+	void RenderBuffers(ID3D11DeviceContext* const deviceContext);
 
 	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
 	void Draw(ID3D11DeviceContext* const deviceContext);

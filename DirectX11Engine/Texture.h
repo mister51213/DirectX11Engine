@@ -31,7 +31,7 @@ private:
 public:
 	TextureClass();
 	TextureClass(const TextureClass&);
-	~TextureClass();
+	//~TextureClass();
 
 	bool InitializeTexture(ID3D11Device * device, ID3D11DeviceContext * deviceContext, char * filename, int i);
 	bool InitializeArray(ID3D11Device* device, ID3D11DeviceContext* deviceContext, /*vector<char*>*/vector<string> filenames);

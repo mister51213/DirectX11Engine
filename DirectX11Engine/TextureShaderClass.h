@@ -25,7 +25,7 @@ public:
 
 	TextureShaderClass();
 	TextureShaderClass(const TextureShaderClass&);
-	~TextureShaderClass();
+	//~TextureShaderClass();
 
 	/** pass in the name of the HLSL shader files inside this function */
 	bool Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms,/*XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, */ID3D11ShaderResourceView** textureArray,

@@ -6,11 +6,10 @@ using namespace DirectX;
 using namespace VectorMath;
 
 Scene::Scene()
-{
-}
-
-Scene::~Scene()
 {}
+
+//Scene::~Scene()
+//{}
 
 bool Scene::Initialize()
 {
@@ -39,7 +38,8 @@ void Scene::InitializeActors()
 		"Ground",
 		"Wall",
 		"Bath",
-		"Water" };
+		"Water" 
+	};
 
 	vector<XMFLOAT3> positions = {
 		XMFLOAT3(-10.0f, 2.f, 0.0f), // cube
@@ -106,13 +106,14 @@ void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
 	//_LightActors[0]->SetLookAt(-1*XMFLOAT3(10.f, 10.0f, 0.f));
 	//_LightActors[0]->SetPosition(XMFLOAT3(20.f, 25.0f, 0.f));
 	//_LightActors[0]->SetLookAt((-1.f*_LightActors[0]->GetPosition()));
-	_LightActors[0]->SetLookAt((actors["Bath"]->GetPosition() - _LightActors[0]->GetPosition()));
+	_LightActors[0]->SetLookAt((actors["Sphere"]->GetPosition() - _LightActors[0]->GetPosition()));
 
 	_LightActors[1]->SetPosition(XMFLOAT3(0, 10.0f, 0.f));
 	//_LightActors[1]->SetLookAt(-1*XMFLOAT3(-10.f, 10.0f, 0.f));
 	//_LightActors[1]->SetPosition(XMFLOAT3(-10.f, 25.0f, 0.f));
 	//_LightActors[1]->SetLookAt((-1.f*_LightActors[1]->GetPosition()));
 	_LightActors[1]->SetLookAt((actors["Sphere1"]->GetPosition() - _LightActors[1]->GetPosition()));
+	//_LightActors[1]->SetLookAt((actors["Sphere"]->GetPosition() - _LightActors[1]->GetPosition()));
 
 	_LightActors[2]->SetPosition(XMFLOAT3(0.f, 10.0f, 0));
 	//_LightActors[2]->SetLookAt(-1*XMFLOAT3(0.f, 10.0f, 10.f));

@@ -18,7 +18,7 @@ class Scene
 {
 public:
 	Scene();
-	~Scene();
+	//~Scene();
 	bool Initialize();
 	void InitializeLights(map<string, unique_ptr<Actor>>& actors);
 	void InitializeActors();

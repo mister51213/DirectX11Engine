@@ -43,15 +43,15 @@ private:
 public:
 	VerticalBlurShaderClass();
 	VerticalBlurShaderClass(const VerticalBlurShaderClass&);
-	~VerticalBlurShaderClass();
+	//~VerticalBlurShaderClass();
 
 	bool Initialize(ID3D11Device*, HWND);
-	void Shutdown();
+	//void Shutdown();
 	bool Render(ID3D11DeviceContext*, int, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*, float);
 
 private:
 	bool InitializeShader(ID3D11Device*, HWND, WCHAR*, WCHAR*);
-	void ShutdownShader();
+	//void ShutdownShader();
 
 	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*, float);
 	void RenderShader(ID3D11DeviceContext*, int);

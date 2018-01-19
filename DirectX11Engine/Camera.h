@@ -34,6 +34,7 @@ public:
 	void SetLookAt(XMFLOAT3 lookAt);
 
 	void UpdateViewPoint();
+	void RenderBaseViewMatrix();
 	XMMATRIX GetViewMatrix();
 
 	//void RenderBaseViewMatrix();

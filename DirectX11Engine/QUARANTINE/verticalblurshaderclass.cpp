@@ -20,9 +20,9 @@ VerticalBlurShaderClass::VerticalBlurShaderClass(const VerticalBlurShaderClass& 
 }
 
 
-VerticalBlurShaderClass::~VerticalBlurShaderClass()
-{
-}
+//VerticalBlurShaderClass::~VerticalBlurShaderClass()
+//{
+//}
 
 
 bool VerticalBlurShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
@@ -43,13 +43,13 @@ bool VerticalBlurShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 }
 
 
-void VerticalBlurShaderClass::Shutdown()
-{
-	// Shutdown the vertex and pixel shaders as well as the related objects.
-	ShutdownShader();
-
-	return;
-}
+//void VerticalBlurShaderClass::Shutdown()
+//{
+//	// Shutdown the vertex and pixel shaders as well as the related objects.
+//	ShutdownShader();
+//
+//	return;
+//}
 
 
 bool VerticalBlurShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, 
@@ -238,53 +238,6 @@ bool VerticalBlurShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, 
 	return true;
 }
 
-
-void VerticalBlurShaderClass::ShutdownShader()
-{
-	// Release the screen size constant buffer.
-	if(m_screenSizeBuffer)
-	{
-		m_screenSizeBuffer->Release();
-		m_screenSizeBuffer = 0;
-	}
-
-	// Release the matrix constant buffer.
-	if(m_matrixBuffer)
-	{
-		m_matrixBuffer->Release();
-		m_matrixBuffer = 0;
-	}
-
-	// Release the sampler state.
-	if(m_sampleState)
-	{
-		m_sampleState->Release();
-		m_sampleState = 0;
-	}
-
-	// Release the layout.
-	if(m_layout)
-	{
-		m_layout->Release();
-		m_layout = 0;
-	}
-
-	//// Release the pixel shader.
-	//if(m_pixelShader)
-	//{
-	//	m_pixelShader->Release();
-	//	m_pixelShader = 0;
-	//}
-
-	//// Release the vertex shader.
-	//if(m_vertexShader)
-	//{
-	//	m_vertexShader->Release();
-	//	m_vertexShader = 0;
-	//}
-
-	return;
-}
 
 bool VerticalBlurShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, 
 												  XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, float screenHeight)

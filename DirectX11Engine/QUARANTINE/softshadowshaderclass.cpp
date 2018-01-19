@@ -21,12 +21,6 @@ SoftShadowShaderClass::SoftShadowShaderClass(const SoftShadowShaderClass& other)
 {
 }
 
-
-SoftShadowShaderClass::~SoftShadowShaderClass()
-{
-}
-
-
 bool SoftShadowShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 {
 	bool result;
@@ -43,16 +37,6 @@ bool SoftShadowShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 
 	return true;
 }
-
-
-void SoftShadowShaderClass::Shutdown()
-{
-	// Shutdown the vertex and pixel shaders as well as the related objects.
-	ShutdownShader();
-
-	return;
-}
-
 
 bool SoftShadowShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, 
 								   XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* shadowTexture, 
@@ -277,67 +261,6 @@ bool SoftShadowShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WC
 
 	return true;
 }
-
-
-void SoftShadowShaderClass::ShutdownShader()
-{
-	// Release the light constant buffers.
-	if(m_lightBuffer)
-	{
-		m_lightBuffer->Release();
-		m_lightBuffer = 0;
-	}
-
-	if(m_lightBuffer2)
-	{
-		m_lightBuffer2->Release();
-		m_lightBuffer2 = 0;
-	}
-
-	// Release the matrix constant buffer.
-	if(m_matrixBuffer)
-	{
-		m_matrixBuffer->Release();
-		m_matrixBuffer = 0;
-	}
-
-	// Release the sampler states.
-	if(m_sampleStateWrap)
-	{
-		m_sampleStateWrap->Release();
-		m_sampleStateWrap = 0;
-	}
-
-	if(m_sampleStateClamp)
-	{
-		m_sampleStateClamp->Release();
-		m_sampleStateClamp = 0;
-	}
-
-	// Release the layout.
-	if(m_layout)
-	{
-		m_layout->Release();
-		m_layout = 0;
-	}
-
-	//// Release the pixel shader.
-	//if(m_pixelShader)
-	//{
-	//	m_pixelShader->Release();
-	//	m_pixelShader = 0;
-	//}
-
-	//// Release the vertex shader.
-	//if(m_vertexShader)
-	//{
-	//	m_vertexShader->Release();
-	//	m_vertexShader = 0;
-	//}
-
-	return;
-}
-
 
 bool SoftShadowShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, 
 												XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, ID3D11ShaderResourceView* shadowTexture, 

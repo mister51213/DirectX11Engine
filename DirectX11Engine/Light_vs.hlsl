@@ -104,13 +104,14 @@ PixelInputType LightVertexShader(VertexInputType input)
 	output.tex  = input.tex;
 
 	// Pre-calculate vertex position in world space
+	input.vertex_ModelSpace.w = 1.0f;
 	float4 vertex_WS = mul(input.vertex_ModelSpace, cb_worldMatrix);
 
 	// Store worldspace view direction for specular calculations
 	output.viewDirection = normalize(cb_camPosition_WS.xyz - vertex_WS.xyz);
 
 	// Change the position vector to homogeneous coordinates for proper position-based calculations.
-	input.vertex_ModelSpace.w = 1.0f;
+	//input.vertex_ModelSpace.w = 1.0f;
 	output.vertex_ModelSpace = input.vertex_ModelSpace; // store the raw vert position in model space for pixel shader
 
 	// Bring vertex from model space into world, view (camera), then screen space

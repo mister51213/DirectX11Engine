@@ -16,9 +16,9 @@ OrthoWindowClass::OrthoWindowClass(const OrthoWindowClass& other)
 }
 
 
-OrthoWindowClass::~OrthoWindowClass()
-{
-}
+//OrthoWindowClass::~OrthoWindowClass()
+//{
+//}
 
 
 bool OrthoWindowClass::Initialize(ID3D11Device* device, int windowWidth, int windowHeight)
@@ -37,13 +37,13 @@ bool OrthoWindowClass::Initialize(ID3D11Device* device, int windowWidth, int win
 }
 
 
-void OrthoWindowClass::Shutdown()
-{
-	// Release the vertex and index buffers.
-	ShutdownBuffers();
-
-	return;
-}
+//void OrthoWindowClass::Shutdown()
+//{
+//	// Release the vertex and index buffers.
+//	ShutdownBuffers();
+//
+//	return;
+//}
 
 
 void OrthoWindowClass::Render(ID3D11DeviceContext* deviceContext)
@@ -182,24 +182,24 @@ bool OrthoWindowClass::InitializeBuffers(ID3D11Device* device, int windowWidth, 
 }
 
 
-void OrthoWindowClass::ShutdownBuffers()
-{
-	// Release the index buffer.
-	if(m_indexBuffer)
-	{
-		m_indexBuffer->Release();
-		m_indexBuffer = 0;
-	}
-
-	// Release the vertex buffer.
-	if(m_vertexBuffer)
-	{
-		m_vertexBuffer->Release();
-		m_vertexBuffer = 0;
-	}
-
-	return;
-}
+//void OrthoWindowClass::ShutdownBuffers()
+//{
+//	// Release the index buffer.
+//	if(m_indexBuffer)
+//	{
+//		m_indexBuffer->Release();
+//		m_indexBuffer = 0;
+//	}
+//
+//	// Release the vertex buffer.
+//	if(m_vertexBuffer)
+//	{
+//		m_vertexBuffer->Release();
+//		m_vertexBuffer = 0;
+//	}
+//
+//	return;
+//}
 
 
 void OrthoWindowClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
@@ -222,7 +222,7 @@ void OrthoWindowClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
     deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// NOTE - THIS IS A NEW ADDITION!!!!
-	deviceContext->DrawIndexed(m_indexCount, 0, 0);
+	//deviceContext->DrawIndexed(m_indexCount, 0, 0);
 
 	return;
 }
