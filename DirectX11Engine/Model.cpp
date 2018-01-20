@@ -1,4 +1,3 @@
-
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: model.cpp
 ////////////////////////////////////////////////////////////////////////////////
@@ -33,7 +32,7 @@ bool Model::Initialize(ID3D11Device* const device, ID3D11DeviceContext* const de
 	LoadModel(modelFilename);
 
 	// Calculate the normal, tangent, and binormal vectors for the model.
-	CalculateModelVectors();
+	//CalculateModelVectors();
 
 	// Initialize the vertex and index buffers.
 	InitializeBuffers(device);
