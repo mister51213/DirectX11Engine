@@ -15,7 +15,8 @@
 #include <DirectXMath.h>
 //#include <d3dx11async.h>
 #include <fstream>
-#include "ShaderBase.h"
+//#include "ShaderBase.h"
+#include "../ShaderClass.h"
 
 using namespace std;
 using namespace DirectX;
@@ -24,7 +25,7 @@ using namespace DirectX;
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: SoftShadowShaderClass
 ////////////////////////////////////////////////////////////////////////////////
-class SoftShadowShaderClass:public ShaderBase
+class SoftShadowShaderClass:public ShaderClass //ShaderBase
 {
 private:
 	struct MatrixBufferType
@@ -58,8 +59,8 @@ public:
 		XMFLOAT3 lightPosition, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor);
 
 private:
-	bool InitializeShader(ID3D11Device*, HWND, WCHAR*, WCHAR*);
-	//void ShutdownShader();
+	bool InitializeShader(ID3D11Device* device, HWND hwnd,/* WCHAR* */wstring vsFilename, /*WCHAR* */wstring psFilename);
+		//void ShutdownShader();
 
 	bool SetShaderParameters(ID3D11DeviceContext*, XMMATRIX, XMMATRIX, XMMATRIX, ID3D11ShaderResourceView*, ID3D11ShaderResourceView*, XMFLOAT3, 
 							 XMFLOAT4, XMFLOAT4);

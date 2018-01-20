@@ -5,16 +5,7 @@
 
 
 SoftShadowShaderClass::SoftShadowShaderClass()
-{
-	//m_vertexShader = 0;
-	//m_pixelShader = 0;
-	m_layout = 0;
-	m_sampleStateWrap = 0;
-	m_sampleStateClamp = 0;
-	m_matrixBuffer = 0;
-	m_lightBuffer = 0;
-	m_lightBuffer2 = 0;
-}
+{}
 
 
 SoftShadowShaderClass::SoftShadowShaderClass(const SoftShadowShaderClass& other)
@@ -60,7 +51,7 @@ bool SoftShadowShaderClass::Render(ID3D11DeviceContext* deviceContext, int index
 }
 
 
-bool SoftShadowShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WCHAR* vsFilename, WCHAR* psFilename)
+bool SoftShadowShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd,/* WCHAR* */wstring vsFilename, /*WCHAR* */wstring psFilename)
 {
 	HRESULT result;
 	ID3D10Blob* errorMessage;
@@ -74,6 +65,7 @@ bool SoftShadowShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, WC
 	D3D11_BUFFER_DESC lightBufferDesc2;
 
 	CreateShaders(device, hwnd, vsFilename, psFilename);
+	//CreateShaders(device, hwnd, vsFilename, psFilename);
 
 
 	//// Initialize the pointers this function will use to null.
@@ -368,8 +360,10 @@ void SoftShadowShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int
 	deviceContext->IASetInputLayout(m_layout);
 
     // Set the vertex and pixel shaders that will be used to render this triangle.
-    deviceContext->VSSetShader(m_vertexShader.Get(), NULL, 0);
-    deviceContext->PSSetShader(m_pixelShader.Get(), NULL, 0);
+   // deviceContext->VSSetShader(m_vertexShader.Get(), NULL, 0);
+    //deviceContext->PSSetShader(m_pixelShader.Get(), NULL, 0);
+	deviceContext->VSSetShader(_vertexShader.Get(), NULL, 0);
+	deviceContext->PSSetShader(_pixelShader.Get(), NULL, 0);
 
 	// Set the sampler states in the pixel shader.
 	deviceContext->PSSetSamplers(0, 1, &m_sampleStateClamp);

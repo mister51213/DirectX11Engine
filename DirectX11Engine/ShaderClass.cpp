@@ -31,6 +31,32 @@ bool ShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, char * vsFi
 	return false;
 }
 
+
+bool ShaderClass::CreateShaders(
+	ID3D11Device * device,
+	HWND hwnd,
+	wstring vsFilename,
+	wstring psFilename)
+{
+	// USING HLSL COMPILER
+#ifdef RELEASE
+	vsFilename = L"../x64/Release/" + vsFilename;
+	psFilename = L"../x64/Release/" + psFilename;
+#else
+	vsFilename = L"../x64/Debug/" + vsFilename;
+	psFilename = L"../x64/Debug/" + psFilename;
+#endif
+
+	ComPtr<ID3D10Blob> pVertexShaderBuffer, pPixelShaderBuffer;
+	ThrowHResultIf(D3DReadFileToBlob(vsFilename.data(), _vertexShaderBuffer.GetAddressOf()));
+	ThrowHResultIf(D3DReadFileToBlob(psFilename.data(), _pixelShaderBuffer.GetAddressOf()));
+
+	ThrowHResultIf(device->CreateVertexShader(_vertexShaderBuffer->GetBufferPointer(), _vertexShaderBuffer->GetBufferSize(), nullptr, &_vertexShader));
+	ThrowHResultIf(device->CreatePixelShader(_pixelShaderBuffer->GetBufferPointer(), _pixelShaderBuffer->GetBufferSize(), nullptr, &_pixelShader));
+
+	return true;
+}
+
 bool ShaderClass::CompileShaders(
 	ID3D11Device * device, 
 	HWND hwnd, 
