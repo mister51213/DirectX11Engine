@@ -79,9 +79,9 @@ public:
 
 	void SetResourceView(const int index, ID3D11ShaderResourceView* const view);
 
-	bool LoadModel(const string name);
+	bool LoadVerticesFromFile(const string name);
 
-	void RenderBuffers(ID3D11DeviceContext* const deviceContext);
+	void PutVerticesOnPipeline(ID3D11DeviceContext* const deviceContext);
 
 	/* Once the GPU has an active vertex buffer it can use the shader to render that buffer. */
 	void Draw(ID3D11DeviceContext* const deviceContext);

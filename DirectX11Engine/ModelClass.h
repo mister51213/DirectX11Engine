@@ -58,12 +58,12 @@ public:
 private:
 	bool InitializeBuffers(ID3D11Device*);
 	void ShutdownBuffers();
-	void RenderBuffers(ID3D11DeviceContext*);
+	void PutVerticesOnPipeline(ID3D11DeviceContext*);
 
 	bool LoadTexture(ID3D11Device*, ID3D11DeviceContext* d3dContext, WCHAR*);
 	void ReleaseTexture();
 
-	bool LoadModel(char*);
+	bool LoadVerticesFromFile(char*);
 	void ReleaseModel();
 
 private:

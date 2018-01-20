@@ -376,7 +376,7 @@ void SoftShadowShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int
 	deviceContext->PSSetSamplers(1, 1, &m_sampleStateWrap);
 
 	// Render the triangle.
-	deviceContext->DrawIndexed(indexCount, 0, 0);
+	//deviceContext->DrawIndexed(indexCount, 0, 0);
 
 	return;
 }

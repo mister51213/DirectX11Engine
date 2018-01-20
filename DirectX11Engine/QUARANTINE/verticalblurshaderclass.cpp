@@ -323,7 +323,7 @@ void VerticalBlurShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, i
 	deviceContext->PSSetSamplers(0, 1, &m_sampleState);
 
 	// Render the triangle.
-	deviceContext->DrawIndexed(indexCount, 0, 0);
+	//deviceContext->DrawIndexed(indexCount, 0, 0);
 
 	return;
 }

@@ -33,12 +33,13 @@ public:
 	bool Initialize(ID3D11Device*, int, int);
 	//void Shutdown();
 	void Render(ID3D11DeviceContext*);
+	void Draw(ID3D11DeviceContext* const deviceContext);
 
 	int GetIndexCount();
 
 	bool InitializeBuffers(ID3D11Device*, int, int);
 	//void ShutdownBuffers();
-	void RenderBuffers(ID3D11DeviceContext*);
+	void PutVerticesOnPipeline(ID3D11DeviceContext*);
 
 private:
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;

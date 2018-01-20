@@ -29,7 +29,7 @@ bool ModelClass::Initialize(ID3D11Device* device, char* modelFilename, ID3D11Dev
 
 
 	// Load in the model data,
-	result = LoadModel(modelFilename);
+	result = LoadVerticesFromFile(modelFilename);
 	if (!result)
 	{
 		return false;
@@ -71,7 +71,7 @@ void ModelClass::Shutdown()
 void ModelClass::Render(ID3D11DeviceContext* deviceContext)
 {
 	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	RenderBuffers(deviceContext);
+	PutVerticesOnPipeline(deviceContext);
 
 	return;
 }
@@ -194,7 +194,7 @@ void ModelClass::ShutdownBuffers()
 }
 
 
-void ModelClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
+void ModelClass::PutVerticesOnPipeline(ID3D11DeviceContext* deviceContext)
 {
 	unsigned int stride;
 	unsigned int offset;
@@ -254,7 +254,7 @@ void ModelClass::ReleaseTexture()
 }
 
 
-bool ModelClass::LoadModel(char* filename)
+bool ModelClass::LoadVerticesFromFile(char* filename)
 {
 	ifstream fin;
 	char input;

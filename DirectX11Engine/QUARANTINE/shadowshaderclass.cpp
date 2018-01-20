@@ -339,7 +339,7 @@ void ShadowShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int ind
 	deviceContext->PSSetSamplers(0, 1, &m_sampleStateClamp);
 
 	// Render the triangle.
-	deviceContext->DrawIndexed(indexCount, 0, 0);
+	//deviceContext->DrawIndexed(indexCount, 0, 0);
 
 	return;
 }

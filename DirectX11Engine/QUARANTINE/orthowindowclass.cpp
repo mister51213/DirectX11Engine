@@ -49,11 +49,15 @@ bool OrthoWindowClass::Initialize(ID3D11Device* device, int windowWidth, int win
 void OrthoWindowClass::Render(ID3D11DeviceContext* deviceContext)
 {
 	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	RenderBuffers(deviceContext);
+	PutVerticesOnPipeline(deviceContext);
 
 	return;
 }
 
+void OrthoWindowClass::Draw(ID3D11DeviceContext * const deviceContext)
+{
+	deviceContext->DrawIndexed(m_indexCount, 0, 0);
+}
 
 int OrthoWindowClass::GetIndexCount()
 {
@@ -202,7 +206,7 @@ bool OrthoWindowClass::InitializeBuffers(ID3D11Device* device, int windowWidth, 
 //}
 
 
-void OrthoWindowClass::RenderBuffers(ID3D11DeviceContext* deviceContext)
+void OrthoWindowClass::PutVerticesOnPipeline(ID3D11DeviceContext* deviceContext)
 {
 	unsigned int stride;
 	unsigned int offset;

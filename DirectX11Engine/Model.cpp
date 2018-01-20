@@ -29,7 +29,7 @@ Model::Model(XMFLOAT3 scale, XMFLOAT3 orientation, XMFLOAT3 translation, string 
 bool Model::Initialize(ID3D11Device* const device, ID3D11DeviceContext* const deviceContext, const string modelFilename, vector<string> texFileNames, EShaderType shaderType)
 {
 	// Load in the model data
-	LoadModel(modelFilename);
+	LoadVerticesFromFile(modelFilename);
 
 	// Calculate the normal, tangent, and binormal vectors for the model.
 	if (shaderType == EShaderType::ELIGHT_SPECULAR)
@@ -176,7 +176,7 @@ bool Model::InitializeBuffers(ID3D11Device* const device)
 	return true;
 }
 
-void Model::RenderBuffers(ID3D11DeviceContext* const deviceContext)
+void Model::PutVerticesOnPipeline(ID3D11DeviceContext* const deviceContext)
 {
 	// Set vertex buffer stride and offset.
 	unsigned int stride = sizeof(VertexType);
@@ -194,18 +194,18 @@ void Model::RenderBuffers(ID3D11DeviceContext* const deviceContext)
 
 void Model::Draw(ID3D11DeviceContext* const deviceContext)
 {
-	// Set vertex buffer stride and offset.
-	unsigned int stride = sizeof(VertexType);
-	unsigned int offset = 0;
+	//// Set vertex buffer stride and offset.
+	//unsigned int stride = sizeof(VertexType);
+	//unsigned int offset = 0;
 
-	// Set the vertex buffer to active in the input assembler so it can be rendered.
-	deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
+	//// Set the vertex buffer to active in the input assembler so it can be rendered.
+	//deviceContext->IASetVertexBuffers(0, 1, _vertexBuffer.GetAddressOf(), &stride, &offset);
 
-	// Set the index buffer to active in the input assembler so it can be rendered.
-	deviceContext->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	//// Set the index buffer to active in the input assembler so it can be rendered.
+	//deviceContext->IASetIndexBuffer(_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
-	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
-	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
+	//deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	deviceContext->DrawIndexed(_indexCount, 0, 0);
 }
@@ -376,7 +376,7 @@ void Model::SetResourceView(const int index, ID3D11ShaderResourceView * view)
 	}
 }
 
-bool Model::LoadModel(const string filename)
+bool Model::LoadVerticesFromFile(const string filename)
 {
 	ifstream fin;
 	char input;
