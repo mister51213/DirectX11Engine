@@ -69,6 +69,11 @@ bool System::Tick()
 
 	_UI->Tick();
 
+	// Toggle drawing test scene and main scene
+	if (_Input->IsKeyDown(DIK_N))
+	{
+		_Graphics->bDrawAlternate = !_Graphics->bDrawAlternate;
+	}
 	return true;
 }
 

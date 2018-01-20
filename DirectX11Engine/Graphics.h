@@ -63,10 +63,11 @@ public:
 	float textureTranslation = 0.f;
 #pragma endregion
 
+	bool bDrawAlternate = false;
 private:
 	bool RenderWaterToTexture(Scene* pScene, LightClass* lights[]);
 	bool RenderShadowsToTexture(Scene* pScene, LightClass* lights[]);
-	bool Render(Scene* pScene);
+	bool DrawFrame(Scene* pScene);
 
 	void RenderShadowScene(Scene * pScene);
 
@@ -87,22 +88,23 @@ private:
 	SceneEffects _sceneEffects;
 	const int NUM_SHADOWS = 3; // FOR SHADOWING ONLY!!!
 
+
 	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
 	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
 	ID3D11ShaderResourceView* ApplyBlur(ID3D11ShaderResourceView* viewToBlur, RenderTextureClass* outputRenderTarget);
 	void RenderShadows(Scene* pScene);
 
-	RenderTextureClass *m_RenderTexture, *m_BlackWhiteRenderTexture, *m_DownSampleTexure;
-	RenderTextureClass *m_HorizontalBlurTexture, *m_VerticalBlurTexture, *m_UpSampleTexure;
+	unique_ptr<RenderTextureClass> m_RenderTexture,m_BlackWhiteRenderTexture,m_DownSampleTexure;
+	unique_ptr<RenderTextureClass>m_HorizontalBlurTexture,m_VerticalBlurTexture,m_UpSampleTexure;
 	
-	OrthoWindowClass *m_SmallWindow, *m_FullScreenWindow;
-	HorizontalBlurShaderClass* m_HorizontalBlurShader;
-	VerticalBlurShaderClass* m_VerticalBlurShader;
-	SoftShadowShaderClass* m_SoftShadowShader;
-	ShadowShaderClass* m_ShadowShader;
+	unique_ptr<OrthoWindowClass>m_SmallWindow, m_FullScreenWindow;
+	unique_ptr<HorizontalBlurShaderClass> m_HorizontalBlurShader;
+	unique_ptr<VerticalBlurShaderClass> m_VerticalBlurShader;
+	unique_ptr<SoftShadowShaderClass> m_SoftShadowShader;
+	unique_ptr<ShadowShaderClass> m_ShadowShader;
 	
-	LightClass* m_SoftLight;
-	Model *m_CubeModel, *m_GroundModel, *m_SphereModel;
+	unique_ptr<LightClass> m_SoftLight;
+	unique_ptr<Model> m_CubeModel,m_GroundModel,m_SphereModel;
 	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
 	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
 };

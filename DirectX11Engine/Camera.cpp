@@ -150,7 +150,7 @@ void Camera::UpdateViewPoint()
 
 	if (_bFirstRenderPass)
 	{
-		//m_baseViewMatrix = _viewMatrix;
+		m_baseViewMatrix = _viewMatrix;
 	}
 
 	_bFirstRenderPass = false;

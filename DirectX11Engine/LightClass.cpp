@@ -26,10 +26,13 @@ void LightClass::SetPosition(const XMFLOAT3& pos)
 void LightClass::GenerateViewMatrix()
 {
 	XMVECTOR eyePosition = XMLoadFloat3(&_lightBufferVS->position);
+	//XMVECTOR eyePosition = XMLoadFloat4(&XMFLOAT4(_lightBufferVS->position.x, _lightBufferVS->position.y, _lightBufferVS->position.z, 1));
 	XMVECTOR focusPosition = XMLoadFloat3(&_lookAt);
+	//XMVECTOR focusPosition = XMLoadFloat4(&XMFLOAT4(_lookAt.x, _lookAt.y, _lookAt.z, 1));
 	XMFLOAT3 up(0, 1, 0);
 	XMVECTOR upVector = XMLoadFloat3(&up);
 	XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(eyePosition, focusPosition, upVector);
+	//XMMATRIX viewMatrix = DirectX::XMMatrixLookToLH(eyePosition, focusPosition, upVector);
 	_lightBufferVS->viewMatrix = viewMatrix;
 	//_lightBufferVS->viewMatrix = DirectX::XMMatrixLookAtLH(XMLoadFloat3(&_lightBufferVS->position), XMLoadFloat3(&_lookAt), XMLoadFloat3(&up));
 }
