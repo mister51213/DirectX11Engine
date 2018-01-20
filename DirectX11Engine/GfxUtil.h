@@ -226,9 +226,9 @@ namespace GfxUtil
 	enum EShaderType
 	{
 		ETEXTURE = 0,
-		ELIGHT_SPECULAR = 1,
-		EREFLECTION = 2,
-		EREFRACTION = 3,
+		ELIGHT_DIFFUSE = 1,
+		ELIGHT_SPECULAR = 2,
+		EREFLECTION = 3,
 		EWATER = 4,
 		EFONT = 5,
 		EDEPTH = 6,

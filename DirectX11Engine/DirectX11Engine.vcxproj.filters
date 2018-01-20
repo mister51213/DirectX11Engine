@@ -1444,12 +1444,6 @@
     <FxCompile Include="Reflection_vs.hlsl">
       <Filter>Shaders_HLSL</Filter>
     </FxCompile>
-    <FxCompile Include="Refraction_ps.hlsl">
-      <Filter>Shaders_HLSL</Filter>
-    </FxCompile>
-    <FxCompile Include="Refraction_vs.hlsl">
-      <Filter>Shaders_HLSL</Filter>
-    </FxCompile>
     <FxCompile Include="texture_ps.hlsl">
       <Filter>Shaders_HLSL</Filter>
     </FxCompile>
@@ -1485,6 +1479,12 @@
     </FxCompile>
     <FxCompile Include="QUARANTINE\verticalblur_vs.hlsl">
       <Filter>Quarantine</Filter>
+    </FxCompile>
+    <FxCompile Include="Diffuse_ps.hlsl">
+      <Filter>Shaders_HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="Diffuse_vs.hlsl">
+      <Filter>Shaders_HLSL</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
