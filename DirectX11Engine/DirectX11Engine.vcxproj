@@ -101,9 +101,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level1</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -152,146 +150,426 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Actor.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btAxisSweep3.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btBroadphaseProxy.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btCollisionAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btDbvt.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btDbvtBroadphase.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btDispatcher.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btMultiSapBroadphase.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btOverlappingPairCache.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btQuantizedBvh.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btSimpleBroadphase.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btActivatingCollisionAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btBox2dBox2dCollisionAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btBoxBoxCollisionAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btBoxBoxDetector.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btCollisionDispatcher.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btCollisionObject.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btCollisionWorld.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btCompoundCollisionAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btCompoundCompoundCollisionAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btConvex2dConvex2dAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btConvexConcaveCollisionAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btConvexConvexAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btConvexPlaneCollisionAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btDefaultCollisionConfiguration.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btEmptyCollisionAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btGhostObject.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btHashedSimplePairCache.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btInternalEdgeUtility.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btManifoldResult.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btSimulationIslandManager.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btSphereBoxCollisionAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btSphereSphereCollisionAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btSphereTriangleCollisionAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btUnionFind.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\SphereTriangleDetector.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btBox2dShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btBoxShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btBvhTriangleMeshShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btCapsuleShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btCollisionShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btCompoundShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConcaveShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConeShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConvex2dShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConvexHullShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConvexInternalShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConvexPointCloudShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConvexPolyhedron.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConvexShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConvexTriangleMeshShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btCylinderShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btEmptyShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btHeightfieldTerrainShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btMinkowskiSumShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btMultimaterialTriangleMeshShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btMultiSphereShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btOptimizedBvh.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btPolyhedralConvexShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btScaledBvhTriangleMeshShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btShapeHull.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btSphereShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btStaticPlaneShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btStridingMeshInterface.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btTetrahedronShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btTriangleBuffer.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btTriangleCallback.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btTriangleIndexVertexArray.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btTriangleIndexVertexMaterialArray.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btTriangleMesh.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btTriangleMeshShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btUniformScalingShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\Gimpact\btContactProcessing.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\Gimpact\btGenericPoolAllocator.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\Gimpact\btGImpactBvh.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\Gimpact\btGImpactCollisionAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\Gimpact\btGImpactQuantizedBvh.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\Gimpact\btGImpactShape.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\Gimpact\btTriangleShapeEx.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\Gimpact\gim_box_set.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\Gimpact\gim_contact.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\Gimpact\gim_memory.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\Gimpact\gim_tri_collision.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btContinuousConvexCollision.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btConvexCast.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btGjkConvexCast.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btGjkEpa2.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btGjkEpaPenetrationDepthSolver.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btGjkPairDetector.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btMinkowskiPenetrationDepthSolver.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btPersistentManifold.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btPolyhedralContactClipping.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btRaycastCallback.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btSubSimplexConvexCast.cpp" />
-    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btVoronoiSimplexSolver.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\Character\btKinematicCharacterController.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btConeTwistConstraint.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btContactConstraint.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btFixedConstraint.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btGearConstraint.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btGeneric6DofConstraint.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btGeneric6DofSpringConstraint.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btHinge2Constraint.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btHingeConstraint.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btPoint2PointConstraint.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolver.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btSliderConstraint.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btSolve2LinearConstraint.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btTypedConstraint.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btUniversalConstraint.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\Dynamics\btDiscreteDynamicsWorld.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\Dynamics\btRigidBody.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\Dynamics\btSimpleDynamicsWorld.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\Dynamics\Bullet-C-API.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\Featherstone\btMultiBody.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\Featherstone\btMultiBodyConstraint.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\Featherstone\btMultiBodyConstraintSolver.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\Featherstone\btMultiBodyDynamicsWorld.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\Featherstone\btMultiBodyJointLimitConstraint.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\Featherstone\btMultiBodyJointMotor.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\Featherstone\btMultiBodyPoint2Point.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\MLCPSolvers\btDantzigLCP.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\MLCPSolvers\btMLCPSolver.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\Vehicle\btRaycastVehicle.cpp" />
-    <ClCompile Include="BULLET\BulletDynamics\Vehicle\btWheelInfo.cpp" />
-    <ClCompile Include="BULLET\BulletSoftBody\btDefaultSoftBodySolver.cpp" />
-    <ClCompile Include="BULLET\BulletSoftBody\btSoftBody.cpp" />
-    <ClCompile Include="BULLET\BulletSoftBody\btSoftBodyConcaveCollisionAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletSoftBody\btSoftBodyHelpers.cpp" />
-    <ClCompile Include="BULLET\BulletSoftBody\btSoftBodyRigidBodyCollisionConfiguration.cpp" />
-    <ClCompile Include="BULLET\BulletSoftBody\btSoftRigidCollisionAlgorithm.cpp" />
-    <ClCompile Include="BULLET\BulletSoftBody\btSoftRigidDynamicsWorld.cpp" />
-    <ClCompile Include="BULLET\BulletSoftBody\btSoftSoftCollisionAlgorithm.cpp" />
-    <ClCompile Include="BULLET\LinearMath\btAlignedAllocator.cpp" />
-    <ClCompile Include="BULLET\LinearMath\btConvexHull.cpp" />
-    <ClCompile Include="BULLET\LinearMath\btConvexHullComputer.cpp" />
-    <ClCompile Include="BULLET\LinearMath\btGeometryUtil.cpp" />
-    <ClCompile Include="BULLET\LinearMath\btPolarDecomposition.cpp" />
-    <ClCompile Include="BULLET\LinearMath\btQuickprof.cpp" />
-    <ClCompile Include="BULLET\LinearMath\btSerializer.cpp" />
-    <ClCompile Include="BULLET\LinearMath\btVector3.cpp" />
+    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btAxisSweep3.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btBroadphaseProxy.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btCollisionAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btDbvt.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btDbvtBroadphase.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btDispatcher.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btMultiSapBroadphase.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btOverlappingPairCache.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btQuantizedBvh.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\BroadphaseCollision\btSimpleBroadphase.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btActivatingCollisionAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btBox2dBox2dCollisionAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btBoxBoxCollisionAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btBoxBoxDetector.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btCollisionDispatcher.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btCollisionObject.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btCollisionWorld.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btCompoundCollisionAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btCompoundCompoundCollisionAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btConvex2dConvex2dAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btConvexConcaveCollisionAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btConvexConvexAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btConvexPlaneCollisionAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btDefaultCollisionConfiguration.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btEmptyCollisionAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btGhostObject.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btHashedSimplePairCache.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btInternalEdgeUtility.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btManifoldResult.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btSimulationIslandManager.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btSphereBoxCollisionAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btSphereSphereCollisionAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btSphereTriangleCollisionAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\btUnionFind.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionDispatch\SphereTriangleDetector.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btBox2dShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btBoxShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btBvhTriangleMeshShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btCapsuleShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btCollisionShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btCompoundShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConcaveShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConeShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConvex2dShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConvexHullShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConvexInternalShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConvexPointCloudShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConvexPolyhedron.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConvexShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btConvexTriangleMeshShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btCylinderShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btEmptyShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btHeightfieldTerrainShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btMinkowskiSumShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btMultimaterialTriangleMeshShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btMultiSphereShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btOptimizedBvh.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btPolyhedralConvexShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btScaledBvhTriangleMeshShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btShapeHull.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btSphereShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btStaticPlaneShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btStridingMeshInterface.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btTetrahedronShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btTriangleBuffer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btTriangleCallback.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btTriangleIndexVertexArray.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btTriangleIndexVertexMaterialArray.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btTriangleMesh.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btTriangleMeshShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\CollisionShapes\btUniformScalingShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\Gimpact\btContactProcessing.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\Gimpact\btGenericPoolAllocator.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\Gimpact\btGImpactBvh.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\Gimpact\btGImpactCollisionAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\Gimpact\btGImpactQuantizedBvh.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\Gimpact\btGImpactShape.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\Gimpact\btTriangleShapeEx.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\Gimpact\gim_box_set.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\Gimpact\gim_contact.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\Gimpact\gim_memory.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\Gimpact\gim_tri_collision.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btContinuousConvexCollision.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btConvexCast.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btGjkConvexCast.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btGjkEpa2.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btGjkEpaPenetrationDepthSolver.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btGjkPairDetector.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btMinkowskiPenetrationDepthSolver.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btPersistentManifold.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btPolyhedralContactClipping.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btRaycastCallback.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btSubSimplexConvexCast.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletCollision\NarrowPhaseCollision\btVoronoiSimplexSolver.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\Character\btKinematicCharacterController.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btConeTwistConstraint.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btContactConstraint.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btFixedConstraint.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btGearConstraint.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btGeneric6DofConstraint.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btGeneric6DofSpringConstraint.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btHinge2Constraint.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btHingeConstraint.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btPoint2PointConstraint.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolver.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btSliderConstraint.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btSolve2LinearConstraint.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btTypedConstraint.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\ConstraintSolver\btUniversalConstraint.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\Dynamics\btDiscreteDynamicsWorld.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\Dynamics\btRigidBody.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\Dynamics\btSimpleDynamicsWorld.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\Dynamics\Bullet-C-API.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\Featherstone\btMultiBody.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\Featherstone\btMultiBodyConstraint.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\Featherstone\btMultiBodyConstraintSolver.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\Featherstone\btMultiBodyDynamicsWorld.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\Featherstone\btMultiBodyJointLimitConstraint.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\Featherstone\btMultiBodyJointMotor.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\Featherstone\btMultiBodyPoint2Point.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\MLCPSolvers\btDantzigLCP.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\MLCPSolvers\btMLCPSolver.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\Vehicle\btRaycastVehicle.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletDynamics\Vehicle\btWheelInfo.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletSoftBody\btDefaultSoftBodySolver.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletSoftBody\btSoftBody.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletSoftBody\btSoftBodyConcaveCollisionAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletSoftBody\btSoftBodyHelpers.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletSoftBody\btSoftBodyRigidBodyCollisionConfiguration.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletSoftBody\btSoftRigidCollisionAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletSoftBody\btSoftRigidDynamicsWorld.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\BulletSoftBody\btSoftSoftCollisionAlgorithm.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\LinearMath\btAlignedAllocator.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\LinearMath\btConvexHull.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\LinearMath\btConvexHullComputer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\LinearMath\btGeometryUtil.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\LinearMath\btPolarDecomposition.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\LinearMath\btQuickprof.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\LinearMath\btSerializer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="BULLET\LinearMath\btVector3.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraClass.cpp" />
     <ClCompile Include="CpuClass.cpp" />
@@ -341,219 +619,645 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Actor.h" />
-    <ClInclude Include="BULLET\btBulletCollisionCommon.h" />
-    <ClInclude Include="BULLET\btBulletDynamicsCommon.h" />
-    <ClInclude Include="BULLET\Bullet-C-Api.h" />
-    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btAxisSweep3.h" />
-    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btBroadphaseInterface.h" />
-    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btBroadphaseProxy.h" />
-    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btCollisionAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btDbvt.h" />
-    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btDbvtBroadphase.h" />
-    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btDispatcher.h" />
-    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btMultiSapBroadphase.h" />
-    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btOverlappingPairCache.h" />
-    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btOverlappingPairCallback.h" />
-    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btQuantizedBvh.h" />
-    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btSimpleBroadphase.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btActivatingCollisionAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btBox2dBox2dCollisionAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btBoxBoxCollisionAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btBoxBoxDetector.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btCollisionConfiguration.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btCollisionCreateFunc.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btCollisionDispatcher.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btCollisionObject.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btCollisionObjectWrapper.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btCollisionWorld.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btCompoundCollisionAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btCompoundCompoundCollisionAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btConvex2dConvex2dAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btConvexConcaveCollisionAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btConvexConvexAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btConvexPlaneCollisionAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btDefaultCollisionConfiguration.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btEmptyCollisionAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btGhostObject.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btHashedSimplePairCache.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btInternalEdgeUtility.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btManifoldResult.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btSimulationIslandManager.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btSphereBoxCollisionAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btSphereSphereCollisionAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btSphereTriangleCollisionAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btUnionFind.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\SphereTriangleDetector.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btBox2dShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btBoxShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btBvhTriangleMeshShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btCapsuleShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btCollisionMargin.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btCollisionShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btCompoundShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConcaveShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConeShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConvex2dShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConvexHullShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConvexInternalShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConvexPointCloudShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConvexPolyhedron.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConvexShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConvexTriangleMeshShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btCylinderShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btEmptyShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btHeightfieldTerrainShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btMaterial.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btMinkowskiSumShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btMultimaterialTriangleMeshShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btMultiSphereShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btOptimizedBvh.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btPolyhedralConvexShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btScaledBvhTriangleMeshShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btShapeHull.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btSphereShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btStaticPlaneShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btStridingMeshInterface.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTetrahedronShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTriangleBuffer.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTriangleCallback.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTriangleIndexVertexArray.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTriangleIndexVertexMaterialArray.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTriangleInfoMap.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTriangleMesh.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTriangleMeshShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTriangleShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btUniformScalingShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\btBoxCollision.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\btClipPolygon.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\btCompoundFromGimpact.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\btContactProcessing.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\btGenericPoolAllocator.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\btGeometryOperations.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\btGImpactBvh.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\btGImpactCollisionAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\btGImpactMassUtil.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\btGImpactQuantizedBvh.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\btGImpactShape.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\btQuantization.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\btTriangleShapeEx.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_array.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_basic_geometry_operations.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_bitset.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_box_collision.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_box_set.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_clip_polygon.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_contact.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_geometry.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_geom_types.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_hash_table.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_linear_math.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_math.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_memory.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_radixsort.h" />
-    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_tri_collision.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btContinuousConvexCollision.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btConvexCast.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btConvexPenetrationDepthSolver.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btDiscreteCollisionDetectorInterface.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btGjkConvexCast.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btGjkEpa2.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btGjkEpaPenetrationDepthSolver.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btGjkPairDetector.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btManifoldPoint.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btMinkowskiPenetrationDepthSolver.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btPersistentManifold.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btPointCollector.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btPolyhedralContactClipping.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btRaycastCallback.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btSimplexSolverInterface.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btSubSimplexConvexCast.h" />
-    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btVoronoiSimplexSolver.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Character\btCharacterControllerInterface.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Character\btKinematicCharacterController.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btConeTwistConstraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btConstraintSolver.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btContactConstraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btContactSolverInfo.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btFixedConstraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btGearConstraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btGeneric6DofConstraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btGeneric6DofSpringConstraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btHinge2Constraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btHingeConstraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btJacobianEntry.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btPoint2PointConstraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolver.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btSliderConstraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btSolve2LinearConstraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btSolverBody.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btSolverConstraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btTypedConstraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btUniversalConstraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Dynamics\btActionInterface.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Dynamics\btDiscreteDynamicsWorld.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Dynamics\btDynamicsWorld.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Dynamics\btRigidBody.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Dynamics\btSimpleDynamicsWorld.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBody.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodyConstraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodyConstraintSolver.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodyDynamicsWorld.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodyJointLimitConstraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodyJointMotor.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodyLink.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodyLinkCollider.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodyPoint2Point.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodySolverConstraint.h" />
-    <ClInclude Include="BULLET\BulletDynamics\MLCPSolvers\btDantzigLCP.h" />
-    <ClInclude Include="BULLET\BulletDynamics\MLCPSolvers\btDantzigSolver.h" />
-    <ClInclude Include="BULLET\BulletDynamics\MLCPSolvers\btMLCPSolver.h" />
-    <ClInclude Include="BULLET\BulletDynamics\MLCPSolvers\btMLCPSolverInterface.h" />
-    <ClInclude Include="BULLET\BulletDynamics\MLCPSolvers\btPATHSolver.h" />
-    <ClInclude Include="BULLET\BulletDynamics\MLCPSolvers\btSolveProjectedGaussSeidel.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Vehicle\btRaycastVehicle.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Vehicle\btVehicleRaycaster.h" />
-    <ClInclude Include="BULLET\BulletDynamics\Vehicle\btWheelInfo.h" />
-    <ClInclude Include="BULLET\BulletSoftBody\btDefaultSoftBodySolver.h" />
-    <ClInclude Include="BULLET\BulletSoftBody\btSoftBody.h" />
-    <ClInclude Include="BULLET\BulletSoftBody\btSoftBodyConcaveCollisionAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletSoftBody\btSoftBodyData.h" />
-    <ClInclude Include="BULLET\BulletSoftBody\btSoftBodyHelpers.h" />
-    <ClInclude Include="BULLET\BulletSoftBody\btSoftBodyInternals.h" />
-    <ClInclude Include="BULLET\BulletSoftBody\btSoftBodyRigidBodyCollisionConfiguration.h" />
-    <ClInclude Include="BULLET\BulletSoftBody\btSoftBodySolvers.h" />
-    <ClInclude Include="BULLET\BulletSoftBody\btSoftBodySolverVertexBuffer.h" />
-    <ClInclude Include="BULLET\BulletSoftBody\btSoftRigidCollisionAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletSoftBody\btSoftRigidDynamicsWorld.h" />
-    <ClInclude Include="BULLET\BulletSoftBody\btSoftSoftCollisionAlgorithm.h" />
-    <ClInclude Include="BULLET\BulletSoftBody\btSparseSDF.h" />
-    <ClInclude Include="BULLET\LinearMath\btAabbUtil2.h" />
-    <ClInclude Include="BULLET\LinearMath\btAlignedAllocator.h" />
-    <ClInclude Include="BULLET\LinearMath\btAlignedObjectArray.h" />
-    <ClInclude Include="BULLET\LinearMath\btConvexHull.h" />
-    <ClInclude Include="BULLET\LinearMath\btConvexHullComputer.h" />
-    <ClInclude Include="BULLET\LinearMath\btDefaultMotionState.h" />
-    <ClInclude Include="BULLET\LinearMath\btGeometryUtil.h" />
-    <ClInclude Include="BULLET\LinearMath\btGrahamScan2dConvexHull.h" />
-    <ClInclude Include="BULLET\LinearMath\btHashMap.h" />
-    <ClInclude Include="BULLET\LinearMath\btIDebugDraw.h" />
-    <ClInclude Include="BULLET\LinearMath\btList.h" />
-    <ClInclude Include="BULLET\LinearMath\btMatrix3x3.h" />
-    <ClInclude Include="BULLET\LinearMath\btMatrixX.h" />
-    <ClInclude Include="BULLET\LinearMath\btMinMax.h" />
-    <ClInclude Include="BULLET\LinearMath\btMotionState.h" />
-    <ClInclude Include="BULLET\LinearMath\btPolarDecomposition.h" />
-    <ClInclude Include="BULLET\LinearMath\btPoolAllocator.h" />
-    <ClInclude Include="BULLET\LinearMath\btQuadWord.h" />
-    <ClInclude Include="BULLET\LinearMath\btQuaternion.h" />
-    <ClInclude Include="BULLET\LinearMath\btQuickprof.h" />
-    <ClInclude Include="BULLET\LinearMath\btRandom.h" />
-    <ClInclude Include="BULLET\LinearMath\btScalar.h" />
-    <ClInclude Include="BULLET\LinearMath\btSerializer.h" />
-    <ClInclude Include="BULLET\LinearMath\btStackAlloc.h" />
-    <ClInclude Include="BULLET\LinearMath\btTransform.h" />
-    <ClInclude Include="BULLET\LinearMath\btTransformUtil.h" />
-    <ClInclude Include="BULLET\LinearMath\btVector3.h" />
+    <ClInclude Include="BULLET\btBulletCollisionCommon.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\btBulletDynamicsCommon.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\Bullet-C-Api.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btAxisSweep3.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btBroadphaseInterface.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btBroadphaseProxy.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btCollisionAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btDbvt.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btDbvtBroadphase.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btDispatcher.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btMultiSapBroadphase.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btOverlappingPairCache.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btOverlappingPairCallback.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btQuantizedBvh.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\BroadphaseCollision\btSimpleBroadphase.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btActivatingCollisionAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btBox2dBox2dCollisionAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btBoxBoxCollisionAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btBoxBoxDetector.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btCollisionConfiguration.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btCollisionCreateFunc.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btCollisionDispatcher.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btCollisionObject.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btCollisionObjectWrapper.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btCollisionWorld.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btCompoundCollisionAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btCompoundCompoundCollisionAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btConvex2dConvex2dAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btConvexConcaveCollisionAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btConvexConvexAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btConvexPlaneCollisionAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btDefaultCollisionConfiguration.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btEmptyCollisionAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btGhostObject.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btHashedSimplePairCache.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btInternalEdgeUtility.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btManifoldResult.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btSimulationIslandManager.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btSphereBoxCollisionAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btSphereSphereCollisionAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btSphereTriangleCollisionAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\btUnionFind.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionDispatch\SphereTriangleDetector.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btBox2dShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btBoxShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btBvhTriangleMeshShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btCapsuleShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btCollisionMargin.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btCollisionShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btCompoundShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConcaveShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConeShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConvex2dShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConvexHullShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConvexInternalShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConvexPointCloudShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConvexPolyhedron.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConvexShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btConvexTriangleMeshShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btCylinderShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btEmptyShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btHeightfieldTerrainShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btMaterial.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btMinkowskiSumShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btMultimaterialTriangleMeshShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btMultiSphereShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btOptimizedBvh.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btPolyhedralConvexShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btScaledBvhTriangleMeshShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btShapeHull.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btSphereShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btStaticPlaneShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btStridingMeshInterface.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTetrahedronShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTriangleBuffer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTriangleCallback.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTriangleIndexVertexArray.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTriangleIndexVertexMaterialArray.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTriangleInfoMap.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTriangleMesh.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTriangleMeshShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btTriangleShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\CollisionShapes\btUniformScalingShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\btBoxCollision.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\btClipPolygon.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\btCompoundFromGimpact.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\btContactProcessing.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\btGenericPoolAllocator.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\btGeometryOperations.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\btGImpactBvh.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\btGImpactCollisionAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\btGImpactMassUtil.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\btGImpactQuantizedBvh.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\btGImpactShape.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\btQuantization.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\btTriangleShapeEx.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_array.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_basic_geometry_operations.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_bitset.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_box_collision.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_box_set.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_clip_polygon.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_contact.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_geometry.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_geom_types.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_hash_table.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_linear_math.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_math.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_memory.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_radixsort.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\Gimpact\gim_tri_collision.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btContinuousConvexCollision.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btConvexCast.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btConvexPenetrationDepthSolver.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btDiscreteCollisionDetectorInterface.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btGjkConvexCast.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btGjkEpa2.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btGjkEpaPenetrationDepthSolver.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btGjkPairDetector.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btManifoldPoint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btMinkowskiPenetrationDepthSolver.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btPersistentManifold.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btPointCollector.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btPolyhedralContactClipping.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btRaycastCallback.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btSimplexSolverInterface.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btSubSimplexConvexCast.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletCollision\NarrowPhaseCollision\btVoronoiSimplexSolver.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Character\btCharacterControllerInterface.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Character\btKinematicCharacterController.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btConeTwistConstraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btConstraintSolver.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btContactConstraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btContactSolverInfo.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btFixedConstraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btGearConstraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btGeneric6DofConstraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btGeneric6DofSpringConstraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btHinge2Constraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btHingeConstraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btJacobianEntry.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btPoint2PointConstraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btSequentialImpulseConstraintSolver.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btSliderConstraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btSolve2LinearConstraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btSolverBody.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btSolverConstraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btTypedConstraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\ConstraintSolver\btUniversalConstraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Dynamics\btActionInterface.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Dynamics\btDiscreteDynamicsWorld.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Dynamics\btDynamicsWorld.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Dynamics\btRigidBody.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Dynamics\btSimpleDynamicsWorld.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBody.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodyConstraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodyConstraintSolver.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodyDynamicsWorld.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodyJointLimitConstraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodyJointMotor.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodyLink.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodyLinkCollider.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodyPoint2Point.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Featherstone\btMultiBodySolverConstraint.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\MLCPSolvers\btDantzigLCP.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\MLCPSolvers\btDantzigSolver.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\MLCPSolvers\btMLCPSolver.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\MLCPSolvers\btMLCPSolverInterface.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\MLCPSolvers\btPATHSolver.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\MLCPSolvers\btSolveProjectedGaussSeidel.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Vehicle\btRaycastVehicle.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Vehicle\btVehicleRaycaster.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletDynamics\Vehicle\btWheelInfo.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletSoftBody\btDefaultSoftBodySolver.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletSoftBody\btSoftBody.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletSoftBody\btSoftBodyConcaveCollisionAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletSoftBody\btSoftBodyData.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletSoftBody\btSoftBodyHelpers.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletSoftBody\btSoftBodyInternals.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletSoftBody\btSoftBodyRigidBodyCollisionConfiguration.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletSoftBody\btSoftBodySolvers.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletSoftBody\btSoftBodySolverVertexBuffer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletSoftBody\btSoftRigidCollisionAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletSoftBody\btSoftRigidDynamicsWorld.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletSoftBody\btSoftSoftCollisionAlgorithm.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\BulletSoftBody\btSparseSDF.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btAabbUtil2.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btAlignedAllocator.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btAlignedObjectArray.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btConvexHull.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btConvexHullComputer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btDefaultMotionState.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btGeometryUtil.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btGrahamScan2dConvexHull.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btHashMap.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btIDebugDraw.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btList.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btMatrix3x3.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btMatrixX.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btMinMax.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btMotionState.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btPolarDecomposition.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btPoolAllocator.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btQuadWord.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btQuaternion.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btQuickprof.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btRandom.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btScalar.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btSerializer.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btStackAlloc.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btTransform.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btTransformUtil.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="BULLET\LinearMath\btVector3.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraClass.h" />
     <ClInclude Include="CpuClass.h" />

@@ -15,7 +15,8 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <fstream>
-#include "ShaderBase.h"
+#include "../ShaderClass.h"
+//#include "ShaderBase.h"
 
 using namespace std;
 using namespace DirectX;
@@ -24,15 +25,15 @@ using namespace DirectX;
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: VerticalBlurShaderClass
 ////////////////////////////////////////////////////////////////////////////////
-class VerticalBlurShaderClass : public ShaderBase
+class VerticalBlurShaderClass : public ShaderClass //ShaderBase
 {
 private:
-	struct MatrixBufferType
-	{
-		XMMATRIX world;
-		XMMATRIX view;
-		XMMATRIX projection;
-	};
+	//struct MatrixBufferType
+	//{
+	//	XMMATRIX world;
+	//	XMMATRIX view;
+	//	XMMATRIX projection;
+	//};
 
 	struct ScreenSizeBufferType
 	{

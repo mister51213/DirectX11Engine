@@ -219,8 +219,10 @@ void VerticalBlurShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, i
 	deviceContext->IASetInputLayout(m_layout);
 
     // Set the vertex and pixel shaders that will be used to render this triangle.
-    deviceContext->VSSetShader(m_vertexShader.Get(), NULL, 0);
-    deviceContext->PSSetShader(m_pixelShader.Get(), NULL, 0);
+   // deviceContext->VSSetShader(m_vertexShader.Get(), NULL, 0);
+   // deviceContext->PSSetShader(m_pixelShader.Get(), NULL, 0);
+	deviceContext->VSSetShader(_vertexShader.Get(), NULL, 0);
+	deviceContext->PSSetShader(_pixelShader.Get(), NULL, 0);
 
 	// Set the sampler state in the pixel shader.
 	deviceContext->PSSetSamplers(0, 1, &m_sampleState);

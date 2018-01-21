@@ -28,12 +28,12 @@ using namespace DirectX;
 class SoftShadowShaderClass:public ShaderClass //ShaderBase
 {
 private:
-	struct MatrixBufferType
-	{
-		XMMATRIX world;
-		XMMATRIX view;
-		XMMATRIX projection;
-	};
+	//struct MatrixBufferType
+	//{
+	//	XMMATRIX world;
+	//	XMMATRIX view;
+	//	XMMATRIX projection;
+	//};
 
 	struct LightBufferType
 	{

@@ -15,6 +15,7 @@
 #include <DirectXMath.h>
 //#include <d3dx11async.h>
 #include <fstream>
+//#include "../ShaderClass.h"
 #include "ShaderBase.h"
 
 using namespace std;
@@ -24,7 +25,7 @@ using namespace DirectX;
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: ShadowShaderClass
 ////////////////////////////////////////////////////////////////////////////////
-class ShadowShaderClass:public ShaderBase
+class ShadowShaderClass:public ShaderBase //ShaderClass
 {
 private:
 	struct MatrixBufferType
@@ -66,5 +67,4 @@ private:
 	ID3D11Buffer* m_matrixBuffer;
 	ID3D11Buffer* m_lightBuffer2;
 };
-
 #endif

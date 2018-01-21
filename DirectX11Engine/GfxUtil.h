@@ -49,6 +49,27 @@ namespace GfxUtil
 
 	// GPU PIPELINE RELATED //
 	// VS CBUFFER TYPES
+	struct MatrixBufferType
+	{
+		XMMATRIX world;
+		XMMATRIX view;
+		XMMATRIX projection;
+
+		MatrixBufferType()
+		{
+			XMMATRIX world = XMMatrixIdentity();
+			XMMATRIX view = XMMatrixIdentity();
+			XMMATRIX projection = XMMatrixIdentity();
+		}
+
+		MatrixBufferType(const XMMATRIX& wrld, const XMMATRIX& vw, const XMMATRIX& proj)
+		{
+			world = wrld;
+			view = vw;
+			projection = proj;
+		}
+	};
+
 	struct LightDataTemplate_VS
 	{
 		XMMATRIX viewMatrix;
@@ -110,27 +131,6 @@ namespace GfxUtil
 			direction = otherBuff.direction;
 			specularPower = otherBuff.specularPower;
 			specularColor = otherBuff.specularColor;
-		}
-	};
-
-	struct MatrixBufferType
-	{
-		XMMATRIX world;
-		XMMATRIX view;
-		XMMATRIX projection;
-
-		MatrixBufferType()
-		{
-			XMMATRIX world = XMMatrixIdentity();
-			XMMATRIX view = XMMatrixIdentity();
-			XMMATRIX projection = XMMatrixIdentity();
-		}
-
-		MatrixBufferType(const XMMATRIX& wrld, const XMMATRIX& vw, const XMMATRIX& proj)
-		{
-			world = wrld;
-			view = vw;
-			projection = proj;
 		}
 	};
 
