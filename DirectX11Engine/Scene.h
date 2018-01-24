@@ -40,8 +40,6 @@ public:
 	float _lightPositionX2 = 5.f;
 	float _increment2 = -0.08f;
 	
-	const int NUM_LIGHTS = 3;
-
 	//////// WATER CONSTANTS /////////
 	float _waterHeight = 2.75f;
 };

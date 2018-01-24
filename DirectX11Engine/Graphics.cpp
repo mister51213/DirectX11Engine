@@ -375,7 +375,7 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 {
 	// UPDATE LIGHTS 	//@TODO // AWAY WITH THIS MADNESS! ~ properly loop / hold in the right containers
 	XMMATRIX lightViewMatrix[NUM_LIGHTS], lightProjectionMatrix[NUM_LIGHTS];
-	for (int i = 0; i < pScene->NUM_LIGHTS; ++i)
+	for (int i = 0; i < NUM_LIGHTS; ++i)
 	{
 		_Lights[i]->GenerateViewMatrix();
 		lightViewMatrix[i] = _Lights[i]->GetViewMatrix();

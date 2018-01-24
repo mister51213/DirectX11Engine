@@ -27,6 +27,7 @@ const float SCREEN_DEPTH = 10000.0f;
 const float SCREEN_NEAR = 1.0f;
 const int SHADOWMAP_WIDTH = 1024;// 4096;
 const int SHADOWMAP_HEIGHT = 1024;// 4096;
+const int NUM_LIGHTS = 3;
 
 #define VISIBLE true
 #define INVISIBLE false

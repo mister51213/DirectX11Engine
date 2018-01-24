@@ -6,11 +6,6 @@
 #pragma comment ( lib, "d3dcompiler.lib" )
 #pragma comment ( lib, "d3d11.lib" )
 
-/////////////
-// GLOBALS //
-/////////////
-const int NUM_LIGHTS = 3;
-
 //////////////
 // INCLUDES //
 //////////////
@@ -71,9 +66,9 @@ public:
 		XMFLOAT4 ambientColor, LightClass* shadowLight[],
 		XMFLOAT3 cameraPosition, float translation, float transparency);
 
-private:
-	bool InitializeShader(ID3D11Device* device, HWND hwnd,/* WCHAR* */wstring vsFilename, /*WCHAR* */wstring psFilename);
+	virtual bool InitializeShader(ID3D11Device* device, HWND hwnd,/* WCHAR* */wstring vsFilename, /*WCHAR* */wstring psFilename);
 
+private:
 	bool SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType& transforms,
 		vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
 		XMFLOAT4 ambientColor, LightClass* shadowLight[],

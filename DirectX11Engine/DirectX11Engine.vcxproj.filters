@@ -615,6 +615,12 @@
     <ClCompile Include="QUARANTINE\ShaderBase.cpp">
       <Filter>Quarantine</Filter>
     </ClCompile>
+    <ClCompile Include="ShadowShaderClass_Multi.cpp">
+      <Filter>Source Files\Shader_Classes</Filter>
+    </ClCompile>
+    <ClCompile Include="SoftShadowShaderClass_Multi.cpp">
+      <Filter>Source Files\Shader_Classes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VectorMath.h">
@@ -1396,6 +1402,12 @@
     </ClInclude>
     <ClInclude Include="QUARANTINE\ShaderBase.h">
       <Filter>Quarantine</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowShaderClass_Multi.h">
+      <Filter>Header Files\Shader_Classes</Filter>
+    </ClInclude>
+    <ClInclude Include="SoftShadowShaderClass_Multi.h">
+      <Filter>Header Files\Shader_Classes</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

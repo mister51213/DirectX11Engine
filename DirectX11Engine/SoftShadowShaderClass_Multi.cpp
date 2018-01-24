@@ -1,7 +1,7 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: SoftShadowShaderClass_Multi.cpp
 ////////////////////////////////////////////////////////////////////////////////
-#include "SoftShadowShaderClass - Copy.h"
+#include "SoftShadowShaderClass_Multi.h"
 
 
 SoftShadowShaderClass_Multi::SoftShadowShaderClass_Multi()
@@ -15,7 +15,6 @@ bool SoftShadowShaderClass_Multi::Initialize(ID3D11Device* device, HWND hwnd)
 	bool result;
 
 	// Initialize the vertex and pixel shaders.
-	//result = InitializeShader(device, hwnd, L"../Engine/softshadow.vs", L"../Engine/softshadow.ps");
 	result = InitializeShader(device, hwnd, L"Light_SoftShadows_vs.cso", L"Light_SoftShadows_ps.cso");
 
 	if(!result)

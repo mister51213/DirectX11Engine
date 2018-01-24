@@ -127,12 +127,40 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 		return false;
 	}
 
-	//result = _DepthShader->Initialize(device, hwnd, "../DirectX11Engine/depth.vs", "../DirectX11Engine/depth.ps");
-	//result = _DepthShader->Initialize(device, hwnd, "../x64/Debug/depth_vs.cso", "../x64/Debug/depth_ps.cso");
 	result = _DepthShader->Initialize(device, hwnd, "depth_vs.cso", "depth_ps.cso");
 	if (!result)
 	{
 		throw std::runtime_error("Could not initialize the depth shader object. - " + to_string(__LINE__));
+
+		return false;
+	}
+
+	// Multi Shadow Shader
+	_ShadowShaderMulti.reset(new ShadowShaderClass_Multi);
+	if (!_ShadowShaderMulti)
+	{
+		return false;
+	}
+
+	result = _ShadowShaderMulti->InitializeShader(device, hwnd, L"MultiShadows_vs.cso", L"MultiShadows_ps.cso");
+	if (!result)
+	{
+		throw std::runtime_error("Could not initialize the multi shadow shader object. - " + to_string(__LINE__));
+
+		return false;
+	}
+
+	// Soft Shadow Shader
+	_ShadowShaderSoft.reset(new SoftShadowShaderClass_Multi);
+	if (!_ShadowShaderSoft)
+	{
+		return false;
+	}
+
+	result = _ShadowShaderSoft->InitializeShader(device, hwnd, L"Light_SoftShadows_vs.cso", L"Light_SoftShadows_ps.cso");
+	if (!result)
+	{
+		throw std::runtime_error("Could not initialize the soft shadow shader object. - " + to_string(__LINE__));
 
 		return false;
 	}

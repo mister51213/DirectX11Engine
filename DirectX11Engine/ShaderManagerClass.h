@@ -16,6 +16,9 @@
 //#include "RefractionShaderClass.h"
 #include "DiffuseShaderClass.h"
 #include "DepthShaderClass.h"
+#include "SoftShadowShaderClass_Multi.h"
+#include "ShadowShaderClass_Multi.h"
+
 
 #include "GfxUtil.h"
 
@@ -56,4 +59,6 @@ public:
 	unique_ptr<TextureShaderClass> _TextureShader;
 	unique_ptr<FontShaderClass> _FontShader;
 	unique_ptr<WaterShaderClass> _WaterShader;
+	unique_ptr<SoftShadowShaderClass_Multi> _ShadowShaderSoft;
+	unique_ptr<ShadowShaderClass_Multi> _ShadowShaderMulti;
 };

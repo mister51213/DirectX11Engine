@@ -601,9 +601,9 @@
     <ClCompile Include="ShaderClass.cpp" />
     <ClCompile Include="ShaderCompiler.cpp" />
     <ClCompile Include="ShaderManagerClass.cpp" />
-    <ClCompile Include="shadowshaderclass - Copy.cpp" />
+    <ClCompile Include="ShadowShaderClass_Multi.cpp" />
     <ClCompile Include="shadowshaderclass.cpp" />
-    <ClCompile Include="softshadowshaderclass - Copy.cpp" />
+    <ClCompile Include="SoftShadowShaderClass_Multi.cpp" />
     <ClCompile Include="TextClass.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="D3DClass.cpp" />
@@ -1291,9 +1291,9 @@
     <ClInclude Include="ShaderClass.h" />
     <ClInclude Include="ShaderCompiler.h" />
     <ClInclude Include="ShaderManagerClass.h" />
-    <ClInclude Include="shadowshaderclass - Copy.h" />
+    <ClInclude Include="ShadowShaderClass_Multi.h" />
     <ClInclude Include="shadowshaderclass.h" />
-    <ClInclude Include="softshadowshaderclass - Copy.h" />
+    <ClInclude Include="SoftShadowShaderClass_Multi.h" />
     <ClInclude Include="TextClass.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="D3DClass.h" />

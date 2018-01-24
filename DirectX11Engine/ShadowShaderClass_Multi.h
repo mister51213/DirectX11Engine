@@ -6,11 +6,6 @@
 #pragma comment ( lib, "d3dcompiler.lib" )
 #pragma comment ( lib, "d3d11.lib" )
 
-/////////////
-// GLOBALS //
-/////////////
-const int NUM_LIGHTS = 3;
-
 //////////////
 // INCLUDES //
 //////////////
@@ -43,9 +38,9 @@ public:
 
 	bool Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType transforms, LightClass* shadowLight[], vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews);
 
-private:
 	bool InitializeShader(ID3D11Device*, HWND, WCHAR*, WCHAR*);
 
+private:
 	bool SetShaderParameters(ID3D11DeviceContext* device, MatrixBufferType transforms, LightClass* shadowLight[], vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews);
 	void RenderShader(ID3D11DeviceContext*, int);
 
