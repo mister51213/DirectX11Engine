@@ -8,12 +8,10 @@
 //////////////
 Texture2D depthMapTexture : register(t0);
 
-
 ///////////////////
 // SAMPLE STATES //
 ///////////////////
 SamplerState SampleTypeClamp : register(s0);
-
 
 //////////////
 // TYPEDEFS //

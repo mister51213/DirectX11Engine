@@ -9,13 +9,11 @@
 Texture2D shaderTexture : register(t0);
 Texture2D shadowTexture : register(t1);
 
-
 ///////////////////
 // SAMPLE STATES //
 ///////////////////
 SamplerState SampleTypeClamp : register(s0);
 SamplerState SampleTypeWrap  : register(s1);
-
 
 //////////////////////
 // CONSTANT BUFFERS //

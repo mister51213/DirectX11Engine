@@ -13,16 +13,13 @@ LightShaderClass::LightShaderClass(const LightShaderClass& other)
 LightShaderClass::~LightShaderClass()
 {}
 
-bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, 
-	MatrixBufferType& transforms,/*
-	XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix,*/
+bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms,
 	ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
 	XMFLOAT4 ambientColor, LightClass* shadowLight[], 
 	XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency)
 {
 	// Set the shader parameters that it will use for rendering.
-	SetShaderParameters(deviceContext, transforms, /*worldMatrix, viewMatrix, projectionMatrix,*/
-		textureArray, texViews, ambientColor, shadowLight, cameraPosition, fogStart, fogEnd, translation, transparency);
+	SetShaderParameters(deviceContext, transforms, textureArray, texViews, ambientColor, shadowLight, cameraPosition, fogStart, fogEnd, translation, transparency);
 
 	// Now render the prepared buffers with the shader.
 	RenderShader(deviceContext, indexCount);

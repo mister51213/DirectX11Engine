@@ -1,12 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: light_ps
-// The pixel shader gets its input from the vertex shader output.
-// Msdn note: Pixel shaders can only write to parameters with the 
-// SV_Depth and SV_Target system-value semantics.
-////////////////////////////////////////////////////////////////////////////////
-
-#include "Common.hlsli"
-
 /////////////
 // DEFINES //
 /////////////
@@ -16,7 +7,7 @@
 // GLOBALS //
 /////////////
 // texture resource that will be used for rendering the texture on the model
-Texture2D shaderTextures[9];
+Texture2D shaderTextures[7];// NOTE - we only use one render target for drawing all the shadows here!
 // allows modifying how pixels are written to the polygon face, for example choosing which to draw. 
 SamplerState SampleType;
 
@@ -25,7 +16,6 @@ SamplerState SampleType;
 ///////////////////
 SamplerState SampleTypeClamp : register(s0);
 SamplerState SampleTypeWrap  : register(s1);
-SamplerComparisonState SampleTypeComp  : register(s2);
 
 // This structure is used to describe the lights properties
 struct LightTemplate_PS
@@ -43,8 +33,6 @@ struct LightTemplate_PS
 //////////////////////
 cbuffer SceneLightBuffer:register(b0)
 {
-	//int cb_lightCount;
-	//float3 cb_padding;
 	float4 cb_ambientColor;
 	LightTemplate_PS cb_lights[NUM_LIGHTS];
 }
@@ -64,21 +52,17 @@ cbuffer TransparentBuffer:register(b2)
     float blendAmount;
 };
 
-//////////////
-// TYPEDEFS //
-//////////////
 struct PixelInputType
 {
-	float4 vertPos_ModelSpace : TEXCOORD12;
-	float4 vertPos_ScrnSpace : SV_POSITION;
-	float2 tex : TEXCOORD0;
-    float3 normal : NORMAL;
+	float4 vertex_ModelSpace : TEXCOORD12;
+	float4 vertex_ScrnSpace : SV_POSITION;
+    float2 tex : TEXCOORD0;
+	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
     float3 binormal : BINORMAL;
-    float3 viewDirection : TEXCOORD1;
-    float4 vertex_ProjLightSpace[NUM_LIGHTS] : TEXCOORD6;
+	float3 viewDirection : TEXCOORD1;
+   // float4 vertex_ProjLightSpace[NUM_LIGHTS] : TEXCOORD6;
     float3 lightPos_LS[NUM_LIGHTS] : TEXCOORD9;
-	float fogFactor : FOG;
 };
 
 // Calculates spot lights, based on position and direction of the light and of the direction of the surface.
@@ -92,7 +76,6 @@ float CalculateSpotLightIntensity(
 	float dist = length(LightPos_VertexSpace);
 	float attenuation = 1.f - (maxLightRange - dist) / maxLightRange;
 
-	//float3 lightToVertex = normalize(SurfacePosition - LightPos_VertexSpace);
 	float3 lightToVertex_WS = -LightPos_VertexSpace;
 	
 	float dotProduct = saturate(dot(normalize(lightToVertex_WS), normalize(LightDirection_WS)));
@@ -100,14 +83,11 @@ float CalculateSpotLightIntensity(
 	// METALLIC EFFECT (deactivate for now)
 	float metalEffect = saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace)));
 
-	//float dpCutOff = .77f;
 	float dpCutOff = .95f;
 	if(dotProduct > dpCutOff /*&& metalEffect > .55*/)
 	{
 		float expandedRange = (dotProduct - dpCutOff)/(1.f - dpCutOff);
 		return saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace))* expandedRange/**attenuation*/);
-		//return saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace)));
-		//return dotProduct;
 	}
 	else
 	{
@@ -115,15 +95,12 @@ float CalculateSpotLightIntensity(
 	}
 }
 
-float4 LightPixelShader(PixelInputType input) : SV_TARGET
+float4 main(PixelInputType input) : SV_TARGET
 {
 	float2 projectTexCoord;
 	float depthValue;
 	float lightDepthValue;
 	float4 textureColor;
-
-	// Set the bias value for fixing the floating point precision issues.
-	float bias = 0.001f;
 
 	/////////////////// NORMAL MAPPING //////////////////
 	float4 bumpMap = shaderTextures[4].Sample(SampleType, input.tex);
@@ -138,51 +115,29 @@ float4 LightPixelShader(PixelInputType input) : SV_TARGET
 	// Set the default output color to the ambient light value for all pixels.
     float4 lightColor = cb_ambientColor* saturate(dot(bumpNormal, input.normal) + .2);
 
-	//////////////// SHADOWING LOOP ////////////////
+	// Calculate the projected texture coordinates.
+	projectTexCoord.x =  input.vertex_ScrnSpace.x / input.vertex_ScrnSpace.w / 2.0f + 0.5f;
+	projectTexCoord.y = -input.vertex_ScrnSpace.y / input.vertex_ScrnSpace.w / 2.0f + 0.5f;
+
+	// Calculate the amount of light on this pixel.
 	for(int i = 0; i < NUM_LIGHTS; ++i)
 	{
-	// Calculate the projected texture coordinates.
-	projectTexCoord.x =  input.vertex_ProjLightSpace[i].x / input.vertex_ProjLightSpace[i].w / 2.0f + 0.5f;
-	projectTexCoord.y = -input.vertex_ProjLightSpace[i].y / input.vertex_ProjLightSpace[i].w / 2.0f + 0.5f;
+		float lightIntensity = saturate(dot(bumpNormal, normalize(input.lightPos_LS[i])));
+		if(lightIntensity > 0.0f)
+		{
+		// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
+		lightIntensity = 
+		CalculateSpotLightIntensity(input.lightPos_LS[i], cb_lights[i].lightDirection, bumpNormal);
 
-	if((saturate(projectTexCoord.x) == projectTexCoord.x) && (saturate(projectTexCoord.y) == projectTexCoord.y))
-	{
-		// Sample the shadow map depth value from the depth texture using the sampler at the projected texture coordinate location.
-		depthValue = shaderTextures[6 + i].Sample(SampleTypeClamp, projectTexCoord).r;
-
-		// Calculate the depth of the light.
-		lightDepthValue = input.vertex_ProjLightSpace[i].z / input.vertex_ProjLightSpace[i].w;
-
-		// Subtract the bias from the lightDepthValue.
-		lightDepthValue = lightDepthValue - bias;
-
-		//float lightVisibility = shaderTextures[6 + i].SampleCmp(SampleTypeComp, projectTexCoord, lightDepthValue );
-
-		// Compare the depth of the shadow map value and the depth of the light to determine whether to shadow or to light this pixel.
-		// If the light is in front of the object then light the pixel, if not then shadow this pixel since an object (occluder) is casting a shadow on it.
-			if(lightDepthValue < depthValue)
-			{
-				// Calculate the amount of light on this pixel.
-				float lightIntensity = saturate(dot(bumpNormal, normalize(input.lightPos_LS[i])));
-
-				if(lightIntensity > 0.0f)
-				{
-					// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-					float spotLightIntensity = CalculateSpotLightIntensity(
-						input.lightPos_LS[i], // NOTE - this is NOT NORMALIZED!!!
-						cb_lights[i].lightDirection, 
-						bumpNormal/*input.normal*/);
-
-					lightColor += cb_lights[i].diffuseColor*spotLightIntensity* .3f; // spotlight
-					//lightColor += cb_lights[i].diffuseColor*lightIntensity* .2f; // square light
-				}
-			}
+		lightColor += (cb_lights[i].diffuseColor * lightIntensity);
 		}
 	}
 
     // Saturate the final light color.
     lightColor = saturate(lightColor);
-   // lightColor = saturate( CalculateNormalMapIntensity(input, lightColor, cb_lights[0].lightDirection));
+
+	// Sample the shadow value from the shadow texture using the sampler at the projected texture coordinate location.
+	float shadowValue = shaderTextures[6].Sample(SampleTypeClamp, projectTexCoord).r;
 
 	// TEXTURE ANIMATION -  Sample pixel color from texture at this texture coordinate location.
     input.tex.x += textureTranslation;

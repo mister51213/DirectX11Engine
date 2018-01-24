@@ -19,12 +19,6 @@ HorizontalBlurShaderClass::HorizontalBlurShaderClass(const HorizontalBlurShaderC
 {
 }
 
-
-//HorizontalBlurShaderClass::~HorizontalBlurShaderClass()
-//{
-//}
-
-
 bool HorizontalBlurShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 {
 	bool result;
@@ -41,16 +35,6 @@ bool HorizontalBlurShaderClass::Initialize(ID3D11Device* device, HWND hwnd)
 
 	return true;
 }
-
-
-//void HorizontalBlurShaderClass::Shutdown()
-//{
-//	// Shutdown the vertex and pixel shaders as well as the related objects.
-//	ShutdownShader();
-//
-//	return;
-//}
-
 
 bool HorizontalBlurShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, 
 									   XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, float screenWidth)
@@ -86,67 +70,6 @@ bool HorizontalBlurShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd
 
 	CreateShaders(device, hwnd, vsFilename, psFilename);
 
-	//// Initialize the pointers this function will use to null.
-	//errorMessage = 0;
-	//vertexShaderBuffer = 0;
-	//pixelShaderBuffer = 0;
-
- //   // Compile the vertex shader code.
-	////result = D3DX11CompileFromFile(vsFilename, NULL, NULL, "HorizontalBlurVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, 
-	////							   &vertexShaderBuffer, &errorMessage, NULL);
-	//result = D3DCompileFromFile(vsFilename, NULL, NULL, "HorizontalBlurVertexShader", "vs_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
-	//	0, &vertexShaderBuffer, &errorMessage);
-	//if(FAILED(result))
-	//{
-	//	// If the shader failed to compile it should have writen something to the error message.
-	//	if(errorMessage)
-	//	{
-	//		OutputShaderErrorMessage(errorMessage, hwnd, vsFilename);
-	//	}
-	//	// If there was nothing in the error message then it simply could not find the shader file itself.
-	//	else
-	//	{
-	//		MessageBox(hwnd, vsFilename, L"Missing Shader File", MB_OK);
-	//	}
-
-	//	return false;
-	//}
-
- //   // Compile the pixel shader code.
-	////result = D3DX11CompileFromFile(psFilename, NULL, NULL, "HorizontalBlurPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS, 0, NULL, 
-	////							   &pixelShaderBuffer, &errorMessage, NULL);
-	//result = D3DCompileFromFile(psFilename, NULL, NULL, "HorizontalBlurPixelShader", "ps_5_0", D3D10_SHADER_ENABLE_STRICTNESS,
-	//	0, &pixelShaderBuffer, &errorMessage);
-	//if(FAILED(result))
-	//{
-	//	// If the shader failed to compile it should have writen something to the error message.
-	//	if(errorMessage)
-	//	{
-	//		OutputShaderErrorMessage(errorMessage, hwnd, psFilename);
-	//	}
-	//	// If there was  nothing in the error message then it simply could not find the file itself.
-	//	else
-	//	{
-	//		MessageBox(hwnd, psFilename, L"Missing Shader File", MB_OK);
-	//	}
-
-	//	return false;
-	//}
-
- //   // Create the vertex shader from the buffer.
- //   result = device->CreateVertexShader(vertexShaderBuffer->GetBufferPointer(), vertexShaderBuffer->GetBufferSize(), NULL, &m_vertexShader);
-	//if(FAILED(result))
-	//{
-	//	return false;
-	//}
-
- //   // Create the pixel shader from the buffer.
- //   result = device->CreatePixelShader(pixelShaderBuffer->GetBufferPointer(), pixelShaderBuffer->GetBufferSize(), NULL, &m_pixelShader);
-	//if(FAILED(result))
-	//{
-	//	return false;
-	//}
-
 	// Create the vertex input layout description.
 	// This setup needs to match the VertexType stucture in the ModelClass and in the shader.
 	polygonLayout[0].SemanticName = "POSITION";
@@ -175,13 +98,6 @@ bool HorizontalBlurShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd
 	{
 		return false;
 	}
-
-	// Release the vertex shader buffer and pixel shader buffer since they are no longer needed.
-	//vertexShaderBuffer->Release();
-	//vertexShaderBuffer = 0;
-
-	//pixelShaderBuffer->Release();
-	//pixelShaderBuffer = 0;
 
 	// Create a texture sampler state description.
     samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
@@ -238,55 +154,6 @@ bool HorizontalBlurShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd
 	return true;
 }
 
-
-//void HorizontalBlurShaderClass::ShutdownShader()
-//{
-//	// Release the screen size constant buffer.
-//	if(m_screenSizeBuffer)
-//	{
-//		m_screenSizeBuffer->Release();
-//		m_screenSizeBuffer = 0;
-//	}
-//
-//	// Release the matrix constant buffer.
-//	if(m_matrixBuffer)
-//	{
-//		m_matrixBuffer->Release();
-//		m_matrixBuffer = 0;
-//	}
-//
-//	// Release the sampler state.
-//	if(m_sampleState)
-//	{
-//		m_sampleState->Release();
-//		m_sampleState = 0;
-//	}
-//
-//	// Release the layout.
-//	if(m_layout)
-//	{
-//		m_layout->Release();
-//		m_layout = 0;
-//	}
-//
-//	//// Release the pixel shader.
-//	//if(m_pixelShader)
-//	//{
-//	//	m_pixelShader->Release();
-//	//	m_pixelShader = 0;
-//	//}
-//
-//	//// Release the vertex shader.
-//	//if(m_vertexShader)
-//	//{
-//	//	m_vertexShader->Release();
-//	//	m_vertexShader = 0;
-//	//}
-//
-//	return;
-//}
-
-
 bool HorizontalBlurShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, XMMATRIX worldMatrix, XMMATRIX viewMatrix, 
 													XMMATRIX projectionMatrix, ID3D11ShaderResourceView* texture, float screenWidth)
 {
@@ -298,9 +165,6 @@ bool HorizontalBlurShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceC
 
 
 	// Transpose the matrices to prepare them for the shader.
-	//XMMATRIXTranspose(&worldMatrix, &worldMatrix);
-	//XMMATRIXTranspose(&viewMatrix, &viewMatrix);
-	//XMMATRIXTranspose(&projectionMatrix, &projectionMatrix);
 	worldMatrix = XMMatrixTranspose(worldMatrix);
 	viewMatrix = XMMatrixTranspose(viewMatrix);
 	projectionMatrix = XMMatrixTranspose(projectionMatrix);
@@ -365,8 +229,6 @@ void HorizontalBlurShaderClass::RenderShader(ID3D11DeviceContext* deviceContext,
 	deviceContext->IASetInputLayout(m_layout);
 
     // Set the vertex and pixel shaders that will be used to render this triangle.
-    //deviceContext->VSSetShader(m_vertexShader.Get(), NULL, 0);
-    //deviceContext->PSSetShader(m_pixelShader.Get(), NULL, 0);
 	deviceContext->VSSetShader(_vertexShader.Get(), NULL, 0);
 	deviceContext->PSSetShader(_pixelShader.Get(), NULL, 0);
 

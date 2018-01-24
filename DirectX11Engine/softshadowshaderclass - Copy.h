@@ -1,7 +1,10 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Filename: lightshaderinterface.h
+// Filename: SoftShadowShaderClass_Multi.h
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
+
+#pragma comment ( lib, "d3dcompiler.lib" )
+#pragma comment ( lib, "d3d11.lib" )
 
 /////////////
 // GLOBALS //
@@ -11,13 +14,21 @@ const int NUM_LIGHTS = 3;
 //////////////
 // INCLUDES //
 //////////////
-#include "ShaderClass.h"
+#include <d3dcompiler.h>
+#include <d3d11.h>
+#include <DirectXMath.h>
+#include <fstream>
+#include "../ShaderClass.h"
 #include "LightClass.h"
 
+using namespace std;
+using namespace DirectX;
+
+
 ////////////////////////////////////////////////////////////////////////////////
-// Class name: LightShaderClass
+// Class name: SoftShadowShaderClass_Multi
 ////////////////////////////////////////////////////////////////////////////////
-class LightShaderClass: public ShaderClass
+class SoftShadowShaderClass_Multi:public ShaderClass //ShaderBase
 {
 private:
 	///////////////////////// VS BUFFER TYPES //////////////////////////
@@ -30,13 +41,6 @@ private:
 	{
 		XMFLOAT3 cameraPosition;
 		float padding;
-	};
-
-	struct FogBufferType
-	{
-		float fogStart;
-		float fogEnd;
-		float padding1, padding2;
 	};
 
 	///////////////////////// PS BUFFER TYPES //////////////////////////
@@ -58,27 +62,25 @@ private:
 	};
 
 public:
-	LightShaderClass();
-	LightShaderClass(const LightShaderClass&);
-	~LightShaderClass();
+	SoftShadowShaderClass_Multi();
+	SoftShadowShaderClass_Multi(const SoftShadowShaderClass_Multi&);
 
-	bool Render(ID3D11DeviceContext* deviceContext, int indexCount,
-		MatrixBufferType& transforms,ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
+	bool Initialize(ID3D11Device*, HWND);
+	bool Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms,
+		vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
 		XMFLOAT4 ambientColor, LightClass* shadowLight[],
-		XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency);
-
-	virtual void RenderShader(ID3D11DeviceContext* deviceContext, int indexCount) override;
-
-	bool InitializeShader(ID3D11Device*, HWND, char*, char*);
-
-	bool SetShaderParameters(ID3D11DeviceContext* deviceContext,
-		MatrixBufferType& transforms, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
-		XMFLOAT4 ambientColor, LightClass* shadowLight[],
-		XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency);
+		XMFLOAT3 cameraPosition, float translation, float transparency);
 
 private:
-	// Total number of buffers including parent matrix buffer
-	const int _numBufferDescs = 5;
+	bool InitializeShader(ID3D11Device* device, HWND hwnd,/* WCHAR* */wstring vsFilename, /*WCHAR* */wstring psFilename);
+
+	bool SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType& transforms,
+		vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
+		XMFLOAT4 ambientColor, LightClass* shadowLight[],
+		XMFLOAT3 cameraPosition, float translation, float transparency);
+
+	virtual void RenderShader(ID3D11DeviceContext*, int) override;
+
+private:
 	ComPtr <ID3D11SamplerState> _sampleStateClamp;
-	ComPtr <ID3D11SamplerState> _sampleStateComp;
 };

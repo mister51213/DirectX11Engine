@@ -68,9 +68,7 @@ private:
 	bool RenderWaterToTexture(Scene* pScene, LightClass* lights[]);
 	bool RenderShadowsToTexture(Scene* pScene, LightClass* lights[]);
 	bool DrawFrame(Scene* pScene);
-
 	void RenderShadowScene(Scene * pScene);
-
 	void DrawModel(Model& model, MatrixBufferType& transforms, LightClass * shadowLights[] = nullptr, EShaderType shaderType = EShaderType::EMATERIAL_DEFAULT, XMMATRIX reflectionMatrix = XMMatrixIdentity());
 
 	unique_ptr<D3DClass> _D3D;
@@ -81,6 +79,7 @@ private:
 	unique_ptr<Model> _SkyInner;
 	unique_ptr<Model> _Earth;
 	unique_ptr<Model> _EarthInner;
+	// Render textures used for shadowing
 	vector<unique_ptr<RenderTextureClass>> _RenderTextures;
 	vector<unique_ptr<LightClass>>_Lights;
 
@@ -88,8 +87,6 @@ private:
 	SceneEffects _sceneEffects;
 	const int NUM_SHADOWS = 3; // FOR SHADOWING ONLY!!!
 
-
-	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
 	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
 	ID3D11ShaderResourceView* ApplyBlur(ID3D11ShaderResourceView* viewToBlur, RenderTextureClass* outputRenderTarget);
 	void RenderShadows(Scene* pScene);
@@ -105,6 +102,5 @@ private:
 	
 	unique_ptr<LightClass> m_SoftLight;
 	unique_ptr<Model> m_CubeModel,m_GroundModel,m_SphereModel;
-	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
 	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
 };

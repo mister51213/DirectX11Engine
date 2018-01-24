@@ -362,6 +362,15 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 	return true;
 }
 
+void GraphicsClass::DrawModel(Model& model, MatrixBufferType& transforms, LightClass * lights[], EShaderType shaderType, XMMATRIX reflectionMatrix)
+{
+	// NOTE - this transposes it BEFORE sending it in!!!!
+	transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(model.GetOrientation(), model.GetScale(), model.GetPosition()));
+	model.PutVerticesOnPipeline(_D3D->GetDeviceContext());
+	_ShaderManager->Render(_D3D->GetDeviceContext(), model.GetIndexCount(), transforms, model.GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), shaderType, reflectionMatrix);
+	model.Draw(_D3D->GetDeviceContext());
+}
+
 bool GraphicsClass::DrawFrame(Scene* pScene)
 {
 	// UPDATE LIGHTS 	//@TODO // AWAY WITH THIS MADNESS! ~ properly loop / hold in the right containers
@@ -425,7 +434,6 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 	return true;
 }
 
-#pragma region NEW LOGIC
 void GraphicsClass::RenderShadowScene(Scene* pScene)
 {
 	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, translateMatrix;
@@ -483,7 +491,7 @@ ID3D11ShaderResourceView* GraphicsClass::ApplyBlur(ID3D11ShaderResourceView* vie
 	_D3D->TurnZBufferOff();
 	_Camera->GetBaseViewMatrix(baseViewMatrix);
 
-	// Tex 1
+	// Downsample
 	m_DownSampleTexure->SetRenderTarget(_D3D->GetDeviceContext());
 	m_DownSampleTexure->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f); // REALLY UNNECESSARY???
 	m_DownSampleTexure->GetOrthoMatrix(orthoMatrix);
@@ -494,19 +502,19 @@ ID3D11ShaderResourceView* GraphicsClass::ApplyBlur(ID3D11ShaderResourceView* vie
 		vector<ComPtr<ID3D11ShaderResourceView>>(1, ComPtr<ID3D11ShaderResourceView>(viewToBlur)));
 	m_SmallWindow->Draw(_D3D->GetDeviceContext());
 
-	// Tex 2
+	// Apply horizontal blur
 	m_HorizontalBlurTexture->SetRenderTarget(_D3D->GetDeviceContext());
 	m_HorizontalBlurShader->Render(_D3D->GetDeviceContext(), m_SmallWindow->GetIndexCount(), worldMatrix, baseViewMatrix, orthoMatrix,
 		m_DownSampleTexure->GetShaderResourceView(), (float)(SHADOWMAP_WIDTH * 0.5f));
 	m_SmallWindow->Draw(_D3D->GetDeviceContext());
 
-	// Tex 3
+	// Apply vertical blur
 	m_VerticalBlurTexture->SetRenderTarget(_D3D->GetDeviceContext());
 	m_VerticalBlurShader->Render(_D3D->GetDeviceContext(), m_SmallWindow->GetIndexCount(), worldMatrix, baseViewMatrix, orthoMatrix,
 		m_HorizontalBlurTexture->GetShaderResourceView(), (float)(SHADOWMAP_HEIGHT * 0.5f));
 	m_SmallWindow->Draw(_D3D->GetDeviceContext());
 
-	// Tex 4
+	// Up sample texture
 	outputRenderTarget->SetRenderTarget(_D3D->GetDeviceContext());
 	outputRenderTarget->GetOrthoMatrix(orthoMatrix);
 	ID3D11ShaderResourceView* tempView = m_VerticalBlurTexture->GetShaderResourceView();
@@ -521,6 +529,7 @@ ID3D11ShaderResourceView* GraphicsClass::ApplyBlur(ID3D11ShaderResourceView* vie
 	_D3D->SetBackBufferRenderTarget();
 	_D3D->ResetViewport();
 
+	// Return the resource view of the blurred texture
 	return outputRenderTarget->GetShaderResourceView();
 }
 
@@ -618,7 +627,6 @@ void GraphicsClass::RenderShadows(Scene* pScene)
 	// Reset the viewport back to the original.
 	_D3D->ResetViewport();
 }
-#pragma endregion
 
 bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 {
@@ -626,7 +634,7 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 	float posX, posY, posZ;
 	bool result;
 
-	for (int i = 0; i < _RenderTextures.size()/*3*/; ++i)
+	for (int i = 0; i < _RenderTextures.size(); ++i)
 	{
 		_RenderTextures[i]->SetRenderTarget(_D3D->GetDeviceContext());
 		_RenderTextures[i]->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
@@ -636,12 +644,12 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 		// Draw all actors in scene to this render texture
 		for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 		{
-			// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
+			// DONT SHADOW THE WATER
 			if (it->first == "Water" || !it->second->GetModel())
 			{
 				continue;
 			}
-			DrawModel(*it->second->GetModel(), matBuffer,/*, worldMatrix, _Lights[i]->GetViewMatrix(), _Lights[i]->GetProjectionMatrix(), */nullptr, EDEPTH);
+			DrawModel(*it->second->GetModel(), matBuffer, nullptr, EDEPTH);
 		}
 	}
 
@@ -650,15 +658,6 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 	_D3D->ResetViewport();
 
 	return true;
-}
-
-void GraphicsClass::DrawModel(Model& model, MatrixBufferType& transforms, /*XMMATRIX &worldTransform, const XMMATRIX &viewMatrix, const XMMATRIX &projectionMatrix, */LightClass * lights[], EShaderType shaderType, XMMATRIX reflectionMatrix)
-{
-	// NOTE - this transposes it BEFORE sending it in!!!!
-	transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(model.GetOrientation(), model.GetScale(), model.GetPosition()));
-	model.PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	_ShaderManager->Render(_D3D->GetDeviceContext(), model.GetIndexCount(), transforms,	model.GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), shaderType, reflectionMatrix);
-	model.Draw(_D3D->GetDeviceContext());
 }
 
 bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[])

@@ -1486,5 +1486,17 @@
     <FxCompile Include="Diffuse_vs.hlsl">
       <Filter>Shaders_HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="Light_SoftShadows_ps.hlsl">
+      <Filter>Shaders_HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="Light_SoftShadows_vs.hlsl">
+      <Filter>Shaders_HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="MultiShadows_ps.hlsl">
+      <Filter>Shaders_HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="MultiShadows_vs.hlsl">
+      <Filter>Shaders_HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
