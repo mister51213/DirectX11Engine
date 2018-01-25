@@ -328,7 +328,7 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 
 	// 2. Update Camera
 	XMFLOAT3 camPos = pScene->GetCamera()->GetPosition();
-	XMFLOAT3 camRot = pScene->GetCamera()->GetOrientation();
+	XMFLOAT3 camRot = pScene->GetCamera()->GetOrientation(); //XMFLOAT3(90, 0, 0);
 	_Camera->SetPosition(camPos.x, camPos.y, camPos.z);
 	_Camera->SetRotation(camRot.x, camRot.y, camRot.z);
 
@@ -397,7 +397,7 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 	LightClass* lights[3] = { _Lights[0].get(), _Lights[1].get(), _Lights[2].get() };
 
 	// DRAW TO RENDER TEXTURES
-	//RenderWaterToTexture(pScene, lights);
+	RenderWaterToTexture(pScene, lights);
 	RenderShadowsToTexture(pScene, lights);
 
 	// BLUR SHADOWS TEXTURE
@@ -417,12 +417,12 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 	////////////////// RENDER ACTUAL SCENE  /////////////////////////
 
 	//////// BACKGROUND /////////
-	//_D3D->EnableAlphaBlending();
-	//DrawModel(*_Earth, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	//DrawModel(*_EarthInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	//DrawModel(*_Sky, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	//DrawModel(*_SkyInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	//_D3D->DisableAlphaBlending();
+	_D3D->EnableAlphaBlending();
+	DrawModel(*_Earth, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
+	DrawModel(*_EarthInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
+	DrawModel(*_Sky, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
+	DrawModel(*_SkyInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
+	_D3D->DisableAlphaBlending();
 
 	//////// OTHER OBJECTS /////////
 	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
@@ -445,13 +445,13 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 	}
 	
 	////////// RENDER WATER //////////////
-	//if (pScene->_Actors["Water"]->GetModel())
-	//{
-	//	DrawModel(*pScene->_Actors["Water"]->GetModel(), transforms, lights, EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
-	//}
+	if (pScene->_Actors["Water"]->GetModel())
+	{
+		DrawModel(*pScene->_Actors["Water"]->GetModel(), transforms, lights, EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
+	}
 	
 	///////////////// UI ///////////////////
-	//RenderText();
+	RenderText();
 
 	// Present the rendered scene to the screen.
 	_D3D->EndScene();
