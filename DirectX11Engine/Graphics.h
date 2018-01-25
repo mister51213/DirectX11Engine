@@ -79,13 +79,19 @@ private:
 	unique_ptr<Model> _SkyInner;
 	unique_ptr<Model> _Earth;
 	unique_ptr<Model> _EarthInner;
-	// Render textures used for shadowing
-	vector<unique_ptr<RenderTextureClass>> _RenderTextures;
-	vector<unique_ptr<LightClass>>_Lights;
 
 	/////////// GLOBAL EFFECTS /////////////
 	SceneEffects _sceneEffects;
 	const int NUM_SHADOWS = 3; // FOR SHADOWING ONLY!!!
+
+	// Render textures used for shadowing
+	vector<unique_ptr<RenderTextureClass>> _DepthTextures;
+	vector<unique_ptr<LightClass>>_Lights;
+
+	// INTEGRATED SOFT SHADOWS //
+	unique_ptr<RenderTextureClass> _SceneShadows;
+	unique_ptr<RenderTextureClass> _SceneShadowsBlurred;
+	vector<ComPtr<ID3D11ShaderResourceView>> _DepthViews;
 
 	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
 	ID3D11ShaderResourceView* ApplyBlur(ID3D11ShaderResourceView* viewToBlur, RenderTextureClass* outputRenderTarget);

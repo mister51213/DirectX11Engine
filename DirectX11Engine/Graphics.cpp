@@ -38,14 +38,23 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	// SHADOW RENDER TEXTURES //
 	for (int i = 0; i < NUM_SHADOWS; ++i)
 	{
-		_RenderTextures.push_back(unique_ptr<RenderTextureClass>());
-		_RenderTextures[i].reset(new RenderTextureClass);
+		_DepthTextures.push_back(unique_ptr<RenderTextureClass>());
+		_DepthTextures[i].reset(new RenderTextureClass);
 
-		if (_RenderTextures[i])
+		if (_DepthTextures[i])
 		{
-			_RenderTextures[i]->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR), "render to texture";
+			_DepthTextures[i]->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR), "render to texture";
+
+			// FOR SOFT SHADOWING
+			_DepthViews.emplace_back(_DepthTextures[i]->GetShaderResourceView());
 		}
 	}
+
+	// BLURRED SCENE SHADOWS CLASS
+	_SceneShadows.reset(new RenderTextureClass);
+	_SceneShadows->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
+	_SceneShadowsBlurred.reset(new RenderTextureClass);
+	_SceneShadowsBlurred->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
 
 	// WATER RENDER TEXTURES
 	//_RefractionTexture.reset(new RenderTextureClass); // TEMP TEST
@@ -95,9 +104,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		"../DirectX11Engine/data/alpha.dds",
 		"../DirectX11Engine/data/bumpMap.dds", // normal map
 		"../DirectX11Engine/data/specMap.dds",
-		"../DirectX11Engine/data/specMap.dds",
-		"../DirectX11Engine/data/specMap.dds",
 		"../DirectX11Engine/data/specMap.dds"
+		//"../DirectX11Engine/data/specMap.dds",
+		//"../DirectX11Engine/data/specMap.dds"
 	};
 
 	int i = 0;
@@ -111,14 +120,15 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 
 		it->second->InstantiateModel(new Model(it->second->GetScale(), it->second->GetOrientation(), it->second->GetPosition(), it->first));
 
-		vector<string> texArray(9, "../DirectX11Engine/data/" + texNames[i]);
+		// TODO: change to 7 textures (ONLY NEED 1 FOR SHADOWING NOW)
+		vector<string> texArray(/*9*/7, "../DirectX11Engine/data/" + texNames[i]);
 		it->second->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/" + meshNames[i],
 			defaultTex, EShaderType::ELIGHT_SPECULAR);
 
 		// Store the render texture in the texture view array of each model to make it accessible to the graphics pipeline
-		for (int idx = 0; idx < _RenderTextures.size(); ++idx)
+		for (int idx = 0; idx < _DepthTextures.size(); ++idx)
 		{
-			it->second->GetModel()->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
+			it->second->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 		}
 
 		++i;
@@ -135,15 +145,16 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		"../DirectX11Engine/data/alpha.dds",
 		"../DirectX11Engine/data/bumpMap.dds", // normal map
 		"../DirectX11Engine/data/specMap.dds",
-		"../DirectX11Engine/data/noise.png",
-		"../DirectX11Engine/data/noise.png",
-		"../DirectX11Engine/data/noise.png" };
+		"../DirectX11Engine/data/noise.png"//,
+		//"../DirectX11Engine/data/noise.png",
+		//"../DirectX11Engine/data/noise.png" 
+	};
 	pScene->_Actors["Wall"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/wall.txt", wallTex, EShaderType::ELIGHT_SPECULAR);
 	
 	// Set Wall Model Shadow textures
-	for (int idx = 0; idx < _RenderTextures.size(); ++idx)
+	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
 	{
-		pScene->_Actors["Wall"]->GetModel()->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
+		pScene->_Actors["Wall"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 	}
 	pScene->_Actors["Bath"]->InstantiateModel(new Model(pScene->_Actors["Bath"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Bath"));
 	vector<string>bathTex{
@@ -153,15 +164,16 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		"../DirectX11Engine/data/alpha.dds",
 		"../DirectX11Engine/data/nMap5.png", // normal map
 		"../DirectX11Engine/data/specMap.dds",
-		"../DirectX11Engine/data/noise.png",
-		"../DirectX11Engine/data/noise.png",
-		"../DirectX11Engine/data/noise.png" };
+		"../DirectX11Engine/data/noise.png"//,
+		//"../DirectX11Engine/data/noise.png",
+		//"../DirectX11Engine/data/noise.png" 
+	};
 	pScene->_Actors["Bath"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/bath.txt", bathTex, EShaderType::ELIGHT_SPECULAR);
 	
 	// Set Bath Model Shadow textures
-	for (int idx = 0; idx < _RenderTextures.size(); ++idx)
+	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
 	{
-		pScene->_Actors["Bath"]->GetModel()->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
+		pScene->_Actors["Bath"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 	}
 
 	pScene->_Actors["Ground"]->InstantiateModel(new Model(pScene->_Actors["Ground"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Ground"));
@@ -172,17 +184,18 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		"../DirectX11Engine/data/noise.png",	// alpha map
 		"../DirectX11Engine/data/nMap4.png",	// normal map
 		"../DirectX11Engine/data/specMap.dds",
-		"../DirectX11Engine/data/noise.png",
-		"../DirectX11Engine/data/noise.png",
-		"../DirectX11Engine/data/noise.png" };
+		"../DirectX11Engine/data/noise.png"//,
+		//"../DirectX11Engine/data/noise.png",
+		//"../DirectX11Engine/data/noise.png" 
+	};
 
 	pScene->_Actors["Ground"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt"/*"../DirectX11Engine/data/SnowTerrain_LowPoly.txt"*/, groundTex, EShaderType::ELIGHT_SPECULAR);
 	pScene->_Actors["Ground"]->GetModel()->SetScale(XMFLOAT3(3, 3, 3));
 
 	// Set Bath Model Shadow textures
-	for (int idx = 0; idx < _RenderTextures.size(); ++idx)
+	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
 	{
-		pScene->_Actors["Ground"]->GetModel()->SetResourceView(6 + idx, _RenderTextures[idx]->GetShaderResourceView());
+		pScene->_Actors["Ground"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 	}
 
 	pScene->_Actors["Water"]->InstantiateModel(new Model(pScene->_Actors["Water"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Water"));
@@ -341,23 +354,23 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 	UpdateFpsString(_D3D->GetDeviceContext(), fps);
 	UpdatePositionStrings(_D3D->GetDeviceContext(), camPos.x, camPos.y, camPos.z, camRot.x, camRot.y, camRot.z);
 
-	if (!bDrawAlternate)
+	// 5. Draw the Actual frame
+	//if (!bDrawAlternate)
 	{
-		// 5. Draw the Actual frame
 		DrawFrame(pScene);
 	}
-	else
-	{
-		// SOFT SHADOW DEMO
-		static float lightPositionX = -5.0f;
-		lightPositionX += 0.05f;
-		if (lightPositionX > 5.0f)
-		{
-			lightPositionX = -5.0f;
-		}
-		m_SoftLight->SetPosition(XMFLOAT3(lightPositionX, 8.0f, -5.0f));
-		RenderShadowScene(pScene);
-	}
+	//else
+	//{
+	//	// SOFT SHADOW DEMO
+	//	static float lightPositionX = -5.0f;
+	//	lightPositionX += 0.05f;
+	//	if (lightPositionX > 5.0f)
+	//	{
+	//		lightPositionX = -5.0f;
+	//	}
+	//	m_SoftLight->SetPosition(XMFLOAT3(lightPositionX, 8.0f, -5.0f));
+	//	RenderShadowScene(pScene);
+	//}
 
 	return true;
 }
@@ -384,8 +397,11 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 	LightClass* lights[3] = { _Lights[0].get(), _Lights[1].get(), _Lights[2].get() };
 
 	// DRAW TO RENDER TEXTURES
+	//RenderWaterToTexture(pScene, lights);
 	RenderShadowsToTexture(pScene, lights);
-	RenderWaterToTexture(pScene, lights);
+
+	// BLUR SHADOWS TEXTURE
+	ID3D11ShaderResourceView* blurredShadows = ApplyBlur(_SceneShadows->GetShaderResourceView(), _SceneShadowsBlurred.get());
 
 	// DRAW MAIN SCENE
 	_D3D->BeginScene(1.0f, 1.0f, 1.0f, 1.0f);
@@ -401,12 +417,12 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 	////////////////// RENDER ACTUAL SCENE  /////////////////////////
 
 	//////// BACKGROUND /////////
-	_D3D->EnableAlphaBlending();
-	DrawModel(*_Earth, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	DrawModel(*_EarthInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	DrawModel(*_Sky, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	DrawModel(*_SkyInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	_D3D->DisableAlphaBlending();
+	//_D3D->EnableAlphaBlending();
+	//DrawModel(*_Earth, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
+	//DrawModel(*_EarthInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
+	//DrawModel(*_Sky, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
+	//DrawModel(*_SkyInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
+	//_D3D->DisableAlphaBlending();
 
 	//////// OTHER OBJECTS /////////
 	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
@@ -415,18 +431,27 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 		if (it->first == "Water" || !it->second->GetModel()) continue;
 
 		//_D3D->EnableAlphaBlending();
-		DrawModel(*it->second->GetModel(), transforms,/*, worldTransform, viewMatrix, projectionMatrix, */lights);
+		//DrawModel(*it->second->GetModel(), transforms,lights);
 		//_D3D->DisableAlphaBlending();
+
+		// BLURRED SCENE SHADOWS CLASS
+		it->second->GetModel()->SetResourceView(6, blurredShadows);
+
+		transforms.world = XMMatrixTranspose(ComputeWorldTransform(it->second->GetModel()->GetOrientation(), it->second->GetModel()->GetScale(), it->second->GetModel()->GetPosition()));
+		it->second->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+		_ShaderManager->_ShadowShaderSoft->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), transforms,
+			it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor, lights, _Camera->GetPosition(), 0.f, 1.f);
+		it->second->GetModel()->Draw(_D3D->GetDeviceContext());
 	}
 	
 	////////// RENDER WATER //////////////
-	if (pScene->_Actors["Water"]->GetModel())
-	{
-		DrawModel(*pScene->_Actors["Water"]->GetModel(), transforms/*, worldTransform, viewMatrix, projectionMatrix*/, lights, EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
-	}
+	//if (pScene->_Actors["Water"]->GetModel())
+	//{
+	//	DrawModel(*pScene->_Actors["Water"]->GetModel(), transforms, lights, EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
+	//}
 	
 	///////////////// UI ///////////////////
-	RenderText();
+	//RenderText();
 
 	// Present the rendered scene to the screen.
 	_D3D->EndScene();
@@ -448,31 +473,26 @@ void GraphicsClass::RenderShadowScene(Scene* pScene)
 	// Generate the view matrix based on the camera's position.
 	_Camera->UpdateViewPoint();
 	viewMatrix = _Camera->GetViewMatrix();
-
-	worldMatrix = _D3D->GetWorldMatrix();
 	projectionMatrix = _D3D->GetProjectionMatrix();
+
 	XMFLOAT3 cubePos = m_CubeModel->GetPosition();
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(cubePos.x, cubePos.y, cubePos.z));
+	worldMatrix =XMMatrixTranslation(cubePos.x, cubePos.y, cubePos.z);
 	m_CubeModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
 	m_SoftShadowShader->Render(_D3D->GetDeviceContext(), m_CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		m_CubeModel->GetMaterial()->GetResourceArray()[0],blurredShadows,
 		m_SoftLight->GetPosition(), _sceneEffects.ambientColor, m_SoftLight->GetDiffuseColor());
 	m_CubeModel->Draw(_D3D->GetDeviceContext());
 
-	// Reset the world matrix.
-	worldMatrix = _D3D->GetWorldMatrix();
 	XMFLOAT3 sphPos = m_SphereModel->GetPosition();
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(sphPos.x, sphPos.y, sphPos.z));
+	worldMatrix = XMMatrixTranslation(sphPos.x, sphPos.y, sphPos.z);
 	m_SphereModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
 	m_SoftShadowShader->Render(_D3D->GetDeviceContext(), m_SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		m_SphereModel->GetMaterial()->GetResourceArray()[0],blurredShadows, 
 		m_SoftLight->GetPosition(), _sceneEffects.ambientColor, m_SoftLight->GetDiffuseColor());
 	m_SphereModel->Draw(_D3D->GetDeviceContext());
 
-	// Reset the world matrix.
-	worldMatrix = _D3D->GetWorldMatrix();
 	XMFLOAT3 gPos = m_GroundModel->GetPosition();
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(gPos.x, gPos.y, gPos.z));
+	worldMatrix = XMMatrixTranslation(gPos.x, gPos.y, gPos.z);
 	m_GroundModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
 	m_SoftShadowShader->Render(_D3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
 		m_GroundModel->GetMaterial()->GetResourceArray()[0], blurredShadows,
@@ -634,10 +654,10 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 	float posX, posY, posZ;
 	bool result;
 
-	for (int i = 0; i < _RenderTextures.size(); ++i)
+	for (int i = 0; i < _DepthTextures.size(); ++i)
 	{
-		_RenderTextures[i]->SetRenderTarget(_D3D->GetDeviceContext());
-		_RenderTextures[i]->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
+		_DepthTextures[i]->SetRenderTarget(_D3D->GetDeviceContext());
+		_DepthTextures[i]->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
 
 		MatrixBufferType matBuffer(XMMatrixIdentity(), XMMatrixTranspose(_Lights[i]->GetViewMatrix()), XMMatrixTranspose(_Lights[i]->GetProjectionMatrix()));
 
@@ -651,6 +671,26 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 			}
 			DrawModel(*it->second->GetModel(), matBuffer, nullptr, EDEPTH);
 		}
+	}
+
+	// NOW RENDER ALL OF THESE SHADOWS TO ONE GLOBAL SHADOW TEXTURE
+	_SceneShadows->SetRenderTarget(_D3D->GetDeviceContext());
+	_SceneShadows->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
+
+	MatrixBufferType transforms = { XMMatrixIdentity(), XMMatrixTranspose(_Camera->GetViewMatrix()), XMMatrixTranspose(_D3D->GetProjectionMatrix()) };
+
+	for (auto& itr = pScene->_Actors.begin(); itr != pScene->_Actors.end(); ++itr)
+	{
+		// DONT SHADOW THE WATER
+		if (itr->first == "Water" || !itr->second->GetModel())
+		{
+			continue;
+		}
+
+		transforms.world = XMMatrixTranspose(ComputeWorldTransform(itr->second->GetModel()->GetOrientation(), itr->second->GetModel()->GetScale(),itr->second->GetModel()->GetPosition()));
+		itr->second->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+		_ShaderManager->_ShadowShaderMulti->Render(_D3D->GetDeviceContext(), itr->second->GetModel()->GetIndexCount(), transforms, lights, _DepthViews);
+		itr->second->GetModel()->Draw(_D3D->GetDeviceContext());
 	}
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.

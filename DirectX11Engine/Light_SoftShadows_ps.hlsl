@@ -54,15 +54,15 @@ cbuffer TransparentBuffer:register(b2)
 
 struct PixelInputType
 {
-	float4 vertex_ModelSpace : TEXCOORD12;
-	float4 vertex_ScrnSpace : SV_POSITION;
+	float4 vertex_ModelSpace : SV_POSITION;
     float2 tex : TEXCOORD0;
 	float3 normal : NORMAL;
 	float3 tangent : TANGENT;
     float3 binormal : BINORMAL;
-	float3 viewDirection : TEXCOORD1;
-   // float4 vertex_ProjLightSpace[NUM_LIGHTS] : TEXCOORD6;
-    float3 lightPos_LS[NUM_LIGHTS] : TEXCOORD9;
+	float4 vertex_ScrnSpace : TEXCOORD1;
+	float3 viewDirection : TEXCOORD2;
+    //float4 vertex_ProjLightSpace[NUM_LIGHTS] : TEXCOORD6;
+    float3 lightPos_LS[NUM_LIGHTS] : TEXCOORD3;
 };
 
 // Calculates spot lights, based on position and direction of the light and of the direction of the surface.
@@ -115,10 +115,6 @@ float4 main(PixelInputType input) : SV_TARGET
 	// Set the default output color to the ambient light value for all pixels.
     float4 lightColor = cb_ambientColor* saturate(dot(bumpNormal, input.normal) + .2);
 
-	// Calculate the projected texture coordinates.
-	projectTexCoord.x =  input.vertex_ScrnSpace.x / input.vertex_ScrnSpace.w / 2.0f + 0.5f;
-	projectTexCoord.y = -input.vertex_ScrnSpace.y / input.vertex_ScrnSpace.w / 2.0f + 0.5f;
-
 	// Calculate the amount of light on this pixel.
 	for(int i = 0; i < NUM_LIGHTS; ++i)
 	{
@@ -136,8 +132,15 @@ float4 main(PixelInputType input) : SV_TARGET
     // Saturate the final light color.
     lightColor = saturate(lightColor);
 
+	// Calculate the projected texture coordinates.
+	projectTexCoord.x =  input.vertex_ScrnSpace.x / input.vertex_ScrnSpace.w / 2.0f + 0.5f;
+	projectTexCoord.y = -input.vertex_ScrnSpace.y / input.vertex_ScrnSpace.w / 2.0f + 0.5f;
+	//projectTexCoord.x =  input.vertex_ProjLightSpace.x / input.vertex_ProjLightSpace.w / 2.0f + 0.5f;
+	//projectTexCoord.y = -input.vertex_ProjLightSpace.y / input.vertex_ProjLightSpace.w / 2.0f + 0.5f;
+
 	// Sample the shadow value from the shadow texture using the sampler at the projected texture coordinate location.
 	float shadowValue = shaderTextures[6].Sample(SampleTypeClamp, projectTexCoord).r;
+	//float shadowValue = shaderTextures[6].Sample(SampleTypeClamp, input.tex).r;
 
 	// TEXTURE ANIMATION -  Sample pixel color from texture at this texture coordinate location.
     input.tex.x += textureTranslation;
@@ -149,7 +152,10 @@ float4 main(PixelInputType input) : SV_TARGET
 	textureColor = saturate((alphaValue * color1) + ((1.0f - alphaValue) * color2));
 
 	// Combine the light and texture color.
-	float4 finalColor = lightColor * textureColor;
+	//float4 finalColor = lightColor * textureColor *shadowValue;
+	//float4 finalColor = lightColor*shadowValue;
+	//float4 finalColor = textureColor*shadowValue;
+	float4 finalColor = float4(1,1,1,1)*shadowValue;
 
 	/////// TRANSPARENCY /////////
 	//finalColor.a = 0.2f;

@@ -52,6 +52,11 @@ bool SoftShadowShaderClass_Multi::InitializeShader(ID3D11Device* device, HWND hw
 
 	// Create the vertex input layout description.
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[5];
+	//polygonLayout[0] = MakeInputElementDesc("POSITION", DXGI_FORMAT_R32G32B32_FLOAT, 0);
+	//polygonLayout[1] = MakeInputElementDesc("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
+	//polygonLayout[2] = MakeInputElementDesc("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT);
+	//polygonLayout[3] = MakeInputElementDesc("TANGENT", DXGI_FORMAT_R32G32B32_FLOAT);
+	//polygonLayout[4] = MakeInputElementDesc("BINORMAL", DXGI_FORMAT_R32G32B32_FLOAT);
 	polygonLayout[0] = MakeInputElementDesc("POSITION", DXGI_FORMAT_R32G32B32_FLOAT, 0);
 	polygonLayout[1] = MakeInputElementDesc("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
 	polygonLayout[2] = MakeInputElementDesc("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT);
@@ -110,7 +115,7 @@ bool SoftShadowShaderClass_Multi::SetShaderParameters(ID3D11DeviceContext* devic
 	MapBuffer(sceneLights_VS, _vsBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
-	///////////////////// CAM INIT - VS BUFFER 1 //////////////////////////////////
+	///////////////////// CAM INIT - VS BUFFER 2 //////////////////////////////////
 	bufferNumber++;
 	CameraBufferType tempCamBuff = { cameraPosition, 0.f };
 	MapBuffer(tempCamBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
