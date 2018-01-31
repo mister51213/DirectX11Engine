@@ -166,7 +166,7 @@ float4 main(PixelInputType input) : SV_TARGET
 // TEST // TEST // TEST // TEST // TEST // TEST// TEST // TEST // TEST
 // TEST // TEST // TEST // TEST // TEST // TEST// TEST // TEST // TEST
 		
-		lightColor += (cb_lights[i].diffuseColor * lightIntensity) * 0.3;
+		lightColor += (cb_lights[i].diffuseColor * lightIntensity) * 0.4;
 		}
 	}
 
@@ -193,7 +193,7 @@ float4 main(PixelInputType input) : SV_TARGET
 	float4 finalColor;
 	//if(bInsideSpotlight)
 	{
-		finalColor = lightColor * textureColor * shadowValue * gamma;
+		finalColor = lightColor * textureColor * shadowValue;// * gamma;
 	}
 	//else
 	//{

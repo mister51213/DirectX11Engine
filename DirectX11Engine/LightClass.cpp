@@ -39,10 +39,10 @@ void LightClass::GenerateViewMatrix()
 
 void LightClass::GenerateProjectionMatrix(float screenDepth, float screenNear)
 {
-	//float fieldOfView = (float)XM_PI / 2.f;
+	float fieldOfView = (float)XM_PI / 2.f;
 	//float fieldOfView = (float)XM_PI / .3f; // wider fov to hide frustum overlap with surface
 	//float fieldOfView = (float)XM_PI / 1.2f; // wider fov to hide frustum overlap with surface
-	float fieldOfView = (float)XM_PI / 1.5f; // narrower fov to hide frustum overlap with surface
+	//float fieldOfView = (float)XM_PI / 1.5f; // narrower fov to hide frustum overlap with surface
 
 	float screenAspect = 1.0f;
 	_lightBufferVS->projectionMatrix = XMMatrixPerspectiveFovLH(fieldOfView, screenAspect, screenNear, screenDepth);
