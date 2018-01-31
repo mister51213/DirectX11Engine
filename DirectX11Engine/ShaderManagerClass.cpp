@@ -192,7 +192,7 @@ bool ShaderManagerClass::Render(
 	{
 	case EShaderType::ETEXTURE:
 		result = _TextureShader->Render(device, indexCount,	transforms,
-			material->GetResourceArray(), 
+			//material->GetResourceArray(), 
 			material->GetTextureObject()->_textureViews, material->translation2D, material->textureScale);
 		if (!result) return false;
 		//_TextureShader->RenderShader(device, indexCount);
@@ -259,7 +259,7 @@ bool ShaderManagerClass::Render(
 
 	default:
 		result = _TextureShader->Render(device, indexCount, transforms,
-			material->GetResourceArray(),
+			//material->GetResourceArray(),
 			material->GetTextureObject()->_textureViews, material->translation2D, material->textureScale);
 		if (!result) ThrowRuntime("Could not render the texture shader.");
 		//_TextureShader->RenderShader(device, indexCount);

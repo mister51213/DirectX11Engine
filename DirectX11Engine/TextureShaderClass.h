@@ -29,7 +29,7 @@ public:
 
 	/** pass in the name of the HLSL shader files inside this function */
 	bool Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms,
-	ID3D11ShaderResourceView** textureArray, 
+	//ID3D11ShaderResourceView** textureArray, 
 	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, const XMFLOAT2& translation = XMFLOAT2(0.f,0.f), const float scale = 1.f);
 
 private:
@@ -37,6 +37,6 @@ private:
 	virtual bool InitializeShader(ID3D11Device* device, HWND hwnd, char* vsFileName, char* psFileName) override;
 
 	bool SetShaderParameters(ID3D11DeviceContext*, MatrixBufferType& transforms,
-		ID3D11ShaderResourceView** textureArray, 
+		//ID3D11ShaderResourceView** textureArray, 
 		vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, const XMFLOAT2& translation, const float scale);
 };

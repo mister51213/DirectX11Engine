@@ -527,7 +527,7 @@ ID3D11ShaderResourceView* GraphicsClass::ApplyBlur(ID3D11ShaderResourceView* vie
 	m_SmallWindow->PutVerticesOnPipeline(_D3D->GetDeviceContext());
 	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), m_SmallWindow->GetIndexCount(),
 		MatrixBufferType(XMMatrixTranspose(worldMatrix), XMMatrixTranspose(baseViewMatrix), XMMatrixTranspose(orthoMatrix)),
-		&viewToBlur, 
+		//&viewToBlur, 
 		vector<ComPtr<ID3D11ShaderResourceView>>(1, ComPtr<ID3D11ShaderResourceView>(viewToBlur)));
 	m_SmallWindow->Draw(_D3D->GetDeviceContext());
 
@@ -550,7 +550,7 @@ ID3D11ShaderResourceView* GraphicsClass::ApplyBlur(ID3D11ShaderResourceView* vie
 	m_FullScreenWindow->PutVerticesOnPipeline(_D3D->GetDeviceContext());
 	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), m_FullScreenWindow->GetIndexCount(), 
 		MatrixBufferType(XMMatrixTranspose(worldMatrix), XMMatrixTranspose(baseViewMatrix), XMMatrixTranspose(orthoMatrix)),
-		&tempView,
+		//&tempView,
 		vector<ComPtr<ID3D11ShaderResourceView>>(1, ComPtr<ID3D11ShaderResourceView>(m_VerticalBlurTexture->GetShaderResourceView())));
 	m_FullScreenWindow->Draw(_D3D->GetDeviceContext());
 
