@@ -224,7 +224,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		_Lights[i]->SetDiffuseColor(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 		_Lights[i]->SetLookAt(pScene->_LightActors[i]->GetLookAt());
 		_Lights[i]->SetPosition(pScene->_LightActors[i]->GetPosition());
-		_Lights[i]->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+		//_Lights[i]->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+		_Lights[i]->GenerateOrthoMatrix(50.0f, SHADOWMAP_DEPTH, SHADOWMAP_NEAR);
+
 	}
 
 	// Effects
@@ -266,8 +268,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	m_SoftLight->SetAmbientColor(XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f));
 	m_SoftLight->SetDiffuseColor(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 	m_SoftLight->SetLookAt(XMFLOAT3(0.00f, 0.000f, 0.000f));
-	//m_SoftLight->SetLookAt(m_GroundModel->GetPosition() - XMFLOAT3(-5,8,0));
-	m_SoftLight->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+	//m_SoftLight->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+	m_SoftLight->GenerateOrthoMatrix(20.0f, SHADOWMAP_DEPTH, SHADOWMAP_NEAR);
 
 	// Create the render to texture object.
 	m_RenderTexture.reset(new RenderTextureClass);

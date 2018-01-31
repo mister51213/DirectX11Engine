@@ -134,8 +134,8 @@ float4 main(PixelInputType input) : SV_TARGET
 
 	//////////////// AMBIENT BASE COLOR ////////////////
 	// Set the default output color to the ambient light value for all pixels.
-    //float4 lightColor = cb_ambientColor * saturate(dot(bumpNormal, input.normal) + .2);
-    float4 lightColor = float4(0,0,0,0);
+    float4 lightColor = cb_ambientColor * saturate(dot(bumpNormal, input.normal) + .2);
+   // float4 lightColor = float4(0,0,0,0);
 
 	// Calculate the amount of light on this pixel.
 	for(int i = 0; i < NUM_LIGHTS; ++i)
@@ -145,8 +145,27 @@ float4 main(PixelInputType input) : SV_TARGET
 		{
 		// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
 		lightIntensity = 
-		CalculateSpotLightIntensity(input.lightPos_LS[i], cb_lights[i].lightDirection, bumpNormal, bInsideSpotlight);
+			CalculateSpotLightIntensity(input.lightPos_LS[i], cb_lights[i].lightDirection, bumpNormal, bInsideSpotlight);
 
+// TEST // TEST // TEST // TEST // TEST // TEST// TEST // TEST // TEST
+// TEST // TEST // TEST // TEST // TEST // TEST// TEST // TEST // TEST
+	float3 lightToVertex_WS = -input.lightPos_LS[i];
+	float dotProduct = saturate(dot(normalize(lightToVertex_WS), normalize(cb_lights[i].lightDirection)));
+	float dpCutOff = .96f;
+	if(dotProduct > dpCutOff)
+	{
+		bInsideSpotlight = true;
+		float expandedRange = (dotProduct - dpCutOff)/(1.f - dpCutOff);
+		lightIntensity =  saturate(dot(bumpNormal, normalize(input.lightPos_LS[i]))* expandedRange);
+	}
+	else
+	{
+		bInsideSpotlight = false;
+		lightIntensity = 0;
+	}
+// TEST // TEST // TEST // TEST // TEST // TEST// TEST // TEST // TEST
+// TEST // TEST // TEST // TEST // TEST // TEST// TEST // TEST // TEST
+		
 		lightColor += (cb_lights[i].diffuseColor * lightIntensity) * 0.3;
 		}
 	}
@@ -174,17 +193,19 @@ float4 main(PixelInputType input) : SV_TARGET
 	float4 finalColor;
 	//if(bInsideSpotlight)
 	{
-	finalColor = lightColor * textureColor * shadowValue * gamma;
+		finalColor = lightColor * textureColor * shadowValue * gamma;
 	}
 	//else
 	//{
-	//finalColor = float4(.15,.15,.15,1)*textureColor;
+	//	finalColor = float4(.15,.15,.15,1)*textureColor;
 	//}
+
+
+
 	//if(lightColor.x == 0)
 	//{
 	//	finalColor =  cb_ambientColor * saturate(dot(bumpNormal, input.normal) + .2) * textureColor;
 	//}
-
 
 	return finalColor;
 }

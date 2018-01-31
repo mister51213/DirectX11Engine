@@ -25,6 +25,9 @@ public:
 	//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	void GenerateViewMatrix();
 	void GenerateProjectionMatrix(float screenDepth, float screenNear);
+
+	void GenerateOrthoMatrix(float width, float depthPlane, float nearPlane);
+
 	void SetPosition(const XMFLOAT3&pos);
 
 	XMMATRIX GetViewMatrix() const;

@@ -102,7 +102,7 @@ void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
 		_LightActors[i]->SetLookAt(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	}
 
-	_LightActors[0]->SetPosition(XMFLOAT3(-10, 15.f, 0.f));
+	_LightActors[0]->SetPosition(XMFLOAT3(-20, 30.f, 0.f));
 	_LightActors[0]->SetLookAt((actors["Sphere"]->GetPosition() - _LightActors[0]->GetPosition()));
 	//_LightActors[0]->SetLookAt(XMFLOAT3(0, 0, 0));
 	//_LightActors[0]->SetLookAt(-1*XMFLOAT3(10.f, 10.0f, 0.f));
@@ -110,7 +110,7 @@ void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
 	//_LightActors[0]->SetLookAt((-1.f*_LightActors[0]->GetPosition()));
 	//_LightActors[0]->SetLookAt(actors["Sphere"]->GetPosition());
 
-	_LightActors[1]->SetPosition(XMFLOAT3(0, 15.0f, 0.f));
+	_LightActors[1]->SetPosition(XMFLOAT3(0, 30.0f, 0.f));
 	_LightActors[1]->SetLookAt((actors["Sphere1"]->GetPosition() - _LightActors[1]->GetPosition()));
 	//_LightActors[1]->SetLookAt(XMFLOAT3(0, 0, 0));
 	//_LightActors[1]->SetLookAt(-1*XMFLOAT3(-10.f, 10.0f, 0.f));
@@ -118,7 +118,7 @@ void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
 	//_LightActors[1]->SetLookAt((-1.f*_LightActors[1]->GetPosition()));
 	//_LightActors[1]->SetLookAt(actors["Sphere1"]->GetPosition());
 
-	_LightActors[2]->SetPosition(XMFLOAT3(0.f, 15.0f, 0));
+	_LightActors[2]->SetPosition(XMFLOAT3(0.f, 30.0f, -20));
 	_LightActors[2]->SetLookAt((actors["Cube"]->GetPosition() - _LightActors[2]->GetPosition()));
 	//_LightActors[2]->SetLookAt(XMFLOAT3(0,0,0));
 	//_LightActors[2]->SetLookAt(-1*XMFLOAT3(0.f, 10.0f, 10.f));
