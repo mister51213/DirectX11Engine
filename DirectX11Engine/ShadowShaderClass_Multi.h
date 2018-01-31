@@ -27,9 +27,17 @@ using namespace DirectX;
 class ShadowShaderClass_Multi:public ShaderClass
 {
 private:
+	///////////////////////// VS BUFFER TYPES //////////////////////////
 	struct SceneLightBufferType_VS
 	{
 		LightDataTemplate_VS lights[NUM_LIGHTS];
+	};
+
+	///////////////////////// PS BUFFER TYPES //////////////////////////
+	struct SceneLightBufferType_PS
+	{
+		XMFLOAT4 ambientColor;
+		LightDataTemplate_PS lights[NUM_LIGHTS];
 	};
 
 public:

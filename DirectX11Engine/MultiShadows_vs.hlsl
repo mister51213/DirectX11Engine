@@ -13,6 +13,9 @@ struct LightTemplate_VS
 	float4 lightPosition_WS;
 };
 
+//////////////
+// CBUFFERS //
+//////////////
 cbuffer MatrixBuffer:register(b0)
 {
 	matrix cb_worldMatrix;

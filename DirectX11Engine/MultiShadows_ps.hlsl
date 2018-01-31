@@ -13,6 +13,25 @@ Texture2D depthTextures[3]; // Only pass in the depth shaded textures here
 SamplerState SampleTypeClamp : register(s0);
 
 //////////////
+// CBUFFERS //
+//////////////
+struct LightTemplate_PS
+{
+	int type;
+	float3 padding;
+	float4 diffuseColor;
+    float3 lightDirection; //(lookat?) //@TODO pass from VS BUFFER?
+    float specularPower;
+    float4 specularColor;
+};
+
+cbuffer SceneLightBuffer:register(b0)
+{
+	float4 cb_ambientColor;
+	LightTemplate_PS cb_lights[NUM_LIGHTS];
+}
+
+//////////////
 // TYPEDEFS //
 //////////////
 struct PixelInputType
@@ -24,6 +43,37 @@ struct PixelInputType
     float3 lightPos_LS[NUM_LIGHTS] : TEXCOORD4;
 };
 
+// SUPPORT FUNCTIONS
+float CalculateSpotLightIntensity(
+	float3 LightPos_VertexSpace, 
+	float3 LightDirection_WS, 
+	float3 SurfaceNormal_WS)
+{
+	// CALCULATE SPOTLIGHT ATTENUATION
+	float maxLightRange = 50.f;
+	float dist = length(LightPos_VertexSpace);
+	float attenuation = 1.f - (maxLightRange - dist) / maxLightRange;
+
+	float3 lightToVertex_WS = -LightPos_VertexSpace;
+	
+	float dotProduct = saturate(dot(normalize(lightToVertex_WS), normalize(LightDirection_WS)));
+
+	// METALLIC EFFECT (deactivate for now)
+	float metalEffect = saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace)));
+
+	float dpCutOff = .85f;
+	if(dotProduct > dpCutOff /*&& metalEffect > .55*/)
+	{
+		float expandedRange = (dotProduct - dpCutOff)/(1.f - dpCutOff);
+		return saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace))* expandedRange/**attenuation*/);
+	}
+	else
+	{
+		return 0.f;
+	}
+}
+
+// ENTRY POINT
 float4 main(PixelInputType input) : SV_TARGET
 {
 	float2 projectTexCoord;
@@ -61,7 +111,9 @@ float4 main(PixelInputType input) : SV_TARGET
 
 				if(lightIntensity > 0.0f)
 				{
-					lightColor += (float4(1.0f, 1.0f, 1.0f, 1.0f) * lightIntensity) * .3f; // spotlight
+					float spotlightIntensity = CalculateSpotLightIntensity(input.lightPos_LS[i], cb_lights[i].lightDirection, input.normal);
+					//lightColor += (float4(1.0f, 1.0f, 1.0f, 1.0f) * lightIntensity) * .3f; // spotlight
+					lightColor += float4(1.0f, 1.0f, 1.0f, 1.0f) * lightIntensity * spotlightIntensity * .3f; // spotlight
 				}
 			}
 		}

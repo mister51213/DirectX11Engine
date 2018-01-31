@@ -55,7 +55,6 @@ private:
 public:
 	LightShaderClass();
 	LightShaderClass(const LightShaderClass&);
-	~LightShaderClass();
 
 	bool Render(ID3D11DeviceContext* deviceContext, int indexCount,
 		MatrixBufferType& transforms,ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,

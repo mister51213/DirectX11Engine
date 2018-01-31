@@ -32,13 +32,6 @@ struct LightTemplate_PS
     float4 specularColor;
 };
 
-// struct to return values from Spotlight test
-struct SpotlightResult
-{
-
-
-};
-
 //////////////////////
 // CONSTANT BUFFERS //
 //////////////////////
@@ -144,25 +137,25 @@ float4 main(PixelInputType input) : SV_TARGET
 		if(lightIntensity > 0.0f)
 		{
 		// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-		lightIntensity = 
-			CalculateSpotLightIntensity(input.lightPos_LS[i], cb_lights[i].lightDirection, bumpNormal, bInsideSpotlight);
+		//lightIntensity = 
+		//	CalculateSpotLightIntensity(input.lightPos_LS[i], cb_lights[i].lightDirection, bumpNormal, bInsideSpotlight);
 
 // TEST // TEST // TEST // TEST // TEST // TEST// TEST // TEST // TEST
 // TEST // TEST // TEST // TEST // TEST // TEST// TEST // TEST // TEST
-	float3 lightToVertex_WS = -input.lightPos_LS[i];
-	float dotProduct = saturate(dot(normalize(lightToVertex_WS), normalize(cb_lights[i].lightDirection)));
-	float dpCutOff = .96f;
-	if(dotProduct > dpCutOff)
-	{
-		bInsideSpotlight = true;
-		float expandedRange = (dotProduct - dpCutOff)/(1.f - dpCutOff);
-		lightIntensity =  saturate(dot(bumpNormal, normalize(input.lightPos_LS[i]))* expandedRange);
-	}
-	else
-	{
-		bInsideSpotlight = false;
-		lightIntensity = 0;
-	}
+	//float3 lightToVertex_WS = -input.lightPos_LS[i];
+	//float dotProduct = saturate(dot(normalize(lightToVertex_WS), normalize(cb_lights[i].lightDirection)));
+	//float dpCutOff = .96f;
+	//if(dotProduct > dpCutOff)
+	//{
+	//	bInsideSpotlight = true;
+	//	float expandedRange = (dotProduct - dpCutOff)/(1.f - dpCutOff);
+	//	lightIntensity =  saturate(dot(bumpNormal, normalize(input.lightPos_LS[i]))* expandedRange);
+	//}
+	//else
+	//{
+	//	bInsideSpotlight = false;
+	//	lightIntensity = 0;
+	//}
 // TEST // TEST // TEST // TEST // TEST // TEST// TEST // TEST // TEST
 // TEST // TEST // TEST // TEST // TEST // TEST// TEST // TEST // TEST
 		

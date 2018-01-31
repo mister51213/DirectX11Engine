@@ -48,8 +48,13 @@ bool ShadowShaderClass_Multi::InitializeShader(ID3D11Device* device, HWND hwnd, 
 
 	// Create a clamp texture sampler state description.
 	ThrowHResultIf(device->CreateSamplerState(&MakeSamplerDesc(D3D11_TEXTURE_ADDRESS_CLAMP), &_sampleStateClamp));
+
+	// VS Buffers
 	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<SceneLightBufferType_VS>(device));
+
+	// PS Buffers
+	_psBuffers.emplace_back(MakeConstantBuffer<SceneLightBufferType_PS>(device));
 
 	return true;
 }
@@ -82,6 +87,20 @@ bool ShadowShaderClass_Multi::SetShaderParameters(ID3D11DeviceContext* deviceCon
 	sceneLights_VS.lights[2].projectionMatrix = XMMatrixTranspose(sceneLights_VS.lights[2].projectionMatrix);
 	MapBuffer(sceneLights_VS, _vsBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
+
+	/////////////////////////////////////////////////////////////
+	/////////////////////// PS BUFFERS //////////////////////////
+	/////////////////////////////////////////////////////////////
+
+	///////////////////////// LIGHT INIT - PS BUFFER 0 //////////////////////
+	bufferNumber = 0;
+
+	SceneLightBufferType_PS tempLightBuff =
+	{ XMFLOAT4(.15,.15,.15,1), *shadowLight[0]->GetLightBufferPS(), *shadowLight[1]->GetLightBufferPS(), *shadowLight[2]->GetLightBufferPS() };
+
+	MapBuffer(tempLightBuff, _psBuffers[bufferNumber].Get(), deviceContext);
+	deviceContext->PSSetConstantBuffers(bufferNumber, 1, _psBuffers[bufferNumber].GetAddressOf());
+
 
 	return true;
 }

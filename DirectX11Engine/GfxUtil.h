@@ -135,7 +135,6 @@ namespace GfxUtil
 	};
 
 	// DIRECT3D UTILITY FUNCTIONS
-
 	template<class BufferType>
 	static Microsoft::WRL::ComPtr<ID3D11Buffer> MakeConstantBuffer(ID3D11Device* device)
 	{
