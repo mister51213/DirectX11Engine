@@ -79,7 +79,6 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	ThrowHResultIf(device->CreateSamplerState(&comparisonDesc, &_sampleStateComp));
 
 	// VS Buffers
-	//_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferLightType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
 	_vsBuffers.emplace_back(MakeConstantBuffer<SceneLightBufferType_VS>(device));	
 	_vsBuffers.emplace_back(MakeConstantBuffer<CameraBufferType>(device));
@@ -102,24 +101,11 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
 	/////////////////////// SET TEXTURE RESOURCES //////////////////////
-	//deviceContext->PSSetShaderResources(0, 9, textureArray); // @SHADOWING - TODO: Feed in texture view elsewhere in the framework!!!
 	deviceContext->PSSetShaderResources(0, texViews.size(), texViews.data()->GetAddressOf());
 
 	///////////////////////////////////////////////////////////////
 	///////////////////////// VS BUFFERS //////////////////////////
 	///////////////////////////////////////////////////////////////
-
-	// make temp list of transposed light matrices @CAUTION - need to define copy constructor here_????
-	//LightDataTemplate_VS tempLightsVS[NUM_LIGHTS] = { *shadowLight[0]->GetLightBufferVS(), *shadowLight[1]->GetLightBufferVS(), *shadowLight[2]->GetLightBufferVS() };
-	//tempLightsVS[0].viewMatrix = XMMatrixTranspose(tempLightsVS[0].viewMatrix);
-	//tempLightsVS[0].projectionMatrix = XMMatrixTranspose(tempLightsVS[0].projectionMatrix);
-	//tempLightsVS[1].viewMatrix = XMMatrixTranspose(tempLightsVS[1].viewMatrix);
-	//tempLightsVS[1].projectionMatrix = XMMatrixTranspose(tempLightsVS[1].projectionMatrix);
-	//tempLightsVS[2].viewMatrix = XMMatrixTranspose(tempLightsVS[2].viewMatrix);
-	//tempLightsVS[2].projectionMatrix = XMMatrixTranspose(tempLightsVS[2].projectionMatrix);
-	//MatrixBufferLightType tempMatBuff = {transforms.world, transforms.view, transforms.projection, tempLightsVS[0], tempLightsVS[1], tempLightsVS[2] };
-	//MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
-	//deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
 	///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
 	unsigned int bufferNumber = 0;

@@ -275,8 +275,10 @@ namespace GfxUtil
 		bool bAnimated = false;
 		float transparency = 0.f;
 		float translation = 0.f;
+		XMFLOAT2 translation2D = XMFLOAT2(0.f,0.f);
 		float reflectRefractScale = 0.01f;
 		float waterHeight = 2.75f;
+		float textureScale = 1.f;
 
 		// RENDER TEXTURES - for shadowing, reflection, and refraction
 		vector<unique_ptr<RenderTextureClass>> _RenderTextures;

@@ -11,16 +11,13 @@ TextureShaderClass::TextureShaderClass(const TextureShaderClass& other)
 {
 }
 
-//TextureShaderClass::~TextureShaderClass()
-//{}
-
-bool TextureShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms,/* XMMATRIX worldMatrix, XMMATRIX viewMatrix,	XMMATRIX projectionMatrix,*/
-	ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews)
+bool TextureShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms,
+	ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, const XMFLOAT2& translation, const float scale)
 {
 	bool result;
 
 	// Set the shader parameters that it will use for rendering.
-	SetShaderParameters(deviceContext, transforms, /*worldMatrix, viewMatrix, projectionMatrix,*/ textureArray, texViews);
+	SetShaderParameters(deviceContext, transforms, textureArray, texViews, translation, scale);
 
 	// Now render the prepared buffers with the shader.
 	RenderShader(deviceContext, indexCount);
@@ -52,35 +49,46 @@ bool TextureShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char*
 	ThrowHResultIf(device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(),
 		_vertexShaderBuffer->GetBufferSize(), &_layout));
 
+	// Create the texture sampler state.
+	D3D11_SAMPLER_DESC samplerDesc = MakeSamplerDesc();
+	ThrowHResultIf(device->CreateSamplerState(&samplerDesc, &_sampleState));
+
 	// VS Buffers
 	_vsBuffers.emplace_back(MakeConstantBuffer<MatrixBufferType>(device));
 
-	D3D11_SAMPLER_DESC samplerDesc = MakeSamplerDesc();
-
-	// Create the texture sampler state.
-	ThrowHResultIf(device->CreateSamplerState(&samplerDesc, &_sampleState));
+	// PS Buffers
+	_psBuffers.emplace_back(MakeConstantBuffer<TexParamBufferType>(device));
 
 	return true;
 }
 
-bool TextureShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType& transforms,/*XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix, */
-	ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews)
+bool TextureShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType& transforms,
+	ID3D11ShaderResourceView** textureArray, 
+	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, const XMFLOAT2& translation, const float scale)
 {
-	// Set shader texture resource in the pixel shader.
-	//deviceContext->PSSetShaderResources(0, 1, &texture);
-	//deviceContext->PSSetShaderResources(0, 2, textureArray);
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	
+	/////////////////////// SET TEXTURE RESOURCES //////////////////////
 	deviceContext->PSSetShaderResources(0, texViews.size(), texViews.data()->GetAddressOf());
 
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
+	///////////////////////////////////////////////////////////////
+	///////////////////////// VS BUFFERS //////////////////////////
+	///////////////////////////////////////////////////////////////
 
+	///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
 	unsigned int bufferNumber = 0;
-
-	//MatrixBufferType tempMatBuff = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix) };
-	//MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
-		
 	MapBuffer(transforms, _vsBuffers[bufferNumber].Get(), deviceContext);
-
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
+
+	/////////////////////////////////////////////////////////////
+	/////////////////////// PS BUFFERS //////////////////////////
+	/////////////////////////////////////////////////////////////
+
+	////////////////////// TEXPARAM INIT - PS BUFFER 0 //////////////////////
+	bufferNumber = 0;
+	TexParamBufferType tempTexBuffer = { translation , scale, 0.f};
+	MapBuffer(tempTexBuffer, _psBuffers[bufferNumber].Get(), deviceContext);
+	deviceContext->PSSetConstantBuffers(bufferNumber, 1, _psBuffers[bufferNumber].GetAddressOf());
 
 	return true;
 }

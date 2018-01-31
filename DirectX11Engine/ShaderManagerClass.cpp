@@ -172,7 +172,6 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 bool ShaderManagerClass::Render(
 	ID3D11DeviceContext * device, int indexCount, 
 	MatrixBufferType& transforms,
-	//XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix,
 	Material * material,
 	LightClass* lights[], 
 	SceneEffects& effects, 
@@ -192,9 +191,9 @@ bool ShaderManagerClass::Render(
 	switch (shaderToUse)
 	{
 	case EShaderType::ETEXTURE:
-		result = _TextureShader->Render(device, indexCount,/* worldMatrix, viewMatrix, projectionMatrix, */
-			transforms,
-			material->GetResourceArray(), material->GetTextureObject()->_textureViews);
+		result = _TextureShader->Render(device, indexCount,	transforms,
+			material->GetResourceArray(), 
+			material->GetTextureObject()->_textureViews, material->translation2D, material->textureScale);
 		if (!result) return false;
 		//_TextureShader->RenderShader(device, indexCount);
 		break;
@@ -260,8 +259,8 @@ bool ShaderManagerClass::Render(
 
 	default:
 		result = _TextureShader->Render(device, indexCount, transforms,
-			/*worldMatrix, viewMatrix, projectionMatrix,*/
-			material->GetResourceArray(), material->GetTextureObject()->_textureViews);
+			material->GetResourceArray(),
+			material->GetTextureObject()->_textureViews, material->translation2D, material->textureScale);
 		if (!result) ThrowRuntime("Could not render the texture shader.");
 		//_TextureShader->RenderShader(device, indexCount);
 		break;

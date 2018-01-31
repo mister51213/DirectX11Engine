@@ -15,6 +15,16 @@ Texture2D shaderTextures[2];
 SamplerState SampleType;
 
 //////////////
+// CBUFFERS //
+//////////////
+cbuffer TextureParams
+{
+	float2 translation;
+	float scale;
+	float padding;
+};
+
+//////////////
 // TYPEDEFS //
 //////////////
 struct PixelInputType
@@ -32,6 +42,10 @@ float4 TexturePixelShader(PixelInputType input) : SV_TARGET
 {
     float4 textureColor;
 	float gamma = .5;
+
+	// Move the position the texture is sampled from.	
+    input.tex += translation;
+	input.tex *= scale;
 
     // Sample the pixel color from the texture using the sampler at this texture coordinate location.
     textureColor = shaderTextures[0].Sample(SampleType, input.tex);

@@ -68,13 +68,6 @@ struct PixelInputType
     float4 vertex_ScrnSpace : TEXCOORD5;
 };
 
-// Calculates spot lights, based on position and direction of the light and of the direction of the surface.
-//float CalculateSpotLightIntensity(
-//	float3 LightPos_VertexSpace, 
-//	float3 LightDirection_WS, 
-//	float3 SurfaceNormal_WS, 
-//	inout bool outInsideSpotlight)
-//{
 float CalculateSpotLightIntensity(
 	float3 LightPos_VertexSpace, 
 	float3 LightDirection_WS, 

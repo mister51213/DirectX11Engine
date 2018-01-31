@@ -71,6 +71,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	vector<string> earthtex = { "../DirectX11Engine/data/fire2.dds", "../DirectX11Engine/data/skydome_alpha3.jpg" };
 	_Earth->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
 		earthtex, EShaderType::ETEXTURE);
+	_Earth->GetMaterial()->bAnimated = true;
+
 
 	// EARTH INNER
 	_EarthInner.reset(new Model(.75f * _Earth->GetScale(), _Earth->GetOrientation(), XMFLOAT3(0, -200, 0), "Earth Inner"));
@@ -224,8 +226,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		_Lights[i]->SetDiffuseColor(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 		_Lights[i]->SetLookAt(pScene->_LightActors[i]->GetLookAt());
 		_Lights[i]->SetPosition(pScene->_LightActors[i]->GetPosition());
-		//_Lights[i]->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
-		_Lights[i]->GenerateOrthoMatrix(50.0f, SHADOWMAP_DEPTH, SHADOWMAP_NEAR);
+		_Lights[i]->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+		//_Lights[i]->GenerateOrthoMatrix(50.0f, SHADOWMAP_DEPTH, SHADOWMAP_NEAR);
 
 	}
 
@@ -327,6 +329,9 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 	// WATER DEMO
 	if(pScene->_Actors["Water"]->GetModel())
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->Animate();
+
+	if (_Earth)
+	_Earth->GetMaterial()->Animate();
 
 	// 2. Update Camera
 	XMFLOAT3 camPos = pScene->GetCamera()->GetPosition();

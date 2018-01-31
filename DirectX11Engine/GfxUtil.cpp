@@ -4,12 +4,15 @@ GfxUtil::Material::Material()
 	{
 		shaderType = ETEXTURE;
 		texArraySize = 1;
+		textureScale = 1.f;
+		numRenderTextures = 0;
 	}
 
 GfxUtil::Material::Material(EShaderType inShaderType, int numRenderTex = 0)
 {
 	shaderType = inShaderType;
 	texArraySize = 1;
+	textureScale = 1.f;
 	numRenderTextures = numRenderTex;
 }
 
@@ -66,10 +69,19 @@ void GfxUtil::Material::Animate(float deltaTime)
 {
 	if (bAnimated)
 	{
-		translation += 0.001f * deltaTime;
+		float translationIncrement = 0.001f * deltaTime;
+		translation += translationIncrement;
 		if (translation > 1.0f)
 		{
 			translation -= 1.0f;
+		}
+
+		translation2D.x += 0.0001f * deltaTime;
+		translation2D.y += 0.0001f * deltaTime;
+		if (translation2D.x > 1.0f)
+		{
+			translation2D.x -= 1.0f;
+			translation2D.y -= 1.0f;
 		}
 	}
 }
