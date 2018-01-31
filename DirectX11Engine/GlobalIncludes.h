@@ -21,7 +21,7 @@ using Microsoft::WRL::ComPtr;
 /////////////
 // GLOBALS //
 /////////////
-const bool FULL_SCREEN = false;
+const bool FULL_SCREEN = true;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 10000.0f;
 const float SCREEN_NEAR = 1.0f;

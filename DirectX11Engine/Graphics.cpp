@@ -397,11 +397,13 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 	LightClass* lights[3] = { _Lights[0].get(), _Lights[1].get(), _Lights[2].get() };
 
 	// DRAW TO RENDER TEXTURES
-	RenderWaterToTexture(pScene, lights);
 	RenderShadowsToTexture(pScene, lights);
 
 	// BLUR SHADOWS TEXTURE
 	ID3D11ShaderResourceView* blurredShadows = ApplyBlur(_SceneShadows->GetShaderResourceView(), _SceneShadowsBlurred.get());
+
+	// RENDER WATER
+	RenderWaterToTexture(pScene, lights, blurredShadows);
 
 	// DRAW MAIN SCENE
 	_D3D->BeginScene(1.0f, 1.0f, 1.0f, 1.0f);
@@ -700,7 +702,7 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 	return true;
 }
 
-bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[])
+bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[], ID3D11ShaderResourceView* blurredShadows)
 {
 	//////////////
 	// REFRACTION
@@ -727,7 +729,16 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[])
 	// NEW REFACTOR
 	
 	//////// BACKGROUND /////////
-	DrawModel(*pScene->_Actors["Bath"]->GetModel(), transforms, /*worldMatrix, viewMatrix, projectionMatrix, */lights, EShaderType::ELIGHT_SPECULAR);
+	//DrawModel(*pScene->_Actors["Bath"]->GetModel(), transforms, /*worldMatrix, viewMatrix, projectionMatrix, */lights, EShaderType::ELIGHT_SPECULAR);
+
+	// DRAW WITH SHADOW SHADER INSTEAD
+	pScene->_Actors["Bath"]->GetModel()->SetResourceView(6, blurredShadows);
+	transforms.world = XMMatrixTranspose(ComputeWorldTransform(pScene->_Actors["Bath"]->GetModel()->GetOrientation(), pScene->_Actors["Bath"]->GetModel()->GetScale(), pScene->_Actors["Bath"]->GetModel()->GetPosition()));
+	pScene->_Actors["Bath"]->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+	_ShaderManager->_ShadowShaderSoft->Render(_D3D->GetDeviceContext(), pScene->_Actors["Bath"]->GetModel()->GetIndexCount(), transforms,
+		pScene->_Actors["Bath"]->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor, lights, _Camera->GetPosition(), 0.f, 1.f);
+	pScene->_Actors["Bath"]->GetModel()->Draw(_D3D->GetDeviceContext());
+
 	// TODO: DRAW OTHER STUFF AND USE IT AS A REFRACTION GLOBE
 	//_D3D->EnableAlphaBlending();
 	//DrawModel(*_Earth, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);

@@ -17,6 +17,10 @@ SamplerState SampleType;
 SamplerState SampleTypeClamp : register(s0);
 SamplerState SampleTypeWrap  : register(s1);
 
+///////////////////
+// TYPEDEFS //
+///////////////////
+
 // This structure is used to describe the lights properties
 struct LightTemplate_PS
 {
@@ -26,6 +30,13 @@ struct LightTemplate_PS
     float3 lightDirection; //(lookat?) //@TODO pass from VS BUFFER?
     float specularPower;
     float4 specularColor;
+};
+
+// struct to return values from Spotlight test
+struct SpotlightResult
+{
+
+
 };
 
 //////////////////////
@@ -65,10 +76,17 @@ struct PixelInputType
 };
 
 // Calculates spot lights, based on position and direction of the light and of the direction of the surface.
+//float CalculateSpotLightIntensity(
+//	float3 LightPos_VertexSpace, 
+//	float3 LightDirection_WS, 
+//	float3 SurfaceNormal_WS, 
+//	inout bool outInsideSpotlight)
+//{
 float CalculateSpotLightIntensity(
 	float3 LightPos_VertexSpace, 
 	float3 LightDirection_WS, 
-	float3 SurfaceNormal_WS)
+	float3 SurfaceNormal_WS, 
+	out bool outInsideSpotlight)
 {
 	// CALCULATE SPOTLIGHT ATTENUATION
 	float maxLightRange = 50.f;
@@ -82,24 +100,28 @@ float CalculateSpotLightIntensity(
 	// METALLIC EFFECT (deactivate for now)
 	float metalEffect = saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace)));
 
-	float dpCutOff = .95f;
+	float dpCutOff = .85f;
 	if(dotProduct > dpCutOff /*&& metalEffect > .55*/)
 	{
+		outInsideSpotlight = true;
 		float expandedRange = (dotProduct - dpCutOff)/(1.f - dpCutOff);
 		return saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace))* expandedRange/**attenuation*/);
 	}
 	else
 	{
+		outInsideSpotlight = false;
 		return 0;
 	}
 }
 
 float4 main(PixelInputType input) : SV_TARGET
 {
+	bool bInsideSpotlight = true;
 	float2 projectTexCoord;
 	float depthValue;
 	float lightDepthValue;
 	float4 textureColor;
+	float gamma = 2.f;
 
 	/////////////////// NORMAL MAPPING //////////////////
 	float4 bumpMap = shaderTextures[4].Sample(SampleType, input.tex);
@@ -123,7 +145,7 @@ float4 main(PixelInputType input) : SV_TARGET
 		{
 		// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
 		lightIntensity = 
-		CalculateSpotLightIntensity(input.lightPos_LS[i], cb_lights[i].lightDirection, bumpNormal);
+		CalculateSpotLightIntensity(input.lightPos_LS[i], cb_lights[i].lightDirection, bumpNormal, bInsideSpotlight);
 
 		lightColor += (cb_lights[i].diffuseColor * lightIntensity) * 0.3;
 		}
@@ -149,7 +171,15 @@ float4 main(PixelInputType input) : SV_TARGET
 	textureColor = saturate((alphaValue * color1) + ((1.0f - alphaValue) * color2));
 
 	// Combine the light and texture color.
-	float4 finalColor = lightColor * textureColor * shadowValue;
+	float4 finalColor;
+	//if(bInsideSpotlight)
+	{
+	finalColor = lightColor * textureColor * shadowValue * gamma;
+	}
+	//else
+	//{
+	//finalColor = float4(.15,.15,.15,1)*textureColor;
+	//}
 	//if(lightColor.x == 0)
 	//{
 	//	finalColor =  cb_ambientColor * saturate(dot(bumpNormal, input.normal) + .2) * textureColor;

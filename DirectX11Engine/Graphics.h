@@ -65,7 +65,7 @@ public:
 
 	bool bDrawAlternate = false;
 private:
-	bool RenderWaterToTexture(Scene* pScene, LightClass* lights[]);
+	bool RenderWaterToTexture(Scene* pScene, LightClass* lights[], ID3D11ShaderResourceView* blurredShadows);
 	bool RenderShadowsToTexture(Scene* pScene, LightClass* lights[]);
 	bool DrawFrame(Scene* pScene);
 	void RenderShadowScene(Scene * pScene);
