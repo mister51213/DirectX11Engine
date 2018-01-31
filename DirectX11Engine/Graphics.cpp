@@ -224,8 +224,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		_Lights[i]->SetDiffuseColor(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 		_Lights[i]->SetLookAt(pScene->_LightActors[i]->GetLookAt());
 		_Lights[i]->SetPosition(pScene->_LightActors[i]->GetPosition());
-		_Lights[i]->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
-		//_Lights[i]->GenerateOrthoMatrix(50.0f, SHADOWMAP_DEPTH, SHADOWMAP_NEAR);
+		//_Lights[i]->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+		_Lights[i]->GenerateOrthoMatrix(50.0f, SHADOWMAP_DEPTH, SHADOWMAP_NEAR);
 
 	}
 

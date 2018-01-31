@@ -79,7 +79,8 @@ float4 main(PixelInputType input) : SV_TARGET
 	float2 projectTexCoord;
 	float depthValue;
 	float lightDepthValue;
-	float4 lightColor = float4(0,0,0,0);
+	//float4 lightColor = float4(0,0,0,0);
+	float4 lightColor = float4(0.05,0.05,0.05,1);
 
 	// Set the bias value for fixing the floating point precision issues.
 	float bias = 0.001f;
@@ -113,7 +114,7 @@ float4 main(PixelInputType input) : SV_TARGET
 				{
 					float spotlightIntensity = CalculateSpotLightIntensity(input.lightPos_LS[i], cb_lights[i].lightDirection, input.normal);
 					//lightColor += (float4(1.0f, 1.0f, 1.0f, 1.0f) * lightIntensity) * .3f; // spotlight
-					lightColor += float4(1.0f, 1.0f, 1.0f, 1.0f) * lightIntensity * spotlightIntensity * .3f; // spotlight
+					lightColor += float4(1.0f, 1.0f, 1.0f, 1.0f) /** lightIntensity*/ * spotlightIntensity * .3f; // spotlight
 				}
 			}
 		}

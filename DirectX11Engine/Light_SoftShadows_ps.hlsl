@@ -119,6 +119,11 @@ float4 main(PixelInputType input) : SV_TARGET
 	/////////////////// NORMAL MAPPING //////////////////
 	float4 bumpMap = shaderTextures[4].Sample(SampleType, input.tex);
 
+	// Sample the shadow value from the shadow texture using the sampler at the projected texture coordinate location.
+	projectTexCoord.x =  input.vertex_ScrnSpace.x / input.vertex_ScrnSpace.w / 2.0f + 0.5f;
+	projectTexCoord.y = -input.vertex_ScrnSpace.y / input.vertex_ScrnSpace.w / 2.0f + 0.5f;
+	float shadowValue = shaderTextures[6].Sample(SampleTypeClamp, projectTexCoord).r;
+
 	// Expand the range of the normal value from (0, +1) to (-1, +1).
     bumpMap = (bumpMap * 2.0f) - 1.0f;
 
@@ -159,19 +164,17 @@ float4 main(PixelInputType input) : SV_TARGET
 // TEST // TEST // TEST // TEST // TEST // TEST// TEST // TEST // TEST
 // TEST // TEST // TEST // TEST // TEST // TEST// TEST // TEST // TEST
 		
-		lightColor += (cb_lights[i].diffuseColor * lightIntensity) * 0.4;
+		lightColor += (cb_lights[i].diffuseColor * lightIntensity) * 0.3;
 		}
 	}
 
     // Saturate the final light color.
     lightColor = saturate(lightColor);
 
-	// Calculate the projected texture coordinates.
-	projectTexCoord.x =  input.vertex_ScrnSpace.x / input.vertex_ScrnSpace.w / 2.0f + 0.5f;
-	projectTexCoord.y = -input.vertex_ScrnSpace.y / input.vertex_ScrnSpace.w / 2.0f + 0.5f;
-
 	// Sample the shadow value from the shadow texture using the sampler at the projected texture coordinate location.
-	float shadowValue = shaderTextures[6].Sample(SampleTypeClamp, projectTexCoord).r;
+	//projectTexCoord.x =  input.vertex_ScrnSpace.x / input.vertex_ScrnSpace.w / 2.0f + 0.5f;
+	//projectTexCoord.y = -input.vertex_ScrnSpace.y / input.vertex_ScrnSpace.w / 2.0f + 0.5f;
+	//float shadowValue = shaderTextures[6].Sample(SampleTypeClamp, projectTexCoord).r;
 
 	// TEXTURE ANIMATION -  Sample pixel color from texture at this texture coordinate location.
     input.tex.x += textureTranslation;
@@ -184,7 +187,7 @@ float4 main(PixelInputType input) : SV_TARGET
 
 	// Combine the light and texture color.
 	float4 finalColor;
-	//if(bInsideSpotlight)
+	//if(shadowValue > 0)
 	{
 		finalColor = lightColor * textureColor * shadowValue;// * gamma;
 	}
