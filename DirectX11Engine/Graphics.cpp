@@ -72,6 +72,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	_Earth->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
 		earthtex, EShaderType::ETEXTURE);
 	_Earth->GetMaterial()->bAnimated = true;
+	//_Earth->GetMaterial()->textureScale = 1.5f;
 
 
 	// EARTH INNER
@@ -79,6 +80,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	vector<string> earthtex2 = { "../DirectX11Engine/data/fire.dds", "../DirectX11Engine/data/skydome_alpha5.jpg" };
 	_EarthInner->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
 		earthtex2, EShaderType::ETEXTURE);
+	//_EarthInner->GetMaterial()->textureScale = .7f;
 
 	// SKY
 	_Sky.reset(new Model(XMFLOAT3(100, 150, 100), XMFLOAT3(0, 0, 0), XMFLOAT3(100, 300, 100), "Sky Outer"));

@@ -76,11 +76,14 @@ void GfxUtil::Material::Animate(float deltaTime)
 			translation -= 1.0f;
 		}
 
-		translation2D.x += 0.0001f * deltaTime;
+		translation2D.x += 0.00005f * deltaTime;
 		translation2D.y += 0.0001f * deltaTime;
 		if (translation2D.x > 1.0f)
 		{
 			translation2D.x -= 1.0f;
+		}
+		if (translation2D.y > 1.0f)
+		{
 			translation2D.y -= 1.0f;
 		}
 	}

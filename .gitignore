@@ -251,3 +251,5 @@ DirectX11Engine/shader-error.txt
 /textures
 /DirectX11Engine/adapter_output.txt
 /DirectX11Engine/adapter-descriptions.txt
+/DirectX11Engine/models/
+/DirectX11Engine/textures/

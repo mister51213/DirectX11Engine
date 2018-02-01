@@ -21,7 +21,7 @@ cbuffer TextureParams
 {
 	float2 translation;
 	float scale;
-	float padding;
+	float gamma;
 };
 
 //////////////

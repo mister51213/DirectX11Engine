@@ -64,9 +64,7 @@ private:
 
 public:
 	Model();
-	Model(XMFLOAT3 scale, XMFLOAT3 orientation, XMFLOAT3 translation, string name);
-	//Model(const Model&);
-	//~Model();
+	Model(XMFLOAT3 scale, XMFLOAT3 orientation, XMFLOAT3 translation, string name, bool castShadow = false, bool visibleInRefraction = false);
 
 	bool Initialize(ID3D11Device* const device, ID3D11DeviceContext* const deviceContext, const string modelFilename, vector<string> texFileNames, EShaderType shaderType = EShaderType::ETEXTURE);
 
@@ -113,9 +111,14 @@ public:
 public:
 	string Name;
 
+	//DRAWING
+	bool bCastShadow;
+	bool bVisibleInRefraction;
+
 	// PHYSICS
 	bool bPerVertexCollision;
 	//VertexType* _Vertices;
+
 	vector<XMFLOAT4> _Vertices;
 	vector<unsigned int> _Indices;
 
