@@ -66,7 +66,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	// DEFAULT SCENE BACKGROUND
 	///////////////////////////////////	
 	// EARTH
-	_Earth.reset(new Model(XMFLOAT3(250, 400, 250), XMFLOAT3(180, 0, 0), XMFLOAT3(0, -300, 0), "Earth Outer"));
+	_Earth.reset(new Model(XMFLOAT3(250, 400, 250), XMFLOAT3(180, 0, 0), XMFLOAT3(0, -300, 0), "Earth Outer", false));
 	//_Earth.reset(new Model());
 	vector<string> earthtex = { "../DirectX11Engine/data/fire2.dds", "../DirectX11Engine/data/skydome_alpha3.jpg" };
 	_Earth->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
@@ -74,22 +74,21 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	_Earth->GetMaterial()->bAnimated = true;
 	//_Earth->GetMaterial()->textureScale = 1.5f;
 
-
 	// EARTH INNER
-	_EarthInner.reset(new Model(.75f * _Earth->GetScale(), _Earth->GetOrientation(), XMFLOAT3(0, -200, 0), "Earth Inner"));
+	_EarthInner.reset(new Model(.75f * _Earth->GetScale(), _Earth->GetOrientation(), XMFLOAT3(0, -200, 0), "Earth Inner", false));
 	vector<string> earthtex2 = { "../DirectX11Engine/data/fire.dds", "../DirectX11Engine/data/skydome_alpha5.jpg" };
 	_EarthInner->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
 		earthtex2, EShaderType::ETEXTURE);
 	//_EarthInner->GetMaterial()->textureScale = .7f;
 
 	// SKY
-	_Sky.reset(new Model(XMFLOAT3(100, 150, 100), XMFLOAT3(0, 0, 0), XMFLOAT3(100, 300, 100), "Sky Outer"));
+	_Sky.reset(new Model(XMFLOAT3(100, 150, 100), XMFLOAT3(0, 0, 0), XMFLOAT3(100, 300, 100), "Sky Outer", false));
 	vector<string> skytex = { "../DirectX11Engine/data/galaxyblue.jpg", "../DirectX11Engine/data/skydome_alpha2.jpg" };
 	_Sky->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
 		skytex, EShaderType::ETEXTURE);
 
 	// SKY INNNER
-	_SkyInner.reset(new Model(.7f * _Sky->GetScale(), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 150, 0), "Sky Inner"));
+	_SkyInner.reset(new Model(.7f * _Sky->GetScale(), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 150, 0), "Sky Inner", false));
 	vector<string> skytexInner = { "../DirectX11Engine/data/galaxypurple.jpg", "../DirectX11Engine/data/skydome_alpha4.jpg" };
 	_SkyInner->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
 		skytexInner, EShaderType::ETEXTURE);
@@ -122,7 +121,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 			continue;
 		}
 
-		it->second->InstantiateModel(new Model(it->second->GetScale(), it->second->GetOrientation(), it->second->GetPosition(), it->first));
+		it->second->InstantiateModel(new Model(it->second->GetScale(), it->second->GetOrientation(), it->second->GetPosition(), it->first, true));
 
 		// TODO: change to 7 textures (ONLY NEED 1 FOR SHADOWING NOW)
 		vector<string> texArray(/*9*/7, "../DirectX11Engine/data/" + texNames[i]);
@@ -141,7 +140,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	///////////////////////////////////
 	// REFRACTION / REFLECTION MODELS
 	///////////////////////////////////
-	pScene->_Actors["Wall"]->InstantiateModel(new Model(pScene->_Actors["Wall"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Wall"));
+	pScene->_Actors["Wall"]->InstantiateModel(new Model(pScene->_Actors["Wall"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Wall", true));
 	vector<string>wallTex{
 		"../DirectX11Engine/data/wall.dds",
 		"../DirectX11Engine/data/dirt.dds",
@@ -160,7 +159,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	{
 		pScene->_Actors["Wall"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 	}
-	pScene->_Actors["Bath"]->InstantiateModel(new Model(pScene->_Actors["Bath"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Bath"));
+	pScene->_Actors["Bath"]->InstantiateModel(new Model(pScene->_Actors["Bath"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Bath", true, true));
 	vector<string>bathTex{
 		"../DirectX11Engine/data/wall.dds",
 		"../DirectX11Engine/data/dirt.dds",
@@ -180,7 +179,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		pScene->_Actors["Bath"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 	}
 
-	pScene->_Actors["Ground"]->InstantiateModel(new Model(pScene->_Actors["Ground"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Ground"));
+	pScene->_Actors["Ground"]->InstantiateModel(new Model(pScene->_Actors["Ground"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Ground", true));
 	vector<string>groundTex{
 		"../DirectX11Engine/data/snow.jpg",
 		"../DirectX11Engine/data/snow.jpg",
@@ -202,7 +201,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		pScene->_Actors["Ground"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 	}
 
-	pScene->_Actors["Water"]->InstantiateModel(new Model(pScene->_Actors["Water"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Water"));
+	pScene->_Actors["Water"]->InstantiateModel(new Model(pScene->_Actors["Water"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Water", false));
 	//vector<string> waterTextures{ "../DirectX11Engine/data/water.dds", "../DirectX11Engine/data/water.dds", "../DirectX11Engine/data/water.dds" };
 	vector<string> waterTextures{ "../DirectX11Engine/data/water.dds"}; // TEST
 	
@@ -676,7 +675,9 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 		for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 		{
 			// DONT SHADOW THE WATER
-			if (it->first == "Water" || !it->second->GetModel())
+			//if (it->first == "Water" || !it->second->GetModel())
+			string currentModel = it->first; // for debug purposes
+			if (!it->second->GetModel() || !it->second->GetModel()->bCastShadow)
 			{
 				continue;
 			}
@@ -693,7 +694,9 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 	for (auto& itr = pScene->_Actors.begin(); itr != pScene->_Actors.end(); ++itr)
 	{
 		// DONT SHADOW THE WATER
-		if (itr->first == "Water" || !itr->second->GetModel())
+		//if (itr->first == "Water" || !itr->second->GetModel())
+		string currentModel = itr->first; // for debug purposes
+		if (!itr->second->GetModel() || !itr->second->GetModel()->bCastShadow)
 		{
 			continue;
 		}

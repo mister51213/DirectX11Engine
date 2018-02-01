@@ -9,7 +9,7 @@ Model::Model()
 	:
 	Name("Model"),
 	bPerVertexCollision(false),
-	bCastShadow(false),
+	bCastShadow(true),
 	bVisibleInRefraction(false)
 {
 	_scale = XMFLOAT3(1.f, 1.f, 1.f);
