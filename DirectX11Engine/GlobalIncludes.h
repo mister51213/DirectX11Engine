@@ -18,7 +18,7 @@
 using namespace std;
 using Microsoft::WRL::ComPtr;
 
-/////////////
+/////////////	
 // GLOBALS //
 /////////////
 const bool FULL_SCREEN = false;

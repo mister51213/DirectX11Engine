@@ -46,7 +46,8 @@ void Scene::InitializeActors()
 		XMFLOAT3(10.0f, 2.f, 0.0f), // sphere
 		XMFLOAT3(0.0f, 2.f, -10.0f), // sphere
 		XMFLOAT3(0.0f, 0.0f, 0.0f), // ground
-		XMFLOAT3(0.0f, 6.0f, 8.0f), // wall
+		//XMFLOAT3(0.0f, 6.0f, 8.0f), // wall
+		XMFLOAT3(0.0f, 0.0f, 8.0f), // wall
 		XMFLOAT3(0.0f, 2.0f, 0.0f),  // bath
 		XMFLOAT3(0.0f, _waterHeight, 0.0f) }; //water
 
@@ -90,6 +91,10 @@ void Scene::InitializeActors()
 	// Custom tweaks on actors
 	_Actors["Ground"]->SetScale(XMFLOAT3(6.f, 1.0f, 6.f));
 	_Actors["Ground"]->SetPosition(XMFLOAT3(0.f, 1.0f, 0.f));
+
+	_Actors["Wall"]->SetScale(XMFLOAT3(.5, .5, .5));
+
+	
 }
 
 void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)

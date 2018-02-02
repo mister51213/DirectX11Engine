@@ -140,13 +140,15 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	///////////////////////////////////
 	// REFRACTION / REFLECTION MODELS
 	///////////////////////////////////
-	pScene->_Actors["Wall"]->InstantiateModel(new Model(pScene->_Actors["Wall"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Wall", true));
+	pScene->_Actors["Wall"]->InstantiateModel(new Model(pScene->_Actors["Wall"]->GetScale(),XMFLOAT3(), XMFLOAT3(), "Wall", true));
 	vector<string>wallTex{
-		"../DirectX11Engine/data/wall.dds",
+		//"../DirectX11Engine/data/wall.dds",
+		"../DirectX11Engine/data/moai_BaseColor.png",
 		"../DirectX11Engine/data/dirt.dds",
 		"../DirectX11Engine/data/light.dds",
 		"../DirectX11Engine/data/alpha.dds",
-		"../DirectX11Engine/data/bumpMap.dds", // normal map
+		//"../DirectX11Engine/data/bumpMap.dds", // normal map
+		"../DirectX11Engine/data/moai_Normal.png",
 		"../DirectX11Engine/data/specMap.dds",
 		"../DirectX11Engine/data/noise.png"//,
 		//"../DirectX11Engine/data/noise.png",
@@ -426,7 +428,7 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 
 	////////////////// RENDER ACTUAL SCENE  /////////////////////////
 
-	//////// BACKGROUND /////////
+	////// BACKGROUND /////////
 	_D3D->EnableAlphaBlending();
 	DrawModel(*_Earth, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
 	DrawModel(*_EarthInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
@@ -566,8 +568,6 @@ ID3D11ShaderResourceView* GraphicsClass::ApplyBlur(ID3D11ShaderResourceView* vie
 void GraphicsClass::RenderShadows(Scene* pScene)
 {
 	//ProjectDepthToTexture//ProjectDepthToTexture//ProjectDepthToTexture//ProjectDepthToTexture
-	//ProjectDepthToTexture//ProjectDepthToTexture//ProjectDepthToTexture//ProjectDepthToTexture
-	//ProjectDepthToTexture//ProjectDepthToTexture//ProjectDepthToTexture//ProjectDepthToTexture
 	XMMATRIX worldMatrix, lightViewMatrix, lightProjectionMatrix, translateMatrix;
 
 	// Set the render target to be the render to texture.
@@ -610,8 +610,6 @@ void GraphicsClass::RenderShadows(Scene* pScene)
 	_D3D->SetBackBufferRenderTarget();
 	_D3D->ResetViewport();
 
-	//RenderBlackAndWhiteShadows//RenderBlackAndWhiteShadows//RenderBlackAndWhiteShadows//RenderBlackAndWhiteShadows
-	//RenderBlackAndWhiteShadows//RenderBlackAndWhiteShadows//RenderBlackAndWhiteShadows//RenderBlackAndWhiteShadows
 	//RenderBlackAndWhiteShadows//RenderBlackAndWhiteShadows//RenderBlackAndWhiteShadows//RenderBlackAndWhiteShadows
 	XMMATRIX viewMatrix, projectionMatrix;
 
@@ -1011,10 +1009,10 @@ void GraphicsClass::RenderText()
 	{
 		_PositionStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), transforms, /*worldMatrix, baseViewMatrix, orthoMatrix,*/ _Font1->GetTexture(), _Font1->GetTextureObject()->_textureViews);
 	}
-	for (int i = 0; i < 3; i++)
-	{
-		_RenderCountStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), transforms,/*worldMatrix, baseViewMatrix, orthoMatrix, */_Font1->GetTexture(), _Font1->GetTextureObject()->_textureViews);
-	}
+	//for (int i = 0; i < 3; i++)
+	//{
+	//	_RenderCountStrings[i]->Render(_D3D->GetDeviceContext(), _ShaderManager.get(), transforms,/*worldMatrix, baseViewMatrix, orthoMatrix, */_Font1->GetTexture(), _Font1->GetTextureObject()->_textureViews);
+	//}
 
 	_D3D->DisableAlphaBlending();
 	_D3D->TurnZBufferOn(); // Turn the Z buffer back on now that all 2D rendering has completed.
