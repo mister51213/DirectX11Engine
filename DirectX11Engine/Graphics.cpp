@@ -99,13 +99,16 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 
 	// DEFAULT TEX //
 	vector<string> texNames = { "wall01.dds", "marble.png", "metal001.dds", "wall01.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
-	vector<string> meshNames = { "sphere.txt", "cube2.txt", "sphere.txt" };
+	vector<string> meshNames = { /*"sphere.txt",*/ "_column_Tri.txt", "_rock_Tri.txt" };// , /*"cube2.txt",*/ "sphere.txt"
+
 	vector<string> defaultTex{
-		"../DirectX11Engine/data/metal001.dds",
+		//"../DirectX11Engine/data/metal001.dds",
+		"../DirectX11Engine/data/_column_BaseColor.png",
 		"../DirectX11Engine/data/dirt.dds",
 		"../DirectX11Engine/data/light.dds",
 		"../DirectX11Engine/data/alpha.dds",
-		"../DirectX11Engine/data/bumpMap.dds", // normal map
+		//"../DirectX11Engine/data/bumpMap.dds", // normal map
+		"../DirectX11Engine/data/_column_Normal.png", // normal map
 		"../DirectX11Engine/data/specMap.dds",
 		"../DirectX11Engine/data/specMap.dds"
 		//"../DirectX11Engine/data/specMap.dds",
@@ -154,7 +157,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		//"../DirectX11Engine/data/noise.png",
 		//"../DirectX11Engine/data/noise.png" 
 	};
-	pScene->_Actors["Wall"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/wall.txt", wallTex, EShaderType::ELIGHT_SPECULAR);
+	pScene->_Actors["Wall"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), /*"../DirectX11Engine/data/wall.txt", */
+		"../DirectX11Engine/data/_moai_Tri.txt",
+		wallTex, EShaderType::ELIGHT_SPECULAR);
 	
 	// Set Wall Model Shadow textures
 	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
@@ -163,17 +168,22 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	}
 	pScene->_Actors["Bath"]->InstantiateModel(new Model(pScene->_Actors["Bath"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Bath", true, true));
 	vector<string>bathTex{
-		"../DirectX11Engine/data/wall.dds",
+		//"../DirectX11Engine/data/wall.dds",
+		"../DirectX11Engine/data/_fountain_BaseColor.png",
 		"../DirectX11Engine/data/dirt.dds",
 		"../DirectX11Engine/data/light.dds",
 		"../DirectX11Engine/data/alpha.dds",
-		"../DirectX11Engine/data/nMap5.png", // normal map
+		//"../DirectX11Engine/data/nMap5.png", // normal map
+		"../DirectX11Engine/data/_fountain_Normal.png", // normal map
 		"../DirectX11Engine/data/specMap.dds",
 		"../DirectX11Engine/data/noise.png"//,
 		//"../DirectX11Engine/data/noise.png",
 		//"../DirectX11Engine/data/noise.png" 
 	};
-	pScene->_Actors["Bath"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/bath.txt", bathTex, EShaderType::ELIGHT_SPECULAR);
+	pScene->_Actors["Bath"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
+		//"../DirectX11Engine/data/bath.txt",
+		"../DirectX11Engine/data/_fountain_Tri.txt",
+		bathTex, EShaderType::ELIGHT_SPECULAR);
 	
 	// Set Bath Model Shadow textures
 	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
@@ -183,18 +193,23 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 
 	pScene->_Actors["Ground"]->InstantiateModel(new Model(pScene->_Actors["Ground"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Ground", true));
 	vector<string>groundTex{
-		"../DirectX11Engine/data/snow.jpg",
+		//"../DirectX11Engine/data/snow.jpg",
+		"../DirectX11Engine/data/_platform_BaseColor.png",
 		"../DirectX11Engine/data/snow.jpg",
 		"../DirectX11Engine/data/light.dds",
 		"../DirectX11Engine/data/noise.png",	// alpha map
-		"../DirectX11Engine/data/nMap4.png",	// normal map
+		//"../DirectX11Engine/data/nMap4.png",	// normal map
+		"../DirectX11Engine/data/_platform_Normal.png",	// normal map
 		"../DirectX11Engine/data/specMap.dds",
 		"../DirectX11Engine/data/noise.png"//,
 		//"../DirectX11Engine/data/noise.png",
 		//"../DirectX11Engine/data/noise.png" 
 	};
 
-	pScene->_Actors["Ground"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt"/*"../DirectX11Engine/data/SnowTerrain_LowPoly.txt"*/, groundTex, EShaderType::ELIGHT_SPECULAR);
+	pScene->_Actors["Ground"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
+		"../DirectX11Engine/data/_platform_Tri.txt",
+		//"../DirectX11Engine/data/plane01.txt"
+		/*"../DirectX11Engine/data/SnowTerrain_LowPoly.txt"*/ groundTex, EShaderType::ELIGHT_SPECULAR);
 	pScene->_Actors["Ground"]->GetModel()->SetScale(XMFLOAT3(3, 3, 3));
 
 	// Set Bath Model Shadow textures
@@ -204,10 +219,12 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	}
 
 	pScene->_Actors["Water"]->InstantiateModel(new Model(pScene->_Actors["Water"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Water", false));
-	//vector<string> waterTextures{ "../DirectX11Engine/data/water.dds", "../DirectX11Engine/data/water.dds", "../DirectX11Engine/data/water.dds" };
-	vector<string> waterTextures{ "../DirectX11Engine/data/water.dds"}; // TEST
+	vector<string> waterTextures{ "../DirectX11Engine/data/water.dds" }; 
 	
-	pScene->_Actors["Water"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/water.txt", waterTextures, EShaderType::EWATER);
+	pScene->_Actors["Water"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
+		//"../DirectX11Engine/data/water.txt",
+		"../DirectX11Engine/data/_fountain_water_Tri.txt",
+		waterTextures, EShaderType::EWATER);
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->reflectRefractScale = 0.01f;
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->waterHeight = _waterHeight;// *_waterSceneScale;
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->bAnimated = true;
@@ -235,7 +252,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	}
 
 	// Effects
-	_sceneEffects.ambientColor = XMFLOAT4(.2, .2, .2, 1);
+	_sceneEffects.ambientColor = XMFLOAT4(.5, .5, .5, 1);
 	_sceneEffects.fogEnd = 0;
 	_sceneEffects.fogStart = 0;
 	
@@ -270,7 +287,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	}
 
 	// Initialize the light object.
-	m_SoftLight->SetAmbientColor(XMFLOAT4(0.15f, 0.15f, 0.15f, 1.0f));
+	m_SoftLight->SetAmbientColor(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
 	m_SoftLight->SetDiffuseColor(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
 	m_SoftLight->SetLookAt(XMFLOAT3(0.00f, 0.000f, 0.000f));
 	//m_SoftLight->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
