@@ -31,23 +31,13 @@ bool Scene::Initialize()
 
 void Scene::InitializeActors()
 {
-	//std::map<string, XMFLOAT3> actors
-	//{
-	//	std::make_pair("Cube", XMFLOAT3(0.f, -2.5f, 5.0f)), // cube -> Columns,
-	//	std::make_pair("Sphere", XMFLOAT3(0.0f, 80.f, 0.0f)), // sphere -> Rock
-	//	std::make_pair("Ground", XMFLOAT3(0.0f, 0.0f, 0.0f)), // ground -> Platform
-	//	std::make_pair("Wall", XMFLOAT3(0.0f, 0.0f, 20.0f)), // wall -> Moai
-	//	std::make_pair("Bath", XMFLOAT3(0.0f, 0.0f, 0.0f)),  // bath -> Fountain
-	//	std::make_pair("Water", XMFLOAT3(0.0f, 0.0f, 0.0f)) //water -> Fountain water
-	//};
-
 	vector < std::pair<string, XMFLOAT3>> actorPairs =
 	{
-		std::make_pair("Cube", XMFLOAT3(0.f, -2.5f, 5.0f)), // cube -> Columns,
-		std::make_pair("Sphere", XMFLOAT3(0.0f, 80.f, 0.0f)), // sphere -> Rock
-		std::make_pair("Ground", XMFLOAT3(0.0f, 0.0f, 0.0f)), // ground -> Platform
-		std::make_pair("Wall", XMFLOAT3(0.0f, 0.0f, 20.0f)), // wall -> Moai
-		std::make_pair("Bath", XMFLOAT3(0.0f, 0.0f, 0.0f)),  // bath -> Fountain
+		std::make_pair("Columns", XMFLOAT3(0.f, -2.5f, 5.0f)), // cube -> Columns,
+		std::make_pair("Rock", XMFLOAT3(0.0f, 80.f, 0.0f)), // sphere -> Rock
+		std::make_pair("Platform", XMFLOAT3(0.0f, 0.0f, 0.0f)), // ground -> Platform
+		std::make_pair("Moai", XMFLOAT3(0.0f, 0.0f, 20.0f)), // wall -> Moai
+		std::make_pair("Fountain", XMFLOAT3(0.0f, 0.0f, 0.0f)),  // bath -> Fountain
 		std::make_pair("Water", XMFLOAT3(0.0f, 0.0f, 0.0f)) //water -> Fountain water
 	};
 
@@ -86,77 +76,15 @@ void Scene::InitializeActors()
 		_Actors.emplace(pActor->Name, std::move(pActor));
 	}
 
-	// LEGACY CODE // LEGACY CODE // LEGACY CODE // LEGACY CODE // LEGACY CODE
-	//vector<string> actorNames = { // actors w same name must be added CONSECUTIVELY!!!!
-	//	"Cube",
-	//	"Sphere",
-	//	//"Sphere",
-	//	"Ground",
-	//	"Wall",
-	//	"Bath",
-	//	"Water" 
-	//};
-
-	//vector<XMFLOAT3> positions = {
-	//	//XMFLOAT3(-10.0f, 2.f, 0.0f), // cube
-	//	XMFLOAT3(0.f, -2.5f, 5.0f), // cube -> Columns
-	//	//XMFLOAT3(10.0f, 2.f, 0.0f), // sphere
-	//	XMFLOAT3(0.0f, 80.f, 0.0f), // sphere -> Rock
-	//	//XMFLOAT3(0.0f, 2.f, -10.0f), // sphere
-	//	XMFLOAT3(0.0f, 0.0f, 0.0f), // ground -> Platform
-	//	//XMFLOAT3(0.0f, 6.0f, 8.0f), // wall
-	//	XMFLOAT3(0.0f, 0.0f, 20.0f), // wall -> Moai
-	//	//XMFLOAT3(0.0f, 2.0f, 0.0f),  // bath
-	//	//XMFLOAT3(0.0f, _waterHeight, 0.0f) }; //water
-	//	XMFLOAT3(0.0f, 0.0f, 0.0f),  // bath -> Fountain
-	//	XMFLOAT3(0.0f, 0.0f, 0.0f)}; //water -> Fountain water
-
-	//positions.resize(actorNames.size()); // safety check
-
-	//// Instantiate actors and update their names if duplicates
-	//int duplicateIdx = 0;
-	//string DuplicateBaseName = actorNames[0];
-
-	//for (int i = 0; i < actorNames.size(); ++i)
-	//{
-	//	if (i > 0)
-	//	{
-	//		// Decide whether to reset duplicate reference name
-	//		if (actorNames[i - 1] == actorNames[i])
-	//		{
-	//			duplicateIdx = 0;
-	//			DuplicateBaseName = actorNames[i];
-	//		}
-
-	//		// Check each name against the latest duplicate name and number it if it matches
-	//		if (actorNames[i] == DuplicateBaseName)
-	//		{
-	//			if (actorNames[i - 1] == DuplicateBaseName)
-	//			{
-	//				actorNames[i - 1] += to_string(duplicateIdx);
-	//			}
-
-	//			duplicateIdx++;
-	//			actorNames[i] += to_string(duplicateIdx);
-	//		}
-	//	}
-
-	//	// Instantiate each actor with the updated name
-	//	unique_ptr<Actor> pActor = std::make_unique<Actor>(actorNames[i]);
-	//	pActor->InitializeMovement(VISIBLE);
-	//	pActor->SetPosition(positions[i]);
-	//	_Actors.emplace(pActor->Name, std::move(pActor));
-	//}
-
 	// Custom tweaks on actors
 	XMFLOAT3 customScale(.5, .5, .5);
 
-	//_Actors["Ground"]->SetScale(XMFLOAT3(6.f, 1.0f, 6.f));
-	_Actors["Ground"]->SetPosition(XMFLOAT3(0.f, 1.0f, 0.f));
+	//_Actors["Platform"]->SetScale(XMFLOAT3(6.f, 1.0f, 6.f));
+	_Actors["Platform"]->SetPosition(XMFLOAT3(0.f, 1.0f, 0.f));
 
-	_Actors["Ground"]->SetScale(customScale);
-	_Actors["Wall"]->SetScale(customScale);
-	_Actors["Bath"]->SetScale(customScale);
+	_Actors["Platform"]->SetScale(customScale);
+	_Actors["Moai"]->SetScale(customScale);
+	_Actors["Fountain"]->SetScale(customScale);
 	_Actors["Water"]->SetScale(customScale);
 	
 }
@@ -173,16 +101,16 @@ void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
 
 	//_LightActors[0]->SetPosition(XMFLOAT3(-20, 15.f, 0.f));
 	_LightActors[0]->SetPosition(XMFLOAT3(-20, 40.f, 0.f));
-	_LightActors[0]->SetLookAt((actors["Sphere"]->GetPosition() - _LightActors[0]->GetPosition()));
+	_LightActors[0]->SetLookAt((actors["Rock"]->GetPosition() - _LightActors[0]->GetPosition()));
 	//_LightActors[0]->SetLookAt(XMFLOAT3(0, 0, 0));
 	//_LightActors[0]->SetLookAt(-1*XMFLOAT3(10.f, 10.0f, 0.f));
 	//_LightActors[0]->SetPosition(XMFLOAT3(20.f, 25.0f, 0.f));
 	//_LightActors[0]->SetLookAt((-1.f*_LightActors[0]->GetPosition()));
-	//_LightActors[0]->SetLookAt(actors["Sphere"]->GetPosition());
+	//_LightActors[0]->SetLookAt(actors["Rock"]->GetPosition());
 
 	//_LightActors[1]->SetPosition(XMFLOAT3(0, 15.0f, 0.f));
 	_LightActors[1]->SetPosition(XMFLOAT3(0, 40.0f, 0.f));
-	_LightActors[1]->SetLookAt((actors["Bath"]->GetPosition() - _LightActors[1]->GetPosition()));
+	_LightActors[1]->SetLookAt((actors["Moai"]->GetPosition() - _LightActors[1]->GetPosition()));
 	//_LightActors[1]->SetLookAt(XMFLOAT3(0, 0, 0));
 	//_LightActors[1]->SetLookAt(-1*XMFLOAT3(-10.f, 10.0f, 0.f));
 	//_LightActors[1]->SetPosition(XMFLOAT3(-10.f, 25.0f, 0.f));
@@ -191,12 +119,12 @@ void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
 
 	//_LightActors[2]->SetPosition(XMFLOAT3(0.f, 15.0f, -20));
 	_LightActors[2]->SetPosition(XMFLOAT3(0.f, 40.0f, -20));
-	_LightActors[2]->SetLookAt((actors["Cube"]->GetPosition() - _LightActors[2]->GetPosition()));
+	_LightActors[2]->SetLookAt((actors["Columns"]->GetPosition() - _LightActors[2]->GetPosition()));
 	//_LightActors[2]->SetLookAt(XMFLOAT3(0,0,0));
 	//_LightActors[2]->SetLookAt(-1*XMFLOAT3(0.f, 10.0f, 10.f));
 	//_LightActors[2]->SetPosition(XMFLOAT3(0.f, 25.0f,20.f));
 	//_LightActors[2]->SetLookAt((-1.f*_LightActors[2]->GetPosition()));
-	//_LightActors[2]->SetLookAt(actors["Cube"]->GetPosition());
+	//_LightActors[2]->SetLookAt(actors["Columns"]->GetPosition());
 }
 
 void Scene::Tick(float deltaTime, Input* pInput)

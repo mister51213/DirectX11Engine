@@ -119,7 +119,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 	{
 		// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
-		if (it->first == "Wall" || it->first == "Bath" || it->first == "Water" || it->first == "Ground")
+		if (it->first == "Moai" || it->first == "Fountain" || it->first == "Water" || it->first == "Platform")
 		{
 			continue;
 		}
@@ -143,7 +143,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	///////////////////////////////////
 	// REFRACTION / REFLECTION MODELS
 	///////////////////////////////////
-	pScene->_Actors["Wall"]->InstantiateModel(new Model(pScene->_Actors["Wall"]->GetScale(),XMFLOAT3(), XMFLOAT3(), "Wall", true));
+	pScene->_Actors["Moai"]->InstantiateModel(new Model(pScene->_Actors["Moai"]->GetScale(),XMFLOAT3(), XMFLOAT3(), "Moai", true));
 	vector<string>wallTex{
 		//"../DirectX11Engine/data/wall.dds",
 		"../DirectX11Engine/data/moai_BaseColor.png",
@@ -157,16 +157,16 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		//"../DirectX11Engine/data/noise.png",
 		//"../DirectX11Engine/data/noise.png" 
 	};
-	pScene->_Actors["Wall"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), /*"../DirectX11Engine/data/wall.txt", */
+	pScene->_Actors["Moai"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), /*"../DirectX11Engine/data/wall.txt", */
 		"../DirectX11Engine/data/_moai_Tri.txt",
 		wallTex, EShaderType::ELIGHT_SPECULAR);
 	
-	// Set Wall Model Shadow textures
+	// Set Moai Model Shadow textures
 	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
 	{
-		pScene->_Actors["Wall"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
+		pScene->_Actors["Moai"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 	}
-	pScene->_Actors["Bath"]->InstantiateModel(new Model(pScene->_Actors["Bath"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Bath", true, true));
+	pScene->_Actors["Fountain"]->InstantiateModel(new Model(pScene->_Actors["Fountain"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Fountain", true, true));
 	vector<string>bathTex{
 		//"../DirectX11Engine/data/wall.dds",
 		"../DirectX11Engine/data/_fountain_BaseColor.png",
@@ -180,18 +180,18 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		//"../DirectX11Engine/data/noise.png",
 		//"../DirectX11Engine/data/noise.png" 
 	};
-	pScene->_Actors["Bath"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
+	pScene->_Actors["Fountain"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
 		//"../DirectX11Engine/data/bath.txt",
 		"../DirectX11Engine/data/_fountain_Tri.txt",
 		bathTex, EShaderType::ELIGHT_SPECULAR);
 	
-	// Set Bath Model Shadow textures
+	// Set Fountain Model Shadow textures
 	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
 	{
-		pScene->_Actors["Bath"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
+		pScene->_Actors["Fountain"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 	}
 
-	pScene->_Actors["Ground"]->InstantiateModel(new Model(pScene->_Actors["Ground"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Ground", true));
+	pScene->_Actors["Platform"]->InstantiateModel(new Model(pScene->_Actors["Platform"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Platform", true));
 	vector<string>groundTex{
 		//"../DirectX11Engine/data/snow.jpg",
 		"../DirectX11Engine/data/_platform_BaseColor.png",
@@ -206,16 +206,16 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		//"../DirectX11Engine/data/noise.png" 
 	};
 
-	pScene->_Actors["Ground"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
+	pScene->_Actors["Platform"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
 		"../DirectX11Engine/data/_platform_Tri.txt",
 		//"../DirectX11Engine/data/plane01.txt"
 		/*"../DirectX11Engine/data/SnowTerrain_LowPoly.txt"*/ groundTex, EShaderType::ELIGHT_SPECULAR);
-	pScene->_Actors["Ground"]->GetModel()->SetScale(XMFLOAT3(3, 3, 3));
+	pScene->_Actors["Platform"]->GetModel()->SetScale(XMFLOAT3(3, 3, 3));
 
-	// Set Bath Model Shadow textures
+	// Set Fountain Model Shadow textures
 	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
 	{
-		pScene->_Actors["Ground"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
+		pScene->_Actors["Platform"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 	}
 
 	pScene->_Actors["Water"]->InstantiateModel(new Model(pScene->_Actors["Water"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Water", false));
@@ -734,7 +734,7 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[], ID
 	//////////////
 	// REFRACTION
 	//////////////
-	if (!pScene->_Actors["Bath"]->GetModel()) return false;
+	if (!pScene->_Actors["Fountain"]->GetModel()) return false;
 
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->_RenderTextures[0]->SetRenderTarget(_D3D->GetDeviceContext());
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->_RenderTextures[0]->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
@@ -756,15 +756,15 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[], ID
 	// NEW REFACTOR
 	
 	//////// BACKGROUND /////////
-	//DrawModel(*pScene->_Actors["Bath"]->GetModel(), transforms, /*worldMatrix, viewMatrix, projectionMatrix, */lights, EShaderType::ELIGHT_SPECULAR);
+	//DrawModel(*pScene->_Actors["Fountain"]->GetModel(), transforms, /*worldMatrix, viewMatrix, projectionMatrix, */lights, EShaderType::ELIGHT_SPECULAR);
 
 	// DRAW WITH SHADOW SHADER INSTEAD
-	pScene->_Actors["Bath"]->GetModel()->SetResourceView(6, blurredShadows);
-	transforms.world = XMMatrixTranspose(ComputeWorldTransform(pScene->_Actors["Bath"]->GetModel()->GetOrientation(), pScene->_Actors["Bath"]->GetModel()->GetScale(), pScene->_Actors["Bath"]->GetModel()->GetPosition()));
-	pScene->_Actors["Bath"]->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	_ShaderManager->_ShadowShaderSoft->Render(_D3D->GetDeviceContext(), pScene->_Actors["Bath"]->GetModel()->GetIndexCount(), transforms,
-		pScene->_Actors["Bath"]->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor, lights, _Camera->GetPosition(), 0.f, 1.f);
-	pScene->_Actors["Bath"]->GetModel()->Draw(_D3D->GetDeviceContext());
+	pScene->_Actors["Fountain"]->GetModel()->SetResourceView(6, blurredShadows);
+	transforms.world = XMMatrixTranspose(ComputeWorldTransform(pScene->_Actors["Fountain"]->GetModel()->GetOrientation(), pScene->_Actors["Fountain"]->GetModel()->GetScale(), pScene->_Actors["Fountain"]->GetModel()->GetPosition()));
+	pScene->_Actors["Fountain"]->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+	_ShaderManager->_ShadowShaderSoft->Render(_D3D->GetDeviceContext(), pScene->_Actors["Fountain"]->GetModel()->GetIndexCount(), transforms,
+		pScene->_Actors["Fountain"]->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor, lights, _Camera->GetPosition(), 0.f, 1.f);
+	pScene->_Actors["Fountain"]->GetModel()->Draw(_D3D->GetDeviceContext());
 
 	// TODO: DRAW OTHER STUFF AND USE IT AS A REFRACTION GLOBE
 	//_D3D->EnableAlphaBlending();
@@ -778,7 +778,7 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[], ID
 	////////////////
 	//// REFLECTION
 	////////////////
-	//if (!pScene->_Actors["Wall"]->GetModel()) return false;
+	//if (!pScene->_Actors["Moai"]->GetModel()) return false;
 
 	//XMMATRIX reflectionViewMatrix;
 	//
@@ -797,11 +797,11 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[], ID
 	//// Get the world and projection matrices from the d3d object.
 	//projectionMatrix = _D3D->GetProjectionMatrix();
 	//worldMatrix = _D3D->GetWorldMatrix();
-	//worldMatrix *= ComputeWorldTransform(pScene->_Actors["Wall"]->GetOrientation(), pScene->_Actors["Wall"]->GetScale(), pScene->_Actors["Wall"]->GetPosition());
-	//pScene->_Actors["Wall"]->GetModel()->Draw(_D3D->GetDeviceContext());
+	//worldMatrix *= ComputeWorldTransform(pScene->_Actors["Moai"]->GetOrientation(), pScene->_Actors["Moai"]->GetScale(), pScene->_Actors["Moai"]->GetPosition());
+	//pScene->_Actors["Moai"]->GetModel()->Draw(_D3D->GetDeviceContext());
 
-	//_ShaderManager->_WaterShader->Render(_D3D->GetDeviceContext(), pScene->_Actors["Wall"]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, reflectionViewMatrix,
-	//	pScene->_Actors["Wall"]->GetModel()->GetMaterial()->GetResourceArray(), pScene->_Actors["Wall"]->GetModel()->GetMaterial()->translation, pScene->_Actors["Wall"]->GetModel()->GetMaterial()->reflectRefractScale);
+	//_ShaderManager->_WaterShader->Render(_D3D->GetDeviceContext(), pScene->_Actors["Moai"]->GetModel()->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, reflectionViewMatrix,
+	//	pScene->_Actors["Moai"]->GetModel()->GetMaterial()->GetResourceArray(), pScene->_Actors["Moai"]->GetModel()->GetMaterial()->translation, pScene->_Actors["Moai"]->GetModel()->GetMaterial()->reflectRefractScale);
 
 	// Reset the render target back to the original back buffer and not the render to texture anymore.
 #pragma endregion
