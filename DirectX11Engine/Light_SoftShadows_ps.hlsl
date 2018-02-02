@@ -107,7 +107,7 @@ float4 main(PixelInputType input) : SV_TARGET
 	float depthValue;
 	float lightDepthValue;
 	float4 textureColor;
-	float gamma = 7.f;
+	float gamma = 3.f;
 
 	/////////////////// NORMAL MAPPING //////////////////
 	float4 bumpMap = shaderTextures[4].Sample(SampleType, input.tex);

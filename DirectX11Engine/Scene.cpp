@@ -31,66 +31,122 @@ bool Scene::Initialize()
 
 void Scene::InitializeActors()
 {
-	vector<string> actorNames = { // actors w same name must be added CONSECUTIVELY!!!!
-		"Cube",
-		"Sphere",
-		//"Sphere",
-		"Ground",
-		"Wall",
-		"Bath",
-		"Water" 
+	//std::map<string, XMFLOAT3> actors
+	//{
+	//	std::make_pair("Cube", XMFLOAT3(0.f, -2.5f, 5.0f)), // cube -> Columns,
+	//	std::make_pair("Sphere", XMFLOAT3(0.0f, 80.f, 0.0f)), // sphere -> Rock
+	//	std::make_pair("Ground", XMFLOAT3(0.0f, 0.0f, 0.0f)), // ground -> Platform
+	//	std::make_pair("Wall", XMFLOAT3(0.0f, 0.0f, 20.0f)), // wall -> Moai
+	//	std::make_pair("Bath", XMFLOAT3(0.0f, 0.0f, 0.0f)),  // bath -> Fountain
+	//	std::make_pair("Water", XMFLOAT3(0.0f, 0.0f, 0.0f)) //water -> Fountain water
+	//};
+
+	vector < std::pair<string, XMFLOAT3>> actorPairs =
+	{
+		std::make_pair("Cube", XMFLOAT3(0.f, -2.5f, 5.0f)), // cube -> Columns,
+		std::make_pair("Sphere", XMFLOAT3(0.0f, 80.f, 0.0f)), // sphere -> Rock
+		std::make_pair("Ground", XMFLOAT3(0.0f, 0.0f, 0.0f)), // ground -> Platform
+		std::make_pair("Wall", XMFLOAT3(0.0f, 0.0f, 20.0f)), // wall -> Moai
+		std::make_pair("Bath", XMFLOAT3(0.0f, 0.0f, 0.0f)),  // bath -> Fountain
+		std::make_pair("Water", XMFLOAT3(0.0f, 0.0f, 0.0f)) //water -> Fountain water
 	};
-
-	vector<XMFLOAT3> positions = {
-		//XMFLOAT3(-10.0f, 2.f, 0.0f), // cube
-		XMFLOAT3(0.f, -1.f, 5.0f), // cube -> Columns
-		//XMFLOAT3(10.0f, 2.f, 0.0f), // sphere
-		XMFLOAT3(0.0f, 80.f, 0.0f), // sphere -> Rock
-		//XMFLOAT3(0.0f, 2.f, -10.0f), // sphere
-		XMFLOAT3(0.0f, 0.0f, 0.0f), // ground -> Platform
-		//XMFLOAT3(0.0f, 6.0f, 8.0f), // wall
-		XMFLOAT3(0.0f, 0.0f, 20.0f), // wall -> Moai
-		//XMFLOAT3(0.0f, 2.0f, 0.0f),  // bath
-		//XMFLOAT3(0.0f, _waterHeight, 0.0f) }; //water
-		XMFLOAT3(0.0f, 0.0f, 0.0f),  // bath -> Fountain
-		XMFLOAT3(0.0f, 0.0f, 0.0f)}; //water -> Fountain water
-
-	positions.resize(actorNames.size()); // safety check
 
 	// Instantiate actors and update their names if duplicates
 	int duplicateIdx = 0;
-	string DuplicateBaseName = actorNames[0];
+	string DuplicateBaseName = actorPairs[0].first;
 
-	for (int i = 0; i < actorNames.size(); ++i)
+	for (int i = 0; i < actorPairs.size(); ++i)
 	{
 		if (i > 0)
 		{
 			// Decide whether to reset duplicate reference name
-			if (actorNames[i - 1] == actorNames[i])
+			if (actorPairs[i - 1].first == actorPairs[i].first)
 			{
 				duplicateIdx = 0;
-				DuplicateBaseName = actorNames[i];
+				DuplicateBaseName = actorPairs[i].first;
 			}
 
 			// Check each name against the latest duplicate name and number it if it matches
-			if (actorNames[i] == DuplicateBaseName)
+			if (actorPairs[i].first == DuplicateBaseName)
 			{
-				if (actorNames[i - 1] == DuplicateBaseName)
+				if (actorPairs[i - 1].first == DuplicateBaseName)
 				{
-					actorNames[i - 1] += to_string(duplicateIdx);
+					actorPairs[i - 1].first += to_string(duplicateIdx);
 				}
 
 				duplicateIdx++;
-				actorNames[i] += to_string(duplicateIdx);
+				actorPairs[i].first += to_string(duplicateIdx);
 			}
 		}
 
 		// Instantiate each actor with the updated name
-		unique_ptr<Actor> pActor = std::make_unique<Actor>(actorNames[i]);
+		unique_ptr<Actor> pActor = std::make_unique<Actor>(actorPairs[i].first);
 		pActor->InitializeMovement(VISIBLE);
-		pActor->SetPosition(positions[i]);
+		pActor->SetPosition(actorPairs[i].second);
 		_Actors.emplace(pActor->Name, std::move(pActor));
 	}
+
+	// LEGACY CODE // LEGACY CODE // LEGACY CODE // LEGACY CODE // LEGACY CODE
+	//vector<string> actorNames = { // actors w same name must be added CONSECUTIVELY!!!!
+	//	"Cube",
+	//	"Sphere",
+	//	//"Sphere",
+	//	"Ground",
+	//	"Wall",
+	//	"Bath",
+	//	"Water" 
+	//};
+
+	//vector<XMFLOAT3> positions = {
+	//	//XMFLOAT3(-10.0f, 2.f, 0.0f), // cube
+	//	XMFLOAT3(0.f, -2.5f, 5.0f), // cube -> Columns
+	//	//XMFLOAT3(10.0f, 2.f, 0.0f), // sphere
+	//	XMFLOAT3(0.0f, 80.f, 0.0f), // sphere -> Rock
+	//	//XMFLOAT3(0.0f, 2.f, -10.0f), // sphere
+	//	XMFLOAT3(0.0f, 0.0f, 0.0f), // ground -> Platform
+	//	//XMFLOAT3(0.0f, 6.0f, 8.0f), // wall
+	//	XMFLOAT3(0.0f, 0.0f, 20.0f), // wall -> Moai
+	//	//XMFLOAT3(0.0f, 2.0f, 0.0f),  // bath
+	//	//XMFLOAT3(0.0f, _waterHeight, 0.0f) }; //water
+	//	XMFLOAT3(0.0f, 0.0f, 0.0f),  // bath -> Fountain
+	//	XMFLOAT3(0.0f, 0.0f, 0.0f)}; //water -> Fountain water
+
+	//positions.resize(actorNames.size()); // safety check
+
+	//// Instantiate actors and update their names if duplicates
+	//int duplicateIdx = 0;
+	//string DuplicateBaseName = actorNames[0];
+
+	//for (int i = 0; i < actorNames.size(); ++i)
+	//{
+	//	if (i > 0)
+	//	{
+	//		// Decide whether to reset duplicate reference name
+	//		if (actorNames[i - 1] == actorNames[i])
+	//		{
+	//			duplicateIdx = 0;
+	//			DuplicateBaseName = actorNames[i];
+	//		}
+
+	//		// Check each name against the latest duplicate name and number it if it matches
+	//		if (actorNames[i] == DuplicateBaseName)
+	//		{
+	//			if (actorNames[i - 1] == DuplicateBaseName)
+	//			{
+	//				actorNames[i - 1] += to_string(duplicateIdx);
+	//			}
+
+	//			duplicateIdx++;
+	//			actorNames[i] += to_string(duplicateIdx);
+	//		}
+	//	}
+
+	//	// Instantiate each actor with the updated name
+	//	unique_ptr<Actor> pActor = std::make_unique<Actor>(actorNames[i]);
+	//	pActor->InitializeMovement(VISIBLE);
+	//	pActor->SetPosition(positions[i]);
+	//	_Actors.emplace(pActor->Name, std::move(pActor));
+	//}
 
 	// Custom tweaks on actors
 	XMFLOAT3 customScale(.5, .5, .5);

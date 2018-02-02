@@ -83,7 +83,8 @@ float4 main(PixelInputType input) : SV_TARGET
 	float4 lightColor = float4(0.05,0.05,0.05,1);
 
 	// Set the bias value for fixing the floating point precision issues.
-	float bias = 0.001f;
+	//float bias = 0.001f;
+	float bias = 0.0005f;
 
 	//////////////// SHADOWING LOOP ////////////////
 	for(int i = 0; i < NUM_LIGHTS; ++i)
