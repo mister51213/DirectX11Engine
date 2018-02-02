@@ -126,8 +126,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 
 		it->second->InstantiateModel(new Model(it->second->GetScale(), it->second->GetOrientation(), it->second->GetPosition(), it->first, true));
 
-		// TODO: change to 7 textures (ONLY NEED 1 FOR SHADOWING NOW)
-		vector<string> texArray(/*9*/7, "../DirectX11Engine/data/" + texNames[i]);
+		vector<string> texArray(7, "../DirectX11Engine/data/" + texNames[i]);
 		it->second->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/" + meshNames[i],
 			defaultTex, EShaderType::ELIGHT_SPECULAR);
 
@@ -259,77 +258,100 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	// UI
 	InitializeUI(screenWidth, screenHeight);
 	
+	// BLUR AND SOFT SHADOW SETUP
+	int downSampleWidth = SHADOWMAP_WIDTH / 2;
+	int downSampleHeight = SHADOWMAP_HEIGHT / 2;
+
+	_BlackWhiteRenderTexture.reset(new RenderTextureClass);
+	_BlackWhiteRenderTexture->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
+	_DownSampleTexure.reset(new RenderTextureClass);
+	_DownSampleTexure->Initialize(_D3D->GetDevice(), downSampleWidth, downSampleHeight, 100.0f, 1.0f);
+	_SmallWindow.reset(new OrthoWindowClass);
+	_SmallWindow->Initialize(_D3D->GetDevice(), downSampleWidth, downSampleHeight);
+	_HorizontalBlurTexture.reset(new RenderTextureClass);
+	_HorizontalBlurTexture->Initialize(_D3D->GetDevice(), downSampleWidth, downSampleHeight, SCREEN_DEPTH, 0.1f);
+	_HorizontalBlurShader.reset(new HorizontalBlurShaderClass);
+	_HorizontalBlurShader->Initialize(_D3D->GetDevice(), hwnd);
+	_VerticalBlurTexture.reset(new RenderTextureClass);
+	_VerticalBlurTexture->Initialize(_D3D->GetDevice(), downSampleWidth, downSampleHeight, SCREEN_DEPTH, 0.1f);
+	_VerticalBlurShader.reset(new VerticalBlurShaderClass);
+	_VerticalBlurShader->Initialize(_D3D->GetDevice(), hwnd);
+	_UpSampleTexure.reset(new RenderTextureClass);
+	_UpSampleTexure->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, 0.1f);
+	_FullScreenWindow.reset(new OrthoWindowClass);
+	_FullScreenWindow->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
+
 #pragma endregion
 
 #pragma region QUARANTINE SECTION
 	/////////////// QUARANTINE SECTION ////////////////
-	bool result;
-	int downSampleWidth, downSampleHeight;
+	//bool result;
+	//int downSampleWidth, downSampleHeight;
 	
-	// MODELS
-	m_CubeModel.reset(new Model);
-	m_CubeModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/cube.txt", vector<string>(1, "../DirectX11Engine/data/wall01.dds"));
-	m_CubeModel->SetPosition(XMFLOAT3(-2.0f, 2.0f, 0.0f));
+	//// MODELS
+	//m_CubeModel.reset(new Model);
+	//m_CubeModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/cube.txt", vector<string>(1, "../DirectX11Engine/data/wall01.dds"));
+	//m_CubeModel->SetPosition(XMFLOAT3(-2.0f, 2.0f, 0.0f));
 
-	m_SphereModel.reset(new Model);
-	m_SphereModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/sphere.txt", vector<string>(1, "../DirectX11Engine/data/ice.dds"));
-	m_SphereModel->SetPosition(XMFLOAT3(2.0f, 2.0f, 0.0f));
+	//m_SphereModel.reset(new Model);
+	//m_SphereModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/sphere.txt", vector<string>(1, "../DirectX11Engine/data/ice.dds"));
+	//m_SphereModel->SetPosition(XMFLOAT3(2.0f, 2.0f, 0.0f));
 
-	m_GroundModel.reset(new Model);
-	m_GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt", vector<string>(1, "../DirectX11Engine/data/metal001.dds"));
-	m_GroundModel->SetPosition(XMFLOAT3(0.0f, 1.0f, 0.0f));
+	//m_GroundModel.reset(new Model);
+	//m_GroundModel->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/plane01.txt", vector<string>(1, "../DirectX11Engine/data/metal001.dds"));
+	//m_GroundModel->SetPosition(XMFLOAT3(0.0f, 1.0f, 0.0f));
 
-	// Create the light object.
-	m_SoftLight.reset(new LightClass);
-	if (!m_SoftLight)
-	{
-		return false;
-	}
+	//// Create the light object.
+	//m_SoftLight.reset(new LightClass);
+	//if (!m_SoftLight)
+	//{
+	//	return false;
+	//}
 
-	// Initialize the light object.
-	m_SoftLight->SetAmbientColor(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
-	m_SoftLight->SetDiffuseColor(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
-	m_SoftLight->SetLookAt(XMFLOAT3(0.00f, 0.000f, 0.000f));
-	//m_SoftLight->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
-	m_SoftLight->GenerateOrthoMatrix(20.0f, SHADOWMAP_DEPTH, SHADOWMAP_NEAR);
+	//// Initialize the light object.
+	//m_SoftLight->SetAmbientColor(XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f));
+	//m_SoftLight->SetDiffuseColor(XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+	//m_SoftLight->SetLookAt(XMFLOAT3(0.00f, 0.000f, 0.000f));
+	////m_SoftLight->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
+	//m_SoftLight->GenerateOrthoMatrix(20.0f, SHADOWMAP_DEPTH, SHADOWMAP_NEAR);
 
-	// Create the render to texture object.
-	m_RenderTexture.reset(new RenderTextureClass);
-	if (!m_RenderTexture)
-	{
-		return false;
-	}
+	//// Create the render to texture object.
+	//m_RenderTexture.reset(new RenderTextureClass);
+	//if (!m_RenderTexture)
+	//{
+	//	return false;
+	//}
 
-	// Initialize the render to texture object.
-	m_RenderTexture->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
+	//// Initialize the render to texture object.
+	//m_RenderTexture->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
 
-	m_BlackWhiteRenderTexture.reset(new RenderTextureClass);
-	m_BlackWhiteRenderTexture->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
-	m_ShadowShader.reset(new ShadowShaderClass);
-	m_ShadowShader->Initialize(_D3D->GetDevice(), hwnd);
+	//m_BlackWhiteRenderTexture.reset(new RenderTextureClass);
+	//m_BlackWhiteRenderTexture->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
+	//m_ShadowShader.reset(new ShadowShaderClass);
+	//m_ShadowShader->Initialize(_D3D->GetDevice(), hwnd);
 
-	// Set the size to sample down to.
-	downSampleWidth = SHADOWMAP_WIDTH / 2;
-	downSampleHeight = SHADOWMAP_HEIGHT / 2;
+	//// Set the size to sample down to.
+	//int downSampleWidth = SHADOWMAP_WIDTH / 2;
+	//int downSampleHeight = SHADOWMAP_HEIGHT / 2;
 
-	m_DownSampleTexure.reset(new RenderTextureClass);
-	m_DownSampleTexure->Initialize(_D3D->GetDevice(), downSampleWidth, downSampleHeight, 100.0f, 1.0f);
-	m_SmallWindow.reset(new OrthoWindowClass);
-	result = m_SmallWindow->Initialize(_D3D->GetDevice(), downSampleWidth, downSampleHeight);
-	m_HorizontalBlurTexture.reset(new RenderTextureClass);
-	result = m_HorizontalBlurTexture->Initialize(_D3D->GetDevice(), downSampleWidth, downSampleHeight, SCREEN_DEPTH, 0.1f);
-	m_HorizontalBlurShader.reset(new HorizontalBlurShaderClass);
-	result = m_HorizontalBlurShader->Initialize(_D3D->GetDevice(), hwnd);
-	m_VerticalBlurTexture.reset(new RenderTextureClass);
-	result = m_VerticalBlurTexture->Initialize(_D3D->GetDevice(), downSampleWidth, downSampleHeight, SCREEN_DEPTH, 0.1f);
-	m_VerticalBlurShader.reset(new VerticalBlurShaderClass);
-	result = m_VerticalBlurShader->Initialize(_D3D->GetDevice(), hwnd);
-	m_UpSampleTexure.reset(new RenderTextureClass);
-	result = m_UpSampleTexure->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, 0.1f);
-	m_FullScreenWindow.reset(new OrthoWindowClass);
-	result = m_FullScreenWindow->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
-	m_SoftShadowShader.reset(new SoftShadowShaderClass);
-	m_SoftShadowShader->Initialize(_D3D->GetDevice(), hwnd);
+	//m_DownSampleTexure.reset(new RenderTextureClass);
+	//m_DownSampleTexure->Initialize(_D3D->GetDevice(), downSampleWidth, downSampleHeight, 100.0f, 1.0f);
+	//m_SmallWindow.reset(new OrthoWindowClass);
+	//m_SmallWindow->Initialize(_D3D->GetDevice(), downSampleWidth, downSampleHeight);
+	//m_HorizontalBlurTexture.reset(new RenderTextureClass);
+	//m_HorizontalBlurTexture->Initialize(_D3D->GetDevice(), downSampleWidth, downSampleHeight, SCREEN_DEPTH, 0.1f);
+	//m_HorizontalBlurShader.reset(new HorizontalBlurShaderClass);
+	//m_HorizontalBlurShader->Initialize(_D3D->GetDevice(), hwnd);
+	//m_VerticalBlurTexture.reset(new RenderTextureClass);
+	//m_VerticalBlurTexture->Initialize(_D3D->GetDevice(), downSampleWidth, downSampleHeight, SCREEN_DEPTH, 0.1f);
+	//m_VerticalBlurShader.reset(new VerticalBlurShaderClass);
+	//m_VerticalBlurShader->Initialize(_D3D->GetDevice(), hwnd);
+	//m_UpSampleTexure.reset(new RenderTextureClass);
+	//m_UpSampleTexure->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, 0.1f);
+	//m_FullScreenWindow.reset(new OrthoWindowClass);
+	//m_FullScreenWindow->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
+	//m_SoftShadowShader.reset(new SoftShadowShaderClass);
+	//m_SoftShadowShader->Initialize(_D3D->GetDevice(), hwnd);
 #pragma endregion
 
 	return true;
@@ -488,49 +510,6 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 	return true;
 }
 
-void GraphicsClass::RenderShadowScene(Scene* pScene)
-{
-	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, translateMatrix;
-	float posX, posY, posZ;
-
-	RenderShadows(pScene);
-	ID3D11ShaderResourceView* blurredShadows = ApplyBlur(m_BlackWhiteRenderTexture->GetShaderResourceView(), m_UpSampleTexure.get());
-
-	// Clear the buffers to begin the scene.
-	_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
-
-	// Generate the view matrix based on the camera's position.
-	_Camera->UpdateViewPoint();
-	viewMatrix = _Camera->GetViewMatrix();
-	projectionMatrix = _D3D->GetProjectionMatrix();
-
-	XMFLOAT3 cubePos = m_CubeModel->GetPosition();
-	worldMatrix =XMMatrixTranslation(cubePos.x, cubePos.y, cubePos.z);
-	m_CubeModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	m_SoftShadowShader->Render(_D3D->GetDeviceContext(), m_CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_CubeModel->GetMaterial()->GetResourceArray()[0],blurredShadows,
-		m_SoftLight->GetPosition(), _sceneEffects.ambientColor, m_SoftLight->GetDiffuseColor());
-	m_CubeModel->Draw(_D3D->GetDeviceContext());
-
-	XMFLOAT3 sphPos = m_SphereModel->GetPosition();
-	worldMatrix = XMMatrixTranslation(sphPos.x, sphPos.y, sphPos.z);
-	m_SphereModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	m_SoftShadowShader->Render(_D3D->GetDeviceContext(), m_SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_SphereModel->GetMaterial()->GetResourceArray()[0],blurredShadows, 
-		m_SoftLight->GetPosition(), _sceneEffects.ambientColor, m_SoftLight->GetDiffuseColor());
-	m_SphereModel->Draw(_D3D->GetDeviceContext());
-
-	XMFLOAT3 gPos = m_GroundModel->GetPosition();
-	worldMatrix = XMMatrixTranslation(gPos.x, gPos.y, gPos.z);
-	m_GroundModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	m_SoftShadowShader->Render(_D3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
-		m_GroundModel->GetMaterial()->GetResourceArray()[0], blurredShadows,
-		m_SoftLight->GetPosition(), _sceneEffects.ambientColor, m_SoftLight->GetDiffuseColor());
-	m_GroundModel->Draw(_D3D->GetDeviceContext());
-
-	_D3D->EndScene();
-}
-
 ID3D11ShaderResourceView* GraphicsClass::ApplyBlur(ID3D11ShaderResourceView* viewToBlur, RenderTextureClass* outputRenderTarget)
 {
 	XMMATRIX worldMatrix = _D3D->GetWorldMatrix();
@@ -541,38 +520,38 @@ ID3D11ShaderResourceView* GraphicsClass::ApplyBlur(ID3D11ShaderResourceView* vie
 	_Camera->GetBaseViewMatrix(baseViewMatrix);
 
 	// Downsample
-	m_DownSampleTexure->SetRenderTarget(_D3D->GetDeviceContext());
-	m_DownSampleTexure->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f); // REALLY UNNECESSARY???
-	m_DownSampleTexure->GetOrthoMatrix(orthoMatrix);
-	m_SmallWindow->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), m_SmallWindow->GetIndexCount(),
+	_DownSampleTexure->SetRenderTarget(_D3D->GetDeviceContext());
+	_DownSampleTexure->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f); // REALLY UNNECESSARY???
+	_DownSampleTexure->GetOrthoMatrix(orthoMatrix);
+	_SmallWindow->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), _SmallWindow->GetIndexCount(),
 		MatrixBufferType(XMMatrixTranspose(worldMatrix), XMMatrixTranspose(baseViewMatrix), XMMatrixTranspose(orthoMatrix)),
 		//&viewToBlur, 
 		vector<ComPtr<ID3D11ShaderResourceView>>(1, ComPtr<ID3D11ShaderResourceView>(viewToBlur)));
-	m_SmallWindow->Draw(_D3D->GetDeviceContext());
+	_SmallWindow->Draw(_D3D->GetDeviceContext());
 
 	// Apply horizontal blur
-	m_HorizontalBlurTexture->SetRenderTarget(_D3D->GetDeviceContext());
-	m_HorizontalBlurShader->Render(_D3D->GetDeviceContext(), m_SmallWindow->GetIndexCount(), worldMatrix, baseViewMatrix, orthoMatrix,
-		m_DownSampleTexure->GetShaderResourceView(), (float)(SHADOWMAP_WIDTH * 0.5f));
-	m_SmallWindow->Draw(_D3D->GetDeviceContext());
+	_HorizontalBlurTexture->SetRenderTarget(_D3D->GetDeviceContext());
+	_HorizontalBlurShader->Render(_D3D->GetDeviceContext(), _SmallWindow->GetIndexCount(), worldMatrix, baseViewMatrix, orthoMatrix,
+		_DownSampleTexure->GetShaderResourceView(), (float)(SHADOWMAP_WIDTH * 0.5f));
+	_SmallWindow->Draw(_D3D->GetDeviceContext());
 
 	// Apply vertical blur
-	m_VerticalBlurTexture->SetRenderTarget(_D3D->GetDeviceContext());
-	m_VerticalBlurShader->Render(_D3D->GetDeviceContext(), m_SmallWindow->GetIndexCount(), worldMatrix, baseViewMatrix, orthoMatrix,
-		m_HorizontalBlurTexture->GetShaderResourceView(), (float)(SHADOWMAP_HEIGHT * 0.5f));
-	m_SmallWindow->Draw(_D3D->GetDeviceContext());
+	_VerticalBlurTexture->SetRenderTarget(_D3D->GetDeviceContext());
+	_VerticalBlurShader->Render(_D3D->GetDeviceContext(), _SmallWindow->GetIndexCount(), worldMatrix, baseViewMatrix, orthoMatrix,
+		_HorizontalBlurTexture->GetShaderResourceView(), (float)(SHADOWMAP_HEIGHT * 0.5f));
+	_SmallWindow->Draw(_D3D->GetDeviceContext());
 
 	// Up sample texture
 	outputRenderTarget->SetRenderTarget(_D3D->GetDeviceContext());
 	outputRenderTarget->GetOrthoMatrix(orthoMatrix);
-	ID3D11ShaderResourceView* tempView = m_VerticalBlurTexture->GetShaderResourceView();
-	m_FullScreenWindow->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), m_FullScreenWindow->GetIndexCount(), 
+	ID3D11ShaderResourceView* tempView = _VerticalBlurTexture->GetShaderResourceView();
+	_FullScreenWindow->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), _FullScreenWindow->GetIndexCount(),
 		MatrixBufferType(XMMatrixTranspose(worldMatrix), XMMatrixTranspose(baseViewMatrix), XMMatrixTranspose(orthoMatrix)),
 		//&tempView,
-		vector<ComPtr<ID3D11ShaderResourceView>>(1, ComPtr<ID3D11ShaderResourceView>(m_VerticalBlurTexture->GetShaderResourceView())));
-	m_FullScreenWindow->Draw(_D3D->GetDeviceContext());
+		vector<ComPtr<ID3D11ShaderResourceView>>(1, ComPtr<ID3D11ShaderResourceView>(_VerticalBlurTexture->GetShaderResourceView())));
+	_FullScreenWindow->Draw(_D3D->GetDeviceContext());
 
 	_D3D->TurnZBufferOn();
 	_D3D->SetBackBufferRenderTarget();
@@ -580,97 +559,6 @@ ID3D11ShaderResourceView* GraphicsClass::ApplyBlur(ID3D11ShaderResourceView* vie
 
 	// Return the resource view of the blurred texture
 	return outputRenderTarget->GetShaderResourceView();
-}
-
-void GraphicsClass::RenderShadows(Scene* pScene)
-{
-	//ProjectDepthToTexture//ProjectDepthToTexture//ProjectDepthToTexture//ProjectDepthToTexture
-	XMMATRIX worldMatrix, lightViewMatrix, lightProjectionMatrix, translateMatrix;
-
-	// Set the render target to be the render to texture.
-	m_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext());
-	m_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
-
-	// Generate the light view matrix based on the light's position.
-	m_SoftLight->GenerateViewMatrix();
-	worldMatrix = _D3D->GetWorldMatrix();
-	lightViewMatrix = m_SoftLight->GetViewMatrix();
-	lightProjectionMatrix = m_SoftLight->GetProjectionMatrix();
-
-	// Setup the translation matrix for the cube model.
-	XMFLOAT3 cubePos = m_CubeModel->GetPosition();
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(cubePos.x, cubePos.y, cubePos.z));
-	MatrixBufferType cubeTransforms = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(lightViewMatrix), XMMatrixTranspose(lightProjectionMatrix) };
-	m_CubeModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), m_CubeModel->GetIndexCount(), cubeTransforms);
-	m_CubeModel->Draw(_D3D->GetDeviceContext());
-
-	// Reset the world matrix.
-	worldMatrix = _D3D->GetWorldMatrix();
-	XMFLOAT3 sphPos = m_SphereModel->GetPosition();
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(sphPos.x, sphPos.y, sphPos.z));
-	MatrixBufferType sphTransforms = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(lightViewMatrix), XMMatrixTranspose(lightProjectionMatrix) };
-	m_SphereModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), m_SphereModel->GetIndexCount(), sphTransforms);
-	m_SphereModel->Draw(_D3D->GetDeviceContext());
-
-	// Reset the world matrix.
-	worldMatrix = _D3D->GetWorldMatrix();
-	XMFLOAT3 gPos = m_GroundModel->GetPosition();
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(gPos.x, gPos.y, gPos.z));
-	MatrixBufferType gTransforms = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(lightViewMatrix), XMMatrixTranspose(lightProjectionMatrix) };
-	m_GroundModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), gTransforms);
-	m_GroundModel->Draw(_D3D->GetDeviceContext());
-
-	// Reset the render target back to the original back buffer and not the render to texture anymore.
-	_D3D->SetBackBufferRenderTarget();
-	_D3D->ResetViewport();
-
-	//RenderBlackAndWhiteShadows//RenderBlackAndWhiteShadows//RenderBlackAndWhiteShadows//RenderBlackAndWhiteShadows
-	XMMATRIX viewMatrix, projectionMatrix;
-
-	// Set the render target to be the render to texture.
-	m_BlackWhiteRenderTexture->SetRenderTarget(_D3D->GetDeviceContext());
-	m_BlackWhiteRenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
-	_Camera->UpdateViewPoint();
-
-	// Get the world, view, and projection matrices from the camera and d3d objects.
-	viewMatrix = _Camera->GetViewMatrix();
-	worldMatrix = _D3D->GetWorldMatrix();
-	projectionMatrix = _D3D->GetProjectionMatrix();
-
-	// Get the light's view and projection matrices from the light object.
-	lightProjectionMatrix = m_SoftLight->GetProjectionMatrix();
-
-	// Setup the translation matrix for the cube model.
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(cubePos.x, cubePos.y, cubePos.z));
-	m_CubeModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	m_ShadowShader->Render(_D3D->GetDeviceContext(), m_CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
-		lightProjectionMatrix, m_RenderTexture->GetShaderResourceView(), m_SoftLight->GetPosition());
-	m_CubeModel->Draw(_D3D->GetDeviceContext());
-
-	// Reset the world matrix.
-	worldMatrix =_D3D->GetWorldMatrix();
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(sphPos.x, sphPos.y, sphPos.z));
-	m_SphereModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	m_ShadowShader->Render(_D3D->GetDeviceContext(), m_SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
-		lightProjectionMatrix, m_RenderTexture->GetShaderResourceView(), m_SoftLight->GetPosition());
-	m_SphereModel->Draw(_D3D->GetDeviceContext());
-
-	// Reset the world matrix.
-	worldMatrix = _D3D->GetWorldMatrix();
-	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(gPos.x, gPos.y, gPos.z));
-	m_GroundModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	m_ShadowShader->Render(_D3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
-		lightProjectionMatrix, m_RenderTexture->GetShaderResourceView(), m_SoftLight->GetPosition());
-	m_GroundModel->Draw(_D3D->GetDeviceContext());
-
-	// Reset the render target back to the original back buffer and not the render to texture anymore.
-	_D3D->SetBackBufferRenderTarget();
-
-	// Reset the viewport back to the original.
-	_D3D->ResetViewport();
 }
 
 bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
@@ -812,7 +700,6 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[], ID
 
 	return true;
 }
-
 
 #pragma region UI
 
@@ -1036,3 +923,139 @@ void GraphicsClass::RenderText()
 }
 
 #pragma endregion UI
+
+#pragma region LEGACY SOFT SHADOW TESTING
+//void GraphicsClass::RenderShadowScene(Scene* pScene)
+//{
+//	XMMATRIX worldMatrix, viewMatrix, projectionMatrix, translateMatrix;
+//	float posX, posY, posZ;
+//
+//	RenderShadows(pScene);
+//	ID3D11ShaderResourceView* blurredShadows = ApplyBlur(m_BlackWhiteRenderTexture->GetShaderResourceView(), m_UpSampleTexure.get());
+//
+//	// Clear the buffers to begin the scene.
+//	_D3D->BeginScene(0.0f, 0.0f, 0.0f, 1.0f);
+//
+//	// Generate the view matrix based on the camera's position.
+//	_Camera->UpdateViewPoint();
+//	viewMatrix = _Camera->GetViewMatrix();
+//	projectionMatrix = _D3D->GetProjectionMatrix();
+//
+//	XMFLOAT3 cubePos = m_CubeModel->GetPosition();
+//	worldMatrix =XMMatrixTranslation(cubePos.x, cubePos.y, cubePos.z);
+//	m_CubeModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+//	m_SoftShadowShader->Render(_D3D->GetDeviceContext(), m_CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+//		m_CubeModel->GetMaterial()->GetResourceArray()[0],blurredShadows,
+//		m_SoftLight->GetPosition(), _sceneEffects.ambientColor, m_SoftLight->GetDiffuseColor());
+//	m_CubeModel->Draw(_D3D->GetDeviceContext());
+//
+//	XMFLOAT3 sphPos = m_SphereModel->GetPosition();
+//	worldMatrix = XMMatrixTranslation(sphPos.x, sphPos.y, sphPos.z);
+//	m_SphereModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+//	m_SoftShadowShader->Render(_D3D->GetDeviceContext(), m_SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+//		m_SphereModel->GetMaterial()->GetResourceArray()[0],blurredShadows, 
+//		m_SoftLight->GetPosition(), _sceneEffects.ambientColor, m_SoftLight->GetDiffuseColor());
+//	m_SphereModel->Draw(_D3D->GetDeviceContext());
+//
+//	XMFLOAT3 gPos = m_GroundModel->GetPosition();
+//	worldMatrix = XMMatrixTranslation(gPos.x, gPos.y, gPos.z);
+//	m_GroundModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+//	m_SoftShadowShader->Render(_D3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,
+//		m_GroundModel->GetMaterial()->GetResourceArray()[0], blurredShadows,
+//		m_SoftLight->GetPosition(), _sceneEffects.ambientColor, m_SoftLight->GetDiffuseColor());
+//	m_GroundModel->Draw(_D3D->GetDeviceContext());
+//
+//	_D3D->EndScene();
+//}
+//
+//void GraphicsClass::RenderShadows(Scene* pScene)
+//{
+//	//ProjectDepthToTexture//ProjectDepthToTexture//ProjectDepthToTexture//ProjectDepthToTexture
+//	XMMATRIX worldMatrix, lightViewMatrix, lightProjectionMatrix, translateMatrix;
+//
+//	// Set the render target to be the render to texture.
+//	m_RenderTexture->SetRenderTarget(_D3D->GetDeviceContext());
+//	m_RenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
+//
+//	// Generate the light view matrix based on the light's position.
+//	m_SoftLight->GenerateViewMatrix();
+//	worldMatrix = _D3D->GetWorldMatrix();
+//	lightViewMatrix = m_SoftLight->GetViewMatrix();
+//	lightProjectionMatrix = m_SoftLight->GetProjectionMatrix();
+//
+//	// Setup the translation matrix for the cube model.
+//	XMFLOAT3 cubePos = m_CubeModel->GetPosition();
+//	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(cubePos.x, cubePos.y, cubePos.z));
+//	MatrixBufferType cubeTransforms = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(lightViewMatrix), XMMatrixTranspose(lightProjectionMatrix) };
+//	m_CubeModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+//	_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), m_CubeModel->GetIndexCount(), cubeTransforms);
+//	m_CubeModel->Draw(_D3D->GetDeviceContext());
+//
+//	// Reset the world matrix.
+//	worldMatrix = _D3D->GetWorldMatrix();
+//	XMFLOAT3 sphPos = m_SphereModel->GetPosition();
+//	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(sphPos.x, sphPos.y, sphPos.z));
+//	MatrixBufferType sphTransforms = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(lightViewMatrix), XMMatrixTranspose(lightProjectionMatrix) };
+//	m_SphereModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+//	_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), m_SphereModel->GetIndexCount(), sphTransforms);
+//	m_SphereModel->Draw(_D3D->GetDeviceContext());
+//
+//	// Reset the world matrix.
+//	worldMatrix = _D3D->GetWorldMatrix();
+//	XMFLOAT3 gPos = m_GroundModel->GetPosition();
+//	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(gPos.x, gPos.y, gPos.z));
+//	MatrixBufferType gTransforms = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(lightViewMatrix), XMMatrixTranspose(lightProjectionMatrix) };
+//	m_GroundModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+//	_ShaderManager->_DepthShader->Render(_D3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), gTransforms);
+//	m_GroundModel->Draw(_D3D->GetDeviceContext());
+//
+//	// Reset the render target back to the original back buffer and not the render to texture anymore.
+//	_D3D->SetBackBufferRenderTarget();
+//	_D3D->ResetViewport();
+//
+//	//RenderBlackAndWhiteShadows//RenderBlackAndWhiteShadows//RenderBlackAndWhiteShadows//RenderBlackAndWhiteShadows
+//	XMMATRIX viewMatrix, projectionMatrix;
+//
+//	// Set the render target to be the render to texture.
+//	m_BlackWhiteRenderTexture->SetRenderTarget(_D3D->GetDeviceContext());
+//	m_BlackWhiteRenderTexture->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
+//	_Camera->UpdateViewPoint();
+//
+//	// Get the world, view, and projection matrices from the camera and d3d objects.
+//	viewMatrix = _Camera->GetViewMatrix();
+//	worldMatrix = _D3D->GetWorldMatrix();
+//	projectionMatrix = _D3D->GetProjectionMatrix();
+//
+//	// Get the light's view and projection matrices from the light object.
+//	lightProjectionMatrix = m_SoftLight->GetProjectionMatrix();
+//
+//	// Setup the translation matrix for the cube model.
+//	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(cubePos.x, cubePos.y, cubePos.z));
+//	m_CubeModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+//	m_ShadowShader->Render(_D3D->GetDeviceContext(), m_CubeModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
+//		lightProjectionMatrix, m_RenderTexture->GetShaderResourceView(), m_SoftLight->GetPosition());
+//	m_CubeModel->Draw(_D3D->GetDeviceContext());
+//
+//	// Reset the world matrix.
+//	worldMatrix =_D3D->GetWorldMatrix();
+//	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(sphPos.x, sphPos.y, sphPos.z));
+//	m_SphereModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+//	m_ShadowShader->Render(_D3D->GetDeviceContext(), m_SphereModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
+//		lightProjectionMatrix, m_RenderTexture->GetShaderResourceView(), m_SoftLight->GetPosition());
+//	m_SphereModel->Draw(_D3D->GetDeviceContext());
+//
+//	// Reset the world matrix.
+//	worldMatrix = _D3D->GetWorldMatrix();
+//	worldMatrix = XMMatrixMultiply(worldMatrix, XMMatrixTranslation(gPos.x, gPos.y, gPos.z));
+//	m_GroundModel->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+//	m_ShadowShader->Render(_D3D->GetDeviceContext(), m_GroundModel->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix,
+//		lightProjectionMatrix, m_RenderTexture->GetShaderResourceView(), m_SoftLight->GetPosition());
+//	m_GroundModel->Draw(_D3D->GetDeviceContext());
+//
+//	// Reset the render target back to the original back buffer and not the render to texture anymore.
+//	_D3D->SetBackBufferRenderTarget();
+//
+//	// Reset the viewport back to the original.
+//	_D3D->ResetViewport();
+//}
+#pragma endregion

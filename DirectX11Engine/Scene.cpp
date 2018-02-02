@@ -33,12 +33,12 @@ void Scene::InitializeActors()
 {
 	vector < std::pair<string, XMFLOAT3>> actorPairs =
 	{
-		std::make_pair("Columns", XMFLOAT3(0.f, -2.5f, 5.0f)), // cube -> Columns,
-		std::make_pair("Rock", XMFLOAT3(0.0f, 80.f, 0.0f)), // sphere -> Rock
-		std::make_pair("Platform", XMFLOAT3(0.0f, 0.0f, 0.0f)), // ground -> Platform
-		std::make_pair("Moai", XMFLOAT3(0.0f, 0.0f, 20.0f)), // wall -> Moai
-		std::make_pair("Fountain", XMFLOAT3(0.0f, 0.0f, 0.0f)),  // bath -> Fountain
-		std::make_pair("Water", XMFLOAT3(0.0f, 0.0f, 0.0f)) //water -> Fountain water
+		std::make_pair("Columns", XMFLOAT3(0.f, -2.5f, 5.0f)),
+		std::make_pair("Rock", XMFLOAT3(0.0f, 80.f, 0.0f)),
+		std::make_pair("Platform", XMFLOAT3(0.0f, 0.0f, 0.0f)),
+		std::make_pair("Moai", XMFLOAT3(0.0f, 0.0f, 20.0f)),
+		std::make_pair("Fountain", XMFLOAT3(0.0f, 0.0f, 0.0f)),
+		std::make_pair("Water", XMFLOAT3(0.0f, 0.0f, 0.0f))
 	};
 
 	// Instantiate actors and update their names if duplicates

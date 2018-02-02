@@ -68,7 +68,6 @@ private:
 	bool RenderWaterToTexture(Scene* pScene, LightClass* lights[], ID3D11ShaderResourceView* blurredShadows);
 	bool RenderShadowsToTexture(Scene* pScene, LightClass* lights[]);
 	bool DrawFrame(Scene* pScene);
-	void RenderShadowScene(Scene * pScene);
 	void DrawModel(Model& model, MatrixBufferType& transforms, LightClass * shadowLights[] = nullptr, EShaderType shaderType = EShaderType::EMATERIAL_DEFAULT, XMMATRIX reflectionMatrix = XMMatrixIdentity());
 
 	unique_ptr<D3DClass> _D3D;
@@ -86,27 +85,28 @@ private:
 
 	// Render textures used for shadowing
 	vector<unique_ptr<RenderTextureClass>> _DepthTextures;
-	vector<unique_ptr<LightClass>>_Lights;
+	vector<unique_ptr<LightClass>> _Lights;
 
 	// INTEGRATED SOFT SHADOWS //
+	ID3D11ShaderResourceView* ApplyBlur(ID3D11ShaderResourceView* viewToBlur, RenderTextureClass* outputRenderTarget);
+	
 	unique_ptr<RenderTextureClass> _SceneShadows;
 	unique_ptr<RenderTextureClass> _SceneShadowsBlurred;
 	vector<ComPtr<ID3D11ShaderResourceView>> _DepthViews;
+	unique_ptr<RenderTextureClass> _RenderTexture,_BlackWhiteRenderTexture,_DownSampleTexure;
+	unique_ptr<RenderTextureClass> _HorizontalBlurTexture,_VerticalBlurTexture,_UpSampleTexure;
+	unique_ptr<OrthoWindowClass> _SmallWindow, _FullScreenWindow;
+	unique_ptr<HorizontalBlurShaderClass> _HorizontalBlurShader;
+	unique_ptr<VerticalBlurShaderClass> _VerticalBlurShader;
 
 	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
-	ID3D11ShaderResourceView* ApplyBlur(ID3D11ShaderResourceView* viewToBlur, RenderTextureClass* outputRenderTarget);
-	void RenderShadows(Scene* pScene);
-
-	unique_ptr<RenderTextureClass> m_RenderTexture,m_BlackWhiteRenderTexture,m_DownSampleTexure;
-	unique_ptr<RenderTextureClass>m_HorizontalBlurTexture,m_VerticalBlurTexture,m_UpSampleTexure;
-	
-	unique_ptr<OrthoWindowClass>m_SmallWindow, m_FullScreenWindow;
-	unique_ptr<HorizontalBlurShaderClass> m_HorizontalBlurShader;
-	unique_ptr<VerticalBlurShaderClass> m_VerticalBlurShader;
-	unique_ptr<SoftShadowShaderClass> m_SoftShadowShader;
-	unique_ptr<ShadowShaderClass> m_ShadowShader;
-	
-	unique_ptr<LightClass> m_SoftLight;
-	unique_ptr<Model> m_CubeModel,m_GroundModel,m_SphereModel;
+	//unique_ptr<SoftShadowShaderClass> _SoftShadowShader;
+	//unique_ptr<ShadowShaderClass> _ShadowShader;
+	//unique_ptr<RenderTextureClass> m_RenderTexture, m_BlackWhiteRenderTexture, m_DownSampleTexure;
+	//unique_ptr<RenderTextureClass> m_HorizontalBlurTexture, m_VerticalBlurTexture, m_UpSampleTexure;
+	//void RenderShadowScene(Scene * pScene);
+	//void RenderShadows(Scene* pScene);
+	//unique_ptr<LightClass> m_SoftLight;
+	//unique_ptr<Model> m_CubeModel,m_GroundModel,m_SphereModel;
 	///////// QUARANTINE - TEMP SECTION FOR SOFT SHADOW INTEGRATION ////////////
 };
