@@ -39,6 +39,9 @@ public:
 
 	float _lightPositionX2 = 5.f;
 	float _increment2 = -0.08f;
+
+	float _lightPositionX3 = -5.f;
+	float _increment3 = -0.03f;
 	
 	//////// WATER CONSTANTS /////////
 	float _waterHeight = 2.75f;

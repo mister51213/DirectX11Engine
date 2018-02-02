@@ -33,8 +33,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	_Camera->UpdateViewPoint();
 	//_Camera->SetRotation(pScene->GetCamera()->GetOrientation().x, pScene->GetCamera()->GetOrientation().y, pScene->GetCamera()->GetOrientation().z);
 
-#pragma region MAIN CODE
-
 	// SHADOW RENDER TEXTURES //
 	for (int i = 0; i < NUM_SHADOWS; ++i)
 	{
@@ -93,55 +91,97 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	_SkyInner->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
 		skytexInner, EShaderType::ETEXTURE);
 
+#pragma region DEFAULT MODELS (MAKE MORE ROBUST LATER)
 	///////////////////////////////////
 	// DEFAULT SCENE MODELS
 	///////////////////////////////////	
+	//vector<string> texNames = { "wall01.dds", "marble.png", "metal001.dds", "wall01.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
+	//vector<string> meshNames = { /*"sphere.txt",*/ "_column_Tri.txt", "_rock_Tri.txt" };// , /*"cube2.txt",*/ "sphere.txt"
+	//vector<string> defaultTex{
+	//	//"../DirectX11Engine/data/metal001.dds",
+	//	"../DirectX11Engine/data/_column_BaseColor.png",
+	//	"../DirectX11Engine/data/dirt.dds",
+	//	"../DirectX11Engine/data/light.dds",
+	//	"../DirectX11Engine/data/alpha.dds",
+	//	//"../DirectX11Engine/data/bumpMap.dds", // normal map
+	//	"../DirectX11Engine/data/_column_Normal.png", // normal map
+	//	"../DirectX11Engine/data/specMap.dds",
+	//	"../DirectX11Engine/data/specMap.dds"
+	//	//"../DirectX11Engine/data/specMap.dds",
+	//	//"../DirectX11Engine/data/specMap.dds"
+	//};
 
-	// DEFAULT TEX //
-	vector<string> texNames = { "wall01.dds", "marble.png", "metal001.dds", "wall01.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds", "metal001.dds" };
-	vector<string> meshNames = { /*"sphere.txt",*/ "_column_Tri.txt", "_rock_Tri.txt" };// , /*"cube2.txt",*/ "sphere.txt"
+	//int i = 0;
+	//for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+	//{
+	//	// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
+	//	if (it->first == "Moai" || it->first == "Fountain" || it->first == "Water" || it->first == "Platform")
+	//	{
+	//		continue;
+	//	}
 
-	vector<string> defaultTex{
-		//"../DirectX11Engine/data/metal001.dds",
-		"../DirectX11Engine/data/_column_BaseColor.png",
+	//	it->second->InstantiateModel(new Model(it->second->GetScale(), it->second->GetOrientation(), it->second->GetPosition(), it->first, true));
+
+	//	//vector<string> texArray(7, "../DirectX11Engine/data/" + texNames[i]);
+	//	it->second->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/" + meshNames[i],
+	//		defaultTex, EShaderType::ELIGHT_SPECULAR);
+
+	//	// Store the render texture in the texture view array of each model to make it accessible to the graphics pipeline
+	//	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
+	//	{
+	//		it->second->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
+	//	}
+
+	//	++i;
+	//}
+#pragma endregion
+
+	///////////////////////////////////
+	// CUSTOM MODELS
+	///////////////////////////////////
+	// COLUMNS // COLUMNS // COLUMNS // COLUMNS // COLUMNS
+	pScene->_Actors["Columns"]->InstantiateModel(new Model(pScene->_Actors["Columns"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Columns", true));
+	vector<string>columnTex{
+		"../DirectX11Engine/data/_column_Base_Color.png",
 		"../DirectX11Engine/data/dirt.dds",
 		"../DirectX11Engine/data/light.dds",
 		"../DirectX11Engine/data/alpha.dds",
-		//"../DirectX11Engine/data/bumpMap.dds", // normal map
-		"../DirectX11Engine/data/_column_Normal.png", // normal map
+		"../DirectX11Engine/data/_column_Normal.png",
 		"../DirectX11Engine/data/specMap.dds",
-		"../DirectX11Engine/data/specMap.dds"
-		//"../DirectX11Engine/data/specMap.dds",
-		//"../DirectX11Engine/data/specMap.dds"
+		"../DirectX11Engine/data/noise.png"
 	};
+	pScene->_Actors["Columns"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+		"../DirectX11Engine/data/_column_Tri.txt",
+		columnTex, EShaderType::ELIGHT_SPECULAR);
 
-	int i = 0;
-	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+	// Set Columns Model Shadow textures
+	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
 	{
-		// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
-		if (it->first == "Moai" || it->first == "Fountain" || it->first == "Water" || it->first == "Platform")
-		{
-			continue;
-		}
+		pScene->_Actors["Columns"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
+	}
+	
+	// ROCK // ROCK // ROCK // ROCK // ROCK // ROCK // ROCK // ROCK
+	pScene->_Actors["Rock"]->InstantiateModel(new Model(pScene->_Actors["Columns"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Columns", true));
+	vector<string>rockTex{
+		"../DirectX11Engine/data/_rock_BaseColor.png",
+		"../DirectX11Engine/data/dirt.dds",
+		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/alpha.dds",
+		"../DirectX11Engine/data/_rock_Normal.png",
+		"../DirectX11Engine/data/specMap.dds",
+		"../DirectX11Engine/data/noise.png"
+	};
+	pScene->_Actors["Rock"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+		"../DirectX11Engine/data/_rock_Tri.txt",
+		rockTex, EShaderType::ELIGHT_SPECULAR);
 
-		it->second->InstantiateModel(new Model(it->second->GetScale(), it->second->GetOrientation(), it->second->GetPosition(), it->first, true));
-
-		vector<string> texArray(7, "../DirectX11Engine/data/" + texNames[i]);
-		it->second->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/" + meshNames[i],
-			defaultTex, EShaderType::ELIGHT_SPECULAR);
-
-		// Store the render texture in the texture view array of each model to make it accessible to the graphics pipeline
-		for (int idx = 0; idx < _DepthTextures.size(); ++idx)
-		{
-			it->second->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
-		}
-
-		++i;
+	// Set Columns Model Shadow textures
+	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
+	{
+		pScene->_Actors["Rock"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 	}
 
-	///////////////////////////////////
-	// REFRACTION / REFLECTION MODELS
-	///////////////////////////////////
+	// MOAI // MOAI // MOAI // MOAI // MOAI // MOAI // MOAI // MOAI
 	pScene->_Actors["Moai"]->InstantiateModel(new Model(pScene->_Actors["Moai"]->GetScale(),XMFLOAT3(), XMFLOAT3(), "Moai", true));
 	vector<string>wallTex{
 		//"../DirectX11Engine/data/wall.dds",
@@ -165,6 +205,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	{
 		pScene->_Actors["Moai"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 	}
+
+	// FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN 
 	pScene->_Actors["Fountain"]->InstantiateModel(new Model(pScene->_Actors["Fountain"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Fountain", true, true));
 	vector<string>bathTex{
 		//"../DirectX11Engine/data/wall.dds",
@@ -190,6 +232,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		pScene->_Actors["Fountain"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 	}
 
+	// PLATFORM // PLATFORM // PLATFORM // PLATFORM // PLATFORM // PLATFORM // PLATFORM // PLATFORM // PLATFORM // PLATFORM // PLATFORM // PLATFORM
 	pScene->_Actors["Platform"]->InstantiateModel(new Model(pScene->_Actors["Platform"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Platform", true));
 	vector<string>groundTex{
 		//"../DirectX11Engine/data/snow.jpg",
@@ -209,14 +252,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		"../DirectX11Engine/data/_platform_Tri.txt",
 		//"../DirectX11Engine/data/plane01.txt"
 		/*"../DirectX11Engine/data/SnowTerrain_LowPoly.txt"*/ groundTex, EShaderType::ELIGHT_SPECULAR);
-	pScene->_Actors["Platform"]->GetModel()->SetScale(XMFLOAT3(3, 3, 3));
 
-	// Set Fountain Model Shadow textures
+	// Set Platform Model Shadow textures
 	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
 	{
 		pScene->_Actors["Platform"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 	}
 
+	// WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER 
 	pScene->_Actors["Water"]->InstantiateModel(new Model(pScene->_Actors["Water"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Water", false));
 	vector<string> waterTextures{ "../DirectX11Engine/data/water.dds" }; 
 	
@@ -280,8 +323,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	_UpSampleTexure->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, 0.1f);
 	_FullScreenWindow.reset(new OrthoWindowClass);
 	_FullScreenWindow->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT);
-
-#pragma endregion
 
 #pragma region QUARANTINE SECTION
 	/////////////// QUARANTINE SECTION ////////////////

@@ -134,6 +134,8 @@ void Scene::Tick(float deltaTime, Input* pInput)
 	UpdateActors(deltaTime);
 
 	// Update Lights
+	float lightHeight = 75.f;
+
 	// light 1
 	if (_lightPositionX > 1.0f)
 	{
@@ -146,7 +148,7 @@ void Scene::Tick(float deltaTime, Input* pInput)
 	_lightPositionX += _lightPosIncrement;
 	_lightPositionZ += _lightPosIncrement;
 	//_LightActors[0]->SetPosition(XMFLOAT3(cos(_lightPositionX)*20.f, 20.0f, sin(_lightPositionZ)*20.f));
-	_LightActors[0]->SetPosition(XMFLOAT3(cos(_lightPositionX)*20.f, 40.0f, sin(_lightPositionZ)*20.f));
+	_LightActors[0]->SetPosition(XMFLOAT3(cos(_lightPositionX)*20.f, lightHeight, sin(_lightPositionZ)*20.f));
 
 	// light 2
 	if (_lightPositionX2 > 20.0f || _lightPositionX2 < -20.0f)
@@ -156,7 +158,18 @@ void Scene::Tick(float deltaTime, Input* pInput)
 	_lightPositionX2 += _increment2;
 
 	//_LightActors[1]->SetPosition(XMFLOAT3(_lightPositionX2, 20.0f, sin(_lightPositionZ)*-20.f));
-	_LightActors[1]->SetPosition(XMFLOAT3(_lightPositionX2, 40.0f, sin(_lightPositionZ)*-20.f));
+	_LightActors[1]->SetPosition(XMFLOAT3(_lightPositionX2, lightHeight, sin(_lightPositionZ)*-20.f));
+
+	// light 3
+	if (_lightPositionX3 > 20.0f || _lightPositionX3 < -20.0f)
+	{
+		_increment3 *= -1;
+	}
+	_lightPositionX3 += _increment3;
+
+	_LightActors[2]->SetPosition(XMFLOAT3(_lightPositionX3, lightHeight, sin(_lightPositionZ)*20.f));
+
+
 }
 
 void Scene::ProcessInput(float deltaTime, Input* pInput)

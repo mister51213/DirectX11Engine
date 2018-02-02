@@ -61,7 +61,8 @@ float CalculateSpotLightIntensity(
 	// METALLIC EFFECT (deactivate for now)
 	float metalEffect = saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace)));
 
-	float dpCutOff = .85f;
+	//float dpCutOff = .85f;
+	float dpCutOff = .9f;
 	if(dotProduct > dpCutOff /*&& metalEffect > .55*/)
 	{
 		float expandedRange = (dotProduct - dpCutOff)/(1.f - dpCutOff);

@@ -107,7 +107,7 @@ float4 main(PixelInputType input) : SV_TARGET
 	float depthValue;
 	float lightDepthValue;
 	float4 textureColor;
-	float gamma = 3.f;
+	float gamma = 7.f;
 
 	/////////////////// NORMAL MAPPING //////////////////
 	float4 bumpMap = shaderTextures[4].Sample(SampleType, input.tex);
@@ -176,7 +176,8 @@ float4 main(PixelInputType input) : SV_TARGET
 	float4 color1 = shaderTextures[0].Sample(SampleTypeWrap, input.tex);
     float4 color2 = shaderTextures[1].Sample(SampleTypeWrap, input.tex);
 	float4 alphaValue = shaderTextures[3].Sample(SampleTypeWrap, input.tex);
-	textureColor = saturate((alphaValue * color1) + ((1.0f - alphaValue) * color2));
+	//textureColor = saturate((alphaValue * color1) + ((1.0f - alphaValue) * color2));
+	textureColor = color1;
 
 	// Combine the light and texture color.
 	float4 finalColor;
