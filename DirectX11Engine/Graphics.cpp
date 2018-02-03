@@ -29,6 +29,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 
 	//_Camera->SetPosition(pScene->GetCamera()->GetPosition().x, pScene->GetCamera()->GetPosition().y, pScene->GetCamera()->GetPosition().z);
 	_Camera->SetPosition(0.0f, 0.0f, -10.0f);
+	//XMFLOAT3 tempPos = pScene->GetCamera()->GetPosition(); @DEBUG - not working - WHY must baseviewmatrix use (0,0,-10???)
+	//_Camera->SetPosition(tempPos.x, tempPos.y, tempPos.z); @DEBUG - not working - WHY must baseviewmatrix use (0,0,-10???)
 	_Camera->RenderBaseViewMatrix();
 	_Camera->UpdateViewPoint();
 	//_Camera->SetRotation(pScene->GetCamera()->GetOrientation().x, pScene->GetCamera()->GetOrientation().y, pScene->GetCamera()->GetOrientation().z);
@@ -258,7 +260,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		//"../DirectX11Engine/data/_platform_BaseColor.png",
 		"../DirectX11Engine/data/_platform_BaseColor2.png",
 		"../DirectX11Engine/data/snow.jpg",
-		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/_platform_lightMap.png",	// lightmap
 		"../DirectX11Engine/data/noise.png",	// alpha map
 		//"../DirectX11Engine/data/nMap4.png",	// normal map
 		//"../DirectX11Engine/data/_platform_Normal.png",	// normal map

@@ -139,6 +139,7 @@ float4 main(PixelInputType input) : SV_TARGET
 
     // Saturate the final light color.
     lightColor = saturate(lightColor);
+    //lightColor = lightMapAddition;
 
 	// TEXTURE ANIMATION -  Sample pixel color from texture at this texture coordinate location.
     input.tex.x += textureTranslation;
@@ -149,6 +150,10 @@ float4 main(PixelInputType input) : SV_TARGET
 	float4 alphaValue = shaderTextures[3].Sample(SampleTypeWrap, input.tex);
 	//textureColor = saturate((alphaValue * color1) + ((1.0f - alphaValue) * color2));
 	textureColor = color1;
+
+	// Add extra light map ontop of shadow value
+	float4 lightMapAddition = shaderTextures[2].Sample(SampleType, input.tex);
+	//shadowValue = saturate(shadowValue + lightMapAddition);
 
 	// Combine the light and texture color.
 	float4 finalColor = lightColor * textureColor * shadowValue * gamma;

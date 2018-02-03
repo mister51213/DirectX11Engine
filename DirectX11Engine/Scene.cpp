@@ -17,8 +17,8 @@ bool Scene::Initialize()
 	_Camera.reset(new Actor);
 	_Camera->InitializeMovement(false);
 	_Camera->GetMovementComponent()->SetPosition(XMFLOAT3(0.f, 5.f, -20.f));
-	_Camera->SetPosition(XMFLOAT3(0.f, 50.f, -20.f));
-	//_Camera->SetOrientation(XMFLOAT3(-90, -90, 0));
+	_Camera->SetPosition(XMFLOAT3(0.f, 100.f, -200.f));
+	_Camera->SetOrientation(XMFLOAT3(30, 0, 0));
 
 	/////// INIT ACTORS ////////
 	InitializeActors();
@@ -89,7 +89,8 @@ void Scene::InitializeActors()
 	_Actors["Water"]->SetScale(customScale);
 	//_Actors["Fountain"]->SetScale(XMFLOAT3(.5, 1, .5));
 	//_Actors["Water"]->SetScale(XMFLOAT3(.5, 1, .5));
-	_Actors["Rock"]->SetScale(customScale*.9f);
+	_Actors["Rock"]->SetScale(customScale);
+	_Actors["Rock"]->SetOrientation(XMFLOAT3(0, 0, 0));
 	
 }
 

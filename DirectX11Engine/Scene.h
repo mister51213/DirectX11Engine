@@ -44,6 +44,6 @@ public:
 	float _increment3 = -0.03f;
 	
 	//////// WATER CONSTANTS /////////
-	float _waterHeight = 2.75f;
+	//float _waterHeight = 2.75f;
 };
 
