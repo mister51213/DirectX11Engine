@@ -112,7 +112,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	//	//"../DirectX11Engine/data/specMap.dds",
 	//	//"../DirectX11Engine/data/specMap.dds"
 	//};
-
 	//int i = 0;
 	//for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 	//{
@@ -121,19 +120,15 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	//	{
 	//		continue;
 	//	}
-
 	//	it->second->InstantiateModel(new Model(it->second->GetScale(), it->second->GetOrientation(), it->second->GetPosition(), it->first, true));
-
 	//	//vector<string> texArray(7, "../DirectX11Engine/data/" + texNames[i]);
 	//	it->second->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/" + meshNames[i],
 	//		defaultTex, EShaderType::ELIGHT_SPECULAR);
-
 	//	// Store the render texture in the texture view array of each model to make it accessible to the graphics pipeline
 	//	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
 	//	{
 	//		it->second->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 	//	}
-
 	//	++i;
 	//}
 #pragma endregion
@@ -141,13 +136,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	///////////////////////////////////
 	// CUSTOM MODELS
 	///////////////////////////////////
+
 	// COLUMNS // COLUMNS // COLUMNS // COLUMNS // COLUMNS
 	pScene->_Actors["Columns"]->InstantiateModel(new Model(pScene->_Actors["Columns"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Columns", true));
 	vector<string>columnTex{
 		//"../DirectX11Engine/data/_column_Base_Color.png",
 		"../DirectX11Engine/data/_column_Base_Color2.png",
 		"../DirectX11Engine/data/dirt.dds",
-		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/gammaBlack.png", // gamma map
 		"../DirectX11Engine/data/alpha.dds",
 		//"../DirectX11Engine/data/_column_Normal.png", // normal
 		"../DirectX11Engine/data/_column_Normal2.png", // normal
@@ -165,39 +161,13 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		pScene->_Actors["Columns"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 	}
 	
-	// ROCK // ROCK // ROCK // ROCK // ROCK // ROCK // ROCK // ROCK
-	pScene->_Actors["Rock"]->InstantiateModel(new Model(pScene->_Actors["Columns"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Columns", true));
-	vector<string>rockTex{
-		//"../DirectX11Engine/data/_rock_BaseColor.png",
-		"../DirectX11Engine/data/_rock_BaseColor2.png",
-		"../DirectX11Engine/data/dirt.dds",
-		"../DirectX11Engine/data/light.dds",
-		"../DirectX11Engine/data/alpha.dds",
-		//"../DirectX11Engine/data/_rock_Normal.png",
-		"../DirectX11Engine/data/_rock_Normal2.png",
-		"../DirectX11Engine/data/specMap.dds",
-		"../DirectX11Engine/data/noise.png"
-	};
-	pScene->_Actors["Rock"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
-		//"../DirectX11Engine/data/_rock_Tri.txt",
-		"../DirectX11Engine/data/_rock2.txt",
-		rockTex, EShaderType::ELIGHT_SPECULAR);
-
-	pScene->_Actors["Rock"]->GetModel()->GetMaterial()->gamma = 20.f;
-
-	// Set Columns Model Shadow textures
-	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
-	{
-		pScene->_Actors["Rock"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
-	}
-
 	// MOAI // MOAI // MOAI // MOAI // MOAI // MOAI // MOAI // MOAI
 	pScene->_Actors["Moai"]->InstantiateModel(new Model(pScene->_Actors["Moai"]->GetScale(),XMFLOAT3(), XMFLOAT3(), "Moai", true));
 	vector<string>wallTex{
 		//"../DirectX11Engine/data/moai_BaseColor.png",
 		"../DirectX11Engine/data/_moai_BaseColor2.png",
 		"../DirectX11Engine/data/dirt.dds",
-		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/gammaBlack.png", // gamma map
 		"../DirectX11Engine/data/alpha.dds",
 		//"../DirectX11Engine/data/moai_Normal.png",
 		"../DirectX11Engine/data/_moai_Normal2.png",
@@ -228,7 +198,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		//"../DirectX11Engine/data/_fountain_BaseColor4.png",
 		"../DirectX11Engine/data/_fountain_BaseColor5.png",
 		"../DirectX11Engine/data/dirt.dds",
-		"../DirectX11Engine/data/light.dds",
+		"../DirectX11Engine/data/gammaBlack.png", // gamma map
 		"../DirectX11Engine/data/alpha.dds",
 		//"../DirectX11Engine/data/nMap5.png", // normal map
 		//"../DirectX11Engine/data/_fountain_Normal.png", // normal map
@@ -277,10 +247,38 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		//"../DirectX11Engine/data/plane01.txt"
 		/*"../DirectX11Engine/data/SnowTerrain_LowPoly.txt"*/ groundTex, EShaderType::ELIGHT_SPECULAR);
 
+	pScene->_Actors["Platform"]->GetModel()->GetMaterial()->gamma = 6.f;
+
 	// Set Platform Model Shadow textures
 	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
 	{
 		pScene->_Actors["Platform"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
+	}
+
+	// ROCK // ROCK // ROCK // ROCK // ROCK // ROCK // ROCK // ROCK
+	pScene->_Actors["Rock"]->InstantiateModel(new Model(pScene->_Actors["Columns"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Columns", true));
+	vector<string>rockTex{
+		//"../DirectX11Engine/data/_rock_BaseColor.png",
+		"../DirectX11Engine/data/_rock_BaseColor2.png",
+		"../DirectX11Engine/data/dirt.dds",
+		"../DirectX11Engine/data/gammaWhite.png", // gamma map
+		"../DirectX11Engine/data/alpha.dds",
+		//"../DirectX11Engine/data/_rock_Normal.png",
+		"../DirectX11Engine/data/_rock_Normal2.png",
+		"../DirectX11Engine/data/specMap.dds",
+		"../DirectX11Engine/data/noise.png"
+	};
+	pScene->_Actors["Rock"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
+		//"../DirectX11Engine/data/_rock_Tri.txt",
+		"../DirectX11Engine/data/_rock2.txt",
+		rockTex, EShaderType::ELIGHT_SPECULAR);
+
+	pScene->_Actors["Rock"]->GetModel()->GetMaterial()->gamma = 10.f;
+
+	// Set Columns Model Shadow textures
+	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
+	{
+		pScene->_Actors["Rock"]->GetModel()->SetResourceView(6 + idx, _DepthTextures[idx]->GetShaderResourceView());
 	}
 
 	// WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER 

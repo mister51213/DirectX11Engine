@@ -81,38 +81,6 @@ struct PixelInputType
     float4 vertex_ScrnSpace : TEXCOORD5;
 };
 
-//float CalculateSpotLightIntensity(
-//	float3 LightPos_VertexSpace, 
-//	float3 LightDirection_WS, 
-//	float3 SurfaceNormal_WS, 
-//	out bool outInsideSpotlight)
-//{
-//	// CALCULATE SPOTLIGHT ATTENUATION
-//	float maxLightRange = 50.f;
-//	float dist = length(LightPos_VertexSpace);
-//	float attenuation = 1.f - (maxLightRange - dist) / maxLightRange;
-
-//	float3 lightToVertex_WS = -LightPos_VertexSpace;
-	
-//	float dotProduct = saturate(dot(normalize(lightToVertex_WS), normalize(LightDirection_WS)));
-
-//	// METALLIC EFFECT (deactivate for now)
-//	float metalEffect = saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace)));
-
-//	float dpCutOff = .85f;
-//	if(dotProduct > dpCutOff /*&& metalEffect > .55*/)
-//	{
-//		outInsideSpotlight = true;
-//		float expandedRange = (dotProduct - dpCutOff)/(1.f - dpCutOff);
-//		return saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace))* expandedRange/**attenuation*/);
-//	}
-//	else
-//	{
-//		outInsideSpotlight = false;
-//		return 0;
-//	}
-//}
-
 float4 main(PixelInputType input) : SV_TARGET
 {
 	bool bInsideSpotlight = true;
@@ -120,8 +88,6 @@ float4 main(PixelInputType input) : SV_TARGET
 	float depthValue;
 	float lightDepthValue;
 	float4 textureColor;
-	//float gamma = 1.5f;
-	//float gamma = cb_gamma;
 
 	/////////////////// NORMAL MAPPING //////////////////
 	float4 bumpMap = shaderTextures[4].Sample(SampleType, input.tex);
@@ -153,6 +119,7 @@ float4 main(PixelInputType input) : SV_TARGET
 
     // Saturate the final light color.
     lightColor = saturate(lightColor);
+
     //lightColor = lightMapAddition;
 
 	// TEXTURE ANIMATION -  Sample pixel color from texture at this texture coordinate location.
@@ -166,11 +133,13 @@ float4 main(PixelInputType input) : SV_TARGET
 	textureColor = color1;
 
 	// Add extra light map ontop of shadow value
-	float4 lightMapAddition = shaderTextures[2].Sample(SampleType, input.tex);
-	//shadowValue = saturate(shadowValue + lightMapAddition);
+	float4 lightMapValue = shaderTextures[2].Sample(SampleType, input.tex);
+	float gammaToApply = (cb_gamma * lightMapValue.r) + 1.f;
+
+	//float gammaToApply = (cb_gamma * (lightMapValue.r + 1.f)) - 1.f;
 
 	// Combine the light and texture color.
-	float4 finalColor = lightColor * textureColor * shadowValue * cb_gamma;
+	float4 finalColor = lightColor * textureColor * shadowValue * gammaToApply;//cb_gamma;
 
 	//if(lightColor.x == 0)
 	//{
