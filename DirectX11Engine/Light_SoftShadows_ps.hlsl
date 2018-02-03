@@ -68,37 +68,37 @@ struct PixelInputType
     float4 vertex_ScrnSpace : TEXCOORD5;
 };
 
-float CalculateSpotLightIntensity(
-	float3 LightPos_VertexSpace, 
-	float3 LightDirection_WS, 
-	float3 SurfaceNormal_WS, 
-	out bool outInsideSpotlight)
-{
-	// CALCULATE SPOTLIGHT ATTENUATION
-	float maxLightRange = 50.f;
-	float dist = length(LightPos_VertexSpace);
-	float attenuation = 1.f - (maxLightRange - dist) / maxLightRange;
+//float CalculateSpotLightIntensity(
+//	float3 LightPos_VertexSpace, 
+//	float3 LightDirection_WS, 
+//	float3 SurfaceNormal_WS, 
+//	out bool outInsideSpotlight)
+//{
+//	// CALCULATE SPOTLIGHT ATTENUATION
+//	float maxLightRange = 50.f;
+//	float dist = length(LightPos_VertexSpace);
+//	float attenuation = 1.f - (maxLightRange - dist) / maxLightRange;
 
-	float3 lightToVertex_WS = -LightPos_VertexSpace;
+//	float3 lightToVertex_WS = -LightPos_VertexSpace;
 	
-	float dotProduct = saturate(dot(normalize(lightToVertex_WS), normalize(LightDirection_WS)));
+//	float dotProduct = saturate(dot(normalize(lightToVertex_WS), normalize(LightDirection_WS)));
 
-	// METALLIC EFFECT (deactivate for now)
-	float metalEffect = saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace)));
+//	// METALLIC EFFECT (deactivate for now)
+//	float metalEffect = saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace)));
 
-	float dpCutOff = .85f;
-	if(dotProduct > dpCutOff /*&& metalEffect > .55*/)
-	{
-		outInsideSpotlight = true;
-		float expandedRange = (dotProduct - dpCutOff)/(1.f - dpCutOff);
-		return saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace))* expandedRange/**attenuation*/);
-	}
-	else
-	{
-		outInsideSpotlight = false;
-		return 0;
-	}
-}
+//	float dpCutOff = .85f;
+//	if(dotProduct > dpCutOff /*&& metalEffect > .55*/)
+//	{
+//		outInsideSpotlight = true;
+//		float expandedRange = (dotProduct - dpCutOff)/(1.f - dpCutOff);
+//		return saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace))* expandedRange/**attenuation*/);
+//	}
+//	else
+//	{
+//		outInsideSpotlight = false;
+//		return 0;
+//	}
+//}
 
 float4 main(PixelInputType input) : SV_TARGET
 {
@@ -107,7 +107,7 @@ float4 main(PixelInputType input) : SV_TARGET
 	float depthValue;
 	float lightDepthValue;
 	float4 textureColor;
-	float gamma = 7.f;
+	float gamma = 1.5f;
 
 	/////////////////// NORMAL MAPPING //////////////////
 	float4 bumpMap = shaderTextures[4].Sample(SampleType, input.tex);
@@ -126,7 +126,6 @@ float4 main(PixelInputType input) : SV_TARGET
 	//////////////// AMBIENT BASE COLOR ////////////////
 	// Set the default output color to the ambient light value for all pixels.
     float4 lightColor = cb_ambientColor * saturate(dot(bumpNormal, input.normal) + .2);
-   // float4 lightColor = float4(0,0,0,0);
 
 	// Calculate the amount of light on this pixel.
 	for(int i = 0; i < NUM_LIGHTS; ++i)
@@ -134,40 +133,12 @@ float4 main(PixelInputType input) : SV_TARGET
 		float lightIntensity = saturate(dot(bumpNormal, normalize(input.lightPos_LS[i])));
 		if(lightIntensity > 0.0f)
 		{
-		// Determine the final diffuse color based on the diffuse color and the amount of light intensity.
-		//lightIntensity = 
-		//	CalculateSpotLightIntensity(input.lightPos_LS[i], cb_lights[i].lightDirection, bumpNormal, bInsideSpotlight);
-
-// TEST // TEST // TEST // TEST // TEST // TEST// TEST // TEST // TEST
-// TEST // TEST // TEST // TEST // TEST // TEST// TEST // TEST // TEST
-	//float3 lightToVertex_WS = -input.lightPos_LS[i];
-	//float dotProduct = saturate(dot(normalize(lightToVertex_WS), normalize(cb_lights[i].lightDirection)));
-	//float dpCutOff = .96f;
-	//if(dotProduct > dpCutOff)
-	//{
-	//	bInsideSpotlight = true;
-	//	float expandedRange = (dotProduct - dpCutOff)/(1.f - dpCutOff);
-	//	lightIntensity =  saturate(dot(bumpNormal, normalize(input.lightPos_LS[i]))* expandedRange);
-	//}
-	//else
-	//{
-	//	bInsideSpotlight = false;
-	//	lightIntensity = 0;
-	//}
-// TEST // TEST // TEST // TEST // TEST // TEST// TEST // TEST // TEST
-// TEST // TEST // TEST // TEST // TEST // TEST// TEST // TEST // TEST
-		
 		lightColor += (cb_lights[i].diffuseColor * lightIntensity) * 0.3;
 		}
 	}
 
     // Saturate the final light color.
     lightColor = saturate(lightColor);
-
-	// Sample the shadow value from the shadow texture using the sampler at the projected texture coordinate location.
-	//projectTexCoord.x =  input.vertex_ScrnSpace.x / input.vertex_ScrnSpace.w / 2.0f + 0.5f;
-	//projectTexCoord.y = -input.vertex_ScrnSpace.y / input.vertex_ScrnSpace.w / 2.0f + 0.5f;
-	//float shadowValue = shaderTextures[6].Sample(SampleTypeClamp, projectTexCoord).r;
 
 	// TEXTURE ANIMATION -  Sample pixel color from texture at this texture coordinate location.
     input.tex.x += textureTranslation;
@@ -180,17 +151,7 @@ float4 main(PixelInputType input) : SV_TARGET
 	textureColor = color1;
 
 	// Combine the light and texture color.
-	float4 finalColor;
-	//if(shadowValue > 0)
-	{
-		finalColor = lightColor * textureColor * shadowValue * gamma;
-	}
-	//else
-	//{
-	//	finalColor = float4(.15,.15,.15,1)*textureColor;
-	//}
-
-
+	float4 finalColor = lightColor * textureColor * shadowValue * gamma;
 
 	//if(lightColor.x == 0)
 	//{

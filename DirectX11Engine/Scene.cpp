@@ -34,11 +34,12 @@ void Scene::InitializeActors()
 	vector < std::pair<string, XMFLOAT3>> actorPairs =
 	{
 		std::make_pair("Columns", XMFLOAT3(0.f, -2.5f, 5.0f)),
-		std::make_pair("Rock", XMFLOAT3(0.0f, 80.f, 0.0f)),
+		//std::make_pair("Rock", XMFLOAT3(0.0f, 80.f, 0.0f)),
+		std::make_pair("Rock", XMFLOAT3(0.0f, 0.0f, 0.0f)),
 		std::make_pair("Platform", XMFLOAT3(0.0f, 0.0f, 0.0f)),
 		std::make_pair("Moai", XMFLOAT3(0.0f, 0.0f, 20.0f)),
-		std::make_pair("Fountain", XMFLOAT3(0.0f, 0.0f, 0.0f)),
-		std::make_pair("Water", XMFLOAT3(0.0f, 0.0f, 0.0f))
+		std::make_pair("Fountain", XMFLOAT3(0.0f, 0.0f, -10.0f)),
+		std::make_pair("Water", XMFLOAT3(0.0f, 0.0f, -10.0f))
 	};
 
 	// Instantiate actors and update their names if duplicates
@@ -86,6 +87,9 @@ void Scene::InitializeActors()
 	_Actors["Moai"]->SetScale(customScale);
 	_Actors["Fountain"]->SetScale(customScale);
 	_Actors["Water"]->SetScale(customScale);
+	//_Actors["Fountain"]->SetScale(XMFLOAT3(.5, 1, .5));
+	//_Actors["Water"]->SetScale(XMFLOAT3(.5, 1, .5));
+	_Actors["Rock"]->SetScale(customScale*.9f);
 	
 }
 
@@ -101,7 +105,8 @@ void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
 
 	//_LightActors[0]->SetPosition(XMFLOAT3(-20, 15.f, 0.f));
 	_LightActors[0]->SetPosition(XMFLOAT3(-20, 40.f, 0.f));
-	_LightActors[0]->SetLookAt((actors["Rock"]->GetPosition() - _LightActors[0]->GetPosition()));
+	//_LightActors[0]->SetLookAt((actors["Rock"]->GetPosition() - _LightActors[0]->GetPosition()));
+	_LightActors[0]->SetLookAt((actors["Fountain"]->GetPosition() - _LightActors[0]->GetPosition()));
 	//_LightActors[0]->SetLookAt(XMFLOAT3(0, 0, 0));
 	//_LightActors[0]->SetLookAt(-1*XMFLOAT3(10.f, 10.0f, 0.f));
 	//_LightActors[0]->SetPosition(XMFLOAT3(20.f, 25.0f, 0.f));
@@ -110,7 +115,8 @@ void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
 
 	//_LightActors[1]->SetPosition(XMFLOAT3(0, 15.0f, 0.f));
 	_LightActors[1]->SetPosition(XMFLOAT3(0, 40.0f, 0.f));
-	_LightActors[1]->SetLookAt((actors["Moai"]->GetPosition() - _LightActors[1]->GetPosition()));
+	//_LightActors[1]->SetLookAt((actors["Moai"]->GetPosition() - _LightActors[1]->GetPosition()));
+	_LightActors[1]->SetLookAt((actors["Fountain"]->GetPosition() - _LightActors[1]->GetPosition()));
 	//_LightActors[1]->SetLookAt(XMFLOAT3(0, 0, 0));
 	//_LightActors[1]->SetLookAt(-1*XMFLOAT3(-10.f, 10.0f, 0.f));
 	//_LightActors[1]->SetPosition(XMFLOAT3(-10.f, 25.0f, 0.f));
@@ -120,6 +126,7 @@ void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
 	//_LightActors[2]->SetPosition(XMFLOAT3(0.f, 15.0f, -20));
 	_LightActors[2]->SetPosition(XMFLOAT3(0.f, 40.0f, -20));
 	_LightActors[2]->SetLookAt((actors["Columns"]->GetPosition() - _LightActors[2]->GetPosition()));
+	//_LightActors[2]->SetLookAt((actors["Fountain"]->GetPosition() - _LightActors[2]->GetPosition()));
 	//_LightActors[2]->SetLookAt(XMFLOAT3(0,0,0));
 	//_LightActors[2]->SetLookAt(-1*XMFLOAT3(0.f, 10.0f, 10.f));
 	//_LightActors[2]->SetPosition(XMFLOAT3(0.f, 25.0f,20.f));

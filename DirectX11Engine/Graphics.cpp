@@ -142,16 +142,19 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	// COLUMNS // COLUMNS // COLUMNS // COLUMNS // COLUMNS
 	pScene->_Actors["Columns"]->InstantiateModel(new Model(pScene->_Actors["Columns"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Columns", true));
 	vector<string>columnTex{
-		"../DirectX11Engine/data/_column_Base_Color.png",
+		//"../DirectX11Engine/data/_column_Base_Color.png",
+		"../DirectX11Engine/data/_column_Base_Color2.png",
 		"../DirectX11Engine/data/dirt.dds",
 		"../DirectX11Engine/data/light.dds",
 		"../DirectX11Engine/data/alpha.dds",
-		"../DirectX11Engine/data/_column_Normal.png",
+		//"../DirectX11Engine/data/_column_Normal.png", // normal
+		"../DirectX11Engine/data/_column_Normal2.png", // normal
 		"../DirectX11Engine/data/specMap.dds",
 		"../DirectX11Engine/data/noise.png"
 	};
 	pScene->_Actors["Columns"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/_column_Tri.txt",
+		//"../DirectX11Engine/data/_column_Tri.txt",
+		"../DirectX11Engine/data/_column_Single2.txt",
 		columnTex, EShaderType::ELIGHT_SPECULAR);
 
 	// Set Columns Model Shadow textures
@@ -163,16 +166,19 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	// ROCK // ROCK // ROCK // ROCK // ROCK // ROCK // ROCK // ROCK
 	pScene->_Actors["Rock"]->InstantiateModel(new Model(pScene->_Actors["Columns"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Columns", true));
 	vector<string>rockTex{
-		"../DirectX11Engine/data/_rock_BaseColor.png",
+		//"../DirectX11Engine/data/_rock_BaseColor.png",
+		"../DirectX11Engine/data/_rock_BaseColor2.png",
 		"../DirectX11Engine/data/dirt.dds",
 		"../DirectX11Engine/data/light.dds",
 		"../DirectX11Engine/data/alpha.dds",
-		"../DirectX11Engine/data/_rock_Normal.png",
+		//"../DirectX11Engine/data/_rock_Normal.png",
+		"../DirectX11Engine/data/_rock_Normal2.png",
 		"../DirectX11Engine/data/specMap.dds",
 		"../DirectX11Engine/data/noise.png"
 	};
 	pScene->_Actors["Rock"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
-		"../DirectX11Engine/data/_rock_Tri.txt",
+		//"../DirectX11Engine/data/_rock_Tri.txt",
+		"../DirectX11Engine/data/_rock2.txt",
 		rockTex, EShaderType::ELIGHT_SPECULAR);
 
 	// Set Columns Model Shadow textures
@@ -184,20 +190,23 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	// MOAI // MOAI // MOAI // MOAI // MOAI // MOAI // MOAI // MOAI
 	pScene->_Actors["Moai"]->InstantiateModel(new Model(pScene->_Actors["Moai"]->GetScale(),XMFLOAT3(), XMFLOAT3(), "Moai", true));
 	vector<string>wallTex{
-		//"../DirectX11Engine/data/wall.dds",
-		"../DirectX11Engine/data/moai_BaseColor.png",
+		//"../DirectX11Engine/data/moai_BaseColor.png",
+		"../DirectX11Engine/data/_moai_BaseColor2.png",
 		"../DirectX11Engine/data/dirt.dds",
 		"../DirectX11Engine/data/light.dds",
 		"../DirectX11Engine/data/alpha.dds",
-		//"../DirectX11Engine/data/bumpMap.dds", // normal map
-		"../DirectX11Engine/data/moai_Normal.png",
+		//"../DirectX11Engine/data/moai_Normal.png",
+		"../DirectX11Engine/data/_moai_Normal2.png",
 		"../DirectX11Engine/data/specMap.dds",
 		"../DirectX11Engine/data/noise.png"//,
 		//"../DirectX11Engine/data/noise.png",
 		//"../DirectX11Engine/data/noise.png" 
 	};
+	//pScene->_Actors["Moai"]->SetScale(XMFLOAT3(.01, .01, .01));
 	pScene->_Actors["Moai"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), /*"../DirectX11Engine/data/wall.txt", */
-		"../DirectX11Engine/data/_moai_Tri.txt",
+		//"../DirectX11Engine/data/_moai_Tri.txt",
+		"../DirectX11Engine/data/_moai2.txt",
+		//"../DirectX11Engine/data/_columnSingle.txt",
 		wallTex, EShaderType::ELIGHT_SPECULAR);
 	
 	// Set Moai Model Shadow textures
@@ -209,21 +218,32 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	// FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN // FOUNTAIN 
 	pScene->_Actors["Fountain"]->InstantiateModel(new Model(pScene->_Actors["Fountain"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Fountain", true, true));
 	vector<string>bathTex{
-		//"../DirectX11Engine/data/wall.dds",
-		"../DirectX11Engine/data/_fountain_BaseColor.png",
+		//"../DirectX11Engine/data/_fountain_BaseColor.png",
+		//"../DirectX11Engine/data/_fountain_BaseColor2.png",
+		//"../DirectX11Engine/data/_fountain_BaseColor3.png",
+		//"../DirectX11Engine/data/_fountain_BaseColor4.png",
+		"../DirectX11Engine/data/_fountain_BaseColor5.png",
 		"../DirectX11Engine/data/dirt.dds",
 		"../DirectX11Engine/data/light.dds",
 		"../DirectX11Engine/data/alpha.dds",
 		//"../DirectX11Engine/data/nMap5.png", // normal map
-		"../DirectX11Engine/data/_fountain_Normal.png", // normal map
+		//"../DirectX11Engine/data/_fountain_Normal.png", // normal map
+		//"../DirectX11Engine/data/_fountain_Normal2.png", // normal map
+		//"../DirectX11Engine/data/_fountain_Normal3.png", // normal map
+		//"../DirectX11Engine/data/_fountain_Normal4.png", // normal map
+		//"../DirectX11Engine/data/_fountain_Normal4_TEST.png", // normal map		
+		//"../DirectX11Engine/data/_fountain_Normal5.png", // normal map		NOT WORKING
+		//"../DirectX11Engine/data/_fountain_Normal_HACK.png", // normal map
+		"../DirectX11Engine/data/_fountain_Normal_HACK2.png", // normal map
+		//"../DirectX11Engine/data/_fountain_Normal6.png", // normal map		
 		"../DirectX11Engine/data/specMap.dds",
 		"../DirectX11Engine/data/noise.png"//,
 		//"../DirectX11Engine/data/noise.png",
 		//"../DirectX11Engine/data/noise.png" 
 	};
 	pScene->_Actors["Fountain"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
-		//"../DirectX11Engine/data/bath.txt",
-		"../DirectX11Engine/data/_fountain_Tri.txt",
+		//"../DirectX11Engine/data/_fountain_Tri.txt",
+		"../DirectX11Engine/data/_fountain2.txt",
 		bathTex, EShaderType::ELIGHT_SPECULAR);
 	
 	// Set Fountain Model Shadow textures
@@ -235,21 +255,21 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	// PLATFORM // PLATFORM // PLATFORM // PLATFORM // PLATFORM // PLATFORM // PLATFORM // PLATFORM // PLATFORM // PLATFORM // PLATFORM // PLATFORM
 	pScene->_Actors["Platform"]->InstantiateModel(new Model(pScene->_Actors["Platform"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Platform", true));
 	vector<string>groundTex{
-		//"../DirectX11Engine/data/snow.jpg",
-		"../DirectX11Engine/data/_platform_BaseColor.png",
+		//"../DirectX11Engine/data/_platform_BaseColor.png",
+		"../DirectX11Engine/data/_platform_BaseColor2.png",
 		"../DirectX11Engine/data/snow.jpg",
 		"../DirectX11Engine/data/light.dds",
 		"../DirectX11Engine/data/noise.png",	// alpha map
 		//"../DirectX11Engine/data/nMap4.png",	// normal map
-		"../DirectX11Engine/data/_platform_Normal.png",	// normal map
+		//"../DirectX11Engine/data/_platform_Normal.png",	// normal map
+		"../DirectX11Engine/data/_platform_Normal2.png",	// normal map
 		"../DirectX11Engine/data/specMap.dds",
-		"../DirectX11Engine/data/noise.png"//,
-		//"../DirectX11Engine/data/noise.png",
-		//"../DirectX11Engine/data/noise.png" 
+		"../DirectX11Engine/data/noise.png"
 	};
 
 	pScene->_Actors["Platform"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
-		"../DirectX11Engine/data/_platform_Tri.txt",
+		//"../DirectX11Engine/data/_platform_Tri.txt",
+		"../DirectX11Engine/data/_platform2.txt",
 		//"../DirectX11Engine/data/plane01.txt"
 		/*"../DirectX11Engine/data/SnowTerrain_LowPoly.txt"*/ groundTex, EShaderType::ELIGHT_SPECULAR);
 
@@ -265,7 +285,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	
 	pScene->_Actors["Water"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
 		//"../DirectX11Engine/data/water.txt",
-		"../DirectX11Engine/data/_fountain_water_Tri.txt",
+		//"../DirectX11Engine/data/_fountain_water_Tri.txt",
+		"../DirectX11Engine/data/_fountain_water2.txt",
 		waterTextures, EShaderType::EWATER);
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->reflectRefractScale = 0.01f;
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->waterHeight = _waterHeight;// *_waterSceneScale;
@@ -290,7 +311,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		_Lights[i]->SetPosition(pScene->_LightActors[i]->GetPosition());
 		_Lights[i]->GenerateProjectionMatrix(SCREEN_DEPTH, SCREEN_NEAR);
 		//_Lights[i]->GenerateOrthoMatrix(50.0f, SHADOWMAP_DEPTH, SHADOWMAP_NEAR);
-
 	}
 
 	// Effects
