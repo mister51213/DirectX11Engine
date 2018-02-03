@@ -33,6 +33,8 @@ public:
 	vector<unique_ptr<Actor>> _LightActors;
 
 	/////////// Light Animation /////////////
+	float _lightHeight = 45.f;
+
 	float _lightPositionX = 1.f;
 	float _lightPositionZ = 1.f;
 	float _lightPosIncrement = -0.008f;

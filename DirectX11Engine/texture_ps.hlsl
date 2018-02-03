@@ -41,17 +41,18 @@ struct PixelInputType
 float4 TexturePixelShader(PixelInputType input) : SV_TARGET
 {
     float4 textureColor;
-	float gamma = .5;
+
+	// Get alpha BEFORE translating texture
+	input.tex *= scale;
+	float4 alpha = shaderTextures[1].Sample(SampleType, input.tex);
 
 	// Move the position the texture is sampled from.	
     input.tex += translation;
-	input.tex *= scale;
 
     // Sample the pixel color from the texture using the sampler at this texture coordinate location.
-    textureColor = shaderTextures[0].Sample(SampleType, input.tex);
+    textureColor = shaderTextures[0].Sample(SampleType, input.tex) * gamma;
     //textureColor = shaderTextures[0].Sample(SampleType, input.tex*.5f) * gamma;
 
-	float4 alpha = shaderTextures[1].Sample(SampleType, input.tex);
 	textureColor.a = 1.f - alpha.x;
 	 
     return textureColor;

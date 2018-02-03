@@ -37,8 +37,8 @@ void Scene::InitializeActors()
 		std::make_pair("Rock", XMFLOAT3(0.0f, 0.0f, 0.0f)),
 		std::make_pair("Platform", XMFLOAT3(0.0f, 0.0f, 0.0f)),
 		std::make_pair("Moai", XMFLOAT3(0.0f, 0.0f, 20.0f)),
-		std::make_pair("Fountain", XMFLOAT3(0.0f, 0.0f, -10.0f)),
-		std::make_pair("Water", XMFLOAT3(0.0f, 0.0f, -10.0f))
+		std::make_pair("Fountain", XMFLOAT3(0.0f, 0.0f, -5.0f)),
+		std::make_pair("Water", XMFLOAT3(0.0f, 0.0f, -5.0f))
 		//std::make_pair("GlassColumn", XMFLOAT3(-5.f, -2.5f, 5.0f))
 	};
 
@@ -99,9 +99,9 @@ void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
 	}
 
 	//_LightActors[0]->SetPosition(XMFLOAT3(-20, 15.f, 0.f));
-	_LightActors[0]->SetPosition(XMFLOAT3(-20, 40.f, 0.f));
+	_LightActors[0]->SetPosition(XMFLOAT3(-20, _lightHeight, -20.f));
 	//_LightActors[0]->SetLookAt((actors["Rock"]->GetPosition() - _LightActors[0]->GetPosition()));
-	_LightActors[0]->SetLookAt((actors["Fountain"]->GetPosition() - _LightActors[0]->GetPosition()));
+	_LightActors[0]->SetLookAt((actors["Moai"]->GetPosition() - _LightActors[0]->GetPosition()));
 	//_LightActors[0]->SetLookAt(XMFLOAT3(0, 0, 0));
 	//_LightActors[0]->SetLookAt(-1*XMFLOAT3(10.f, 10.0f, 0.f));
 	//_LightActors[0]->SetPosition(XMFLOAT3(20.f, 25.0f, 0.f));
@@ -109,9 +109,10 @@ void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
 	//_LightActors[0]->SetLookAt(actors["Rock"]->GetPosition());
 
 	//_LightActors[1]->SetPosition(XMFLOAT3(0, 15.0f, 0.f));
-	_LightActors[1]->SetPosition(XMFLOAT3(0, 40.0f, 0.f));
+	_LightActors[1]->SetPosition(XMFLOAT3(0, _lightHeight*2.f, -40.f));
 	//_LightActors[1]->SetLookAt((actors["Moai"]->GetPosition() - _LightActors[1]->GetPosition()));
-	_LightActors[1]->SetLookAt((actors["Fountain"]->GetPosition() - _LightActors[1]->GetPosition()));
+	//_LightActors[1]->SetLookAt((actors["Columns"]->GetPosition() - _LightActors[1]->GetPosition() + XMFLOAT3(0, 50, 0)));
+	_LightActors[1]->SetLookAt((actors["Columns"]->GetPosition() - _LightActors[1]->GetPosition()));
 	//_LightActors[1]->SetLookAt(XMFLOAT3(0, 0, 0));
 	//_LightActors[1]->SetLookAt(-1*XMFLOAT3(-10.f, 10.0f, 0.f));
 	//_LightActors[1]->SetPosition(XMFLOAT3(-10.f, 25.0f, 0.f));
@@ -119,8 +120,8 @@ void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
 	//_LightActors[1]->SetLookAt(actors["Sphere1"]->GetPosition());
 
 	//_LightActors[2]->SetPosition(XMFLOAT3(0.f, 15.0f, -20));
-	_LightActors[2]->SetPosition(XMFLOAT3(0.f, 40.0f, -20));
-	_LightActors[2]->SetLookAt((actors["Columns"]->GetPosition() - _LightActors[2]->GetPosition()));
+	_LightActors[2]->SetPosition(XMFLOAT3(20.f, _lightHeight, -20));
+	_LightActors[2]->SetLookAt((actors["Moai"]->GetPosition() - _LightActors[2]->GetPosition()));
 	//_LightActors[2]->SetLookAt((actors["Fountain"]->GetPosition() - _LightActors[2]->GetPosition()));
 	//_LightActors[2]->SetLookAt(XMFLOAT3(0,0,0));
 	//_LightActors[2]->SetLookAt(-1*XMFLOAT3(0.f, 10.0f, 10.f));
@@ -136,40 +137,38 @@ void Scene::Tick(float deltaTime, Input* pInput)
 	UpdateActors(deltaTime);
 
 	// Update Lights
-	float lightHeight = 75.f;
+	//// light 1
+	//if (_lightPositionX > 1.0f)
+	//{
+	//	_lightPositionX = -1.f;
+	//}
+	//if (_lightPositionZ > 1.0f)
+	//{
+	//	_lightPositionZ = -1.f;
+	//}
+	//_lightPositionX += _lightPosIncrement;
+	//_lightPositionZ += _lightPosIncrement;
+	////_LightActors[0]->SetPosition(XMFLOAT3(cos(_lightPositionX)*20.f, 20.0f, sin(_lightPositionZ)*20.f));
+	//_LightActors[0]->SetPosition(XMFLOAT3(cos(_lightPositionX)*20.f, _lightHeight, sin(_lightPositionZ)*20.f));
 
-	// light 1
-	if (_lightPositionX > 1.0f)
-	{
-		_lightPositionX = -1.f;
-	}
-	if (_lightPositionZ > 1.0f)
-	{
-		_lightPositionZ = -1.f;
-	}
-	_lightPositionX += _lightPosIncrement;
-	_lightPositionZ += _lightPosIncrement;
-	//_LightActors[0]->SetPosition(XMFLOAT3(cos(_lightPositionX)*20.f, 20.0f, sin(_lightPositionZ)*20.f));
-	_LightActors[0]->SetPosition(XMFLOAT3(cos(_lightPositionX)*20.f, lightHeight, sin(_lightPositionZ)*20.f));
+	//// light 2
+	//if (_lightPositionX2 > 20.0f || _lightPositionX2 < -20.0f)
+	//{
+	//	_increment2 *= -1;
+	//}
+	//_lightPositionX2 += _increment2;
 
-	// light 2
-	if (_lightPositionX2 > 20.0f || _lightPositionX2 < -20.0f)
-	{
-		_increment2 *= -1;
-	}
-	_lightPositionX2 += _increment2;
+	////_LightActors[1]->SetPosition(XMFLOAT3(_lightPositionX2, 20.0f, sin(_lightPositionZ)*-20.f));
+	//_LightActors[1]->SetPosition(XMFLOAT3(_lightPositionX2, _lightHeight, sin(_lightPositionZ)*-20.f));
 
-	//_LightActors[1]->SetPosition(XMFLOAT3(_lightPositionX2, 20.0f, sin(_lightPositionZ)*-20.f));
-	_LightActors[1]->SetPosition(XMFLOAT3(_lightPositionX2, lightHeight, sin(_lightPositionZ)*-20.f));
+	//// light 3
+	//if (_lightPositionX3 > 20.0f || _lightPositionX3 < -20.0f)
+	//{
+	//	_increment3 *= -1;
+	//}
+	//_lightPositionX3 += _increment3;
 
-	// light 3
-	if (_lightPositionX3 > 20.0f || _lightPositionX3 < -20.0f)
-	{
-		_increment3 *= -1;
-	}
-	_lightPositionX3 += _increment3;
-
-	_LightActors[2]->SetPosition(XMFLOAT3(_lightPositionX3, lightHeight, sin(_lightPositionZ)*20.f));
+	//_LightActors[2]->SetPosition(XMFLOAT3(_lightPositionX3, _lightHeight, sin(_lightPositionZ)*20.f));
 
 
 }

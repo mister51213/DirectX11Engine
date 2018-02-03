@@ -68,8 +68,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	// EARTH
 	_Earth.reset(new Model(XMFLOAT3(250, 400, 250), XMFLOAT3(180, 0, 0), XMFLOAT3(0, -300, 0), "Earth Outer", false));
 	//_Earth.reset(new Model());
-	vector<string> earthtex = { "../DirectX11Engine/data/fire2.dds", "../DirectX11Engine/data/skydome_alpha3.jpg" };
-	_Earth->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
+	vector<string> earthtex = { "../DirectX11Engine/data/fire2.dds", "../DirectX11Engine/data/skydome_alpha3nostars.jpg" };
+	_Earth->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
+		"../DirectX11Engine/data/skydome_lowpoly.txt",
 		earthtex, EShaderType::ETEXTURE);
 	_Earth->GetMaterial()->bAnimated = true;
 	//_Earth->GetMaterial()->textureScale = 1.5f;
@@ -77,21 +78,30 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	// EARTH INNER
 	_EarthInner.reset(new Model(.75f * _Earth->GetScale(), _Earth->GetOrientation(), XMFLOAT3(0, -200, 0), "Earth Inner", false));
 	vector<string> earthtex2 = { "../DirectX11Engine/data/fire.dds", "../DirectX11Engine/data/skydome_alpha5.jpg" };
-	_EarthInner->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
+	_EarthInner->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
+		"../DirectX11Engine/data/skydome_lowpoly.txt",
 		earthtex2, EShaderType::ETEXTURE);
 	//_EarthInner->GetMaterial()->textureScale = .7f;
 
 	// SKY
 	_Sky.reset(new Model(XMFLOAT3(100, 150, 100), XMFLOAT3(0, 0, 0), XMFLOAT3(100, 300, 100), "Sky Outer", false));
+	//vector<string> skytex = { "../DirectX11Engine/data/galaxyblue.jpg", "../DirectX11Engine/data/skydome_alpha2s.jpg" };
 	vector<string> skytex = { "../DirectX11Engine/data/galaxyblue.jpg", "../DirectX11Engine/data/skydome_alpha2.jpg" };
-	_Sky->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
+	_Sky->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
+		"../DirectX11Engine/data/skydome_lowpoly.txt",
 		skytex, EShaderType::ETEXTURE);
+	_Sky->GetMaterial()->gamma = 0.7f;
 
-	// SKY INNNER
+	// SKY INNER
 	_SkyInner.reset(new Model(.7f * _Sky->GetScale(), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 150, 0), "Sky Inner", false));
+	//vector<string> skytexInner = { "../DirectX11Engine/data/galaxypurple.jpg", "../DirectX11Engine/data/skydome_alpha4s.jpg" };
 	vector<string> skytexInner = { "../DirectX11Engine/data/galaxypurple.jpg", "../DirectX11Engine/data/skydome_alpha4.jpg" };
-	_SkyInner->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/skydome_lowpoly.txt",
+	_SkyInner->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
+		"../DirectX11Engine/data/skydome_lowpoly.txt",
 		skytexInner, EShaderType::ETEXTURE);
+	//_SkyInner->GetMaterial()->gamma = 0.5f;
+	//_SkyInner->GetMaterial()->textureScale = 1.43f;
+
 
 #pragma region DEFAULT MODELS (MAKE MORE ROBUST LATER)
 	///////////////////////////////////
@@ -681,6 +691,9 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 	float posX, posY, posZ;
 	bool result;
 
+	_D3D->TurnOnFrontFaceCulling();
+	//_D3D->TurnOffCulling();
+
 	for (int i = 0; i < _DepthTextures.size(); ++i)
 	{
 		_DepthTextures[i]->SetRenderTarget(_D3D->GetDeviceContext());
@@ -701,6 +714,8 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 			DrawModel(*it->second->GetModel(), matBuffer, nullptr, EDEPTH);
 		}
 	}
+
+	_D3D->TurnOnCulling();
 
 	// NOW RENDER ALL OF THESE SHADOWS TO ONE GLOBAL SHADOW TEXTURE
 	_SceneShadows->SetRenderTarget(_D3D->GetDeviceContext());

@@ -61,9 +61,12 @@ private:
 
 	// FOR CONTROLLABLE, NON-PHYSICS BASED ACTORS
 	//const float _moveSpeed = 0.0002f;
-	const float _moveSpeed = 0.07f;
-	const float _brakeSpeed = 0.13f;
-	const float _maxSpeed = 0.7f;
+	//const float _moveSpeed = 0.07f;
+	const float _moveSpeed = 0.2f;
+	//const float _brakeSpeed = 0.13f;
+	const float _brakeSpeed = 0.25f;
+	//const float _maxSpeed = 0.7f;
+	const float _maxSpeed = 1.5f;
 
 	int mouseX, mouseY;
 };

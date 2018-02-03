@@ -59,6 +59,7 @@ public:
 	void TurnZBufferOff();
 
 	void TurnOnCulling();
+	void TurnOnFrontFaceCulling();
 	void TurnOffCulling();
 
 	void EnableAlphaBlending();
@@ -84,6 +85,7 @@ private:
 	ComPtr<ID3D11DepthStencilState> _depthStencilState;
 	ComPtr<ID3D11DepthStencilView> _depthStencilView;
 	ComPtr<ID3D11RasterizerState> _rasterState;
+	ComPtr<ID3D11RasterizerState> _rasterStateFrontFaceCulling;
 	ComPtr<ID3D11RasterizerState> _rasterStateNoCulling;
 	ComPtr<ID3D11RasterizerState> _rasterStateWireframe;
 	ComPtr<ID3D11DepthStencilState> _depthDisabledStencilState;

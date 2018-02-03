@@ -193,7 +193,7 @@ bool ShaderManagerClass::Render(
 	case EShaderType::ETEXTURE:
 		result = _TextureShader->Render(device, indexCount,	transforms,
 			//material->GetResourceArray(), 
-			material->GetTextureObject()->_textureViews, material->translation2D, material->textureScale);
+			material->GetTextureObject()->_textureViews, material->translation2D, material->textureScale, material->gamma);
 		if (!result) return false;
 		//_TextureShader->RenderShader(device, indexCount);
 		break;

@@ -62,7 +62,7 @@ float CalculateSpotLightIntensity(
 	float metalEffect = saturate(dot(SurfaceNormal_WS, normalize(LightPos_VertexSpace)));
 
 	//float dpCutOff = .85f;
-	float dpCutOff = .9f;
+	float dpCutOff = .85f;
 	if(dotProduct > dpCutOff /*&& metalEffect > .55*/)
 	{
 		float expandedRange = (dotProduct - dpCutOff)/(1.f - dpCutOff);
@@ -85,7 +85,7 @@ float4 main(PixelInputType input) : SV_TARGET
 
 	// Set the bias value for fixing the floating point precision issues.
 	//float bias = 0.001f;
-	float bias = 0.0008f;
+	float bias = 0.0005f;
 
 	//////////////// SHADOWING LOOP ////////////////
 	for(int i = 0; i < NUM_LIGHTS; ++i)
