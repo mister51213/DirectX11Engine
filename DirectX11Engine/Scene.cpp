@@ -38,8 +38,8 @@ void Scene::InitializeActors()
 		std::make_pair("Platform", XMFLOAT3(0.0f, 0.0f, 0.0f)),
 		std::make_pair("Moai", XMFLOAT3(0.0f, 0.0f, 20.0f)),
 		std::make_pair("Fountain", XMFLOAT3(0.0f, 0.0f, -5.0f)),
-		std::make_pair("Water", XMFLOAT3(0.0f, 0.0f, -5.0f))
-		//std::make_pair("GlassColumn", XMFLOAT3(-5.f, -2.5f, 5.0f))
+		std::make_pair("Water", XMFLOAT3(0.0f, 0.0f, -5.0f)),
+		std::make_pair("GlassColumns", XMFLOAT3(0.f, -2.5f, -20.0f))
 	};
 
 	// Scene scale
@@ -83,6 +83,8 @@ void Scene::InitializeActors()
 
 	// Custom tweaks on actors
 	_Actors["Columns"]->SetScale(XMFLOAT3(1.f, 1.f, 1.f));
+	_Actors["GlassColumns"]->SetScale(XMFLOAT3(1.f, 1.f, 1.f));
+	_Actors["GlassColumns"]->SetOrientation(XMFLOAT3(0.f, 180.f, 0.f));
 	//_Actors["Platform"]->SetScale(XMFLOAT3(.7f,.7f,.7f));
 	//_Actors["Rock"]->SetScale(XMFLOAT3(.7f, .7f, .7f));
 	//_Actors["Platform"]->SetPosition(XMFLOAT3(0.f, 1.0f, 0.f));
@@ -110,6 +112,7 @@ void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
 
 	//_LightActors[1]->SetPosition(XMFLOAT3(0, 15.0f, 0.f));
 	_LightActors[1]->SetPosition(XMFLOAT3(0, _lightHeight*2.f, -40.f));
+	//_LightActors[1]->SetPosition(XMFLOAT3(0, _lightHeight*2.f, 40.f));
 	//_LightActors[1]->SetLookAt((actors["Moai"]->GetPosition() - _LightActors[1]->GetPosition()));
 	//_LightActors[1]->SetLookAt((actors["Columns"]->GetPosition() - _LightActors[1]->GetPosition() + XMFLOAT3(0, 50, 0)));
 	_LightActors[1]->SetLookAt((actors["Columns"]->GetPosition() - _LightActors[1]->GetPosition()));
@@ -169,8 +172,6 @@ void Scene::Tick(float deltaTime, Input* pInput)
 	//_lightPositionX3 += _increment3;
 
 	//_LightActors[2]->SetPosition(XMFLOAT3(_lightPositionX3, _lightHeight, sin(_lightPositionZ)*20.f));
-
-
 }
 
 void Scene::ProcessInput(float deltaTime, Input* pInput)

@@ -316,14 +316,13 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFLECTION TEXTURE (CURRENTLY NOT USED!!!)
 
 	//// GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN 
-	//pScene->_Actors["GlassColumn"]->InstantiateModel(new Model(pScene->_Actors["Water"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Water", false));
-	//pScene->_Actors["GlassColumn"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),	"../DirectX11Engine/data/_column_lowPoly2.txt",	waterTextures, EShaderType::EWATER);
-	//pScene->_Actors["GlassColumn"]->GetModel()->GetMaterial()->reflectRefractScale = 0.01f;
-	//pScene->_Actors["GlassColumn"]->GetModel()->GetMaterial()->waterHeight = _waterHeight;// *_waterSceneScale;
-	//pScene->_Actors["GlassColumn"]->GetModel()->GetMaterial()->bAnimated = true;
-	//pScene->_Actors["GlassColumn"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFRACTION TEXTURE
-	//pScene->_Actors["GlassColumn"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFLECTION TEXTURE (CURRENTLY NOT USED!!!)
-
+	pScene->_Actors["GlassColumns"]->InstantiateModel(new Model(pScene->_Actors["GlassColumns"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "GlassColumns", false));
+	vector<string> iceTextures{ "../DirectX11Engine/data/bump2.dds" }; // FOR ICE, USE A DIFFERENT NORMAL MAP
+	pScene->_Actors["GlassColumns"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/_columns2.txt", waterTextures, EShaderType::EWATER);
+	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->reflectRefractScale = 0.02f;
+	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->bAnimated = true;
+	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFRACTION TEXTURE
+	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFLECTION TEXTURE (CURRENTLY NOT USED!!!)
 
 	///////////////////////////////////
 	// INITIALIZE LIGHTS
@@ -457,12 +456,22 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 		}
 	}
 
-	// WATER DEMO
-	if(pScene->_Actors["Water"]->GetModel())
-	pScene->_Actors["Water"]->GetModel()->GetMaterial()->Animate();
+	// Animate textures
+	if (pScene->_Actors["Water"]->GetModel())
+	{
+		pScene->_Actors["Water"]->GetModel()->GetMaterial()->Animate();
+	}
 
 	if (_Earth)
-	_Earth->GetMaterial()->Animate();
+	{
+		_Earth->GetMaterial()->Animate();
+	}
+
+	if (pScene->_Actors["GlassColumns"]->GetModel())
+	{
+		pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->Animate();
+	}
+
 
 	// 2. Update Camera
 	XMFLOAT3 camPos = pScene->GetCamera()->GetPosition();
@@ -568,7 +577,7 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
 	{
 		// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
-		if (it->first == "Water" || !it->second->GetModel()) continue;
+		if (!it->second->GetModel() || it->first == "Water" || it->first == "GlassColumns") continue;
 
 		//_D3D->EnableAlphaBlending();
 		//DrawModel(*it->second->GetModel(), transforms,lights);
@@ -589,44 +598,65 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 
 	}
 
-	//// EXPERIMENT // EXPERIMENT // EXPERIMENT // EXPERIMENT // EXPERIMENT // EXPERIMENT
-	//// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv//
-	//pScene->_Actors["Water"]->GetModel()->GetMaterial()->_RenderTextures[0]->SetRenderTarget(_D3D->GetDeviceContext());
-	//pScene->_Actors["Water"]->GetModel()->GetMaterial()->_RenderTextures[0]->ClearRenderTarget(_D3D->GetDeviceContext(), 1.0f, 0.0f, 0.0f, 1.0f);
+	// GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS
+	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv//
+	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->_RenderTextures[0]->SetRenderTarget(_D3D->GetDeviceContext());
+	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->_RenderTextures[0]->ClearRenderTarget(_D3D->GetDeviceContext(), 1.0f, 0.0f, 0.0f, 1.0f);
 
-	//////// BACKGROUND /////////
-	//_D3D->EnableAlphaBlending();
-	//DrawModel(*_Earth, transforms);
-	//DrawModel(*_EarthInner, transforms);
-	//DrawModel(*_Sky, transforms);
-	//DrawModel(*_SkyInner, transforms);
+	////// BACKGROUND /////////
+	_D3D->EnableAlphaBlending();
+	DrawModel(*_Earth, transforms);
+	DrawModel(*_EarthInner, transforms);
+	DrawModel(*_Sky, transforms);
+	DrawModel(*_SkyInner, transforms);
 	//_D3D->DisableAlphaBlending();
 
-	////////// OTHER OBJECTS /////////
-	//for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
-	//{
-	//	// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
-	//	if (it->first == "Water" || !it->second->GetModel()) continue;
-	//	it->second->GetModel()->SetResourceView(6, blurredShadows);
-	//	transforms.world = XMMatrixTranspose(ComputeWorldTransform(it->second->GetModel()->GetOrientation(), it->second->GetModel()->GetScale(), it->second->GetModel()->GetPosition()));
-	//	it->second->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	//	_ShaderManager->_ShadowShaderSoft->Render(
-	//		_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), transforms,
-	//		it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor,
-	//		lights, _Camera->GetPosition(), 0.f, 1.f,
-	//		it->second->GetModel()->GetMaterial()->gamma,
-	//		it->second->GetModel()->GetMaterial()->bBlendTexture);
-	//	it->second->GetModel()->Draw(_D3D->GetDeviceContext());
-	//}
-	//_D3D->SetBackBufferRenderTarget();
-	//// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-	//// EXPERIMENT // EXPERIMENT // EXPERIMENT // EXPERIMENT // EXPERIMENT // EXPERIMENT
+	//////// OTHER OBJECTS /////////
+	float alpha;
+
+	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+	{
+		// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
+		if (!it->second->GetModel() || it->first == "Water" || it->first == "GlassColumns") continue;
+
+		if (it->first == "Platform")
+		{
+			alpha = 1.f;
+		}
+		else
+		{
+			alpha = .6f;
+		}
+		
+		it->second->GetModel()->SetResourceView(6, blurredShadows);
+		transforms.world = XMMatrixTranspose(ComputeWorldTransform(it->second->GetModel()->GetOrientation(), it->second->GetModel()->GetScale(), it->second->GetModel()->GetPosition()));
+		it->second->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+		_ShaderManager->_ShadowShaderSoft->Render(
+			_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), transforms,
+			it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor,
+			lights, _Camera->GetPosition(), 0.f, alpha,
+			it->second->GetModel()->GetMaterial()->gamma,
+			it->second->GetModel()->GetMaterial()->bBlendTexture);
+		it->second->GetModel()->Draw(_D3D->GetDeviceContext());
+	}
+
+	_D3D->DisableAlphaBlending();
+
+	_D3D->SetBackBufferRenderTarget();
+	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+	// GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS
 
 	////////// RENDER WATER //////////////
 	if (pScene->_Actors["Water"]->GetModel())
 	{
 		DrawModel(*pScene->_Actors["Water"]->GetModel(), transforms, lights, EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
 	}
+
+	////////// RENDER GLASS COLUMNS //////////////
+	//if (pScene->_Actors["GlassColumns"]->GetModel())
+	//{
+	//	DrawModel(*pScene->_Actors["GlassColumns"]->GetModel(), transforms, lights, EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
+	//}
 	
 	///////////////// UI ///////////////////
 	RenderText();
@@ -787,14 +817,6 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[], ID
 		pScene->_Actors["Fountain"]->GetModel()->GetMaterial()->gamma,
 		pScene->_Actors["Fountain"]->GetModel()->GetMaterial()->bBlendTexture);
 	pScene->_Actors["Fountain"]->GetModel()->Draw(_D3D->GetDeviceContext());
-
-	//// TODO: DRAW OTHER STUFF AND USE IT AS A REFRACTION GLOBE
-	//_D3D->EnableAlphaBlending();
-	//DrawModel(*_Earth, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	//DrawModel(*_EarthInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	//DrawModel(*_Sky, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	//DrawModel(*_SkyInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	//_D3D->DisableAlphaBlending();
 
 #pragma region REFLECTION DEACTIVATED
 	////////////////

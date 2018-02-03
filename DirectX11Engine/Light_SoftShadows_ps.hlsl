@@ -145,5 +145,8 @@ float4 main(PixelInputType input) : SV_TARGET
 	//	finalColor =  cb_ambientColor * saturate(dot(bumpNormal, input.normal) + .2) * textureColor;
 	//}
 
+	// Transparency
+	finalColor.a = cb_blendAmt;
+
 	return finalColor;
 }
