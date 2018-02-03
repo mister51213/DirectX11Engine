@@ -34,13 +34,16 @@ void Scene::InitializeActors()
 	vector < std::pair<string, XMFLOAT3>> actorPairs =
 	{
 		std::make_pair("Columns", XMFLOAT3(0.f, -2.5f, 5.0f)),
-		//std::make_pair("Rock", XMFLOAT3(0.0f, 80.f, 0.0f)),
 		std::make_pair("Rock", XMFLOAT3(0.0f, 0.0f, 0.0f)),
 		std::make_pair("Platform", XMFLOAT3(0.0f, 0.0f, 0.0f)),
 		std::make_pair("Moai", XMFLOAT3(0.0f, 0.0f, 20.0f)),
 		std::make_pair("Fountain", XMFLOAT3(0.0f, 0.0f, -10.0f)),
 		std::make_pair("Water", XMFLOAT3(0.0f, 0.0f, -10.0f))
+		//std::make_pair("GlassColumn", XMFLOAT3(-5.f, -2.5f, 5.0f))
 	};
+
+	// Scene scale
+	XMFLOAT3 sceneScale(.5, .5, .5);
 
 	// Instantiate actors and update their names if duplicates
 	int duplicateIdx = 0;
@@ -75,23 +78,14 @@ void Scene::InitializeActors()
 		pActor->InitializeMovement(VISIBLE);
 		pActor->SetPosition(actorPairs[i].second);
 		_Actors.emplace(pActor->Name, std::move(pActor));
+		_Actors[actorPairs[i].first]->SetScale(sceneScale);
 	}
 
 	// Custom tweaks on actors
-	XMFLOAT3 customScale(.5, .5, .5);
-
-	//_Actors["Platform"]->SetScale(XMFLOAT3(6.f, 1.0f, 6.f));
-	_Actors["Platform"]->SetPosition(XMFLOAT3(0.f, 1.0f, 0.f));
-
-	_Actors["Platform"]->SetScale(customScale);
-	_Actors["Moai"]->SetScale(customScale);
-	_Actors["Fountain"]->SetScale(customScale);
-	_Actors["Water"]->SetScale(customScale);
-	//_Actors["Fountain"]->SetScale(XMFLOAT3(.5, 1, .5));
-	//_Actors["Water"]->SetScale(XMFLOAT3(.5, 1, .5));
-	_Actors["Rock"]->SetScale(customScale);
-	_Actors["Rock"]->SetOrientation(XMFLOAT3(0, 0, 0));
-	
+	_Actors["Columns"]->SetScale(XMFLOAT3(1.f, 1.f, 1.f));
+	//_Actors["Platform"]->SetScale(XMFLOAT3(.7f,.7f,.7f));
+	//_Actors["Rock"]->SetScale(XMFLOAT3(.7f, .7f, .7f));
+	//_Actors["Platform"]->SetPosition(XMFLOAT3(0.f, 1.0f, 0.f));
 }
 
 void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)

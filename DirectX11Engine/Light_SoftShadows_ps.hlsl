@@ -135,7 +135,6 @@ float4 main(PixelInputType input) : SV_TARGET
 	// Add extra light map ontop of shadow value
 	float4 lightMapValue = shaderTextures[2].Sample(SampleType, input.tex);
 	float gammaToApply = (cb_gamma * lightMapValue.r) + 1.f;
-
 	//float gammaToApply = (cb_gamma * (lightMapValue.r + 1.f)) - 1.f;
 
 	// Combine the light and texture color.

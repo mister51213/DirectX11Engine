@@ -152,7 +152,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	};
 	pScene->_Actors["Columns"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		//"../DirectX11Engine/data/_column_Tri.txt",
-		"../DirectX11Engine/data/_column_Single2.txt",
+		"../DirectX11Engine/data/_columns2.txt",
 		columnTex, EShaderType::ELIGHT_SPECULAR);
 
 	// Set Columns Model Shadow textures
@@ -167,7 +167,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		//"../DirectX11Engine/data/moai_BaseColor.png",
 		"../DirectX11Engine/data/_moai_BaseColor2.png",
 		"../DirectX11Engine/data/dirt.dds",
-		"../DirectX11Engine/data/gammaBlack.png", // gamma map
+		"../DirectX11Engine/data/gammaBlack.png", // BLACK gamma map will apply no gamma adjustment at all!
 		"../DirectX11Engine/data/alpha.dds",
 		//"../DirectX11Engine/data/moai_Normal.png",
 		"../DirectX11Engine/data/_moai_Normal2.png",
@@ -198,7 +198,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		//"../DirectX11Engine/data/_fountain_BaseColor4.png",
 		"../DirectX11Engine/data/_fountain_BaseColor5.png",
 		"../DirectX11Engine/data/dirt.dds",
-		"../DirectX11Engine/data/gammaBlack.png", // gamma map
+		"../DirectX11Engine/data/gammaBlack.png", // BLACK gamma map will apply no gamma adjustment at all!
 		"../DirectX11Engine/data/alpha.dds",
 		//"../DirectX11Engine/data/nMap5.png", // normal map
 		//"../DirectX11Engine/data/_fountain_Normal.png", // normal map
@@ -232,7 +232,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		//"../DirectX11Engine/data/_platform_BaseColor.png",
 		"../DirectX11Engine/data/_platform_BaseColor2.png",
 		"../DirectX11Engine/data/snow.jpg",
-		"../DirectX11Engine/data/_platform_lightMap.png",	// lightmap
+		"../DirectX11Engine/data/_platform_lightMap.png",	// custom gamma map (in the areas that area black, gamma defaults to 1.0f)
 		"../DirectX11Engine/data/noise.png",	// alpha map
 		//"../DirectX11Engine/data/nMap4.png",	// normal map
 		//"../DirectX11Engine/data/_platform_Normal.png",	// normal map
@@ -247,7 +247,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		//"../DirectX11Engine/data/plane01.txt"
 		/*"../DirectX11Engine/data/SnowTerrain_LowPoly.txt"*/ groundTex, EShaderType::ELIGHT_SPECULAR);
 
-	pScene->_Actors["Platform"]->GetModel()->GetMaterial()->gamma = 6.f;
+	pScene->_Actors["Platform"]->GetModel()->GetMaterial()->gamma = 4.5f;
 
 	// Set Platform Model Shadow textures
 	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
@@ -261,7 +261,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		//"../DirectX11Engine/data/_rock_BaseColor.png",
 		"../DirectX11Engine/data/_rock_BaseColor2.png",
 		"../DirectX11Engine/data/dirt.dds",
-		"../DirectX11Engine/data/gammaWhite.png", // gamma map
+		"../DirectX11Engine/data/gammaWhite.png", // a WHITE gamma map will apply the requested gamma value uniformly
 		"../DirectX11Engine/data/alpha.dds",
 		//"../DirectX11Engine/data/_rock_Normal.png",
 		"../DirectX11Engine/data/_rock_Normal2.png",
@@ -286,9 +286,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	vector<string> waterTextures{ "../DirectX11Engine/data/water.dds" }; 
 	
 	pScene->_Actors["Water"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
-		//"../DirectX11Engine/data/water.txt",
-		//"../DirectX11Engine/data/_fountain_water_Tri.txt",
 		"../DirectX11Engine/data/_fountain_water2.txt",
+		//"../DirectX11Engine/data/_column_lowPoly2.txt",
+		//"../DirectX11Engine/data/_moai2.txt",
 		waterTextures, EShaderType::EWATER);
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->reflectRefractScale = 0.01f;
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->waterHeight = _waterHeight;// *_waterSceneScale;
@@ -298,6 +298,16 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	//_RefractionTexture.reset(new RenderTextureClass(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR)); // TEMP TEST
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFRACTION TEXTURE
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFLECTION TEXTURE (CURRENTLY NOT USED!!!)
+
+	//// GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN 
+	//pScene->_Actors["GlassColumn"]->InstantiateModel(new Model(pScene->_Actors["Water"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Water", false));
+	//pScene->_Actors["GlassColumn"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),	"../DirectX11Engine/data/_column_lowPoly2.txt",	waterTextures, EShaderType::EWATER);
+	//pScene->_Actors["GlassColumn"]->GetModel()->GetMaterial()->reflectRefractScale = 0.01f;
+	//pScene->_Actors["GlassColumn"]->GetModel()->GetMaterial()->waterHeight = _waterHeight;// *_waterSceneScale;
+	//pScene->_Actors["GlassColumn"]->GetModel()->GetMaterial()->bAnimated = true;
+	//pScene->_Actors["GlassColumn"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFRACTION TEXTURE
+	//pScene->_Actors["GlassColumn"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFLECTION TEXTURE (CURRENTLY NOT USED!!!)
+
 
 	///////////////////////////////////
 	// INITIALIZE LIGHTS
@@ -723,7 +733,7 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[], ID
 		pScene->_Actors["Fountain"]->GetModel()->GetMaterial()->bBlendTexture);
 	pScene->_Actors["Fountain"]->GetModel()->Draw(_D3D->GetDeviceContext());
 
-	// TODO: DRAW OTHER STUFF AND USE IT AS A REFRACTION GLOBE
+	//// TODO: DRAW OTHER STUFF AND USE IT AS A REFRACTION GLOBE
 	//_D3D->EnableAlphaBlending();
 	//DrawModel(*_Earth, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
 	//DrawModel(*_EarthInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);

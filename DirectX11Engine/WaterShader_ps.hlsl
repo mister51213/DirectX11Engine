@@ -60,7 +60,7 @@ float4 WaterPixelShader(PixelInputType input) : SV_TARGET
 
     // Sample the normal from the normal map texture.
     //normalMap = normalTexture.Sample(SampleType, input.tex);
-    normalMap = shaderTextures[0].Sample(SampleType, input.tex);
+    normalMap = shaderTextures[0].Sample(SampleType, input.tex*2.f);
 
     // Expand the range of the normal from (0,1) to (-1,+1).
     normal = (normalMap.xyz * 2.0f) - 1.0f;
