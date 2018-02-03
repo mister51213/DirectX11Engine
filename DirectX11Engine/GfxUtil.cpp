@@ -6,6 +6,8 @@ GfxUtil::Material::Material()
 		texArraySize = 1;
 		textureScale = 1.f;
 		numRenderTextures = 0;
+		gamma = 1.f;
+		bBlendTexture = 0;
 	}
 
 GfxUtil::Material::Material(EShaderType inShaderType, int numRenderTex = 0)
@@ -14,6 +16,8 @@ GfxUtil::Material::Material(EShaderType inShaderType, int numRenderTex = 0)
 	texArraySize = 1;
 	textureScale = 1.f;
 	numRenderTextures = numRenderTex;
+	gamma = 1.f;
+	bBlendTexture = 0;
 }
 
 bool GfxUtil::Material::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, EShaderType inShaderType, vector<string> texFileNames)

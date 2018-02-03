@@ -27,13 +27,14 @@ bool SoftShadowShaderClass_Multi::Initialize(ID3D11Device* device, HWND hwnd)
 
 bool SoftShadowShaderClass_Multi::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms,
 	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,XMFLOAT4 ambientColor, LightClass* shadowLight[],
-	XMFLOAT3 cameraPosition, float translation, float transparency)
+	XMFLOAT3 cameraPosition, float translation, float transparency, float gamma, unsigned int bBlendTexture)
 {
 	bool result;
 
 
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, transforms,	texViews, ambientColor, shadowLight, cameraPosition, translation, transparency);
+	result = SetShaderParameters(deviceContext, transforms,	texViews, ambientColor, shadowLight, cameraPosition, translation, transparency,
+		gamma, bBlendTexture);
 	if(!result)
 	{
 		return false;
@@ -80,14 +81,16 @@ bool SoftShadowShaderClass_Multi::InitializeShader(ID3D11Device* device, HWND hw
 	_psBuffers.emplace_back(MakeConstantBuffer<SceneLightBufferType_PS>(device));
 	_psBuffers.emplace_back(MakeConstantBuffer<TranslateBufferType>(device));
 	_psBuffers.emplace_back(MakeConstantBuffer<TransparentBufferType>(device));
+	_psBuffers.emplace_back(MakeConstantBuffer<TexParamBufferType>(device));
 
 	return true;
 }
 
 bool SoftShadowShaderClass_Multi::SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType& transforms,
-												vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, 
-												XMFLOAT4 ambientColor, LightClass* shadowLight[],
-												XMFLOAT3 cameraPosition, float translation, float transparency)
+	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
+	XMFLOAT4 ambientColor, LightClass* shadowLight[],
+	XMFLOAT3 cameraPosition, float translation, float transparency,
+	float gamma, unsigned int bBlendTexture)
 {
     D3D11_MAPPED_SUBRESOURCE mappedResource;
 
@@ -142,6 +145,12 @@ bool SoftShadowShaderClass_Multi::SetShaderParameters(ID3D11DeviceContext* devic
 	bufferNumber++;
 	TransparentBufferType tempTransparentBuff = { transparency, XMFLOAT3(0, 0, 0) };
 	MapBuffer(tempTransparentBuff, _psBuffers[bufferNumber].Get(), deviceContext);
+	deviceContext->PSSetConstantBuffers(bufferNumber, 1, _psBuffers[bufferNumber].GetAddressOf());
+
+	/////////////////// TEXPARAM BUFFER - PS BUFFER 3 ///////////////////////////
+	bufferNumber++;
+	TexParamBufferType tempTexParamBuff = { translation, transparency, gamma, bBlendTexture};
+	MapBuffer(tempTexParamBuff, _psBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, _psBuffers[bufferNumber].GetAddressOf());
 
 	return true;

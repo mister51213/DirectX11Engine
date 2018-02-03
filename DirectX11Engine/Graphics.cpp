@@ -183,6 +183,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 		"../DirectX11Engine/data/_rock2.txt",
 		rockTex, EShaderType::ELIGHT_SPECULAR);
 
+	pScene->_Actors["Rock"]->GetModel()->GetMaterial()->gamma = 20.f;
+
 	// Set Columns Model Shadow textures
 	for (int idx = 0; idx < _DepthTextures.size(); ++idx)
 	{
@@ -553,8 +555,12 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 
 		transforms.world = XMMatrixTranspose(ComputeWorldTransform(it->second->GetModel()->GetOrientation(), it->second->GetModel()->GetScale(), it->second->GetModel()->GetPosition()));
 		it->second->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-		_ShaderManager->_ShadowShaderSoft->Render(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), transforms,
-			it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor, lights, _Camera->GetPosition(), 0.f, 1.f);
+		_ShaderManager->_ShadowShaderSoft->Render(
+			_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), transforms,
+			it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor, 
+			lights, _Camera->GetPosition(), 0.f, 1.f, 
+			it->second->GetModel()->GetMaterial()->gamma, 
+			it->second->GetModel()->GetMaterial()->bBlendTexture);
 		it->second->GetModel()->Draw(_D3D->GetDeviceContext());
 	}
 	
@@ -714,7 +720,9 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[], ID
 	transforms.world = XMMatrixTranspose(ComputeWorldTransform(pScene->_Actors["Fountain"]->GetModel()->GetOrientation(), pScene->_Actors["Fountain"]->GetModel()->GetScale(), pScene->_Actors["Fountain"]->GetModel()->GetPosition()));
 	pScene->_Actors["Fountain"]->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
 	_ShaderManager->_ShadowShaderSoft->Render(_D3D->GetDeviceContext(), pScene->_Actors["Fountain"]->GetModel()->GetIndexCount(), transforms,
-		pScene->_Actors["Fountain"]->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor, lights, _Camera->GetPosition(), 0.f, 1.f);
+		pScene->_Actors["Fountain"]->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor, lights, _Camera->GetPosition(), 0.f, 1.f,
+		pScene->_Actors["Fountain"]->GetModel()->GetMaterial()->gamma,
+		pScene->_Actors["Fountain"]->GetModel()->GetMaterial()->bBlendTexture);
 	pScene->_Actors["Fountain"]->GetModel()->Draw(_D3D->GetDeviceContext());
 
 	// TODO: DRAW OTHER STUFF AND USE IT AS A REFRACTION GLOBE

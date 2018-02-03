@@ -56,6 +56,19 @@ cbuffer TransparentBuffer:register(b2)
     float blendAmount;
 };
 
+// All in one tex param type
+cbuffer TexParamBufferType:register(b3)
+{
+	float cb_texTrans;
+	float cb_blendAmt;
+	float cb_gamma;
+	int cb_bBlendTex; // NOTE - 0 is false, 1 is true!
+};
+
+///////////////////////////
+// INPUT FROM VERTEX SHADER
+///////////////////////////
+
 struct PixelInputType
 {
 	float4 vertex_ModelSpace : SV_POSITION;
@@ -107,7 +120,8 @@ float4 main(PixelInputType input) : SV_TARGET
 	float depthValue;
 	float lightDepthValue;
 	float4 textureColor;
-	float gamma = 1.5f;
+	//float gamma = 1.5f;
+	//float gamma = cb_gamma;
 
 	/////////////////// NORMAL MAPPING //////////////////
 	float4 bumpMap = shaderTextures[4].Sample(SampleType, input.tex);
@@ -156,7 +170,7 @@ float4 main(PixelInputType input) : SV_TARGET
 	//shadowValue = saturate(shadowValue + lightMapAddition);
 
 	// Combine the light and texture color.
-	float4 finalColor = lightColor * textureColor * shadowValue * gamma;
+	float4 finalColor = lightColor * textureColor * shadowValue * cb_gamma;
 
 	//if(lightColor.x == 0)
 	//{

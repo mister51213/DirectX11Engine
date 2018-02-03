@@ -56,6 +56,16 @@ private:
 		XMFLOAT3 padding;
 	};
 
+	// All in one tex param type
+	struct TexParamBufferType
+	{
+		float translation = 0.f;
+		float blendAmount = 1.f;
+		float gamma = 1.f;
+		unsigned int bBlendTexture;
+	};
+
+
 public:
 	SoftShadowShaderClass_Multi();
 	SoftShadowShaderClass_Multi(const SoftShadowShaderClass_Multi&);
@@ -64,7 +74,8 @@ public:
 	bool Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms,
 		vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
 		XMFLOAT4 ambientColor, LightClass* shadowLight[],
-		XMFLOAT3 cameraPosition, float translation, float transparency);
+		XMFLOAT3 cameraPosition, float translation, float transparency,
+		float gamma = 1.f, unsigned int bBlendTexture = 0);
 
 	virtual bool InitializeShader(ID3D11Device* device, HWND hwnd,/* WCHAR* */wstring vsFilename, /*WCHAR* */wstring psFilename);
 
@@ -72,7 +83,8 @@ private:
 	bool SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType& transforms,
 		vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
 		XMFLOAT4 ambientColor, LightClass* shadowLight[],
-		XMFLOAT3 cameraPosition, float translation, float transparency);
+		XMFLOAT3 cameraPosition, float translation, float transparency,
+		float gamma = 1.f, unsigned int bBlendTexture = 0);
 
 	virtual void RenderShader(ID3D11DeviceContext*, int) override;
 
