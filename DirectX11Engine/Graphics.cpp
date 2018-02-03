@@ -283,15 +283,18 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 
 	// WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER 
 	pScene->_Actors["Water"]->InstantiateModel(new Model(pScene->_Actors["Water"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Water", false));
-	vector<string> waterTextures{ "../DirectX11Engine/data/water.dds" }; 
+	vector<string> waterTextures{ "../DirectX11Engine/data/water.dds" }; // FOR ICE, USE A DIFFERENT NORMAL MAP
 	
 	pScene->_Actors["Water"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
 		"../DirectX11Engine/data/_fountain_water2.txt",
 		//"../DirectX11Engine/data/_column_lowPoly2.txt",
-		//"../DirectX11Engine/data/_moai2.txt",
+		//"../DirectX11Engine/data/_columns2.txt",
 		waterTextures, EShaderType::EWATER);
-	pScene->_Actors["Water"]->GetModel()->GetMaterial()->reflectRefractScale = 0.01f;
-	pScene->_Actors["Water"]->GetModel()->GetMaterial()->waterHeight = _waterHeight;// *_waterSceneScale;
+	//pScene->_Actors["Water"]->SetOrientation(XMFLOAT3(0, 180, 0)); // USED FOR ICE
+	//pScene->_Actors["Water"]->SetScale(XMFLOAT3(1,1,1)); // USED FOR ICE
+
+	pScene->_Actors["Water"]->GetModel()->GetMaterial()->reflectRefractScale = 0.013;
+	pScene->_Actors["Water"]->GetModel()->GetMaterial()->waterHeight = _waterHeight;
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->bAnimated = true;
 	//pScene->_Actors["Water"]->GetModel()->SetResourceView(0, _ReflectionTexture->GetShaderResourceView());
 	//pScene->_Actors["Water"]->GetModel()->SetResourceView(1, _RefractionTexture->GetShaderResourceView());
@@ -570,8 +573,42 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 			it->second->GetModel()->GetMaterial()->gamma, 
 			it->second->GetModel()->GetMaterial()->bBlendTexture);
 		it->second->GetModel()->Draw(_D3D->GetDeviceContext());
+
 	}
-	
+
+	//// EXPERIMENT // EXPERIMENT // EXPERIMENT // EXPERIMENT // EXPERIMENT // EXPERIMENT
+	//// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv//
+	//pScene->_Actors["Water"]->GetModel()->GetMaterial()->_RenderTextures[0]->SetRenderTarget(_D3D->GetDeviceContext());
+	//pScene->_Actors["Water"]->GetModel()->GetMaterial()->_RenderTextures[0]->ClearRenderTarget(_D3D->GetDeviceContext(), 1.0f, 0.0f, 0.0f, 1.0f);
+
+	//////// BACKGROUND /////////
+	//_D3D->EnableAlphaBlending();
+	//DrawModel(*_Earth, transforms);
+	//DrawModel(*_EarthInner, transforms);
+	//DrawModel(*_Sky, transforms);
+	//DrawModel(*_SkyInner, transforms);
+	//_D3D->DisableAlphaBlending();
+
+	////////// OTHER OBJECTS /////////
+	//for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+	//{
+	//	// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
+	//	if (it->first == "Water" || !it->second->GetModel()) continue;
+	//	it->second->GetModel()->SetResourceView(6, blurredShadows);
+	//	transforms.world = XMMatrixTranspose(ComputeWorldTransform(it->second->GetModel()->GetOrientation(), it->second->GetModel()->GetScale(), it->second->GetModel()->GetPosition()));
+	//	it->second->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+	//	_ShaderManager->_ShadowShaderSoft->Render(
+	//		_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), transforms,
+	//		it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor,
+	//		lights, _Camera->GetPosition(), 0.f, 1.f,
+	//		it->second->GetModel()->GetMaterial()->gamma,
+	//		it->second->GetModel()->GetMaterial()->bBlendTexture);
+	//	it->second->GetModel()->Draw(_D3D->GetDeviceContext());
+	//}
+	//_D3D->SetBackBufferRenderTarget();
+	//// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+	//// EXPERIMENT // EXPERIMENT // EXPERIMENT // EXPERIMENT // EXPERIMENT // EXPERIMENT
+
 	////////// RENDER WATER //////////////
 	if (pScene->_Actors["Water"]->GetModel())
 	{
