@@ -84,16 +84,19 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	//_EarthInner->GetMaterial()->textureScale = .7f;
 
 	// SKY
-	_Sky.reset(new Model(XMFLOAT3(100, 150, 100), XMFLOAT3(0, 0, 0), XMFLOAT3(100, 300, 100), "Sky Outer", false));
-	//vector<string> skytex = { "../DirectX11Engine/data/galaxyblue.jpg", "../DirectX11Engine/data/skydome_alpha2s.jpg" };
-	vector<string> skytex = { "../DirectX11Engine/data/galaxyblue.jpg", "../DirectX11Engine/data/skydome_alpha2.jpg" };
+	//_Sky.reset(new Model(XMFLOAT3(100, 150, 100), XMFLOAT3(0, 0, 0), XMFLOAT3(100, 300, 100), "Sky Outer", false));
+	_Sky.reset(new Model(XMFLOAT3(150, 200, 150), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 150, 0), "Sky Outer", false));
+	vector<string> skytex = { "../DirectX11Engine/data/galaxyblue.jpg", "../DirectX11Engine/data/skydome_alpha2s.jpg" };
+	//vector<string> skytex = { "../DirectX11Engine/data/galaxyblue.jpg", "../DirectX11Engine/data/skydome_alpha2.jpg" };
 	_Sky->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
 		"../DirectX11Engine/data/skydome_lowpoly.txt",
 		skytex, EShaderType::ETEXTURE);
 	_Sky->GetMaterial()->gamma = 0.7f;
+	//_Sky->GetMaterial()->textureScale = 1.4f;
 
 	// SKY INNER
-	_SkyInner.reset(new Model(.7f * _Sky->GetScale(), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 150, 0), "Sky Inner", false));
+	//_SkyInner.reset(new Model(.7f * _Sky->GetScale(), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 150, 0), "Sky Inner", false));
+	_SkyInner.reset(new Model(.7f * _Sky->GetScale(), XMFLOAT3(0, 0, 0), XMFLOAT3(0, 70, 0), "Sky Inner", false));
 	//vector<string> skytexInner = { "../DirectX11Engine/data/galaxypurple.jpg", "../DirectX11Engine/data/skydome_alpha4s.jpg" };
 	vector<string> skytexInner = { "../DirectX11Engine/data/galaxypurple.jpg", "../DirectX11Engine/data/skydome_alpha4.jpg" };
 	_SkyInner->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
