@@ -73,7 +73,8 @@ void GfxUtil::Material::Animate(float deltaTime)
 {
 	if (bAnimated)
 	{
-		float translationIncrement = 0.001f * deltaTime;
+		//float translationIncrement = 0.001f * deltaTime;
+		float translationIncrement = 0.0005f * deltaTime;
 		translation += translationIncrement;
 		if (translation > 1.0f)
 		{

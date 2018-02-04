@@ -11,7 +11,7 @@ SamplerState SampleType;
 // 2) refraction texture for the refraction of the scene. 
 // 3) normal map texture for simulating water ripples.
 
-Texture2D shaderTextures[3];
+Texture2D shaderTextures[3]; // CHANGE - first two textures are normal map AND water/ice color, THIRD texture is render target
 //Texture2D reflectionTexture;
 //Texture2D refractionTexture;
 //Texture2D normalTexture;
@@ -43,9 +43,12 @@ float4 WaterPixelShader(PixelInputType input) : SV_TARGET
     float2 refractTexCoord;
     float4 normalMap;
     float3 normal;
-    float4 reflectionColor;
+    //float4 reflectionColor;
     float4 refractionColor;
     float4 color;
+
+	// store an untranslated copy of input for static texture
+	float2 inputUntranslated =  input.tex;
 
     // Move the position the water normal is sampled from to simulate moving water.	
     input.tex.y += waterTranslation;
@@ -72,12 +75,20 @@ float4 WaterPixelShader(PixelInputType input) : SV_TARGET
     // Sample the texture pixels from the textures using the updated texture coordinates.
     //reflectionColor = reflectionTexture.Sample(SampleType, reflectTexCoord);
     //refractionColor = refractionTexture.Sample(SampleType, refractTexCoord);
-    refractionColor = shaderTextures[1].Sample(SampleType, refractTexCoord);
-	reflectionColor = shaderTextures[2].Sample(SampleType, reflectTexCoord);
+
+	// WORKING
+    //refractionColor = shaderTextures[1].Sample(SampleType, refractTexCoord);
+	//reflectionColor = shaderTextures[2].Sample(SampleType, reflectTexCoord); // replaced by ice texture now
+	refractionColor = shaderTextures[2].Sample(SampleType, refractTexCoord);
+	float4 surfaceColor = shaderTextures[1].Sample(SampleType, /*inputUntranslated*/input.tex*4.f);
+
 
     // Combine the reflection and refraction results for the final color.
     //color = lerp(reflectionColor, refractionColor, 0.6f);
-    color = refractionColor;
+    color = lerp(surfaceColor, refractionColor, 0.8f);
+    
+	// WORKING
+	//color = refractionColor;
 	
     return color;
 }

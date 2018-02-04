@@ -296,7 +296,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 
 	// WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER // WATER 
 	pScene->_Actors["Water"]->InstantiateModel(new Model(pScene->_Actors["Water"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "Water", false));
-	vector<string> waterTextures{ "../DirectX11Engine/data/water.dds" }; // FOR ICE, USE A DIFFERENT NORMAL MAP
+	vector<string> waterTextures{ "../DirectX11Engine/data/water.dds", "../DirectX11Engine/data/waterTex.png", }; // FOR ICE, USE A DIFFERENT NORMAL MAP
 	
 	pScene->_Actors["Water"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
 		"../DirectX11Engine/data/_fountain_water2.txt",
@@ -313,16 +313,16 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	//pScene->_Actors["Water"]->GetModel()->SetResourceView(1, _RefractionTexture->GetShaderResourceView());
 	//_RefractionTexture.reset(new RenderTextureClass(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR)); // TEMP TEST
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFRACTION TEXTURE
-	pScene->_Actors["Water"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFLECTION TEXTURE (CURRENTLY NOT USED!!!)
+	//pScene->_Actors["Water"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFLECTION TEXTURE (CURRENTLY NOT USED!!!)
 
 	//// GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN 
 	pScene->_Actors["GlassColumns"]->InstantiateModel(new Model(pScene->_Actors["GlassColumns"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "GlassColumns", false));
-	vector<string> iceTextures{ "../DirectX11Engine/data/bump2.dds" }; // FOR ICE, USE A DIFFERENT NORMAL MAP
-	pScene->_Actors["GlassColumns"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/_columns2.txt", waterTextures, EShaderType::EWATER);
+	vector<string> iceTextures{ "../DirectX11Engine/data/bump3.dds," "../DirectX11Engine/data/glass.dds" }; // FOR ICE, USE A DIFFERENT NORMAL MAP
+	pScene->_Actors["GlassColumns"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/_columns2.txt", iceTextures, EShaderType::EWATER);
 	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->reflectRefractScale = 0.02f;
 	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->bAnimated = true;
 	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFRACTION TEXTURE
-	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFLECTION TEXTURE (CURRENTLY NOT USED!!!)
+	//pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFLECTION TEXTURE (CURRENTLY NOT USED!!!)
 
 	///////////////////////////////////
 	// INITIALIZE LIGHTS
@@ -467,10 +467,10 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 		_Earth->GetMaterial()->Animate();
 	}
 
-	if (pScene->_Actors["GlassColumns"]->GetModel())
-	{
-		pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->Animate();
-	}
+	//if (pScene->_Actors["GlassColumns"]->GetModel())
+	//{
+	//	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->Animate();
+	//}
 
 
 	// 2. Update Camera
@@ -625,7 +625,7 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 		}
 		else
 		{
-			alpha = .6f;
+			alpha = .7f;
 		}
 		
 		it->second->GetModel()->SetResourceView(6, blurredShadows);
@@ -653,10 +653,10 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 	}
 
 	////////// RENDER GLASS COLUMNS //////////////
-	//if (pScene->_Actors["GlassColumns"]->GetModel())
-	//{
-	//	DrawModel(*pScene->_Actors["GlassColumns"]->GetModel(), transforms, lights, EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
-	//}
+	if (pScene->_Actors["GlassColumns"]->GetModel())
+	{
+		DrawModel(*pScene->_Actors["GlassColumns"]->GetModel(), transforms, lights, EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
+	}
 	
 	///////////////// UI ///////////////////
 	RenderText();
