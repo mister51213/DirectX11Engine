@@ -317,10 +317,10 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 
 	//// GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN 
 	pScene->_Actors["GlassColumns"]->InstantiateModel(new Model(pScene->_Actors["GlassColumns"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "GlassColumns", false));
-	vector<string> iceTextures{ "../DirectX11Engine/data/bump3.dds," "../DirectX11Engine/data/glass.dds" }; // FOR ICE, USE A DIFFERENT NORMAL MAP
-	pScene->_Actors["GlassColumns"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), "../DirectX11Engine/data/_columns2.txt", iceTextures, EShaderType::EWATER);
-	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->reflectRefractScale = 0.02f;
-	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->bAnimated = true;
+	vector<string> iceTextures{ "../DirectX11Engine/data/bump2.dds", "../DirectX11Engine/data/ice.dds" }; // FOR ICE, USE A DIFFERENT NORMAL MAP
+	pScene->_Actors["GlassColumns"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),/* "../DirectX11Engine/data/_columns2.txt", */ "../DirectX11Engine/data/_column_lowPoly2.txt", iceTextures, EShaderType::EWATER);
+	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->reflectRefractScale = 0.025f;
+	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->bAnimated = false;
 	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFRACTION TEXTURE
 	//pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFLECTION TEXTURE (CURRENTLY NOT USED!!!)
 
@@ -601,7 +601,7 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 	// GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS
 	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv//
 	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->_RenderTextures[0]->SetRenderTarget(_D3D->GetDeviceContext());
-	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->_RenderTextures[0]->ClearRenderTarget(_D3D->GetDeviceContext(), 1.0f, 0.0f, 0.0f, 1.0f);
+	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->_RenderTextures[0]->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
 
 	////// BACKGROUND /////////
 	_D3D->EnableAlphaBlending();
