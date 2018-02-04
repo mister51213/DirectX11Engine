@@ -314,6 +314,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	//_RefractionTexture.reset(new RenderTextureClass(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR)); // TEMP TEST
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFRACTION TEXTURE
 	//pScene->_Actors["Water"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFLECTION TEXTURE (CURRENTLY NOT USED!!!)
+	pScene->_Actors["Water"]->GetModel()->GetMaterial()->waterLerpRatio = .8f;
 
 	//// GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN 
 	pScene->_Actors["GlassColumns"]->InstantiateModel(new Model(pScene->_Actors["GlassColumns"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "GlassColumns", false));
@@ -323,6 +324,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->bAnimated = false;
 	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFRACTION TEXTURE
 	//pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFLECTION TEXTURE (CURRENTLY NOT USED!!!)
+	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->waterLerpRatio = .3f;
 
 	///////////////////////////////////
 	// INITIALIZE LIGHTS

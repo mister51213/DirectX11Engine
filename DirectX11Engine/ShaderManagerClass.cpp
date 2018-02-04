@@ -239,7 +239,8 @@ bool ShaderManagerClass::Render(
 		result = _WaterShader->Render(device, indexCount, 
 			transforms,
 			/*worldMatrix, viewMatrix, projectionMatrix, */
-			reflectionMatrix, material->GetResourceArray(), material->GetTextureObject()->_textureViews, material->translation, material->reflectRefractScale);
+			reflectionMatrix, material->GetResourceArray(), material->GetTextureObject()->_textureViews, material->translation, material->reflectRefractScale,
+			material->waterLerpRatio);
 		if (!result) ThrowRuntime("Could not render the water shader.");
 		//	_WaterShader->RenderShader(device, indexCount);
 		break;

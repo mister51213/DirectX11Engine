@@ -20,7 +20,9 @@ cbuffer WaterBuffer
 {
     float waterTranslation;
     float reflectRefractScale;
-    float2 padding;
+	float lerpRatio;
+	float padding;
+    //float2 padding;
 };
 
 //////////////
@@ -85,7 +87,8 @@ float4 WaterPixelShader(PixelInputType input) : SV_TARGET
 
     // Combine the reflection and refraction results for the final color.
     //color = lerp(reflectionColor, refractionColor, 0.6f);
-    color = lerp(surfaceColor, refractionColor, 0.8f);
+    //color = lerp(surfaceColor, refractionColor, 0.8f);
+    color = lerp(surfaceColor, refractionColor, lerpRatio);
     
 	// WORKING
 	//color = refractionColor;

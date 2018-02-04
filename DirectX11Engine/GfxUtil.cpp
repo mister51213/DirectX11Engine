@@ -8,6 +8,7 @@ GfxUtil::Material::Material()
 		numRenderTextures = 0;
 		gamma = 1.f;
 		bBlendTexture = 0;
+		waterLerpRatio = .8f;
 	}
 
 GfxUtil::Material::Material(EShaderType inShaderType, int numRenderTex = 0)
@@ -18,6 +19,7 @@ GfxUtil::Material::Material(EShaderType inShaderType, int numRenderTex = 0)
 	numRenderTextures = numRenderTex;
 	gamma = 1.f;
 	bBlendTexture = 0;
+	waterLerpRatio = .8f;
 }
 
 bool GfxUtil::Material::Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext, EShaderType inShaderType, vector<string> texFileNames)

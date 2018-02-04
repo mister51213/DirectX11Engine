@@ -281,6 +281,7 @@ namespace GfxUtil
 		float textureScale = 1.f;
 		float gamma = 1.f;
 		unsigned int bBlendTexture = 0;
+		float waterLerpRatio = .8f;
 
 		// RENDER TEXTURES - for shadowing, reflection, and refraction
 		vector<unique_ptr<RenderTextureClass>> _RenderTextures;

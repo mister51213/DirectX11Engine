@@ -12,12 +12,12 @@ WaterShaderClass::~WaterShaderClass()
 bool WaterShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCount, 
 	MatrixBufferType& transforms,
 	//XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, 
-	XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, float waterTranslation, float reflectRefractScale)
+	XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, float waterTranslation, float reflectRefractScale, float lerpRatio)
 {
 	bool result;
 
 	// Set the shader parameters that it will use for rendering.
-	SetShaderParameters(deviceContext, transforms,/*worldMatrix, viewMatrix, projectionMatrix,*/ reflectionMatrix, textureArray, texViews, waterTranslation, reflectRefractScale);
+	SetShaderParameters(deviceContext, transforms, reflectionMatrix, textureArray, texViews, waterTranslation, reflectRefractScale, lerpRatio);
 
 	// Now render the prepared buffers with the shader.
 	RenderShader(deviceContext, indexCount);
@@ -64,8 +64,7 @@ bool WaterShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 
 bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, 
 	MatrixBufferType& transforms,
-	//XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix, 
-	XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, float waterTranslation, float reflectRefractScale)
+	XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, float waterTranslation, float reflectRefractScale, float lerpRatio)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
@@ -99,7 +98,7 @@ bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 
 	///////////////////// WATER INIT - PS BUFFER 0 //////////////////////////////////
 	bufferNumber = 0;
-	WaterBufferType tempWaterBuff = { waterTranslation, reflectRefractScale, XMFLOAT2(0.0f, 0.0f) };
+	WaterBufferType tempWaterBuff = { waterTranslation, reflectRefractScale, lerpRatio, 0.f /*XMFLOAT2(0.0f, 0.0f)*/ };
 	MapBuffer(tempWaterBuff, _psBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, _psBuffers[bufferNumber].GetAddressOf());
 
