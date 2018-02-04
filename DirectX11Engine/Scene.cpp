@@ -83,7 +83,7 @@ void Scene::InitializeActors()
 
 	// Custom tweaks on actors
 	_Actors["Columns"]->SetScale(XMFLOAT3(1.f, 1.f, 1.f));
-	_Actors["GlassColumns"]->SetScale(XMFLOAT3(1.f, 1.f, 1.f));
+	_Actors["GlassColumns"]->SetScale(XMFLOAT3(.7f, 1.f, .7f));
 	_Actors["GlassColumns"]->SetOrientation(XMFLOAT3(0.f, 180.f, 0.f));
 	//_Actors["Platform"]->SetScale(XMFLOAT3(.7f,.7f,.7f));
 	//_Actors["Rock"]->SetScale(XMFLOAT3(.7f, .7f, .7f));
