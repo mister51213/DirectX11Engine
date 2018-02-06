@@ -39,7 +39,7 @@ void TextClass::Render(ID3D11DeviceContext* deviceContext, ShaderManagerClass* p
 	XMMATRIX orthoMatrix, */ID3D11ShaderResourceView* fontTexture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews)
 {
 	// Draw the sentence.
-	RenderSentence(deviceContext, pShaderManager, transforms,/* worldMatrix, viewMatrix, orthoMatrix,*/ fontTexture, texViews);
+	RenderSentence(deviceContext, pShaderManager, transforms,fontTexture, texViews);
 
 	return;
 }

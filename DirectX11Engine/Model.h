@@ -140,5 +140,13 @@ private:
 	XMFLOAT3 _position;
 	XMFLOAT3 _orientation;
 	XMFLOAT3 _scale;
+
+	// FOR BINARY MESH LOADING
+	std::vector<DirectX::XMFLOAT3> _vertices;
+	std::vector<DirectX::XMFLOAT3> _normals;
+	std::vector<DirectX::XMFLOAT2> _uvs;
+	std::vector<DirectX::XMFLOAT3> _tangents;
+	std::vector<DirectX::XMFLOAT3> _binormals;
+	std::vector<DWORD> _indices;
 };
 

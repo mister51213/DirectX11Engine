@@ -165,7 +165,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	};
 	pScene->_Actors["Columns"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		//"../DirectX11Engine/data/_column_Tri.txt",
-		"../DirectX11Engine/data/_columns2.txt",
+		//"../DirectX11Engine/data/_columns2.txt",
+		"../DirectX11Engine/data/_columns2.bnm",
 		columnTex, EShaderType::ELIGHT_SPECULAR);
 
 	// Set Columns Model Shadow textures
@@ -191,9 +192,10 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	};
 	//pScene->_Actors["Moai"]->SetScale(XMFLOAT3(.01, .01, .01));
 	pScene->_Actors["Moai"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), /*"../DirectX11Engine/data/wall.txt", */
-		//"../DirectX11Engine/data/_moai_Tri.txt",
-		"../DirectX11Engine/data/_moai2.txt",
-		//"../DirectX11Engine/data/_columnSingle.txt",
+		//"../DirectX11Engine/data/_moai2.txt",
+		"../DirectX11Engine/data/_moai2.bnm",
+		//"../DirectX11Engine/data/torus.bnm",
+		//"../DirectX11Engine/data/_moai2.bnm",
 		wallTex, EShaderType::ELIGHT_SPECULAR);
 	
 	// Set Moai Model Shadow textures
@@ -230,7 +232,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	};
 	pScene->_Actors["Fountain"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
 		//"../DirectX11Engine/data/_fountain_Tri.txt",
-		"../DirectX11Engine/data/_fountain2.txt",
+		//"../DirectX11Engine/data/_fountain2.txt",
+		"../DirectX11Engine/data/_fountain2.bnm",
 		bathTex, EShaderType::ELIGHT_SPECULAR);
 	
 	// Set Fountain Model Shadow textures
@@ -256,7 +259,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 
 	pScene->_Actors["Platform"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
 		//"../DirectX11Engine/data/_platform_Tri.txt",
-		"../DirectX11Engine/data/_platform2.txt",
+		//"../DirectX11Engine/data/_platform2.txt",
+		"../DirectX11Engine/data/_platform2.bnm",
 		//"../DirectX11Engine/data/plane01.txt"
 		/*"../DirectX11Engine/data/SnowTerrain_LowPoly.txt"*/ groundTex, EShaderType::ELIGHT_SPECULAR);
 
@@ -283,7 +287,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	};
 	pScene->_Actors["Rock"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),
 		//"../DirectX11Engine/data/_rock_Tri.txt",
-		"../DirectX11Engine/data/_rock2.txt",
+		//"../DirectX11Engine/data/_rock2.txt",
+		"../DirectX11Engine/data/_rock2.bnm",
 		rockTex, EShaderType::ELIGHT_SPECULAR);
 
 	pScene->_Actors["Rock"]->GetModel()->GetMaterial()->gamma = 10.f;
@@ -299,14 +304,15 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	vector<string> waterTextures{ "../DirectX11Engine/data/water.dds", "../DirectX11Engine/data/waterTex.png", }; // FOR ICE, USE A DIFFERENT NORMAL MAP
 	
 	pScene->_Actors["Water"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
-		"../DirectX11Engine/data/_fountain_water2.txt",
+		//"../DirectX11Engine/data/_fountain_water2.txt",
+		"../DirectX11Engine/data/_fountain_water2.bnm",
 		//"../DirectX11Engine/data/_column_lowPoly2.txt",
 		//"../DirectX11Engine/data/_columns2.txt",
 		waterTextures, EShaderType::EWATER);
 	//pScene->_Actors["Water"]->SetOrientation(XMFLOAT3(0, 180, 0)); // USED FOR ICE
 	//pScene->_Actors["Water"]->SetScale(XMFLOAT3(1,1,1)); // USED FOR ICE
 
-	pScene->_Actors["Water"]->GetModel()->GetMaterial()->reflectRefractScale = 0.013;
+	pScene->_Actors["Water"]->GetModel()->GetMaterial()->reflectRefractScale = 0.01f;
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->waterHeight = _waterHeight;
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->bAnimated = true;
 	//pScene->_Actors["Water"]->GetModel()->SetResourceView(0, _ReflectionTexture->GetShaderResourceView());
@@ -314,12 +320,15 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	//_RefractionTexture.reset(new RenderTextureClass(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR)); // TEMP TEST
 	pScene->_Actors["Water"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFRACTION TEXTURE
 	//pScene->_Actors["Water"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFLECTION TEXTURE (CURRENTLY NOT USED!!!)
-	pScene->_Actors["Water"]->GetModel()->GetMaterial()->waterLerpRatio = .8f;
+	pScene->_Actors["Water"]->GetModel()->GetMaterial()->waterLerpRatio = .9f;
 
 	//// GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN // GLASS COLUMN 
 	pScene->_Actors["GlassColumns"]->InstantiateModel(new Model(pScene->_Actors["GlassColumns"]->GetScale(), XMFLOAT3(), XMFLOAT3(), "GlassColumns", false));
 	vector<string> iceTextures{ "../DirectX11Engine/data/bump2.dds", "../DirectX11Engine/data/glass2.dds" }; // FOR ICE, USE A DIFFERENT NORMAL MAP
-	pScene->_Actors["GlassColumns"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),/* "../DirectX11Engine/data/_columns2.txt", */ "../DirectX11Engine/data/_column_lowPoly2.txt", iceTextures, EShaderType::EWATER);
+	pScene->_Actors["GlassColumns"]->GetModel()->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(),/* "../DirectX11Engine/data/_columns2.txt", */ 
+		//"../DirectX11Engine/data/_column_lowPoly2.txt",
+		"../DirectX11Engine/data/_column_Single2.bnm",
+		iceTextures, EShaderType::EWATER);
 	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->reflectRefractScale = 0.025f;
 	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->bAnimated = false;
 	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->AddRenderTexture(_D3D->GetDevice(), screenWidth, screenHeight, SCREEN_DEPTH, SCREEN_NEAR); // REFRACTION TEXTURE
@@ -605,52 +614,52 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 
 	// GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS
 	// vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv//
-	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->_RenderTextures[0]->SetRenderTarget(_D3D->GetDeviceContext());
-	pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->_RenderTextures[0]->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
+	//pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->_RenderTextures[0]->SetRenderTarget(_D3D->GetDeviceContext());
+	//pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial()->_RenderTextures[0]->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f);
 
-	////// BACKGROUND /////////
-	_D3D->EnableAlphaBlending();
-	DrawModel(*_Earth, transforms);
-	DrawModel(*_EarthInner, transforms);
-	DrawModel(*_Sky, transforms);
-	DrawModel(*_SkyInner, transforms);
-	_D3D->DisableAlphaBlending();
+	//////// BACKGROUND /////////
+	//_D3D->EnableAlphaBlending();
+	//DrawModel(*_Earth, transforms);
+	//DrawModel(*_EarthInner, transforms);
+	//DrawModel(*_Sky, transforms);
+	//DrawModel(*_SkyInner, transforms);
+	////_D3D->DisableAlphaBlending();
 
-	//////// OTHER OBJECTS /////////
-	float alpha;
+	////////// OTHER OBJECTS /////////
+	//float alpha;
 
-	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
-	{
-		// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
-		if (!it->second->GetModel() || it->first == "Water" || it->first == "GlassColumns")
-		{
-			continue;
-		}
+	//for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+	//{
+	//	// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
+	//	if (!it->second->GetModel() || it->first == "Water" || it->first == "GlassColumns")
+	//	{
+	//		continue;
+	//	}
 
-		if (it->first == "Platform")
-		{
-			alpha = 1.f;
-		}
-		else
-		{
-			alpha = .7f;
-		}
-		
-		it->second->GetModel()->SetResourceView(6, blurredShadows);
-		transforms.world = XMMatrixTranspose(ComputeWorldTransform(it->second->GetModel()->GetOrientation(), it->second->GetModel()->GetScale(), it->second->GetModel()->GetPosition()));
-		it->second->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-		_ShaderManager->_ShadowShaderSoft->Render(
-			_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), transforms,
-			it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor,
-			lights, _Camera->GetPosition(), 0.f, alpha,
-			it->second->GetModel()->GetMaterial()->gamma,
-			it->second->GetModel()->GetMaterial()->bBlendTexture);
-		it->second->GetModel()->Draw(_D3D->GetDeviceContext());
-	}
+	//	if (it->first == "Platform")
+	//	{
+	//		alpha = 1.f;
+	//	}
+	//	else
+	//	{
+	//		alpha = .6f;
+	//	}
+	//	
+	//	it->second->GetModel()->SetResourceView(6, blurredShadows);
+	//	transforms.world = XMMatrixTranspose(ComputeWorldTransform(it->second->GetModel()->GetOrientation(), it->second->GetModel()->GetScale(), it->second->GetModel()->GetPosition()));
+	//	it->second->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+	//	_ShaderManager->_ShadowShaderSoft->Render(
+	//		_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), transforms,
+	//		it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor,
+	//		lights, _Camera->GetPosition(), 0.f, alpha,
+	//		it->second->GetModel()->GetMaterial()->gamma,
+	//		it->second->GetModel()->GetMaterial()->bBlendTexture);
+	//	it->second->GetModel()->Draw(_D3D->GetDeviceContext());
+	//}
 
 	//_D3D->DisableAlphaBlending();
 
-	_D3D->SetBackBufferRenderTarget();
+	//_D3D->SetBackBufferRenderTarget();
 	// ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 	// GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS
 
@@ -665,27 +674,27 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 	{
 		//DrawModel(*pScene->_Actors["GlassColumns"]->GetModel(), transforms, lights, EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
 
-		pScene->_Actors["GlassColumns"]->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+		//pScene->_Actors["GlassColumns"]->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
 
-		// 1.
-		transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(XMFLOAT3(0.f, 45.f, 0.f), pScene->_Actors["GlassColumns"]->GetModel()->GetScale(), XMFLOAT3(31.f, 0.f, -31.f)));
-		_ShaderManager->Render(_D3D->GetDeviceContext(), pScene->_Actors["GlassColumns"]->GetModel()->GetIndexCount(), transforms, pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
-		pScene->_Actors["GlassColumns"]->GetModel()->Draw(_D3D->GetDeviceContext());
+		//// 1.
+		//transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(XMFLOAT3(0.f, 45.f, 0.f), pScene->_Actors["GlassColumns"]->GetModel()->GetScale(), XMFLOAT3(31.f, 0.f, -31.f)));
+		//_ShaderManager->Render(_D3D->GetDeviceContext(), pScene->_Actors["GlassColumns"]->GetModel()->GetIndexCount(), transforms, pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
+		//pScene->_Actors["GlassColumns"]->GetModel()->Draw(_D3D->GetDeviceContext());
 
-		// 2.
-		transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(XMFLOAT3(0.f, 45.f, 0.f), pScene->_Actors["GlassColumns"]->GetModel()->GetScale(), XMFLOAT3(-31.f, 0.f, -31.f)));
-		_ShaderManager->Render(_D3D->GetDeviceContext(), pScene->_Actors["GlassColumns"]->GetModel()->GetIndexCount(), transforms, pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
-		pScene->_Actors["GlassColumns"]->GetModel()->Draw(_D3D->GetDeviceContext());
+		//// 2.
+		//transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(XMFLOAT3(0.f, 45.f, 0.f), pScene->_Actors["GlassColumns"]->GetModel()->GetScale(), XMFLOAT3(-31.f, 0.f, -31.f)));
+		//_ShaderManager->Render(_D3D->GetDeviceContext(), pScene->_Actors["GlassColumns"]->GetModel()->GetIndexCount(), transforms, pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
+		//pScene->_Actors["GlassColumns"]->GetModel()->Draw(_D3D->GetDeviceContext());
 
-		// 3.
-		transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(XMFLOAT3(0.f, 45.f, 0.f), pScene->_Actors["GlassColumns"]->GetModel()->GetScale(), XMFLOAT3(31.f, 0.f, 31.f)));
-		_ShaderManager->Render(_D3D->GetDeviceContext(), pScene->_Actors["GlassColumns"]->GetModel()->GetIndexCount(), transforms, pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
-		pScene->_Actors["GlassColumns"]->GetModel()->Draw(_D3D->GetDeviceContext());
+		//// 3.
+		//transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(XMFLOAT3(0.f, 45.f, 0.f), pScene->_Actors["GlassColumns"]->GetModel()->GetScale(), XMFLOAT3(31.f, 0.f, 31.f)));
+		//_ShaderManager->Render(_D3D->GetDeviceContext(), pScene->_Actors["GlassColumns"]->GetModel()->GetIndexCount(), transforms, pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
+		//pScene->_Actors["GlassColumns"]->GetModel()->Draw(_D3D->GetDeviceContext());
 
-		// 4.
-		transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(XMFLOAT3(0.f, 45.f, 0.f), pScene->_Actors["GlassColumns"]->GetModel()->GetScale(), XMFLOAT3(-31.f, 0.f, 31.f)));
-		_ShaderManager->Render(_D3D->GetDeviceContext(), pScene->_Actors["GlassColumns"]->GetModel()->GetIndexCount(), transforms, pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
-		pScene->_Actors["GlassColumns"]->GetModel()->Draw(_D3D->GetDeviceContext());
+		//// 4.
+		//transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(XMFLOAT3(0.f, 45.f, 0.f), pScene->_Actors["GlassColumns"]->GetModel()->GetScale(), XMFLOAT3(-31.f, 0.f, 31.f)));
+		//_ShaderManager->Render(_D3D->GetDeviceContext(), pScene->_Actors["GlassColumns"]->GetModel()->GetIndexCount(), transforms, pScene->_Actors["GlassColumns"]->GetModel()->GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
+		//pScene->_Actors["GlassColumns"]->GetModel()->Draw(_D3D->GetDeviceContext());
 	}
 	
 	///////////////// UI ///////////////////

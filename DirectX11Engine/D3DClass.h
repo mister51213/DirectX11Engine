@@ -36,6 +36,8 @@ public:
 	D3DClass(const D3DClass&);
 	~D3DClass();
 
+	void ScreenGrab();
+
 	std::vector<IDXGIAdapter*> EnumerateAdapters(int& adapterToUse);
 
 	bool Initialize(const int screenWidth, const int screenHeight, const bool vsync, const HWND hwnd, const bool fullscreen, const float screenDepth, const float screenNear);

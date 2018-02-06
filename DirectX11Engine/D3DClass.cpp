@@ -6,6 +6,8 @@
 #include <fstream>
 #include <stdlib.h>
 #include <algorithm>
+#include "WICTextureLoader.h"
+
 
 using namespace std;
 

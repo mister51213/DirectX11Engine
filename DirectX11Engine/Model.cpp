@@ -2,6 +2,7 @@
 // Filename: model.cpp
 ////////////////////////////////////////////////////////////////////////////////
 #include "Model.h"
+#include "Shlwapi.h"
 
 using namespace GfxUtil;
 
@@ -109,12 +110,6 @@ bool Model::InitializeBuffers(ID3D11Device* const device)
 		vertices[i].normal = XMFLOAT3(_model.get()[i].nx, _model.get()[i].ny, _model.get()[i].nz);
 		vertices[i].tangent = XMFLOAT3(_model.get()[i].tx, _model.get()[i].ty, _model.get()[i].tz);
 		vertices[i].binormal = XMFLOAT3(_model.get()[i].bx, _model.get()[i].by, _model.get()[i].bz);
-
-		//_Vertices[i].position = XMFLOAT3(_model.get()[i].x, _model.get()[i].y, _model.get()[i].z);
-		//_Vertices[i].texture = XMFLOAT2(_model.get()[i].tu, _model.get()[i].tv);
-		//_Vertices[i].normal = XMFLOAT3(_model.get()[i].nx, _model.get()[i].ny, _model.get()[i].nz);
-		//_Vertices[i].tangent = XMFLOAT3(_model.get()[i].tx, _model.get()[i].ty, _model.get()[i].tz);
-		//_Vertices[i].binormal = XMFLOAT3(_model.get()[i].bx, _model.get()[i].by, _model.get()[i].bz);
 
 		indices[i] = i;
 	}
@@ -386,54 +381,113 @@ bool Model::LoadVerticesFromFile(const string filename)
 	char input;
 	int i;
 
-	// Open the model file.
-	fin.open(filename);
-
-	// If it could not open the file then exit.
-	if (fin.fail())
+	// TODO: check file extension first and use difft lambdas for bin mesh and txt
+	string extension = PathFindExtension(filename.data());
+	if (extension == ".txt")
 	{
-		ThrowRuntime("Could not open " + filename + ".");
-	}
+		// Open the model file.
+		fin.open(filename);
 
-	// Read up to the value of vertex count.
-	fin.get(input);
-	while (input != ':')
-	{
+		// If it could not open the file then exit.
+		if (fin.fail())
+		{
+			ThrowRuntime("Could not open " + filename + ".");
+		}
+
+		// Read up to the value of vertex count.
 		fin.get(input);
-	}
+		while (input != ':')
+		{
+			fin.get(input);
+		}
 
-	// Read in the vertex count.
-	fin >> _vertexCount;
+		// Read in the vertex count.
+		fin >> _vertexCount;
 
-	// Set the number of indices to be the same as the vertex count.
-	_indexCount = _vertexCount;
+		// Set the number of indices to be the same as the vertex count.
+		_indexCount = _vertexCount;
 
-	// Create the model using the vertex count that was read in.
-	_model.reset(new ModelType[_vertexCount]);
-	if (!_model)
-	{
-		ThrowRuntime("Could not create the model - " + filename);
-	}
+		// Create the model using the vertex count that was read in.
+		_model.reset(new ModelType[_vertexCount]);
+		if (!_model)
+		{
+			ThrowRuntime("Could not create the model - " + filename);
+		}
 
-	// Read up to the beginning of the data.
-	fin.get(input);
-	while (input != ':')
-	{
+		// Read up to the beginning of the data.
 		fin.get(input);
-	}
-	fin.get(input);
-	fin.get(input);
+		while (input != ':')
+		{
+			fin.get(input);
+		}
+		fin.get(input);
+		fin.get(input);
 
-	// Read in the vertex data.
-	for (i = 0; i < _vertexCount; i++)
+		// Read in the vertex data.
+		for (i = 0; i < _vertexCount; i++)
+		{
+			fin >> _model.get()[i].x >> _model.get()[i].y >> _model.get()[i].z;
+			fin >> _model.get()[i].tu >> _model.get()[i].tv;
+			fin >> _model.get()[i].nx >> _model.get()[i].ny >> _model.get()[i].nz;
+		}
+
+		// Close the model file.
+		fin.close();
+
+		return true;
+	}
+	else
 	{
-		fin >> _model.get()[i].x >>  _model.get()[i].y >> _model.get()[i].z;
-		fin >> _model.get()[i].tu >> _model.get()[i].tv;
-		fin >> _model.get()[i].nx >> _model.get()[i].ny >> _model.get()[i].nz;
+		// BINARY MESH LOADER VERSION // BINARY MESH LOADER VERSION // BINARY MESH LOADER VERSION // BINARY MESH LOADER VERSION
+		ID3D11Buffer* pVertexBuffer, *pIndexBuffer;
+		int vertexCount, indexCount;
+		ModelType* pModel;
+
+		ifstream file(filename, std::ios::binary); // open file in binary mode
+
+		if (file.fail())
+		{
+			return false;
+		}
+
+		// read first 32 bits into vertexCount
+		vertexCount = 0; 
+		//file.read(reinterpret_cast<char*>(&vertexCount), sizeof(int));
+		file.read(reinterpret_cast<char*>(&_vertexCount), sizeof(int));
+
+		// pack into vector of structs
+		vector<VertexType> vertList(_vertexCount);
+		unsigned long long dataSize = sizeof(VertexType);
+		dataSize*= _vertexCount;
+		file.read(reinterpret_cast<char*>(vertList.data()), dataSize/*sizeof(VertexType)*vertexCount*/);
+
+		_indexCount = _vertexCount;
+
+		// Create the model using the vertex count that was read in.
+		_model.reset(new ModelType[_vertexCount]);
+		if (!_model)
+		{
+			ThrowRuntime("Could not create the model - " + filename);
+		}
+
+		// TEMP FOR TESTING (SEE IF THE BINARY MESH FILE HAS THE RIGHT DATA)
+		for (i = 0; i < _vertexCount; i++)
+		{
+			_model.get()[i].x = vertList[i].position.x;
+			_model.get()[i].y = vertList[i].position.y;
+			_model.get()[i].z = vertList[i].position.z;
+
+			_model.get()[i].tu = vertList[i].texture.x;
+			_model.get()[i].tv = vertList[i].texture.y;
+
+			_model.get()[i].nx = vertList[i].normal.x;
+			_model.get()[i].ny = vertList[i].normal.y;
+			_model.get()[i].nz = vertList[i].normal.z;
+		}
+
+		file.close();
+
+		return true;
+		// BINARY MESH LOADER VERSION // BINARY MESH LOADER VERSION // BINARY MESH LOADER VERSION // BINARY MESH LOADER VERSION
 	}
-
-	// Close the model file.
-	fin.close();
-
-	return true;
 }
