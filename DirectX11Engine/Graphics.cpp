@@ -70,7 +70,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	//_Earth.reset(new Model());
 	vector<string> earthtex = { "../DirectX11Engine/data/fire2.dds", "../DirectX11Engine/data/skydome_alpha3nostars.jpg" };
 	_Earth->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
-		"../DirectX11Engine/data/skydome_lowpoly.txt",
+		//"../DirectX11Engine/data/skydome_lowpoly.txt",
+		"../DirectX11Engine/data/skydome_lowpoly.bnm",
 		earthtex, EShaderType::ETEXTURE);
 	_Earth->GetMaterial()->bAnimated = true;
 	//_Earth->GetMaterial()->textureScale = 1.5f;
@@ -79,7 +80,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	_EarthInner.reset(new Model(.75f * _Earth->GetScale(), _Earth->GetOrientation(), XMFLOAT3(0, -200, 0), "Earth Inner", false));
 	vector<string> earthtex2 = { "../DirectX11Engine/data/fire.dds", "../DirectX11Engine/data/skydome_alpha5.jpg" };
 	_EarthInner->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
-		"../DirectX11Engine/data/skydome_lowpoly.txt",
+		//"../DirectX11Engine/data/skydome_lowpoly.txt",
+		"../DirectX11Engine/data/skydome_lowpoly.bnm",
 		earthtex2, EShaderType::ETEXTURE);
 	//_EarthInner->GetMaterial()->textureScale = .7f;
 
@@ -89,7 +91,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	vector<string> skytex = { "../DirectX11Engine/data/galaxyblue.jpg", "../DirectX11Engine/data/skydome_alpha2s.jpg" };
 	//vector<string> skytex = { "../DirectX11Engine/data/galaxyblue.jpg", "../DirectX11Engine/data/skydome_alpha2.jpg" };
 	_Sky->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
-		"../DirectX11Engine/data/skydome_lowpoly.txt",
+		//"../DirectX11Engine/data/skydome_lowpoly.txt",
+		"../DirectX11Engine/data/skydome_lowpoly.bnm",
 		skytex, EShaderType::ETEXTURE);
 	_Sky->GetMaterial()->gamma = 0.7f;
 	//_Sky->GetMaterial()->textureScale = 1.4f;
@@ -100,7 +103,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 	//vector<string> skytexInner = { "../DirectX11Engine/data/galaxypurple.jpg", "../DirectX11Engine/data/skydome_alpha4s.jpg" };
 	vector<string> skytexInner = { "../DirectX11Engine/data/galaxypurple.jpg", "../DirectX11Engine/data/skydome_alpha4.jpg" };
 	_SkyInner->Initialize(_D3D->GetDevice(), _D3D->GetDeviceContext(), 
-		"../DirectX11Engine/data/skydome_lowpoly.txt",
+		//"../DirectX11Engine/data/skydome_lowpoly.txt",
+		"../DirectX11Engine/data/skydome_lowpoly.bnm",
 		skytexInner, EShaderType::ETEXTURE);
 	//_SkyInner->GetMaterial()->gamma = 0.5f;
 	//_SkyInner->GetMaterial()->textureScale = 1.43f;
@@ -578,10 +582,34 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 
 	////// BACKGROUND /////////
 	_D3D->EnableAlphaBlending();
-	DrawModel(*_Earth, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	DrawModel(*_EarthInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	DrawModel(*_Sky, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	DrawModel(*_SkyInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
+
+	//DrawModel(*_Earth, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
+	//DrawModel(*_EarthInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
+	//DrawModel(*_Sky, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
+	//DrawModel(*_SkyInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
+
+	_Earth->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+
+	// 1.
+	transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(_Earth->GetOrientation(), _Earth->GetScale(), _Earth->GetPosition()));
+	_ShaderManager->Render(_D3D->GetDeviceContext(), _Earth->GetIndexCount(), transforms, _Earth->GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
+	_Earth->Draw(_D3D->GetDeviceContext());
+
+	// 2.
+	transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(_EarthInner->GetOrientation(), _EarthInner->GetScale(), _EarthInner->GetPosition()));
+	_ShaderManager->Render(_D3D->GetDeviceContext(), _EarthInner->GetIndexCount(), transforms, _EarthInner->GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
+	_EarthInner->Draw(_D3D->GetDeviceContext());
+
+	// 3.
+	transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(_Sky->GetOrientation(), _Sky->GetScale(), _Sky->GetPosition()));
+	_ShaderManager->Render(_D3D->GetDeviceContext(), _Sky->GetIndexCount(), transforms, _Sky->GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
+	_Sky->Draw(_D3D->GetDeviceContext());
+
+	// 4.
+	transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(_SkyInner->GetOrientation(), _SkyInner->GetScale(), _SkyInner->GetPosition()));
+	_ShaderManager->Render(_D3D->GetDeviceContext(), _SkyInner->GetIndexCount(), transforms, _SkyInner->GetMaterial(), lights, _sceneEffects, _Camera->GetPosition(), EMATERIAL_DEFAULT, _Camera->GetReflectionViewMatrix());
+	_SkyInner->Draw(_D3D->GetDeviceContext());
+
 	_D3D->DisableAlphaBlending();
 
 	//////// OTHER OBJECTS /////////

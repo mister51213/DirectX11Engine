@@ -3,22 +3,13 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "fontshaderclass.h"
 
-FontShaderClass::FontShaderClass()
-{}
-
-FontShaderClass::FontShaderClass(const FontShaderClass& other)
-{}
-
-FontShaderClass::~FontShaderClass()
-{}
-
-bool FontShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType transforms,/*, XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, */ID3D11ShaderResourceView* texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 pixelColor)
+bool FontShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType transforms,
+	ID3D11ShaderResourceView* texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 pixelColor)
 {
 	bool result;
 
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, transforms, /*worldMatrix, viewMatrix, projectionMatrix, */texture, texViews, pixelColor);
+	result = SetShaderParameters(deviceContext, transforms, texture, texViews, pixelColor);
 	if (!result)
 	{
 		return false;
@@ -66,13 +57,13 @@ bool FontShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* vs
 	return true;
 }
 
-bool FontShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType transforms, /*XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix, */ID3D11ShaderResourceView* texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 pixelColor)
+bool FontShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType transforms,
+	ID3D11ShaderResourceView* texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 pixelColor)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 	
 	// Set shader texture resource in the pixel shader.
-	//deviceContext->PSSetShaderResources(0, 1, &texture);
 	deviceContext->PSSetShaderResources(0, texViews.size(), texViews.data()->GetAddressOf());
 
 	///////////////////////////////////////////////////////////////
@@ -81,8 +72,7 @@ bool FontShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, Ma
 
 	///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
 	unsigned int bufferNumber = 0;
-	//MatrixBufferType tempMatBuff = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix) };
-	MatrixBufferType tempMatBuff = transforms; //{ XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix) };
+	MatrixBufferType tempMatBuff = transforms;
 	MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 

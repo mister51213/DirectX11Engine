@@ -53,26 +53,19 @@ private:
 	};
 
 public:
-	LightShaderClass();
-	LightShaderClass(const LightShaderClass&);
-
-	bool Render(ID3D11DeviceContext* deviceContext, int indexCount,
-		MatrixBufferType& transforms,ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
-		XMFLOAT4 ambientColor, LightClass* shadowLight[],
-		XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency);
+	bool Render(ID3D11DeviceContext* deviceContext, int indexCount,	MatrixBufferType& transforms,ID3D11ShaderResourceView** textureArray, 
+		vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,XMFLOAT4 ambientColor, LightClass* shadowLight[], XMFLOAT3 cameraPosition, 
+		float fogStart, float fogEnd, float translation, float transparency);
 
 	virtual void RenderShader(ID3D11DeviceContext* deviceContext, int indexCount) override;
 
 	bool InitializeShader(ID3D11Device*, HWND, char*, char*);
 
-	bool SetShaderParameters(ID3D11DeviceContext* deviceContext,
-		MatrixBufferType& transforms, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
-		XMFLOAT4 ambientColor, LightClass* shadowLight[],
-		XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency);
+	bool SetShaderParameters(ID3D11DeviceContext* deviceContext,MatrixBufferType& transforms, ID3D11ShaderResourceView** textureArray, 
+		vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,XMFLOAT4 ambientColor, LightClass* shadowLight[], XMFLOAT3 cameraPosition, 
+		float fogStart, float fogEnd, float translation, float transparency);
 
 private:
-	// Total number of buffers including parent matrix buffer
-	const int _numBufferDescs = 5;
 	ComPtr <ID3D11SamplerState> _sampleStateClamp;
 	ComPtr <ID3D11SamplerState> _sampleStateComp;
 };

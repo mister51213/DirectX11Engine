@@ -1,16 +1,5 @@
 #include "DepthShaderClass.h"
 
-DepthShaderClass::DepthShaderClass()
-{}
-
-DepthShaderClass::DepthShaderClass(const DepthShaderClass& other)
-{
-}
-
-DepthShaderClass::~DepthShaderClass()
-{
-}
-
 bool DepthShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms/*,XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix*/)
 {
 	// Set the shader parameters that it will use for rendering.

@@ -4,16 +4,9 @@
 
 #include "lightshaderclass.h"
 
-LightShaderClass::LightShaderClass()
-{}
-
-LightShaderClass::LightShaderClass(const LightShaderClass& other)
-{}
-
 bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms,
-	ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
-	XMFLOAT4 ambientColor, LightClass* shadowLight[], 
-	XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency)
+	ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 ambientColor, 
+	LightClass* shadowLight[], XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency)
 {
 	// Set the shader parameters that it will use for rendering.
 	SetShaderParameters(deviceContext, transforms, textureArray, texViews, ambientColor, shadowLight, cameraPosition, fogStart, fogEnd, translation, transparency);
@@ -33,14 +26,10 @@ void LightShaderClass::RenderShader(ID3D11DeviceContext * deviceContext, int ind
 	deviceContext->VSSetShader(_vertexShader.Get(), NULL, 0);
 	deviceContext->PSSetShader(_pixelShader.Get(), NULL, 0);
 
-	// The new clamp sampler state is set in the pixel shader here.
-
 	// Set the sampler states in the pixel shader.
 	deviceContext->PSSetSamplers(0, 1, _sampleStateClamp.GetAddressOf());
 	deviceContext->PSSetSamplers(1, 1, _sampleState.GetAddressOf());
 	deviceContext->PSSetSamplers(2, 1, _sampleStateComp.GetAddressOf());
-
-	//deviceContext->DrawIndexed(indexCount, 0, 0);
 
 	return;
 }
@@ -53,6 +42,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 
 	// VERTEX SHADER LAYOUT DESCRIPTION SETUP // 
 	//@NOTE - D3D11_APPEND_ALIGNED_ELEMENT is default offset value!
+
 	// This setup needs to match the VertexType stucture in the ModelClass and in the shader.
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[5];
 	polygonLayout[0] = MakeInputElementDesc("POSITION", DXGI_FORMAT_R32G32B32_FLOAT, 0);
@@ -64,8 +54,7 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	// Create the vertex input layout.
 	unsigned int numElements = sizeof(polygonLayout) / sizeof(polygonLayout[0]);
 	
-	//D3D11_INPUT_ELEMENT_DESC polygonLayout2[2]; // invalid argument for testing purposes
-	ThrowHResultIf(device->CreateInputLayout(polygonLayout/*polygonLayout2*/, numElements, _vertexShaderBuffer->GetBufferPointer(), _vertexShaderBuffer->GetBufferSize(), &_layout));
+	ThrowHResultIf(device->CreateInputLayout(polygonLayout, numElements, _vertexShaderBuffer->GetBufferPointer(), _vertexShaderBuffer->GetBufferSize(), &_layout));
 	
 	// Create the texture wrap sampler state.
 	ThrowHResultIf(device->CreateSamplerState(&MakeSamplerDesc(), &_sampleState));
@@ -92,11 +81,9 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	return true;
 }
 
-bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, 
-	MatrixBufferType& transforms,
-	ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
-	XMFLOAT4 ambientColor,	LightClass* shadowLight[],
-	XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency)
+bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType& transforms,
+	ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,XMFLOAT4 ambientColor,	
+	LightClass* shadowLight[],XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
@@ -143,13 +130,8 @@ bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 
 	///////////////////////// LIGHT INIT - PS BUFFER 0 //////////////////////
 	bufferNumber = 0;
-
-	//LightDataTemplate_PS tempLightsPS[NUM_LIGHTS] = {*shadowLight[0]->GetLightBufferPS(), *shadowLight[1]->GetLightBufferPS(), *shadowLight[2]->GetLightBufferPS()};
-
 	SceneLightBufferType_PS tempLightBuff = 
 	{ ambientColor, *shadowLight[0]->GetLightBufferPS(), *shadowLight[1]->GetLightBufferPS(), *shadowLight[2]->GetLightBufferPS() };
-	//{ ambientColor, tempLightsPS[0], tempLightsPS[1], tempLightsPS[2] };
-
 	MapBuffer(tempLightBuff, _psBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->PSSetConstantBuffers(bufferNumber, 1, _psBuffers[bufferNumber].GetAddressOf());
 	
