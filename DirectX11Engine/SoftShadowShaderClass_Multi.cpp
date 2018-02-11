@@ -3,13 +3,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "SoftShadowShaderClass_Multi.h"
 
-
-SoftShadowShaderClass_Multi::SoftShadowShaderClass_Multi()
-{}
-
-SoftShadowShaderClass_Multi::SoftShadowShaderClass_Multi(const SoftShadowShaderClass_Multi& other)
-{}
-
 bool SoftShadowShaderClass_Multi::Initialize(ID3D11Device* device, HWND hwnd)
 {
 	bool result;
@@ -45,7 +38,6 @@ bool SoftShadowShaderClass_Multi::Render(ID3D11DeviceContext* deviceContext, int
 
 	return true;
 }
-
 
 bool SoftShadowShaderClass_Multi::InitializeShader(ID3D11Device* device, HWND hwnd,/* WCHAR* */wstring vsFilename, /*WCHAR* */wstring psFilename)
 {
@@ -87,10 +79,8 @@ bool SoftShadowShaderClass_Multi::InitializeShader(ID3D11Device* device, HWND hw
 }
 
 bool SoftShadowShaderClass_Multi::SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType& transforms,
-	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
-	XMFLOAT4 ambientColor, LightClass* shadowLight[],
-	XMFLOAT3 cameraPosition, float translation, float transparency,
-	float gamma, unsigned int bBlendTexture)
+	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 ambientColor, LightClass* shadowLight[],
+	XMFLOAT3 cameraPosition, float translation, float transparency, float gamma, unsigned int bBlendTexture)
 {
     D3D11_MAPPED_SUBRESOURCE mappedResource;
 
@@ -100,7 +90,8 @@ bool SoftShadowShaderClass_Multi::SetShaderParameters(ID3D11DeviceContext* devic
 	///////////////////////////////////////////////////////////////
 	///////////////////////// VS BUFFERS //////////////////////////
 	///////////////////////////////////////////////////////////////
-		///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
+
+	///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
 	unsigned int bufferNumber = 0;
 	MapBuffer(transforms, _vsBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
@@ -127,6 +118,7 @@ bool SoftShadowShaderClass_Multi::SetShaderParameters(ID3D11DeviceContext* devic
 	/////////////////////////////////////////////////////////////
 	/////////////////////// PS BUFFERS //////////////////////////
 	/////////////////////////////////////////////////////////////
+
 	///////////////////////// LIGHT INIT - PS BUFFER 0 //////////////////////
 	bufferNumber = 0;
 	SceneLightBufferType_PS tempLightBuff =
@@ -155,7 +147,6 @@ bool SoftShadowShaderClass_Multi::SetShaderParameters(ID3D11DeviceContext* devic
 
 	return true;
 }
-
 
 void SoftShadowShaderClass_Multi::RenderShader(ID3D11DeviceContext* deviceContext, int indexCount)
 {

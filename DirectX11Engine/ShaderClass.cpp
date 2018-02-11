@@ -1,21 +1,9 @@
 ////////////////////////////////////////////////////////////////////////////////
 // Filename: ShaderClass.cpp
 ////////////////////////////////////////////////////////////////////////////////
-//#pragma comment ( lib, "d3dcompiler.lib" )
-//#pragma comment ( lib, "d3d11.lib" )
 
 #include "ShaderClass.h"
 #include "ShaderCompiler.h"
-
-
-ShaderClass::ShaderClass()
-{}
-
-ShaderClass::ShaderClass(const ShaderClass& other)
-{}
-
-ShaderClass::~ShaderClass()
-{}
 
 bool ShaderClass::Initialize(ID3D11Device * device, HWND hwnd, char * vsFilename, char * psFilename)
 {
@@ -31,12 +19,7 @@ bool ShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, char * vsFi
 	return false;
 }
 
-
-bool ShaderClass::CreateShaders(
-	ID3D11Device * device,
-	HWND hwnd,
-	wstring vsFilename,
-	wstring psFilename)
+bool ShaderClass::CreateShaders(ID3D11Device * device, HWND hwnd, wstring vsFilename, wstring psFilename)
 {
 	// USING HLSL COMPILER
 #ifdef RELEASE
@@ -57,14 +40,7 @@ bool ShaderClass::CreateShaders(
 	return true;
 }
 
-bool ShaderClass::CompileShaders(
-	ID3D11Device * device, 
-	HWND hwnd, 
-	string vsFilename,
-	string psFilename,
-	char* vsDesc, 
-	char* psDesc, 
-	ID3D10Blob* errorMessage)
+bool ShaderClass::CompileShaders(ID3D11Device * device, HWND hwnd, string vsFilename, string psFilename, char* vsDesc, char* psDesc, ID3D10Blob* errorMessage)
 {
 	// USING HLSL COMPILER
 	#ifdef RELEASE
@@ -133,7 +109,5 @@ void ShaderClass::RenderShader(ID3D11DeviceContext* deviceContext, int indexCoun
 
 	// Set the sampler state in the pixel shader.
 	deviceContext->PSSetSamplers(0, 1, _sampleState.GetAddressOf());
-
-	//deviceContext->DrawIndexed(indexCount, 0, 0);
 }
 

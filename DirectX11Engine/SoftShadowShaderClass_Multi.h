@@ -3,8 +3,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#pragma comment ( lib, "d3dcompiler.lib" )
-#pragma comment ( lib, "d3d11.lib" )
+//#pragma comment ( lib, "d3dcompiler.lib" )
+//#pragma comment ( lib, "d3d11.lib" )
 
 //////////////
 // INCLUDES //
@@ -13,12 +13,11 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <fstream>
-#include "../ShaderClass.h"
+#include "ShaderClass.h"
 #include "LightClass.h"
 
 using namespace std;
 using namespace DirectX;
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: SoftShadowShaderClass_Multi
@@ -65,26 +64,17 @@ private:
 		unsigned int bBlendTexture;
 	};
 
-
 public:
-	SoftShadowShaderClass_Multi();
-	SoftShadowShaderClass_Multi(const SoftShadowShaderClass_Multi&);
-
 	bool Initialize(ID3D11Device*, HWND);
-	bool Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms,
-		vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
-		XMFLOAT4 ambientColor, LightClass* shadowLight[],
-		XMFLOAT3 cameraPosition, float translation, float transparency,
-		float gamma = 1.f, unsigned int bBlendTexture = 0);
+
+	bool Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
+		XMFLOAT4 ambientColor, LightClass* shadowLight[], XMFLOAT3 cameraPosition, float translation, float transparency, float gamma = 1.f, unsigned int bBlendTexture = 0);
 
 	virtual bool InitializeShader(ID3D11Device* device, HWND hwnd,/* WCHAR* */wstring vsFilename, /*WCHAR* */wstring psFilename);
 
 private:
-	bool SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType& transforms,
-		vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
-		XMFLOAT4 ambientColor, LightClass* shadowLight[],
-		XMFLOAT3 cameraPosition, float translation, float transparency,
-		float gamma = 1.f, unsigned int bBlendTexture = 0);
+	bool SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType& transforms, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
+		XMFLOAT4 ambientColor, LightClass* shadowLight[], XMFLOAT3 cameraPosition, float translation, float transparency, float gamma = 1.f, unsigned int bBlendTexture = 0);
 
 	virtual void RenderShader(ID3D11DeviceContext*, int) override;
 

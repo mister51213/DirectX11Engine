@@ -1,18 +1,7 @@
 #include "WaterShaderClass.h"
 
-WaterShaderClass::WaterShaderClass()
-{}
-
-WaterShaderClass::WaterShaderClass(const WaterShaderClass &)
-{}
-
-WaterShaderClass::~WaterShaderClass()
-{}
-
-bool WaterShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCount, 
-	MatrixBufferType& transforms,
-	//XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, 
-	XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, float waterTranslation, float reflectRefractScale, float lerpRatio)
+bool WaterShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCount, MatrixBufferType& transforms, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, 
+	vector<ComPtr <ID3D11ShaderResourceView>>& texViews, float waterTranslation, float reflectRefractScale, float lerpRatio)
 {
 	bool result;
 
@@ -62,14 +51,12 @@ bool WaterShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 	return true;
 }
 
-bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, 
-	MatrixBufferType& transforms,
-	XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, float waterTranslation, float reflectRefractScale, float lerpRatio)
+bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType& transforms, XMMATRIX reflectionMatrix, ID3D11ShaderResourceView** textureArray, 
+	vector<ComPtr <ID3D11ShaderResourceView>>& texViews, float waterTranslation, float reflectRefractScale, float lerpRatio)
 {
 	HRESULT result;
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
-	//deviceContext->PSSetShaderResources(0, texArraySize, textureArray);
 	deviceContext->PSSetShaderResources(0, texViews.size(), texViews.data()->GetAddressOf());
 	
 	///////////////////////////////////////////////////////////////
@@ -83,7 +70,6 @@ bool WaterShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext,
 	//MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
 
 	MapBuffer(transforms, _vsBuffers[bufferNumber].Get(), deviceContext);
-
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());
 
 	///////////////////// REFLECTION INIT - VS BUFFER 1 //////////////////////////////////

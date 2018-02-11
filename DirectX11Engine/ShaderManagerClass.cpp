@@ -3,16 +3,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "shadermanagerclass.h"
 
-ShaderManagerClass::ShaderManagerClass()
-{}
-
-ShaderManagerClass::ShaderManagerClass(const ShaderManagerClass& other)
-{}
-
-ShaderManagerClass::~ShaderManagerClass()
-{
-}
-
 bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 {
 	bool result;
@@ -168,7 +158,7 @@ bool ShaderManagerClass::Initialize(ID3D11Device* device, HWND hwnd)
 	return true;
 }
 
-// @TODO the params at teh end need to be encapsulated
+// @TODO the params at the end need to be encapsulated
 bool ShaderManagerClass::Render(
 	ID3D11DeviceContext * device, int indexCount, 
 	MatrixBufferType& transforms,
@@ -191,9 +181,7 @@ bool ShaderManagerClass::Render(
 	switch (shaderToUse)
 	{
 	case EShaderType::ETEXTURE:
-		result = _TextureShader->Render(device, indexCount,	transforms,
-			//material->GetResourceArray(), 
-			material->GetTextureObject()->_textureViews, material->translation2D, material->textureScale, material->gamma);
+		result = _TextureShader->Render(device, indexCount,	transforms,	material->GetTextureObject()->_textureViews, material->translation2D, material->textureScale, material->gamma);
 		if (!result) return false;
 		//_TextureShader->RenderShader(device, indexCount);
 		break;
@@ -227,41 +215,32 @@ bool ShaderManagerClass::Render(
 		break;
 
 	case EShaderType::ELIGHT_DIFFUSE:
-		result = _DiffuseShader->Render(device, indexCount, 
-			transforms,
-			//worldMatrix, viewMatrix, projectionMatrix,
-			material->GetResourceArray()[0], material->GetTextureObject()->_textureViews, lights[0]->GetDirection(), effects.ambientColor, lights[0]->GetDiffuseColor(), effects.clipPlane);
+		result = _DiffuseShader->Render(device, indexCount, transforms,	material->GetResourceArray()[0], material->GetTextureObject()->_textureViews, 
+			lights[0]->GetDirection(), effects.ambientColor, lights[0]->GetDiffuseColor(), effects.clipPlane);
 		if (!result) ThrowRuntime("Could not render the refraction shader.");
 		//_RefractionShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::EWATER:
-		result = _WaterShader->Render(device, indexCount, 
-			transforms,
-			/*worldMatrix, viewMatrix, projectionMatrix, */
-			reflectionMatrix, material->GetResourceArray(), material->GetTextureObject()->_textureViews, material->translation, material->reflectRefractScale,
-			material->waterLerpRatio);
+		result = _WaterShader->Render(device, indexCount, transforms, reflectionMatrix, material->GetResourceArray(), 
+			material->GetTextureObject()->_textureViews, material->translation, material->reflectRefractScale, material->waterLerpRatio);
 		if (!result) ThrowRuntime("Could not render the water shader.");
 		//	_WaterShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::EFONT:
-		result = _FontShader->Render(device, indexCount, transforms,// worldMatrix, viewMatrix, projectionMatrix,
-			material->GetResourceArray()[0], material->GetTextureObject()->_textureViews, material->pixelColor);
+		result = _FontShader->Render(device, indexCount, transforms, material->GetResourceArray()[0], material->GetTextureObject()->_textureViews, material->pixelColor);
 		if (!result) ThrowRuntime("Could not render the font shader.");
 		//_FontShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::EDEPTH:
-		result = _DepthShader->Render(device, indexCount, transforms/*,
-			worldMatrix, viewMatrix, projectionMatrix*/);
+		result = _DepthShader->Render(device, indexCount, transforms);
 		if (!result) ThrowRuntime("Could not render the depth shader.");
 		break;
 
 	default:
-		result = _TextureShader->Render(device, indexCount, transforms,
-			//material->GetResourceArray(),
-			material->GetTextureObject()->_textureViews, material->translation2D, material->textureScale);
+		result = _TextureShader->Render(device, indexCount, transforms,	material->GetTextureObject()->_textureViews, material->translation2D, material->textureScale);
 		if (!result) ThrowRuntime("Could not render the texture shader.");
 		//_TextureShader->RenderShader(device, indexCount);
 		break;
@@ -269,18 +248,20 @@ bool ShaderManagerClass::Render(
 	return true;
 }
 
-FontShaderClass * ShaderManagerClass::GetFontShader()
+FontShaderClass * ShaderManagerClass::GetFontShader() const
 {
 	if (_FontShader)
-	return _FontShader.get();
+	{
+		return _FontShader.get();
+	}
 
 	return nullptr;
 }
 
-bool ShaderManagerClass::RenderFontShader(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType transforms, /*XMMATRIX worldMatrix, XMMATRIX viewMatrix,
-	XMMATRIX projectionMatrix, */ID3D11ShaderResourceView* texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 pixelColor)
+bool ShaderManagerClass::RenderFontShader(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType transforms, ID3D11ShaderResourceView* texture, 
+	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 pixelColor)
 {
-	if (!_FontShader->Render(deviceContext, indexCount, transforms, /*worldMatrix, viewMatrix, projectionMatrix,*/texture, texViews, pixelColor))
+	if (!_FontShader->Render(deviceContext, indexCount, transforms, texture, texViews, pixelColor))
 	{
 		ThrowRuntime("Could not initialize the font shader object.");
 	}

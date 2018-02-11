@@ -3,15 +3,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "ShadowShaderClass_Multi.h"
 
-
-ShadowShaderClass_Multi::ShadowShaderClass_Multi()
-{}
-
-
-ShadowShaderClass_Multi::ShadowShaderClass_Multi(const ShadowShaderClass_Multi& other)
-{
-}
-
 bool ShadowShaderClass_Multi::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType transforms, LightClass* shadowLight[], vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews)
 {
 	// Set the shader parameters that it will use for rendering.

@@ -13,17 +13,12 @@
 #include "FontShaderClass.h"
 #include "ReflectionShaderClass.h"
 #include "WaterShaderClass.h"
-//#include "RefractionShaderClass.h"
 #include "DiffuseShaderClass.h"
 #include "DepthShaderClass.h"
 #include "SoftShadowShaderClass_Multi.h"
 #include "ShadowShaderClass_Multi.h"
-
-
 #include "GfxUtil.h"
-
 #include "LightClass.h"
-
 
 using namespace GfxUtil;
 
@@ -33,28 +28,20 @@ using namespace GfxUtil;
 class ShaderManagerClass
 {
 public:
-	ShaderManagerClass();
-	ShaderManagerClass(const ShaderManagerClass&);
-	~ShaderManagerClass();
-
 	bool Initialize(ID3D11Device*, HWND);
 
-	bool Render(ID3D11DeviceContext* device, int indexCount, 
-		MatrixBufferType& transforms,
-		//XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, 
-		Material* material, LightClass* lights[], SceneEffects& effects,
+	bool Render(ID3D11DeviceContext* device, int indexCount, MatrixBufferType& transforms, Material* material, LightClass* lights[], SceneEffects& effects,
 		XMFLOAT3 cameraPos = XMFLOAT3(0,0,0), EShaderType shaderType = EShaderType::EMATERIAL_DEFAULT, XMMATRIX reflectionMatrix = XMMatrixIdentity());
 
 	bool RenderFontShader(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType transforms, 
 		ID3D11ShaderResourceView* texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 pixelColor);
 
-	FontShaderClass* GetFontShader();
+	FontShaderClass* GetFontShader() const;
 
 public:
 	unique_ptr<LightShaderClass> _LightShader;
 	unique_ptr<DepthShaderClass> _DepthShader;
 	unique_ptr<ReflectionShaderClass> _ReflectionShader;
-	//unique_ptr<RefractionShaderClass> _RefractionShader;
 	unique_ptr<DiffuseShaderClass> _DiffuseShader;
 	unique_ptr<TextureShaderClass> _TextureShader;
 	unique_ptr<FontShaderClass> _FontShader;

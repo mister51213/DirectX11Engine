@@ -583,11 +583,6 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 	////// BACKGROUND /////////
 	_D3D->EnableAlphaBlending();
 
-	//DrawModel(*_Earth, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	//DrawModel(*_EarthInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	//DrawModel(*_Sky, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-	//DrawModel(*_SkyInner, transforms/*, worldTransform, viewMatrix, projectionMatrix*/);
-
 	_Earth->PutVerticesOnPipeline(_D3D->GetDeviceContext());
 
 	// 1.

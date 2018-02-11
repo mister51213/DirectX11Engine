@@ -24,10 +24,6 @@ using namespace GfxUtil;
 class ShaderClass
 {
 public:
-	ShaderClass();
-	ShaderClass(const ShaderClass&);
-	~ShaderClass();
-
 	bool Initialize(ID3D11Device* device, HWND hwnd, char* vsFilename, char* psFilename);
 
 	virtual void RenderShader(ID3D11DeviceContext* deviceContext, int indexCount);

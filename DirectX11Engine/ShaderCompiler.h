@@ -5,8 +5,6 @@
 class ShaderCompiler
 {
 public:
-	ShaderCompiler() = default;
-
 	ComPtr<ID3DBlob> CompileShader( 
 		std::string Filename,
 		std::string EntryPoint,
@@ -16,6 +14,5 @@ public:
 
 private:
 	void OutputErrorMessage( const std::string& Filename, ComPtr<ID3DBlob>& ErrorMessage )const;
-
 };
 
