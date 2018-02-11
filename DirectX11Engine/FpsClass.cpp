@@ -4,12 +4,10 @@
 #include "fpsclass.h"
 
 FpsClass::FpsClass()
-{}
-
-FpsClass::FpsClass(const FpsClass& other)
-{}
-
-FpsClass::~FpsClass()
+	:
+	_fps(0),
+	_count(0),
+	_startTime(0)
 {}
 
 void FpsClass::Initialize()

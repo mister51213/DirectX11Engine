@@ -196,12 +196,12 @@ void System::InitializeWindows(int& screenWidth, int& screenHeight)
 	else
 	{
 		// If windowed then set it to 800x600 resolution.
-		//screenWidth = 800;
-		//screenHeight = 600;
+		screenWidth = 800;
+		screenHeight = 600;
 		//screenWidth = 1920;
 		//screenHeight = 1080;
-		screenWidth = 2048;
-		screenHeight = 1536;
+		//screenWidth = 2048;
+		//screenHeight = 1536;
 
 		// Place the window in the middle of the screen.
 		posX = (GetSystemMetrics(SM_CXSCREEN) - screenWidth) / 2;
@@ -249,7 +249,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT umessage, WPARAM wparam, LPARAM lparam)
 {
 	switch (umessage)
 	{
-		// Check if the window is being destroyed.
+	// Check if the window is being destroyed.
 	case WM_DESTROY:
 	{
 		PostQuitMessage(0);

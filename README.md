@@ -8,7 +8,8 @@ Features realistic 3D graphics using DirectX 11 and physics using the Bullet Phy
 (currently disabled).
 
 Technology Notes: 
-WASD to move, Mouse to look, Y for wireframe view, U to revert, ESC to exit
+WASD to move, Mouse to look, Y for wireframe view, U to revert, ESC to exit.
+Recommended operating system: Windows 10 x64.
 
 Graphical features include:
 Real time dynamic lighting with specular and normal mapping, Dynamic shadowing, Real time Blur, 

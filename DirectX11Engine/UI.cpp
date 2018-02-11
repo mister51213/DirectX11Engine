@@ -1,7 +1,5 @@
 #include "UI.h"
 
-
-
 UI::UI()
 {
 	_Fps.reset(new FpsClass);
@@ -13,7 +11,7 @@ UI::~UI()
 
 bool UI::Initialize()
 {
-	_Fps->Initialize();
+	//_Fps->Initialize();
 	_Cpu->Initialize();
 
 	return true;

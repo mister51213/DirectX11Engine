@@ -21,8 +21,6 @@ class FpsClass
 {
 public:
 	FpsClass();
-	FpsClass(const FpsClass&);
-	~FpsClass();
 
 	void Initialize();
 	void Frame();

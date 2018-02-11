@@ -4,23 +4,17 @@
 #include "cpuclass.h"
 
 CpuClass::CpuClass()
-{
-}
-
-CpuClass::CpuClass(const CpuClass& other)
-{
-}
-
-CpuClass::~CpuClass()
-{
-}
+	:
+	_canReadCpu(true),
+	_cpuUsage(0)
+{}
 
 void CpuClass::Initialize()
 {
 	PDH_STATUS status;
 
 	// Initialize the flag indicating whether this object can read the system cpu usage or not.
-	_canReadCpu = true;
+	//_canReadCpu = true;
 
 	// Create a query object to poll cpu usage.
 	status = PdhOpenQuery(NULL, 0, &_queryHandle);
@@ -38,7 +32,7 @@ void CpuClass::Initialize()
 
 	_lastSampleTime = GetTickCount();
 
-	_cpuUsage = 0;
+	//_cpuUsage = 0;
 }
 
 void CpuClass::Shutdown()
