@@ -28,9 +28,9 @@ public:
 
 	virtual void RenderShader(ID3D11DeviceContext* deviceContext, int indexCount);
 
-protected:
 	virtual bool InitializeShader(ID3D11Device* device, HWND hwnd, char* vsFileName, char* psFileName);
 
+protected:
 	bool CreateShaders(ID3D11Device * device, HWND hwnd, wstring vsFilename, wstring psFilename);
 
 	bool CompileShaders(ID3D11Device * device, HWND hwnd, string vsFilename, string psFilename, char* vsDesc, char* psDesc, ID3D10Blob* errorMessage = nullptr);

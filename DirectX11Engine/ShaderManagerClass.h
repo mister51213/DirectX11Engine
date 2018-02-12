@@ -38,7 +38,6 @@ public:
 
 	FontShaderClass* GetFontShader() const;
 
-public:
 	unique_ptr<LightShaderClass> _LightShader;
 	unique_ptr<DepthShaderClass> _DepthShader;
 	unique_ptr<ReflectionShaderClass> _ReflectionShader;

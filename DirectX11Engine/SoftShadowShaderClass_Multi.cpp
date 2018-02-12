@@ -26,8 +26,7 @@ bool SoftShadowShaderClass_Multi::Render(ID3D11DeviceContext* deviceContext, int
 
 
 	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, transforms,	texViews, ambientColor, shadowLight, cameraPosition, translation, transparency,
-		gamma, bBlendTexture);
+	result = SetShaderParameters(deviceContext, transforms,	texViews, ambientColor, shadowLight, cameraPosition, translation, transparency,	gamma, bBlendTexture);
 	if(!result)
 	{
 		return false;
@@ -45,6 +44,7 @@ bool SoftShadowShaderClass_Multi::InitializeShader(ID3D11Device* device, HWND hw
 
 	// Create the vertex input layout description.
 	D3D11_INPUT_ELEMENT_DESC polygonLayout[5];
+
 	//polygonLayout[0] = MakeInputElementDesc("POSITION", DXGI_FORMAT_R32G32B32_FLOAT, 0);
 	//polygonLayout[1] = MakeInputElementDesc("TEXCOORD", DXGI_FORMAT_R32G32_FLOAT);
 	//polygonLayout[2] = MakeInputElementDesc("NORMAL", DXGI_FORMAT_R32G32B32_FLOAT);

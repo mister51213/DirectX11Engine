@@ -181,68 +181,65 @@ bool ShaderManagerClass::Render(
 	switch (shaderToUse)
 	{
 	case EShaderType::ETEXTURE:
-		result = _TextureShader->Render(device, indexCount,	transforms,	material->GetTextureObject()->_textureViews, material->translation2D, material->textureScale, material->gamma);
-		if (!result) return false;
-		//_TextureShader->RenderShader(device, indexCount);
+		if(!_TextureShader->SetShaderParameters(device, transforms, material->GetTextureObject()->_textureViews, material->translation2D, material->textureScale, material->gamma))
+		ThrowRuntime("Could not render the texture shader.");
+		_TextureShader->RenderShader(device, indexCount);
+
 		break;
 
 	case EShaderType::ELIGHT_SPECULAR:
-		result = _LightShader->Render(device, indexCount, 
-			transforms,
-			//worldMatrix, viewMatrix, projectionMatrix,
-			material->GetResourceArray(), material->GetTextureObject()->_textureViews, 
-			effects.ambientColor, lights, cameraPos,
-			effects.fogStart, effects.fogEnd, material->translation, material->transparency);
-		//ThrowRuntime("UNDER CONSTRUCTION! ~ this switch case not yet working; currently calling _LightShader->Render() directly from Graphics.cpp!");
-		//@TODO - not passing in right values - need to REWORK ShaderManagerClass::Render() params to do so!
-		/*result = _LightShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
-			&light->GetViewMatrix(), 
-			&light->GetProjectionMatrix(),
-			material->GetResourceArray(), light->GetDirection(), light->GetAmbientColor(), light->GetDiffuseColor(), light->GetDiffuseColor(),
-			lights, 
-			cameraPos, light->GetSpecularColor(), light->GetSpecularPower(), effects.fogStart, effects.fogEnd, material->translation, material->transparency);*/	
-		
-		if (!result) ThrowRuntime("Could not render the light shader.");
-		//_LightShader->RenderShader(device, indexCount);
+		ThrowRuntime("UNDER CONSTRUCTION! ~ currently calling render functions directly for light shader");
+
+		if(!_LightShader->SetShaderParameters(device, transforms, material->GetResourceArray(), material->GetTextureObject()->_textureViews,
+			effects.ambientColor, lights, cameraPos, effects.fogStart, effects.fogEnd, material->translation, material->transparency))
+		ThrowRuntime("Could not render the light shader.");
+		_LightShader->RenderShader(device, indexCount);
+
 		break;
 
 	case EShaderType::EREFLECTION:
-		ThrowRuntime("UNDER CONSTRUCTION! ~ reflection shader currently not working. Need to refactor and pass its reflection texture in the texture array now");
-		//result = _ReflectionShader->Render(device, indexCount, worldMatrix, viewMatrix, projectionMatrix,
-		//	material->GetResourceArray()[0], reflectionTexture, reflectionMatrix);
-		//if (!result) ThrowRuntime("Could not render the reflection shader.");
+		ThrowRuntime("UNDER CONSTRUCTION ~ reflection shader currently not working. Need to refactor and pass its reflection texture in the texture array now");
+
+		//if(!_ReflectionShader->SetShaderParameters(device, worldMatrix, viewMatrix, projectionMatrix, material->GetResourceArray()[0], material->GetTextureObject()->_textureViews, reflectionTexture, reflectionMatrix))
+		//ThrowRuntime("Could not render the reflection shader.");
 		//_ReflectionShader->RenderShader(device, indexCount);
 		break;
 
 	case EShaderType::ELIGHT_DIFFUSE:
-		result = _DiffuseShader->Render(device, indexCount, transforms,	material->GetResourceArray()[0], material->GetTextureObject()->_textureViews, 
-			lights[0]->GetDirection(), effects.ambientColor, lights[0]->GetDiffuseColor(), effects.clipPlane);
-		if (!result) ThrowRuntime("Could not render the refraction shader.");
-		//_RefractionShader->RenderShader(device, indexCount);
+		if(!_DiffuseShader->SetShaderParameters(device, transforms, material->GetResourceArray()[0], material->GetTextureObject()->_textureViews,
+			lights[0]->GetDirection(), effects.ambientColor, lights[0]->GetDiffuseColor(), effects.clipPlane))
+		ThrowRuntime("Could not render the diffuse shader.");
+		_DiffuseShader->RenderShader(device, indexCount);
+
 		break;
 
 	case EShaderType::EWATER:
-		result = _WaterShader->Render(device, indexCount, transforms, reflectionMatrix, material->GetResourceArray(), 
-			material->GetTextureObject()->_textureViews, material->translation, material->reflectRefractScale, material->waterLerpRatio);
-		if (!result) ThrowRuntime("Could not render the water shader.");
-		//	_WaterShader->RenderShader(device, indexCount);
+		if(!_WaterShader->SetShaderParameters(device, transforms, reflectionMatrix, material->GetResourceArray(),
+			material->GetTextureObject()->_textureViews, material->translation, material->reflectRefractScale, material->waterLerpRatio))
+		ThrowRuntime("Could not render the water shader.");
+		_WaterShader->RenderShader(device, indexCount);
+
 		break;
 
 	case EShaderType::EFONT:
-		result = _FontShader->Render(device, indexCount, transforms, material->GetResourceArray()[0], material->GetTextureObject()->_textureViews, material->pixelColor);
-		if (!result) ThrowRuntime("Could not render the font shader.");
-		//_FontShader->RenderShader(device, indexCount);
+		if(!_FontShader->SetShaderParameters(device, transforms, material->GetResourceArray()[0], material->GetTextureObject()->_textureViews, material->pixelColor))
+		ThrowRuntime("Could not render the font shader.");
+		_FontShader->RenderShader(device, indexCount);
+
 		break;
 
 	case EShaderType::EDEPTH:
-		result = _DepthShader->Render(device, indexCount, transforms);
-		if (!result) ThrowRuntime("Could not render the depth shader.");
+		if(!_DepthShader->SetShaderParameters(device, transforms))
+		ThrowRuntime("Could not render the depth shader.");
+		_DepthShader->RenderShader(device, indexCount);
+
 		break;
 
 	default:
-		result = _TextureShader->Render(device, indexCount, transforms,	material->GetTextureObject()->_textureViews, material->translation2D, material->textureScale);
-		if (!result) ThrowRuntime("Could not render the texture shader.");
-		//_TextureShader->RenderShader(device, indexCount);
+		if(!_TextureShader->Render(device, indexCount, transforms,	material->GetTextureObject()->_textureViews, material->translation2D, material->textureScale))
+		ThrowRuntime("Could not render the texture shader.");
+		_TextureShader->RenderShader(device, indexCount);
+
 		break;
 	}
 	return true;

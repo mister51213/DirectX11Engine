@@ -44,7 +44,7 @@ public:
 
 	bool InitializeShader(ID3D11Device*, HWND, WCHAR*, WCHAR*);
 
-private:
+//private:
 	bool SetShaderParameters(ID3D11DeviceContext* device, MatrixBufferType transforms, LightClass* shadowLight[], vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews);
 	void RenderShader(ID3D11DeviceContext*, int);
 

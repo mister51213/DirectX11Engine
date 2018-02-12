@@ -72,7 +72,7 @@ public:
 
 	virtual bool InitializeShader(ID3D11Device* device, HWND hwnd,/* WCHAR* */wstring vsFilename, /*WCHAR* */wstring psFilename);
 
-private:
+//private:
 	bool SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType& transforms, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
 		XMFLOAT4 ambientColor, LightClass* shadowLight[], XMFLOAT3 cameraPosition, float translation, float transparency, float gamma = 1.f, unsigned int bBlendTexture = 0);
 
