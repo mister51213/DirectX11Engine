@@ -18,26 +18,6 @@ bool SoftShadowShaderClass_Multi::Initialize(ID3D11Device* device, HWND hwnd)
 	return true;
 }
 
-//bool SoftShadowShaderClass_Multi::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms,
-//	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,XMFLOAT4 ambientColor, LightClass* shadowLight[],
-//	XMFLOAT3 cameraPosition, float translation, float transparency, float gamma, unsigned int bBlendTexture)
-//{
-//	bool result;
-//
-//
-//	// Set the shader parameters that it will use for rendering.
-//	result = SetShaderParameters(deviceContext, transforms,	texViews, ambientColor, shadowLight, cameraPosition, translation, transparency,	gamma, bBlendTexture);
-//	if(!result)
-//	{
-//		return false;
-//	}
-//
-//	// Now render the prepared buffers with the shader.
-//	RenderShader(deviceContext, indexCount);
-//
-//	return true;
-//}
-
 bool SoftShadowShaderClass_Multi::InitializeShader(ID3D11Device* device, HWND hwnd,/* WCHAR* */wstring vsFilename, /*WCHAR* */wstring psFilename)
 {
 	CreateShaders(device, hwnd, vsFilename, psFilename);

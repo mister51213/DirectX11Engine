@@ -68,7 +68,7 @@ private:
 	bool RenderWaterToTexture(Scene* pScene, LightClass* lights[], ID3D11ShaderResourceView* blurredShadows);
 	bool RenderShadowsToTexture(Scene* pScene, LightClass* lights[]);
 	bool DrawFrame(Scene* pScene);
-	void DrawModel(Model& model, MatrixBufferType& transforms, LightClass * shadowLights[] = nullptr, EShaderType shaderType = EShaderType::EMATERIAL_DEFAULT, XMMATRIX reflectionMatrix = XMMatrixIdentity());
+	void DrawModel(Model& model, MatrixBufferType& transforms, LightClass* shadowLights[] = nullptr, EShaderType shaderType = EShaderType::EMATERIAL_DEFAULT, XMMATRIX reflectionMatrix = XMMatrixIdentity());
 
 	unique_ptr<D3DClass> _D3D;
 	unique_ptr<ShaderManagerClass> _ShaderManager;

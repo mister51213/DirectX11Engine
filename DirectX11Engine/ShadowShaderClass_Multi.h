@@ -3,9 +3,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-//#pragma comment ( lib, "d3dcompiler.lib" )
-//#pragma comment ( lib, "d3d11.lib" )
-
 //////////////
 // INCLUDES //
 //////////////
@@ -39,11 +36,10 @@ private:
 	};
 
 public:
-	//bool Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType transforms, LightClass* shadowLight[], vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews);
-
 	bool InitializeShader(ID3D11Device*, HWND, WCHAR*, WCHAR*);
 
 	bool SetShaderParameters(ID3D11DeviceContext* device, MatrixBufferType transforms, LightClass* shadowLight[], vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews);
+
 	void RenderShader(ID3D11DeviceContext*, int);
 
 private:

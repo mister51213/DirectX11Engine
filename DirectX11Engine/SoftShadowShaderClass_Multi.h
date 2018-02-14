@@ -3,9 +3,6 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-//#pragma comment ( lib, "d3dcompiler.lib" )
-//#pragma comment ( lib, "d3d11.lib" )
-
 //////////////
 // INCLUDES //
 //////////////
@@ -66,9 +63,6 @@ private:
 
 public:
 	bool Initialize(ID3D11Device*, HWND);
-
-	//bool Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,
-	//	XMFLOAT4 ambientColor, LightClass* shadowLight[], XMFLOAT3 cameraPosition, float translation, float transparency, float gamma = 1.f, unsigned int bBlendTexture = 0);
 
 	virtual bool InitializeShader(ID3D11Device* device, HWND hwnd,/* WCHAR* */wstring vsFilename, /*WCHAR* */wstring psFilename);
 

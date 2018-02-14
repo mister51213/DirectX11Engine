@@ -4,20 +4,6 @@
 
 #include "TextureShaderClass.h"
 
-//bool TextureShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms, 
-//	vector<ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT2& translation, float scale, float gamma)
-//{
-//	bool result;
-//
-//	// Set the shader parameters that it will use for rendering.
-//	SetShaderParameters(deviceContext, transforms, texViews, translation, scale, gamma);
-//
-//	// Now render the prepared buffers with the shader.
-//	RenderShader(deviceContext, indexCount);
-//
-//	return true;
-//}
-
 bool TextureShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* vsFilename, char* psFilename)
 {
 	WCHAR* vsFilenameW = charToWChar(vsFilename);

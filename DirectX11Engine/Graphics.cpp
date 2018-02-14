@@ -537,7 +537,7 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 	return true;
 }
 
-void GraphicsClass::DrawModel(Model& model, MatrixBufferType& transforms, LightClass * lights[], EShaderType shaderType, XMMATRIX reflectionMatrix)
+void GraphicsClass::DrawModel(Model& model, MatrixBufferType& transforms, LightClass* lights[], EShaderType shaderType, XMMATRIX reflectionMatrix)
 {
 	// NOTE - this transposes it BEFORE sending it in!!!!
 	transforms.world = XMMatrixTranspose(_D3D->GetWorldMatrix()*ComputeWorldTransform(model.GetOrientation(), model.GetScale(), model.GetPosition()));
@@ -625,15 +625,10 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 
 		transforms.world = XMMatrixTranspose(ComputeWorldTransform(it->second->GetModel()->GetOrientation(), it->second->GetModel()->GetScale(), it->second->GetModel()->GetPosition()));
 		it->second->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-		_ShaderManager->_ShadowShaderSoft->SetShaderParameters(
-			_D3D->GetDeviceContext(), /*it->second->GetModel()->GetIndexCount(), */transforms,
-			it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor, 
-			lights, _Camera->GetPosition(), 0.f, 1.f, 
-			it->second->GetModel()->GetMaterial()->gamma, 
-			it->second->GetModel()->GetMaterial()->bBlendTexture);
+		_ShaderManager->_ShadowShaderSoft->SetShaderParameters(_D3D->GetDeviceContext(), transforms, it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor, 
+			lights, _Camera->GetPosition(), 0.f, 1.f, it->second->GetModel()->GetMaterial()->gamma, it->second->GetModel()->GetMaterial()->bBlendTexture);
 		_ShaderManager->_ShadowShaderSoft->RenderShader(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount());
 		it->second->GetModel()->Draw(_D3D->GetDeviceContext());
-
 	}
 
 	// GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS
@@ -673,11 +668,8 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 		transforms.world = XMMatrixTranspose(ComputeWorldTransform(it->second->GetModel()->GetOrientation(), it->second->GetModel()->GetScale(), it->second->GetModel()->GetPosition()));
 		it->second->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
 		_ShaderManager->_ShadowShaderSoft->SetShaderParameters(
-			_D3D->GetDeviceContext(), /*it->second->GetModel()->GetIndexCount(), */transforms,
-			it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor,
-			lights, _Camera->GetPosition(), 0.f, alpha,
-			it->second->GetModel()->GetMaterial()->gamma,
-			it->second->GetModel()->GetMaterial()->bBlendTexture);
+			_D3D->GetDeviceContext(), transforms, it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor,
+			lights, _Camera->GetPosition(), 0.f, alpha,	it->second->GetModel()->GetMaterial()->gamma, it->second->GetModel()->GetMaterial()->bBlendTexture);
 		_ShaderManager->_ShadowShaderSoft->RenderShader(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount());
 		it->second->GetModel()->Draw(_D3D->GetDeviceContext());
 	}

@@ -1,18 +1,5 @@
 #include "DiffuseShaderClass.h"
 
-//bool DiffuseShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCount, MatrixBufferType& transforms,ID3D11ShaderResourceView * texture, 
-//	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, 
-//	XMFLOAT4 diffuseColor, XMFLOAT4 clipPlane)
-//{
-//	// Set the shader parameters that it will use for rendering.
-//	ThrowHResultIf(SetShaderParameters(deviceContext, transforms,/*worldMatrix, viewMatrix, projectionMatrix, */texture, texViews, lightDirection, ambientColor, diffuseColor, clipPlane));
-//
-//	// Now render the prepared buffers with the shader.
-//	RenderShader(deviceContext, indexCount);
-//
-//	return true;
-//}
-
 bool DiffuseShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, char * vsFilename, char * psFilename)
 {
 	// Compile the vertex shader code.
@@ -47,10 +34,8 @@ bool DiffuseShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, char
 	return true;
 }
 
-bool DiffuseShaderClass::SetShaderParameters(
-	ID3D11DeviceContext * deviceContext, MatrixBufferType& transforms,ID3D11ShaderResourceView * texture, 
-	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT3 lightDirection, 
-	XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT4 clipPlane)
+bool DiffuseShaderClass::SetShaderParameters(ID3D11DeviceContext * deviceContext, MatrixBufferType& transforms,ID3D11ShaderResourceView * texture, 
+	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT3 lightDirection, XMFLOAT4 ambientColor, XMFLOAT4 diffuseColor, XMFLOAT4 clipPlane)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
@@ -63,9 +48,6 @@ bool DiffuseShaderClass::SetShaderParameters(
 
 	///////////////////// MATRIX INIT - VS BUFFER 0 //////////////////////////////////
 	unsigned int bufferNumber = 0;
-
-	//MatrixBufferType tempMatBuff = { XMMatrixTranspose(worldMatrix), XMMatrixTranspose(viewMatrix), XMMatrixTranspose(projectionMatrix) };
-	//MapBuffer(tempMatBuff, _vsBuffers[bufferNumber].Get(), deviceContext);
 
 	MapBuffer(transforms, _vsBuffers[bufferNumber].Get(), deviceContext);
 	deviceContext->VSSetConstantBuffers(bufferNumber, 1, _vsBuffers[bufferNumber].GetAddressOf());

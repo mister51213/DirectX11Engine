@@ -258,7 +258,7 @@ FontShaderClass * ShaderManagerClass::GetFontShader() const
 bool ShaderManagerClass::RenderFontShader(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType transforms, ID3D11ShaderResourceView* texture, 
 	vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 pixelColor)
 {
-	if (!_FontShader->/*Render*/SetShaderParameters(deviceContext, /*indexCount, */transforms, texture, texViews, pixelColor))
+	if (!_FontShader->/*Render*/SetShaderParameters(deviceContext, /*indexCount,*/ transforms, texture, texViews, pixelColor))
 	{
 		ThrowRuntime("Could not initialize the font shader object.");
 	}

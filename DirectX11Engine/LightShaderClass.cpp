@@ -4,19 +4,6 @@
 
 #include "lightshaderclass.h"
 
-//bool LightShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms,
-//	ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 ambientColor, 
-//	LightClass* shadowLight[], XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency)
-//{
-//	// Set the shader parameters that it will use for rendering.
-//	SetShaderParameters(deviceContext, transforms, textureArray, texViews, ambientColor, shadowLight, cameraPosition, fogStart, fogEnd, translation, transparency);
-//
-//	// Now render the prepared buffers with the shader.
-//	RenderShader(deviceContext, indexCount);
-//
-//	return true;
-//}
-
 void LightShaderClass::RenderShader(ID3D11DeviceContext * deviceContext, int indexCount)
 {
 	// Set the vertex input layout.
@@ -82,8 +69,8 @@ bool LightShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* v
 }
 
 bool LightShaderClass::SetShaderParameters(ID3D11DeviceContext* deviceContext, MatrixBufferType& transforms,
-	ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews,XMFLOAT4 ambientColor,	
-	LightClass* shadowLight[],XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency)
+	ID3D11ShaderResourceView** textureArray, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 ambientColor,	
+	LightClass* shadowLight[], XMFLOAT3 cameraPosition, float fogStart, float fogEnd, float translation, float transparency)
 {
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
