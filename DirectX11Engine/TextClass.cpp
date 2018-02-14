@@ -261,11 +261,13 @@ void TextClass::RenderSentence(ID3D11DeviceContext* deviceContext, ShaderManager
 	//{
 	//	false;
 	//}
-	result = pShaderManager->_FontShader->Render(deviceContext, _indexCount, transforms, /*worldMatrix, viewMatrix, orthoMatrix, */fontTexture, texViews, _pixelColor); //@TODO: implement generic function
+	result = pShaderManager->_FontShader->/*Render*/SetShaderParameters(deviceContext, /*_indexCount, */transforms, /*worldMatrix, viewMatrix, orthoMatrix, */fontTexture, texViews, _pixelColor); //@TODO: implement generic function
 	if (!result)
 	{
 		false;
 	}
+
+	pShaderManager->_FontShader->RenderShader(deviceContext, _indexCount);
 
 	deviceContext->DrawIndexed(_indexCount, 0, 0);
 

@@ -1,16 +1,16 @@
 #include "ReflectionShaderClass.h"
 
-bool ReflectionShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, 
-	ID3D11ShaderResourceView * texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, ID3D11ShaderResourceView * reflectionTexture, XMMATRIX reflectionMatrix)
-{
-	// Set the shader parameters that it will use for rendering.
-	SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture, texViews, reflectionTexture, reflectionMatrix);
-
-	// Now render the prepared buffers with the shader.
-	RenderShader(deviceContext, indexCount);
-
-	return true;
-}
+//bool ReflectionShaderClass::Render(ID3D11DeviceContext * deviceContext, int indexCount, XMMATRIX worldMatrix, XMMATRIX viewMatrix, XMMATRIX projectionMatrix, 
+//	ID3D11ShaderResourceView * texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, ID3D11ShaderResourceView * reflectionTexture, XMMATRIX reflectionMatrix)
+//{
+//	// Set the shader parameters that it will use for rendering.
+//	SetShaderParameters(deviceContext, worldMatrix, viewMatrix, projectionMatrix, texture, texViews, reflectionTexture, reflectionMatrix);
+//
+//	// Now render the prepared buffers with the shader.
+//	RenderShader(deviceContext, indexCount);
+//
+//	return true;
+//}
 
 bool ReflectionShaderClass::InitializeShader(ID3D11Device * device, HWND hwnd, char * vsFilename, char * psFilename)
 {

@@ -6,8 +6,6 @@
 
 HorizontalBlurShaderClass::HorizontalBlurShaderClass()
 {
-	//m_vertexShader = 0;
-//	m_pixelShader = 0;
 	m_layout = 0;
 	m_sampleState = 0;
 	m_matrixBuffer = 0;

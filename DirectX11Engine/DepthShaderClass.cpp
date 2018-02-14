@@ -1,15 +1,15 @@
 #include "DepthShaderClass.h"
 
-bool DepthShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms/*,XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix*/)
-{
-	// Set the shader parameters that it will use for rendering.
-	SetShaderParameters(deviceContext, transforms/*,worldMatrix, viewMatrix, projectionMatrix*/);
-
-	// Now render the prepared buffers with the shader.
-	RenderShader(deviceContext, indexCount);
-
-	return true;
-}
+//bool DepthShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType& transforms/*,XMMATRIX worldMatrix, XMMATRIX viewMatrix,XMMATRIX projectionMatrix*/)
+//{
+//	// Set the shader parameters that it will use for rendering.
+//	SetShaderParameters(deviceContext, transforms/*,worldMatrix, viewMatrix, projectionMatrix*/);
+//
+//	// Now render the prepared buffers with the shader.
+//	RenderShader(deviceContext, indexCount);
+//
+//	return true;
+//}
 
 bool DepthShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* vsFilename, char* psFilename)
 {

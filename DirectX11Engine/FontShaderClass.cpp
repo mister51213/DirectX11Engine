@@ -3,23 +3,23 @@
 ////////////////////////////////////////////////////////////////////////////////
 #include "fontshaderclass.h"
 
-bool FontShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType transforms,
-	ID3D11ShaderResourceView* texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 pixelColor)
-{
-	bool result;
-
-	// Set the shader parameters that it will use for rendering.
-	result = SetShaderParameters(deviceContext, transforms, texture, texViews, pixelColor);
-	if (!result)
-	{
-		return false;
-	}
-
-	// Now render the prepared buffers with the shader.
-	RenderShader(deviceContext, indexCount);
-
-	return true;
-}
+//bool FontShaderClass::Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType transforms,
+//	ID3D11ShaderResourceView* texture, vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews, XMFLOAT4 pixelColor)
+//{
+//	bool result;
+//
+//	// Set the shader parameters that it will use for rendering.
+//	result = SetShaderParameters(deviceContext, transforms, texture, texViews, pixelColor);
+//	if (!result)
+//	{
+//		return false;
+//	}
+//
+//	// Now render the prepared buffers with the shader.
+//	RenderShader(deviceContext, indexCount);
+//
+//	return true;
+//}
 
 bool FontShaderClass::InitializeShader(ID3D11Device* device, HWND hwnd, char* vsFilename, char* psFilename)
 {

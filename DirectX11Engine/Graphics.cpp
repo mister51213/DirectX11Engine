@@ -625,12 +625,13 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 
 		transforms.world = XMMatrixTranspose(ComputeWorldTransform(it->second->GetModel()->GetOrientation(), it->second->GetModel()->GetScale(), it->second->GetModel()->GetPosition()));
 		it->second->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-		_ShaderManager->_ShadowShaderSoft->Render(
-			_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), transforms,
+		_ShaderManager->_ShadowShaderSoft->SetShaderParameters(
+			_D3D->GetDeviceContext(), /*it->second->GetModel()->GetIndexCount(), */transforms,
 			it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor, 
 			lights, _Camera->GetPosition(), 0.f, 1.f, 
 			it->second->GetModel()->GetMaterial()->gamma, 
 			it->second->GetModel()->GetMaterial()->bBlendTexture);
+		_ShaderManager->_ShadowShaderSoft->RenderShader(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount());
 		it->second->GetModel()->Draw(_D3D->GetDeviceContext());
 
 	}
@@ -671,12 +672,13 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 		it->second->GetModel()->SetResourceView(6, blurredShadows);
 		transforms.world = XMMatrixTranspose(ComputeWorldTransform(it->second->GetModel()->GetOrientation(), it->second->GetModel()->GetScale(), it->second->GetModel()->GetPosition()));
 		it->second->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-		_ShaderManager->_ShadowShaderSoft->Render(
-			_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount(), transforms,
+		_ShaderManager->_ShadowShaderSoft->SetShaderParameters(
+			_D3D->GetDeviceContext(), /*it->second->GetModel()->GetIndexCount(), */transforms,
 			it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor,
 			lights, _Camera->GetPosition(), 0.f, alpha,
 			it->second->GetModel()->GetMaterial()->gamma,
 			it->second->GetModel()->GetMaterial()->bBlendTexture);
+		_ShaderManager->_ShadowShaderSoft->RenderShader(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount());
 		it->second->GetModel()->Draw(_D3D->GetDeviceContext());
 	}
 
@@ -741,21 +743,24 @@ ID3D11ShaderResourceView* GraphicsClass::ApplyBlur(ID3D11ShaderResourceView* vie
 	_DownSampleTexure->ClearRenderTarget(_D3D->GetDeviceContext(), 0.0f, 0.0f, 0.0f, 1.0f); // REALLY UNNECESSARY???
 	_DownSampleTexure->GetOrthoMatrix(orthoMatrix);
 	_SmallWindow->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), _SmallWindow->GetIndexCount(),
+	_ShaderManager->_TextureShader->SetShaderParameters/*Render*/(_D3D->GetDeviceContext(), /*_SmallWindow->GetIndexCount(),*/
 		MatrixBufferType(XMMatrixTranspose(worldMatrix), XMMatrixTranspose(baseViewMatrix), XMMatrixTranspose(orthoMatrix)),
 		vector<ComPtr<ID3D11ShaderResourceView>>(1, ComPtr<ID3D11ShaderResourceView>(viewToBlur)));
+	_ShaderManager->_TextureShader->RenderShader(_D3D->GetDeviceContext(), _SmallWindow->GetIndexCount());
 	_SmallWindow->Draw(_D3D->GetDeviceContext());
 
 	// Apply horizontal blur
 	_HorizontalBlurTexture->SetRenderTarget(_D3D->GetDeviceContext());
-	_HorizontalBlurShader->Render(_D3D->GetDeviceContext(), _SmallWindow->GetIndexCount(), worldMatrix, baseViewMatrix, orthoMatrix,
+	_HorizontalBlurShader->/*Render*/SetShaderParameters(_D3D->GetDeviceContext(), /*_SmallWindow->GetIndexCount(),*/ worldMatrix, baseViewMatrix, orthoMatrix,
 		_DownSampleTexure->GetShaderResourceView(), (float)(SHADOWMAP_WIDTH * 0.5f));
+	_HorizontalBlurShader->RenderShader(_D3D->GetDeviceContext(), _SmallWindow->GetIndexCount());
 	_SmallWindow->Draw(_D3D->GetDeviceContext());
 
 	// Apply vertical blur
 	_VerticalBlurTexture->SetRenderTarget(_D3D->GetDeviceContext());
-	_VerticalBlurShader->Render(_D3D->GetDeviceContext(), _SmallWindow->GetIndexCount(), worldMatrix, baseViewMatrix, orthoMatrix,
+	_VerticalBlurShader->/*Render*/SetShaderParameters(_D3D->GetDeviceContext(), /*_SmallWindow->GetIndexCount(),*/ worldMatrix, baseViewMatrix, orthoMatrix,
 		_HorizontalBlurTexture->GetShaderResourceView(), (float)(SHADOWMAP_HEIGHT * 0.5f));
+	_VerticalBlurShader->RenderShader(_D3D->GetDeviceContext(), _SmallWindow->GetIndexCount());
 	_SmallWindow->Draw(_D3D->GetDeviceContext());
 
 	// Up sample texture
@@ -763,9 +768,10 @@ ID3D11ShaderResourceView* GraphicsClass::ApplyBlur(ID3D11ShaderResourceView* vie
 	outputRenderTarget->GetOrthoMatrix(orthoMatrix);
 	ID3D11ShaderResourceView* tempView = _VerticalBlurTexture->GetShaderResourceView();
 	_FullScreenWindow->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	_ShaderManager->_TextureShader->Render(_D3D->GetDeviceContext(), _FullScreenWindow->GetIndexCount(),
+	_ShaderManager->_TextureShader->/*Render*/SetShaderParameters(_D3D->GetDeviceContext(), /*_FullScreenWindow->GetIndexCount(),*/
 		MatrixBufferType(XMMatrixTranspose(worldMatrix), XMMatrixTranspose(baseViewMatrix), XMMatrixTranspose(orthoMatrix)),
 		vector<ComPtr<ID3D11ShaderResourceView>>(1, ComPtr<ID3D11ShaderResourceView>(_VerticalBlurTexture->GetShaderResourceView())));
+	_ShaderManager->_TextureShader->RenderShader(_D3D->GetDeviceContext(), _SmallWindow->GetIndexCount());
 	_FullScreenWindow->Draw(_D3D->GetDeviceContext());
 
 	_D3D->TurnZBufferOn();
@@ -826,7 +832,8 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 
 		transforms.world = XMMatrixTranspose(ComputeWorldTransform(itr->second->GetModel()->GetOrientation(), itr->second->GetModel()->GetScale(),itr->second->GetModel()->GetPosition()));
 		itr->second->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-		_ShaderManager->_ShadowShaderMulti->Render(_D3D->GetDeviceContext(), itr->second->GetModel()->GetIndexCount(), transforms, lights, _DepthViews);
+		_ShaderManager->_ShadowShaderMulti->/*Render*/SetShaderParameters(_D3D->GetDeviceContext(), /*itr->second->GetModel()->GetIndexCount(),*/ transforms, lights, _DepthViews);
+		_ShaderManager->_ShadowShaderMulti->RenderShader(_D3D->GetDeviceContext(), itr->second->GetModel()->GetIndexCount());
 		itr->second->GetModel()->Draw(_D3D->GetDeviceContext());
 	}
 
@@ -870,10 +877,11 @@ bool GraphicsClass::RenderWaterToTexture(Scene* pScene, LightClass* lights[], ID
 	pScene->_Actors["Fountain"]->GetModel()->SetResourceView(6, blurredShadows);
 	transforms.world = XMMatrixTranspose(ComputeWorldTransform(pScene->_Actors["Fountain"]->GetModel()->GetOrientation(), pScene->_Actors["Fountain"]->GetModel()->GetScale(), pScene->_Actors["Fountain"]->GetModel()->GetPosition()));
 	pScene->_Actors["Fountain"]->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-	_ShaderManager->_ShadowShaderSoft->Render(_D3D->GetDeviceContext(), pScene->_Actors["Fountain"]->GetModel()->GetIndexCount(), transforms,
+	_ShaderManager->_ShadowShaderSoft->/*Render*/SetShaderParameters(_D3D->GetDeviceContext(), /*pScene->_Actors["Fountain"]->GetModel()->GetIndexCount(), */transforms,
 		pScene->_Actors["Fountain"]->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor, lights, _Camera->GetPosition(), 0.f, 1.f,
 		pScene->_Actors["Fountain"]->GetModel()->GetMaterial()->gamma,
 		pScene->_Actors["Fountain"]->GetModel()->GetMaterial()->bBlendTexture);
+	_ShaderManager->_ShadowShaderSoft->RenderShader(_D3D->GetDeviceContext(), pScene->_Actors["Fountain"]->GetModel()->GetIndexCount());
 	pScene->_Actors["Fountain"]->GetModel()->Draw(_D3D->GetDeviceContext());
 
 #pragma region REFLECTION DEACTIVATED

@@ -13,7 +13,6 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <fstream>
-//#include "QUARANTINE/ShaderBase.h"
 #include "ShaderClass.h"
 #include "LightClass.h"
 
@@ -40,11 +39,10 @@ private:
 	};
 
 public:
-	bool Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType transforms, LightClass* shadowLight[], vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews);
+	//bool Render(ID3D11DeviceContext* deviceContext, int indexCount, MatrixBufferType transforms, LightClass* shadowLight[], vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews);
 
 	bool InitializeShader(ID3D11Device*, HWND, WCHAR*, WCHAR*);
 
-//private:
 	bool SetShaderParameters(ID3D11DeviceContext* device, MatrixBufferType transforms, LightClass* shadowLight[], vector<Microsoft::WRL::ComPtr <ID3D11ShaderResourceView>>& texViews);
 	void RenderShader(ID3D11DeviceContext*, int);
 
