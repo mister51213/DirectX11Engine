@@ -13,6 +13,11 @@ GraphicsClass::GraphicsClass(const GraphicsClass& other)
 
 bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Scene* pScene)
 {
+	// @TODO:
+	// command pattern - tell every actor to do render pass 1, 2, 3 (PREPASS, RENDER PASS, POST RENDER PASS)
+	// Some will do something in the render pass, others do nothing
+	// *YOU MUST encapsulate all params that you pass in into a STRUCT
+
 	// D3D CLASS //
 	_D3D.reset(new D3DClass);
 	if (!_D3D) return false;
@@ -463,11 +468,18 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd, Sce
 bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 {
 	// 1. Animate Materials @TODO - initialize models in initialize function
-	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+	//for (map<string, /*unique_ptr<Actor>*/Actor*>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+	//{
+	//	if (it->second->GetModel())
+	//	{
+	//		it->second->GetModel()->GetMaterial()->Animate();
+	//	}
+	//}
+	for (Actor& actor : pScene->_actorPool)
 	{
-		if (it->second->GetModel())
+		if (actor.GetModel())
 		{
-			it->second->GetModel()->GetMaterial()->Animate();
+			actor.GetModel()->GetMaterial()->Animate();
 		}
 	}
 
@@ -505,11 +517,19 @@ bool GraphicsClass::UpdateFrame(float frameTime, class Scene* pScene, int fps)
 	}
 	
 	// 4. Update ACTORS
-	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+	//for (map<string, /*unique_ptr<Actor>*/Actor*>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+	//{
+	//	it->second->GetModel()->SetOrientation(it->second->GetOrientation());
+	//	it->second->GetModel()->SetPosition(it->second->GetPosition());
+	//	it->second->GetModel()->SetScale(it->second->GetScale());
+	//}
+
+	// Optimized iteration
+	for (Actor& actor : pScene->_actorPool)
 	{
-		it->second->GetModel()->SetOrientation(it->second->GetOrientation());
-		it->second->GetModel()->SetPosition(it->second->GetPosition());
-		it->second->GetModel()->SetScale(it->second->GetScale());
+		actor.GetModel()->SetOrientation(actor.GetOrientation());
+		actor.GetModel()->SetPosition(actor.GetPosition());
+		actor.GetModel()->SetScale(actor.GetScale());
 	}
 
 	// 4. Update UI
@@ -608,10 +628,12 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 	_D3D->DisableAlphaBlending();
 
 	//////// OTHER OBJECTS /////////
-	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+	//for (map<string, /*unique_ptr<Actor>*/Actor*>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+	for (Actor& actor : pScene->_actorPool)
 	{
 		// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
-		if (!it->second->GetModel() || it->first == "Water" || it->first == "GlassColumns")
+		//if (!it->second->GetModel() || it->first == "Water" || it->first == "GlassColumns")
+		if (!actor.GetModel() || actor.Name == "Water" || actor.Name == "GlassColumns")
 		{
 			continue;
 		}
@@ -621,14 +643,14 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 		//_D3D->DisableAlphaBlending();
 
 		// BLURRED SCENE SHADOWS CLASS
-		it->second->GetModel()->SetResourceView(6, blurredShadows);
+		/*it->second->*/actor.GetModel()->SetResourceView(6, blurredShadows);
 
-		transforms.world = XMMatrixTranspose(ComputeWorldTransform(it->second->GetModel()->GetOrientation(), it->second->GetModel()->GetScale(), it->second->GetModel()->GetPosition()));
-		it->second->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
-		_ShaderManager->_ShadowShaderSoft->SetShaderParameters(_D3D->GetDeviceContext(), transforms, it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor, 
-			lights, _Camera->GetPosition(), 0.f, 1.f, it->second->GetModel()->GetMaterial()->gamma, it->second->GetModel()->GetMaterial()->bBlendTexture);
-		_ShaderManager->_ShadowShaderSoft->RenderShader(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount());
-		it->second->GetModel()->Draw(_D3D->GetDeviceContext());
+		transforms.world = XMMatrixTranspose(ComputeWorldTransform(/*it->second->*/actor.GetModel()->GetOrientation(), /*it->second->*/actor.GetModel()->GetScale(), /*it->second->*/actor.GetModel()->GetPosition()));
+		/*it->second->*/actor.GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+		_ShaderManager->_ShadowShaderSoft->SetShaderParameters(_D3D->GetDeviceContext(), transforms, /*it->second->*/actor.GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor, 
+			lights, _Camera->GetPosition(), 0.f, 1.f, /*it->second->*/actor.GetModel()->GetMaterial()->gamma, /*it->second->*/actor.GetModel()->GetMaterial()->bBlendTexture);
+		_ShaderManager->_ShadowShaderSoft->RenderShader(_D3D->GetDeviceContext(), /*it->second->*/actor.GetModel()->GetIndexCount());
+		/*it->second->*/actor.GetModel()->Draw(_D3D->GetDeviceContext());
 	}
 
 	// GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS // GLASS COLUMNS
@@ -647,15 +669,42 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 	//////// OTHER OBJECTS /////////
 	float alpha;
 
-	for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+	//for (map<string, /*unique_ptr<Actor>*/Actor*>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+	//{
+	//	// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
+	//	if (!it->second->GetModel() || it->first == "Water" || it->first == "GlassColumns")
+	//	{
+	//		continue;
+	//	}
+	//	if (it->first == "Platform")
+	//	{
+	//		alpha = 1.f;
+	//	}
+	//	else
+	//	{
+	//		alpha = .6f;
+	//	}
+	//	
+	//	it->second->GetModel()->SetResourceView(6, blurredShadows);
+	//	transforms.world = XMMatrixTranspose(ComputeWorldTransform(it->second->GetModel()->GetOrientation(), it->second->GetModel()->GetScale(), it->second->GetModel()->GetPosition()));
+	//	it->second->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+	//	_ShaderManager->_ShadowShaderSoft->SetShaderParameters(
+	//		_D3D->GetDeviceContext(), transforms, it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor,
+	//		lights, _Camera->GetPosition(), 0.f, alpha,	it->second->GetModel()->GetMaterial()->gamma, it->second->GetModel()->GetMaterial()->bBlendTexture);
+	//	_ShaderManager->_ShadowShaderSoft->RenderShader(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount());
+	//	it->second->GetModel()->Draw(_D3D->GetDeviceContext());
+	//}
+
+	// Optimized iteration
+	for (Actor& actor : pScene->_actorPool)
 	{
 		// SUPER HACK TO GET TEMPORARY WATER MODELS IN!!!!!!!! //
-		if (!it->second->GetModel() || it->first == "Water" || it->first == "GlassColumns")
+		if (actor.GetModel() || actor.Name == "Water" || actor.Name == "GlassColumns")
 		{
 			continue;
 		}
 
-		if (it->first == "Platform")
+		if (actor.Name == "Platform")
 		{
 			alpha = 1.f;
 		}
@@ -663,15 +712,15 @@ bool GraphicsClass::DrawFrame(Scene* pScene)
 		{
 			alpha = .6f;
 		}
-		
-		it->second->GetModel()->SetResourceView(6, blurredShadows);
-		transforms.world = XMMatrixTranspose(ComputeWorldTransform(it->second->GetModel()->GetOrientation(), it->second->GetModel()->GetScale(), it->second->GetModel()->GetPosition()));
-		it->second->GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
+
+		actor.GetModel()->SetResourceView(6, blurredShadows);
+		transforms.world = XMMatrixTranspose(ComputeWorldTransform(actor.GetModel()->GetOrientation(), actor.GetModel()->GetScale(), actor.GetModel()->GetPosition()));
+		actor.GetModel()->PutVerticesOnPipeline(_D3D->GetDeviceContext());
 		_ShaderManager->_ShadowShaderSoft->SetShaderParameters(
-			_D3D->GetDeviceContext(), transforms, it->second->GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor,
-			lights, _Camera->GetPosition(), 0.f, alpha,	it->second->GetModel()->GetMaterial()->gamma, it->second->GetModel()->GetMaterial()->bBlendTexture);
-		_ShaderManager->_ShadowShaderSoft->RenderShader(_D3D->GetDeviceContext(), it->second->GetModel()->GetIndexCount());
-		it->second->GetModel()->Draw(_D3D->GetDeviceContext());
+			_D3D->GetDeviceContext(), transforms, actor.GetModel()->GetMaterial()->GetTextureObject()->_textureViews, _sceneEffects.ambientColor,
+			lights, _Camera->GetPosition(), 0.f, alpha, actor.GetModel()->GetMaterial()->gamma, actor.GetModel()->GetMaterial()->bBlendTexture);
+		_ShaderManager->_ShadowShaderSoft->RenderShader(_D3D->GetDeviceContext(), actor.GetModel()->GetIndexCount());
+		actor.GetModel()->Draw(_D3D->GetDeviceContext());
 	}
 
 	_D3D->DisableAlphaBlending();
@@ -791,16 +840,24 @@ bool GraphicsClass::RenderShadowsToTexture(Scene* pScene, LightClass* lights[])
 		MatrixBufferType matBuffer(XMMatrixIdentity(), XMMatrixTranspose(_Lights[i]->GetViewMatrix()), XMMatrixTranspose(_Lights[i]->GetProjectionMatrix()));
 
 		// Draw all actors in scene to this render texture
-		for (map<string, unique_ptr<Actor>>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+		//for (map<string, /*unique_ptr<Actor>*/Actor*>::const_iterator it = pScene->_Actors.begin(); it != pScene->_Actors.end(); ++it)
+		//{
+		//	string currentModel = it->first; // for debug purposes
+		//	if (!it->second->GetModel() || !it->second->GetModel()->bCastShadow)
+		//	{
+		//		continue;
+		//	}
+		//	DrawModel(*it->second->GetModel(), matBuffer, nullptr, EDEPTH);
+		//}
+
+		for (Actor& actor : pScene->_actorPool)
 		{
-			// DONT SHADOW THE WATER
-			//if (it->first == "Water" || !it->second->GetModel())
-			string currentModel = it->first; // for debug purposes
-			if (!it->second->GetModel() || !it->second->GetModel()->bCastShadow)
+			string currentModel = actor.Name; // for debug purposes
+			if (!actor.GetModel() || !actor.GetModel()->bCastShadow)
 			{
 				continue;
 			}
-			DrawModel(*it->second->GetModel(), matBuffer, nullptr, EDEPTH);
+			DrawModel(*actor.GetModel(), matBuffer, nullptr, EDEPTH);
 		}
 	}
 

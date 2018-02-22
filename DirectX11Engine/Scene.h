@@ -20,7 +20,7 @@ public:
 	Scene();
 	//~Scene();
 	bool Initialize();
-	void InitializeLights(map<string, unique_ptr<Actor>>& actors);
+	void InitializeLights(map<string, /*unique_ptr<Actor>*/Actor*>& actors);
 	void InitializeActors();
 	void Tick(float deltaTime, Input* pInput);
 	void ProcessInput(float deltaTime, Input* pInput);
@@ -29,7 +29,10 @@ public:
 	inline Actor* GetCamera() const { return _Camera.get(); }
 
 	unique_ptr<Actor> _Camera;
-	map<string, unique_ptr<Actor>> _Actors;
+
+	vector<Actor> _actorPool;
+	//map<string, unique_ptr<Actor>> _Actors;
+	map<string, Actor*> _Actors;
 	vector<unique_ptr<Actor>> _LightActors;
 
 	/////////// Light Animation /////////////

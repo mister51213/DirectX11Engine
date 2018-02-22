@@ -45,7 +45,14 @@ void Scene::InitializeActors()
 	// Scene scale
 	XMFLOAT3 sceneScale(.5, .5, .5);
 
-	// Instantiate actors and update their names if duplicates
+	// Initialize contiguously allocated pool of actors for faster performance
+	
+	// Then set each address of these to the pointers in the map
+	// TODO: if grow it or shrink it, fix up all the pointers
+
+	_actorPool.resize(actorPairs.size());
+
+	// Instantiate map of actors and update their names if duplicates
 	int duplicateIdx = 0;
 	string DuplicateBaseName = actorPairs[0].first;
 
@@ -74,11 +81,26 @@ void Scene::InitializeActors()
 		}
 
 		// Instantiate each actor with the updated name
-		unique_ptr<Actor> pActor = std::make_unique<Actor>(actorPairs[i].first);
-		pActor->InitializeMovement(VISIBLE);
-		pActor->SetPosition(actorPairs[i].second);
-		_Actors.emplace(pActor->Name, std::move(pActor));
-		_Actors[actorPairs[i].first]->SetScale(sceneScale);
+		//unique_ptr<Actor> pActor = std::make_unique<Actor>(actorPairs[i].first);
+		//pActor->InitializeMovement(VISIBLE);
+		//pActor->SetPosition(actorPairs[i].second);
+		//_Actors.emplace(pActor->Name, std::move(pActor));
+		//_Actors[actorPairs[i].first]->SetScale(sceneScale);
+
+		// @OPTIMIZE - actor pool version
+		//_actorPool[i] = Actor(actorPairs[i].first);
+		//_actorPool[i].InitializeMovement(VISIBLE);
+		//_actorPool[i].SetPosition(actorPairs[i].second);
+		//_actorPool[i].SetScale(sceneScale);
+		//unique_ptr<Actor> pActor(&_actorPool[i]);
+		//_Actors.emplace(_actorPool[i].Name, std::move(pActor));
+
+		// @OPTIMIZE 2 - actor pool version
+		_actorPool[i] = Actor(actorPairs[i].first);
+		_actorPool[i].InitializeMovement(VISIBLE);
+		_actorPool[i].SetPosition(actorPairs[i].second);
+		_actorPool[i].SetScale(sceneScale);
+		_Actors.emplace(_actorPool[i].Name, &_actorPool[i]);
 	}
 
 	// Custom tweaks on actors
@@ -90,10 +112,15 @@ void Scene::InitializeActors()
 	//_Actors["Platform"]->SetPosition(XMFLOAT3(0.f, 1.0f, 0.f));
 }
 
-void Scene::InitializeLights(map<string, unique_ptr<Actor>>& actors)
+void Scene::InitializeLights(map<string, /*unique_ptr<Actor>*/Actor*>& actors)
 {
 	for (int i = 0; i < NUM_LIGHTS; ++i)
 	{
+		//_LightActors.push_back(unique_ptr<Actor>());
+		//_LightActors[i].reset(new Actor("Light" + to_string(i + 1)));
+		//_LightActors[i]->InitializeMovement(true);
+		//_LightActors[i]->SetLookAt(XMFLOAT3(0.0f, 0.0f, 0.0f));
+
 		_LightActors.push_back(unique_ptr<Actor>());
 		_LightActors[i].reset(new Actor("Light" + to_string(i + 1)));
 		_LightActors[i]->InitializeMovement(true);

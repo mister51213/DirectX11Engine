@@ -62,9 +62,9 @@ bool System::Tick()
 
 	_Input->Tick();
 
-	_Physics->Tick(_Timer->GetTime());
-
 	_Scene->Tick(_Timer->GetTime(), _Input.get());
+	
+	_Physics->Tick(_Timer->GetTime());
 
 	_Graphics->UpdateFrame(_Timer->GetTime(), _Scene.get(), _UI->_Fps->GetFps());
 
